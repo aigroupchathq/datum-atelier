@@ -97,10 +97,11 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
   ];
 
   const SUGGESTED = [
+    { id: 'julian_vane', handle: 'julian_vane', model: 'AC Cobra 427 & Ferrari 488', reason: 'Chilterns Private Custody', img: '/feed/stone_garage_cobra_ferrari.jpg' },
+    { id: 'hamish_heritage', handle: 'hamish_heritage', model: 'Master Engine Rebuild Bench', reason: 'Highland Workshop Mentorship', img: '/feed/heritage_wrenching_workshop.jpg' },
+    { id: 'midlands_sanctuary', handle: 'midlands_sanctuary', model: 'Cooperative Atelier (24 Bays)', reason: 'Independent Custodian Hall', img: '/feed/collective_atelier_hall.jpg' },
+    { id: 'cairngorm_crew', handle: 'cairngorm_crew', model: 'Highland Overland Guild', reason: 'Sub-Zero Expedition Crew', img: '/feed/snow_mountain_overland_convoy.jpg' },
     { id: 'kuro_gt3', handle: 'kuro_gt3', model: 'Porsche 911 GT3 Touring', reason: 'Harpenden, Hertfordshire', img: '/real_uk_gt3_suburb.jpg' },
-    { id: 'retromod_dan', handle: 'retromod_dan', model: 'BMW 318is Slicktop (E30)', reason: 'Clifton, Bristol', img: '/real_uk_e30_terrace.jpg' },
-    { id: 'expedition_110', handle: 'expedition_110', model: 'Defender 110 P400 SE', reason: 'Swaledale, Yorkshire Dales', img: '/real_uk_defender_farm.jpg' },
-    { id: 'yuki_gr_yaris', handle: 'yuki_gr_yaris', model: 'Toyota GR Yaris Circuit', reason: 'Active in B-Roads Guild', img: mockOtherVehicles[1].heroImageUrl },
   ];
 
   return (

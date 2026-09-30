@@ -11,12 +11,15 @@ interface StoriesBarProps {
 }
 
 const RING_CLASS: Record<string, string> = {
-  'story-maya':     'ring-maya',
-  'story-kuro':     'ring-kuro',
-  'story-e30':      'ring-community',
-  'story-defender': 'ring-community',
-  'story-wash':     'ring-maya',
-  'story-evolve':   'ring-community',
+  'story-cobra':      'ring-kuro',
+  'story-workshop':   'ring-community',
+  'story-collective': 'ring-maya',
+  'story-overland':   'ring-community',
+  'story-maya':       'ring-maya',
+  'story-kuro':       'ring-kuro',
+  'story-e30':        'ring-community',
+  'story-defender':   'ring-community',
+  'story-wash':       'ring-maya',
 };
 
 export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
@@ -25,13 +28,61 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
 
   const storiesData: StoryItem[] = [
     {
+      id: 'story-cobra',
+      authorName: 'Julian Vane',
+      authorHandle: 'julian_vane',
+      authorModel: '427 Cobra & 488 GTB',
+      avatarUrl: '/feed/stone_garage_cobra_ferrari.jpg',
+      storyMediaUrl: '/feed/stone_garage_cobra_ferrari.jpg',
+      timeAgo: '45m',
+      caption: 'Open bay doors: letting 15-year-old Toby from down the lane sit behind the wheel and fire up the 427 side-oiler!',
+      location: 'Chilterns Estate • Buckinghamshire',
+      telemetry: '7.0L V8 • Twin Holleys • Open Doors'
+    },
+    {
+      id: 'story-workshop',
+      authorName: 'Hamish',
+      authorHandle: 'hamish_heritage',
+      authorModel: 'Heritage Engine Bench',
+      avatarUrl: '/feed/heritage_wrenching_workshop.jpg',
+      storyMediaUrl: '/feed/heritage_wrenching_workshop.jpg',
+      timeAgo: '2h',
+      caption: 'Saturday apprentice bench: teaching young Alex how to measure crank journal oil clearances on his grandfather\'s M10 block.',
+      location: 'Highland Workshop • Cairngorms',
+      telemetry: '0.0018" Oil Clearance • Plastigauge'
+    },
+    {
+      id: 'story-collective',
+      authorName: 'Collective',
+      authorHandle: 'midlands_sanctuary',
+      authorModel: 'Shared Collector Hall',
+      avatarUrl: '/feed/collective_atelier_hall.jpg',
+      storyMediaUrl: '/feed/collective_atelier_hall.jpg',
+      timeAgo: '4h',
+      caption: '24 independent owners, 1 shared sanctuary. Lifts open, coffee brewing, helping each other bleed brakes for Sunday.',
+      location: 'Aviation Hall • Midlands',
+      telemetry: 'Shared Lifts • 24 Custodians'
+    },
+    {
+      id: 'story-overland',
+      authorName: 'Expeditions',
+      authorHandle: 'cairngorm_crew',
+      authorModel: 'Highland Overland Guild',
+      avatarUrl: '/feed/snow_mountain_overland_convoy.jpg',
+      storyMediaUrl: '/feed/snow_mountain_overland_convoy.jpg',
+      timeAgo: '6h',
+      caption: 'Sub-zero trailside repair in the Cairnwell whiteout. Headlights turned around, zero rigs left behind on the mountain.',
+      location: 'Cairnwell Pass • 2,198 ft',
+      telemetry: 'Sub-Zero Trailside • -5°C Blizzard'
+    },
+    {
       id: 'story-maya',
       authorName: 'MAYA',
       authorHandle: 'maya_m3',
       authorModel: 'BMW M3 Competition (G80)',
       avatarUrl: '/real_uk_m3_cottage.jpg',
       storyMediaUrl: '/real_uk_m3_cottage.jpg',
-      timeAgo: '1h',
+      timeAgo: '7h',
       caption: 'Dawn run departure outside Cotswolds cottage. Damp bitumen, S58 twin-turbos spooling with zero pace drop!',
       location: 'Chipping Campden • Cotswolds',
       telemetry: '510 BHP • 1,688 ft Elevation • 0.92G Apex'
@@ -43,8 +94,8 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
       authorModel: 'Porsche 911 GT3 (992)',
       avatarUrl: '/real_uk_gt3_suburb.jpg',
       storyMediaUrl: '/real_uk_gt3_suburb.jpg',
-      timeAgo: '3h',
-      caption: 'British suburban block driveway 07:00 AM cold start. 4.0L naturally aspirated flat-six 9,000 RPM idle warm-up.',
+      timeAgo: '8h',
+      caption: 'Suburban driveway 06:15 AM cold start. Respecting the neighborhood: exhaust valves locked closed until open roads.',
       location: 'Harpenden • Hertfordshire',
       telemetry: '502 BHP @ 8,400 RPM • 470 Nm Torque'
     },
@@ -55,7 +106,7 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
       authorModel: 'BMW 318is (E30) Slicktop',
       avatarUrl: '/real_uk_e30_terrace.jpg',
       storyMediaUrl: '/real_uk_e30_terrace.jpg',
-      timeAgo: '5h',
+      timeAgo: '10h',
       caption: 'Victorian terraced bay parking. 1989 slicktop analog survivor with period BBS 15" basketweaves.',
       location: 'Clifton • Bristol',
       telemetry: '1989 Analog • 1,120 kg • M42 Twin-Cam'
@@ -67,8 +118,8 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
       authorModel: 'Defender 110 P400 SE',
       avatarUrl: '/real_uk_defender_farm.jpg',
       storyMediaUrl: '/real_uk_defender_farm.jpg',
-      timeAgo: '7h',
-      caption: 'Yorkshire Dales rustic stone barn estate. BFGoodrich KO2s aired down after Swaledale green laning.',
+      timeAgo: '12h',
+      caption: 'Yorkshire Dales parish trail maintenance: clearing fallen branches and unblocking stone culverts for local farmers.',
       location: 'Swaledale • Yorkshire Dales',
       telemetry: '900mm Wading Active • 18 PSI'
     },
@@ -79,22 +130,10 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
       authorModel: 'Sunday Morning Routine',
       avatarUrl: '/real_uk_driveway_wash.jpg',
       storyMediaUrl: '/real_uk_driveway_wash.jpg',
-      timeAgo: '9h',
+      timeAgo: '14h',
       caption: 'Sunday 07:00 AM snow-foam pre-wash outside suburban semi. Two-bucket method with grit guards.',
       location: 'Driveway Enclave • Surrey',
       telemetry: 'Bilt-Hamber Alkaline Decon • pH Neutral'
-    },
-    {
-      id: 'story-evolve',
-      authorName: 'Evolve',
-      authorHandle: 'evolve_automotive',
-      authorModel: 'Verified BMW Specialist',
-      avatarUrl: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=200&q=80',
-      storyMediaUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80',
-      timeAgo: '12h',
-      caption: 'Maha LPS 3000 hub-dyno session. S58 dual-pass chargecooler holding IAT at 34°C under full boost.',
-      location: 'Evolve HQ • Luton Dyno Cell',
-      telemetry: 'Maha Cell 1 • +38 WHP Dyno Proven'
     }
   ];
 

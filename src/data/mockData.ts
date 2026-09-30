@@ -61,31 +61,59 @@ export const mockOtherVehicles: Vehicle[] = [
     }
   },
   {
-    id: 'car-yuki-mx5',
-    ownerId: 'user-anon-4421',
-    ownerIsAnonymous: true,
-    name: 'YUKI',
-    make: 'Mazda',
-    model: 'MX-5',
-    trim: '1.8i S Special',
-    year: 1996,
-    heroImageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80',
-    galleryImages: [],
-    vrmPlate: 'N842 WMX',
-    isPlateBlurredDefault: true,
+    id: 'car-cobra-427',
+    ownerId: 'user-julian-vane',
+    ownerIsAnonymous: false,
+    name: 'COBRA 427',
+    make: 'AC Shelby',
+    model: 'Cobra 427 S/C',
+    trim: 'Side-Oiler Competition',
+    year: 1966,
+    heroImageUrl: '/feed/stone_garage_cobra_ferrari.jpg',
+    galleryImages: ['/feed/stone_garage_cobra_ferrari.jpg'],
+    vrmPlate: 'CSX 3014',
+    isPlateBlurredDefault: false,
     spec: {
-      engine: '1.8L BP-ZE Inline-4',
-      transmission: '5-Speed Manual',
-      drivetrain: 'Rear-Wheel Drive with Torsen LSD',
-      powerBhp: 131,
-      factoryColor: 'Chaste White',
-      mileageCurrent: 114200,
+      engine: '7.0L Ford 427 Side-Oiler FE V8',
+      transmission: 'Toploader 4-Speed Manual',
+      drivetrain: 'Rear-Wheel Drive with Salisbury LSD',
+      powerBhp: 485,
+      factoryColor: 'Guardsman Blue with Wimbledon White Stripes',
+      mileageCurrent: 28400,
     },
     metrics: {
-      followerCount: 840,
-      drivesCount: 210,
-      buildVersionsCount: 5,
-      memoryEventsCount: 52,
+      followerCount: 3420,
+      drivesCount: 94,
+      buildVersionsCount: 3,
+      memoryEventsCount: 42,
+    }
+  },
+  {
+    id: 'car-hamish-bench',
+    ownerId: 'user-hamish-heritage',
+    ownerIsAnonymous: false,
+    name: 'HERITAGE BENCH',
+    make: 'DATUM',
+    model: 'Open Community Workshop',
+    trim: 'Highland Machine Shop',
+    year: 1978,
+    heroImageUrl: '/feed/heritage_wrenching_workshop.jpg',
+    galleryImages: ['/feed/heritage_wrenching_workshop.jpg'],
+    vrmPlate: 'WORKSHOP',
+    isPlateBlurredDefault: false,
+    spec: {
+      engine: 'Master Engine Rebuild & Tolerance Bay',
+      transmission: 'Manual Machine Tools',
+      drivetrain: 'Twin Hydraulic Lifts & Dial Bore Gauges',
+      powerBhp: 0,
+      factoryColor: 'Patina Red & Steel',
+      mileageCurrent: 0,
+    },
+    metrics: {
+      followerCount: 4810,
+      drivesCount: 0,
+      buildVersionsCount: 120,
+      memoryEventsCount: 88,
     }
   }
 ];
@@ -313,77 +341,68 @@ export const mockMayaHealth: VehicleHealth = {
 export const mockFeedPosts: CommunityPost[] = [
   {
     id: 'post-101',
-    authorType: 'car',
-    authorVehicleId: 'car-maya-m3',
-    authorVehicleName: 'MAYA',
-    authorVehicleModel: 'BMW M3 Competition',
-    authorVehicleYear: 2023,
-    postType: 'DRIVE',
-    title: 'Drive #184: London → Cotswolds Loop',
-    content: '126 miles across the Roman roads of Gloucestershire. Testing the newly fitted KW V4 compression damping over undulating surfaces. The front-end bite in damp conditions is transformed.',
+    authorType: 'user',
+    authorVehicleName: 'Julian Vane',
+    authorVehicleModel: 'AC Cobra 427 & Ferrari 488',
+    postType: 'CAR_STORY',
+    title: 'Open Bay Doors: Why I invited a 15-year-old cyclist in to sit in the 427',
+    content: 'Too many collectors treat their garages like locked vaults or tax assets. This morning, 15-year-old Toby from down our lane was leaning against the curb with his bicycle, peering into Bay 2. Instead of closing the shutter, I invited him in, handed him a clean microfiber cloth, and let him climb behind the wood-rimmed steering wheel while we fired up the 7.0L Ford side-oiler. His eyes lit up with pure mechanical wonder. We talked for an hour about twin Holley carbs, flat-plane crank harmonics on the 488, and why keeping analog machinery alive matters. A machine only lives if it inspires the next generation that will care for it. DATUM isn\'t about exclusive velvet ropes; it\'s about opening our garage doors and sharing the spark.',
     mediaUrls: [
-      '/real_uk_m3_cottage.jpg',
-      '/real_uk_driveway_wash.jpg'
+      '/feed/stone_garage_cobra_ferrari.jpg'
     ],
     provenanceTag: 'owner_experience',
-    createdAt: '2 hours ago',
-    likesCount: 142,
-    repliesCount: 18,
-    linkedDriveId: 'drive-184'
+    createdAt: '1 hour ago',
+    likesCount: 642,
+    repliesCount: 82
   },
   {
     id: 'post-102',
-    authorType: 'car',
-    authorVehicleId: 'car-maya-m3',
-    authorVehicleName: 'MAYA',
-    authorVehicleModel: 'BMW M3 Competition',
-    authorVehicleYear: 2023,
-    postType: 'BUILD_UPDATE',
-    title: 'Build 04: KW Variant 4 Setup Notes',
-    content: 'Installed 3-way adjustable coilovers. After 1,000 miles of settling, we dialed in 12 clicks rebound front, 6 clicks low-speed compression. The pogo bounce on high-speed B-road dips is completely gone.',
+    authorType: 'professional',
+    authorVehicleName: 'Hamish MacLeod',
+    authorVehicleModel: 'Heritage Engine Builder & Machinist',
+    postType: 'GUIDE',
+    title: 'Saturday Open Bench: Rescuing Alex’s seized BMW M10 cylinder block',
+    content: 'Young Alex (21) arrived at 08:00 AM devastated — a franchise garage told him his grandfather\'s 1974 2002 block was scrap and quoted £4,800 for an exchange engine. We rolled it onto the engine stand in my back workshop. Cylinders 2 and 3 had stuck rings from 12 years in a damp barn, but zero bore scoring. Spent 7 hours together teaching him how to use penetrating solvent, a dial bore gauge, gentle 3-stone cylinder honing, and plastigauge tolerance checking. By 4:00 PM, the crank spun smoothly with one finger at 0.0018” oil clearance. Total cost to Alex: £35 for fresh Glyco bearings and a box of warm pasties. Never let someone abandon their dream when a few hours of shared workshop mentorship can save it.',
     mediaUrls: [
-      'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=90'
+      '/feed/heritage_wrenching_workshop.jpg'
     ],
     provenanceTag: 'verified_professional',
-    createdAt: 'Yesterday',
-    likesCount: 230,
-    repliesCount: 42,
-    linkedBuildVersion: 'BUILD 04'
+    createdAt: '3 hours ago',
+    likesCount: 1180,
+    repliesCount: 142
   },
   {
     id: 'post-103',
-    authorType: 'car',
-    authorVehicleId: 'car-kuro-gt3',
-    authorVehicleName: 'KURO',
-    authorVehicleModel: 'Porsche 911 GT3 Touring',
-    authorVehicleYear: 2022,
-    postType: 'CAR_STORY',
-    title: 'Crossing Llanberis Pass at First Light',
-    content: 'No music, windows cracked down an inch to hear the 9,000 RPM valvetrain echoing off the slate cliffs of Snowdonia. A car is not a commuting appliance; it is a gateway to mornings like this.',
+    authorType: 'user',
+    authorVehicleName: 'Midlands Collective',
+    authorVehicleModel: 'Independent Custodian Cooperative',
+    postType: 'EVENT',
+    title: '24 Drivers, 1 Shared Sanctuary: How we solved city garaging without corporate price gouging',
+    content: 'None of us had private garages or room for a two-post hydraulic lift in Victorian city terraces. Corporate vehicle vaults wanted £850/month per bay just to park cars in dark rows behind glass. So 24 of us banded together to lease this former aviation hall. We pooled funds for shared Snap-on tool cabinets, a Hunter optical wheel aligner, a dedicated wash bay with deionized water, and an open communal coffee bar. Every weekend, whether you drive an MX-5, a classic Mercedes, or a twin-turbo McLaren, we help each other bleed clutches, torque suspension links, and prepare for Sunday dawn drives. No egos, no gatekeeping, no VIP ropes. Just true enthusiasts bringing out the absolute best in each other.',
     mediaUrls: [
-      '/real_uk_gt3_suburb.jpg'
+      '/feed/collective_atelier_hall.jpg'
     ],
     provenanceTag: 'owner_experience',
-    createdAt: '2 days ago',
-    likesCount: 489,
-    repliesCount: 56
+    createdAt: '5 hours ago',
+    likesCount: 1590,
+    repliesCount: 184
   },
   {
     id: 'post-104',
     authorType: 'user',
-    postType: 'QUESTION',
-    title: 'Uneven inner shoulder rear tyre wear on G80 M3 with -1.8° camber?',
-    content: 'Looking at my rear Pilot Sport 4S tread: outer is at 4.8mm, but the inner shoulder has reached 3.4mm after 9,000 miles. Has anyone experimented with dropping rear camber to -1.5° for street-only use?',
+    authorVehicleName: 'Highland Expeditions',
+    authorVehicleModel: 'Highland Overland Guild',
+    postType: 'DRIVE',
+    title: 'Zero Rigs Left Behind: Sub-zero trailside repair in the Cairnwell whiteout',
+    content: 'At 2,198 ft on the old military trail in freezing fog, David\'s Defender cracked a lower radiator hose over a sharp granite boulder strike. In -5°C blizzard conditions, no one drove ahead. The convoy immediately formed a windbreak with three lead rigs, Marcus produced high-temp reinforced silicone hose from his recovery kit, Elena brewed boiling tea on the tailgate stove, and we refilled the system with premixed OAT coolant. 35 minutes later, the cooling circuit was bled and all six trucks safely crossed the mountain together. The true measure of an automotive community isn’t the spec sheet of your rig, but who turns their headlights around when the storm drops.',
     mediaUrls: [
-      'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=1200&q=90'
+      '/feed/snow_mountain_overland_convoy.jpg'
     ],
-    provenanceTag: 'community_opinion',
-    createdAt: '3 days ago',
-    likesCount: 38,
-    repliesCount: 24
+    provenanceTag: 'owner_experience',
+    createdAt: '8 hours ago',
+    likesCount: 914,
+    repliesCount: 97,
+    linkedDriveId: 'drive-184'
   },
   {
     id: 'post-105',
@@ -393,85 +412,86 @@ export const mockFeedPosts: CommunityPost[] = [
     authorVehicleModel: 'BMW M3 Competition',
     authorVehicleYear: 2023,
     postType: 'CAR_STORY',
-    title: 'Sunday 07:00 AM Driveway Snow-Foam Decon Wash',
-    content: 'Bilt-Hamber touchless alkaline pre-wash on the driveway before the salt crust sets in. Two-bucket method with grit guards and a cordless warm-air blower for the calipers and front grille mesh. Zero swirls, ceramic coat beading like day one.',
+    title: 'Sunday 07:00 AM Driveway Ritual: Teaching road-salt protection to the neighborhood',
+    content: 'Sunday morning foam bath ritual. Neighbor Mark walked over asking how to protect his high-mileage estate car against harsh winter council road salt without spending £1,200 on commercial pro details. Walked him through the Bilt-Hamber touchless alkaline pre-wash method, explained why pH neutrality saves clear coats, and gifted him my spare dual-action brass foam cannon. Seeing his pride two hours later as water beaded effortlessly off his ten-year-old daily driver was pure gold. Caring for our machines shouldn\'t be an elitist secret; sharing the craft elevates the whole street.',
     mediaUrls: [
       '/real_uk_driveway_wash.jpg'
     ],
     provenanceTag: 'owner_experience',
-    createdAt: '3 days ago',
-    likesCount: 312,
-    repliesCount: 29
+    createdAt: 'Yesterday',
+    likesCount: 512,
+    repliesCount: 49
   },
   {
     id: 'post-106',
-    authorType: 'car',
-    authorVehicleId: 'car-maya-m3',
-    authorVehicleName: 'MAYA',
-    authorVehicleModel: 'BMW M3 Competition',
-    authorVehicleYear: 2023,
-    postType: 'MILESTONE',
-    title: 'Statutory DVSA MOT Inspection: PASS (0 Advisories)',
-    content: 'Official DVSA roadworthiness test passed at 42,184 miles. Front brake efficiency tested at 78%, rear at 64% with 52:48 cross-balance. Zero emissions faults logged on Euro 6d OBD-II diagnostics. Cryptographically verified in vehicle passport.',
-    mediaUrls: [
-      '/real_uk_m3_cottage.jpg'
-    ],
-    provenanceTag: 'official_information',
-    createdAt: '4 days ago',
-    likesCount: 215,
-    repliesCount: 14
-  },
-  {
-    id: 'post-107',
-    authorType: 'professional',
-    authorVehicleName: 'Evolve Automotive',
-    authorVehicleModel: 'Verified BMW M Specialist',
-    postType: 'GUIDE',
-    title: 'Technical Guide: S58 Chargecooler Heat Soak Mitigation',
-    content: 'We logged IAT (Intake Air Temperatures) across 15 consecutive dyno pulls. With the stock heat exchanger, temps climbed from 32°C to 58°C by pull 4, causing DME ignition timing pull. Upgrading to a dual-pass core held IAT under 36°C even on a warm ambient afternoon.',
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=90'
-    ],
-    provenanceTag: 'verified_professional',
-    createdAt: '5 days ago',
-    likesCount: 540,
-    repliesCount: 68
-  },
-  {
-    id: 'post-108',
     authorType: 'car',
     authorVehicleId: 'car-kuro-gt3',
     authorVehicleName: 'KURO',
     authorVehicleModel: 'Porsche 911 GT3 Touring',
     authorVehicleYear: 2022,
-    postType: 'MAINTENANCE_UPDATE',
-    title: '18,000-Mile Sump Flush & Alignment Reset',
-    content: 'Mobil 1 ESP X3 0W-40 full sump refresh (7.8 litres). Front axle caster dialed in to 8.2°, negative camber locked at -2.2° front, -1.8° rear on the Beissbarth optical geometry rig. Steering feedback on turn-in is now razor-sharp.',
+    postType: 'CAR_POST',
+    title: 'The Courtesy of Silence: 06:15 AM residential departure protocol',
+    content: '06:15 AM cold start on the block-paved driveway. Feathering the GT sports clutch, coasting in neutral down the street gradient, keeping exhaust valves strictly locked closed until two miles past the village limit. High-performance motoring only earns community respect when drivers show unconditional courtesy to the neighborhoods they live in. Because our local car group practices this, our neighbors wave and smile rather than complain. DATUM’s 800m privacy cloaking reminds us that genuine class is quiet until the open road begins.',
     mediaUrls: [
       '/real_uk_gt3_suburb.jpg'
     ],
-    provenanceTag: 'verified_professional',
-    createdAt: '6 days ago',
-    likesCount: 388,
-    repliesCount: 32
+    provenanceTag: 'owner_experience',
+    createdAt: 'Yesterday',
+    likesCount: 730,
+    repliesCount: 82
+  },
+  {
+    id: 'post-107',
+    authorType: 'user',
+    authorVehicleName: 'RetroMod_Dan',
+    authorVehicleModel: '1989 BMW 318is (E30)',
+    postType: 'CAR_POST',
+    title: 'Passing the Torch: How the community helped a 22-year-old rebuild an analog gearbox',
+    content: 'When my second gear synchro started crunching on the E30, three forum veterans in Bristol offered their tools, gave me an OEM Getrag 240 shift fork they had saved for a decade, and spent a rainy Sunday teaching a 22-year-old apprentice how to press gears without chipping teeth. They refused to take a single pound in payment; all they said was: \'When you are fifty, you do the same for the next young enthusiast.\' That is the DNA of DATUM. True car culture is a brotherhood of mutual preservation.',
+    mediaUrls: [
+      '/real_uk_e30_terrace.jpg'
+    ],
+    provenanceTag: 'owner_experience',
+    createdAt: '2 days ago',
+    likesCount: 945,
+    repliesCount: 104
+  },
+  {
+    id: 'post-108',
+    authorType: 'car',
+    authorVehicleName: 'EXPEDITION_110',
+    authorVehicleModel: 'Land Rover Defender 110',
+    authorVehicleYear: 2021,
+    postType: 'DRIVE',
+    title: 'Green-Laning Custodians: Clearing fallen timber and repairing parish culverts in the Dales',
+    content: '60 miles of green lanes across Swaledale. Spent more time with the bow saw and winch than on the throttle. Cleared two fallen storm branches blocking the public bridleway, unclogged a stone culvert that was flooding a local sheep farmer\'s access track, and packed out three bags of tourist litter. Respect for the countryside is the only reason these historical lanes stay open for future drivers. Leave every trail cleaner and better than you found it.',
+    mediaUrls: [
+      '/real_uk_defender_farm.jpg'
+    ],
+    provenanceTag: 'owner_experience',
+    createdAt: '2 days ago',
+    likesCount: 812,
+    repliesCount: 74,
+    linkedDriveId: 'drive-184'
   },
   {
     id: 'post-109',
-    authorType: 'user',
-    authorVehicleName: 'UK B-Roads Club',
-    authorVehicleModel: 'Automotive Collective',
-    postType: 'EVENT',
-    title: 'A4067 Brecon Beacons Midnight Convoy Recap',
-    content: '16 cars set off under full moonlight from Sennybridge. Zero incidents, zero dropped pace. 800m residential privacy geofence ensured silent arrival at dawn coffee stop in Crickhowell. Full GPX route available in the Clubs library.',
+    authorType: 'car',
+    authorVehicleId: 'car-maya-m3',
+    authorVehicleName: 'MAYA',
+    authorVehicleModel: 'BMW M3 Competition',
+    authorVehicleYear: 2023,
+    postType: 'DRIVE',
+    title: 'B4425 Cotswolds Morning Loop: Exchanging setup notes with a fellow custodian',
+    content: 'Met an owner running an older E46 M3 at the Burford bakery stop. Over fresh coffee, we spent an hour comparing chassis balance, KW damper rebound, and tire cold pressures on wet bitumen. He was struggling with mid-corner understeer; we checked his tire pressures with my Longacre digital gauge and found the front left was 6 psi over-inflated. Dropped it to 32 psi, went for a 10-mile tandem run over the crests, and he said his car had never felt so responsive. It costs nothing to lend an ear and a tire gauge to a fellow driver.',
     mediaUrls: [
-      'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1506015391300-4802dc74de2e?auto=format&fit=crop&w=1200&q=90'
+      '/real_uk_m3_cottage.jpg'
     ],
     provenanceTag: 'owner_experience',
-    createdAt: '1 week ago',
-    likesCount: 672,
-    repliesCount: 84
+    createdAt: '3 days ago',
+    likesCount: 678,
+    repliesCount: 58,
+    linkedDriveId: 'drive-184'
   },
   {
     id: 'post-110',
@@ -480,120 +500,18 @@ export const mockFeedPosts: CommunityPost[] = [
     authorVehicleName: 'MAYA',
     authorVehicleModel: 'BMW M3 Competition',
     authorVehicleYear: 2023,
-    postType: 'DRIVE',
-    title: 'Day 3: NC500 Applecross Pass (Bealach na Bà) Solo Crossing',
-    content: 'Left Inverness at 05:45 AM before tourist campers wake up. The single-track hairpin ascent over Bealach na Bà in 4°C drizzle is pure church. Kept the S58 in Sport throttle with MDM traction mode. Michelin PS4S found purchase through standing water at the crest (2,053 ft). Had hot black coffee and oatcakes in the shelter. 412 miles logged today, average 27.2 MPG. Zero mechanical hiccups.',
+    postType: 'BUILD_UPDATE',
+    title: 'Open S58 Knowledge Base: KW Variant 4 damper setup notes for real UK roads',
+    content: 'Publishing our full suspension setup openly for anyone struggling with G80 rebound harshness over rough UK B-roads. After 1,200 miles of telemetry logging, we ended at: 12 clicks rebound front, 6 clicks low-speed compression, 3 clicks high-speed compression. Rear: 14 clicks rebound, 5 clicks low-speed compression. Ride height: -15mm front, -10mm rear. The nervous lateral hop over crests is completely cured. Full alignment sheet published to the Community Tech Hub.',
     mediaUrls: [
       '/real_uk_m3_cottage.jpg',
       '/real_uk_driveway_wash.jpg'
     ],
-    provenanceTag: 'owner_experience',
-    createdAt: '8 hours ago',
-    likesCount: 482,
-    repliesCount: 51,
-    linkedDriveId: 'drive-184'
-  },
-  {
-    id: 'post-111',
-    authorType: 'professional',
-    authorVehicleName: 'Apex Track Engineering',
-    authorVehicleModel: 'Chassis & Diagnostic Workshop',
-    postType: 'GUIDE',
-    title: 'DIY Diagnostic: How to spot DI carbon buildup vs failing coils',
-    content: 'If you have a cold-start stumble or hesitation around 2,500 RPM under load on modern direct-injected engines (B58, EA888, S58), don’t immediately throw £400 of new coilpacks at it. Log cylinder misfire counts on cold idle. If misfires occur solely on cold enrichment and disappear once coolant reaches 70°C, it is 95% intake valve carbon crust. Walnut shell blasting at 80 PSI brings volumetric airflow back by 14 CFM. Here is the step-by-step manifold removal protocol.',
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=1200&q=90'
-    ],
     provenanceTag: 'verified_professional',
-    createdAt: '12 hours ago',
-    likesCount: 890,
-    repliesCount: 94
-  },
-  {
-    id: 'post-112',
-    authorType: 'car',
-    authorVehicleId: 'car-apex-720s',
-    authorVehicleName: 'VALKYRIE',
-    authorVehicleModel: 'McLaren 720S Performance',
-    authorVehicleYear: 2023,
-    postType: 'CAR_POST',
-    title: 'Meet VALKYRIE — Digital Passport Issued #0084',
-    content: 'Officially naming her VALKYRIE. Handed over in Papaya Spark with full stealth carbon package. Corner-weighed dry at 1,419 kg. 710 BHP twin-turbo 4.0L flat-plane V8 that revs like a superbike. Already registered her sovereign passport on Garage with automatic plate cloaking and geofenced garaging. Maiden shake-down through Surrey hills tonight.',
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=90'
-    ],
-    provenanceTag: 'owner_experience',
-    createdAt: '1 day ago',
-    likesCount: 741,
-    repliesCount: 88
-  },
-  {
-    id: 'post-113',
-    authorType: 'user',
-    authorVehicleName: 'RetroMod_Dan',
-    authorVehicleModel: '1989 BMW 318is (E30)',
-    postType: 'CAR_POST',
-    title: 'First post on Garage! Finally an app made for actual drivers',
-    content: 'Got fed up with Instagram algorithm pushing dropshipping ads instead of real car builds, and compressing 4K photography into 1080p mush. Migrating the full restoration log of my 1989 E30 318is slicktop here. The automatic registration plate blurring on upload without having to manually smudge it in markup is an absolute game-changer. Looking forward to connecting with the UK B-Roads crew!',
-    mediaUrls: [
-      '/real_uk_e30_terrace.jpg'
-    ],
-    provenanceTag: 'owner_experience',
-    createdAt: '1 day ago',
-    likesCount: 412,
-    repliesCount: 63
-  },
-  {
-    id: 'post-114',
-    authorType: 'car',
-    authorVehicleName: 'EXPEDITION_110',
-    authorVehicleModel: 'Land Rover Defender 110',
-    authorVehicleYear: 2021,
-    postType: 'DRIVE',
-    title: 'Strata Florida River Crossings: Aired Down to 18 PSI',
-    content: 'Tackled the Strata Florida green lane in mid-Wales after three days of rain. Dropped the BFGoodrich KO2s to 18 PSI on steel rims. Navigated seven submerged river crossings with the air suspension locked at off-road height (900mm wading capability). Had to winch out a bogged recovery truck near the abbey ruins. Mud up to the door handles, zero interior water ingress. Wilderness bivouac under the awning tonight.',
-    mediaUrls: [
-      '/real_uk_defender_farm.jpg'
-    ],
-    provenanceTag: 'owner_experience',
-    createdAt: '2 days ago',
-    likesCount: 533,
-    repliesCount: 47,
-    linkedDriveId: 'drive-184'
-  },
-  {
-    id: 'post-115',
-    authorType: 'user',
-    authorVehicleName: 'Marcus_GT4',
-    authorVehicleModel: 'Porsche 718 Cayman GT4',
-    postType: 'QUESTION',
-    title: 'Main dealer quoted £2,400 for a £65 PCV oil separator diaphragm?!',
-    content: 'Unbelievable. Threw an erratic idle code (P0171 bank 1 lean) on my GT4. Main dealer workshop inspected it, claimed the entire integrated composite cam cover assembly had to be replaced from Stuttgart with an 8-week backorder: £2,400 plus VAT! Took it to an independent specialist in Guildford: pulled the diaphragm cap off, fitted a reinforced Viton replacement membrane in 25 minutes for £65. Idle is rock solid at 800 RPM. Always get a second opinion before signing off main dealer work.',
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=90'
-    ],
-    provenanceTag: 'community_opinion',
-    createdAt: '2 days ago',
-    likesCount: 928,
-    repliesCount: 134
-  },
-  {
-    id: 'post-116',
-    authorType: 'user',
-    authorVehicleName: 'Sunday Dawn Patrol',
-    authorVehicleModel: 'Automotive Gathering',
-    postType: 'EVENT',
-    title: 'Caffeine & Machine 06:30 AM Yard Roll-Call',
-    content: 'Gates opened at 06:30 sharp. First 30 cars parked in the Yard: everything from an immaculate Singer-style 964 to a turbocharged K20 Lotus Exige and three G80 M3s. Zero revving, zero anti-social behavior — just steam rising off engine bays, warm flat whites, and cold morning exhaust notes. Next dawn convoy route will drop in the Clubs tab Thursday evening.',
-    mediaUrls: [
-      'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=90'
-    ],
-    provenanceTag: 'owner_experience',
-    createdAt: '3 days ago',
-    likesCount: 1120,
-    repliesCount: 95
+    createdAt: '4 days ago',
+    likesCount: 520,
+    repliesCount: 63,
+    linkedBuildVersion: 'BUILD 04'
   }
 ];
 
