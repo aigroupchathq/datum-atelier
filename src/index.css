@@ -51,6 +51,63 @@
     --accent-glow:    rgba(245, 158, 11, 0.18);
   }
 
+  /* Bordeaux & Aero Cyan (Roscosmos & PTS Ruby Star Velvet) */
+  .theme-bordeaux-cyan {
+    --bg-void:       #1D0E16;   /* Deep Plum Canvas #59253A */
+    --bg-surface:    #2D1422;   /* Velvet Bordeaux Card #78244C */
+    --bg-elevated:   #3E1B2F;   /* Hover Plinth */
+    --bg-overlay:    #542540;
+
+    --text-primary:   #FFFFFF;
+    --text-secondary: #E8D4DC;
+    --text-muted:     #A67484;  /* Muted Mauve #895061 */
+
+    --border-subtle:  rgba(137, 80, 97, 0.25);
+    --border-default: rgba(137, 80, 97, 0.45);
+    --border-active:  rgba(6, 119, 161, 0.80);
+
+    --accent:         #0677A1;  /* Electric Aerospace Cyan */
+    --accent-glow:    rgba(6, 119, 161, 0.35);
+  }
+
+  /* C2MTL Avant-Garde (Electric Cobalt & Tangerine Noir) */
+  .theme-c2mtl-avantgarde {
+    --bg-void:       #141414;   /* Graphic C2MTL Noir */
+    --bg-surface:    #1C1C1F;   /* Graphite Slate */
+    --bg-elevated:   #27272B;
+    --bg-overlay:    #34343A;
+
+    --text-primary:   #FFFFFF;
+    --text-secondary: #D4D4D8;
+    --text-muted:     #8E8E93;
+
+    --border-subtle:  rgba(255, 255, 255, 0.10);
+    --border-default: rgba(39, 61, 180, 0.40); /* Cobalt #273DB4 */
+    --border-active:  rgba(237, 120, 69, 0.85); /* Tangerine #ED7845 */
+
+    --accent:         #273DB4;  /* Electric Cobalt */
+    --accent-glow:    rgba(39, 61, 180, 0.35);
+  }
+
+  /* Alpine British Racing Green & Sterling Platinum */
+  .theme-alpine-emerald {
+    --bg-void:       #0B1411;   /* Deep Petroleum Forest */
+    --bg-surface:    #12211C;   /* British Racing Green Plinth */
+    --bg-elevated:   #1A2E27;
+    --bg-overlay:    #243D34;
+
+    --text-primary:   #F4FBF7;
+    --text-secondary: #A8CEBD;
+    --text-muted:     #638D7A;
+
+    --border-subtle:  rgba(16, 185, 129, 0.15);
+    --border-default: rgba(16, 185, 129, 0.32);
+    --border-active:  rgba(52, 211, 153, 0.75);
+
+    --accent:         #10B981;  /* Emerald Speed */
+    --accent-glow:    rgba(16, 185, 129, 0.28);
+  }
+
   body {
     background-color: #F8F9FA;
     color: #09090B;

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { FC } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Shield, Plus, Search, Wrench, ChevronDown, Compass, Users, Sparkles, Volume2, Globe2, Sun, Moon, FileText } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
+import { Shield, Plus, Search, Wrench, ChevronDown, Compass, Users, Sparkles, Volume2, Globe2, FileText, Palette, Check } from 'lucide-react';
+import { useTheme, ATELIER_THEMES } from '../../context/ThemeContext';
+import type { Theme } from '../../context/ThemeContext';
 
 interface NavbarProps {
   onOpenCreatePost: (initialMode?: 'post' | 'story') => void;
@@ -21,9 +22,10 @@ export const Navbar: FC<NavbarProps> = ({
   onOpenPassRadar,
   onOpenTransitCarnet
 }) => {
-  const { isWhiteYellow, toggleTheme } = useTheme();
+  const { theme, setTheme, isWhiteYellow, themeMeta } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCarDropdownOpen, setIsCarDropdownOpen] = useState(false);
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -158,28 +160,112 @@ export const Navbar: FC<NavbarProps> = ({
 
         {/* ── RIGHT CLUSTER ── */}
         <div className="flex items-center gap-2">
-          {/* Theme switcher toggle */}
-          <button
-            onClick={toggleTheme}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition ${
-              isWhiteYellow
-                ? 'bg-yellow-50 border-yellow-300/80 text-yellow-900 hover:bg-yellow-100 shadow-xs'
-                : 'bg-[#1C1C1F] border-white/[0.07] text-zinc-400 hover:text-yellow-400 hover:border-yellow-500/30'
-            }`}
-            title={isWhiteYellow ? 'Switch to Obsidian Dark' : 'Switch to White & Yellow'}
-          >
-            {isWhiteYellow ? (
+          {/* Atelier Luxury Palette Switcher Popover */}
+          <div className="relative">
+            <button
+              onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer ${
+                isWhiteYellow
+                  ? 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200/80 shadow-xs'
+                  : 'bg-[#1C1C1F] border-white/[0.07] text-zinc-300 hover:text-white hover:border-white/[0.15]'
+              }`}
+              title="Switch Atelier Luxury Palette (5 PTS Themes)"
+            >
+              {/* Active Theme Color Swatch */}
+              <div className="flex items-center -space-x-1">
+                <div 
+                  className="w-3.5 h-3.5 rounded-full border border-black/20 shadow-xs"
+                  style={{ backgroundColor: themeMeta.bgHex }}
+                />
+                <div 
+                  className="w-3.5 h-3.5 rounded-full border border-black/20 shadow-xs"
+                  style={{ backgroundColor: themeMeta.accentHex }}
+                />
+              </div>
+
+              <span className="hidden xl:inline text-[11px] font-mono-numbers font-medium truncate max-w-[110px]">
+                {themeMeta.name.split(' ')[0]}
+              </span>
+
+              <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isThemeDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Theme Dropdown Menu */}
+            {isThemeDropdownOpen && (
               <>
-                <Sun className="w-3.5 h-3.5 text-yellow-500 fill-yellow-400" />
-                <span className="hidden xl:inline text-[11px] font-mono-numbers font-bold">Light</span>
-              </>
-            ) : (
-              <>
-                <Moon className="w-3.5 h-3.5 text-zinc-300" />
-                <span className="hidden xl:inline text-[11px] font-mono-numbers">Dark</span>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsThemeDropdownOpen(false)} 
+                />
+                <div className={`absolute right-0 mt-2 w-72 rounded-2xl p-2 z-50 border shadow-2xl backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-150 ${
+                  isWhiteYellow
+                    ? 'bg-white/95 border-zinc-200 text-zinc-900'
+                    : 'bg-[#16161A]/95 border-white/10 text-white'
+                }`}>
+                  <div className="px-3 py-2 border-b border-black/[0.06] mb-1 flex items-center justify-between">
+                    <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-500 font-bold flex items-center gap-1.5">
+                      <Palette className="w-3.5 h-3.5 text-yellow-500" />
+                      PTS COLOR PALETTE
+                    </span>
+                    <span className="text-[9px] font-mono-numbers px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                      5 THEMES
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    {(Object.keys(ATELIER_THEMES) as Theme[]).map((tKey) => {
+                      const tMeta = ATELIER_THEMES[tKey];
+                      const isSelected = theme === tKey;
+
+                      return (
+                        <button
+                          key={tKey}
+                          onClick={() => {
+                            setTheme(tKey);
+                            setIsThemeDropdownOpen(false);
+                          }}
+                          className={`w-full text-left p-2.5 rounded-xl text-xs transition flex items-center justify-between gap-3 cursor-pointer ${
+                            isSelected
+                              ? isWhiteYellow
+                                ? 'bg-zinc-100 font-bold border border-zinc-300/80 shadow-xs'
+                                : 'bg-white/10 font-bold border border-white/15'
+                              : 'hover:bg-zinc-100/70 dark:hover:bg-white/5 text-zinc-600 dark:text-zinc-300'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            {/* Swatch Duo */}
+                            <div className="flex items-center -space-x-1 shrink-0">
+                              <div 
+                                className="w-4 h-4 rounded-full border border-black/20 shadow-xs"
+                                style={{ backgroundColor: tMeta.bgHex }}
+                              />
+                              <div 
+                                className="w-4 h-4 rounded-full border border-black/20 shadow-xs"
+                                style={{ backgroundColor: tMeta.accentHex }}
+                              />
+                            </div>
+
+                            <div>
+                              <div className="font-bold text-xs leading-tight">
+                                {tMeta.name}
+                              </div>
+                              <div className="text-[10px] opacity-60 font-mono-numbers mt-0.5 truncate max-w-[170px]">
+                                {tMeta.subtitle}
+                              </div>
+                            </div>
+                          </div>
+
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-yellow-500 shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </>
             )}
-          </button>
+          </div>
 
           {/* Splash replay */}
           {onOpenSplashScreen && (
