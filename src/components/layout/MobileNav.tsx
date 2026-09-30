@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Compass, Users, Wrench, Shield } from 'lucide-react';
+import { Home, Compass, Users, Wrench, Shield, FileText } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 export const MobileNav: FC = () => {
@@ -72,6 +72,21 @@ export const MobileNav: FC = () => {
         >
           <Users className="w-4 h-4" />
           <span>Clubs</span>
+        </NavLink>
+
+        {/* About & Case Study */}
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            `flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg text-[10px] font-medium transition ${
+              isActive 
+                ? isWhiteYellow ? 'text-yellow-600 font-bold scale-105' : 'text-white' 
+                : isWhiteYellow ? 'text-zinc-500 hover:text-zinc-950' : 'text-zinc-400 hover:text-zinc-200'
+            }`
+          }
+        >
+          <FileText className="w-4 h-4" />
+          <span>About</span>
         </NavLink>
 
         {/* My Garage */}

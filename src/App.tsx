@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { MobileNav } from './components/layout/MobileNav';
 import { FeedPage } from './pages/FeedPage';
@@ -8,6 +8,7 @@ import { DriveDetailPage } from './pages/DriveDetailPage';
 import { ExplorePage } from './pages/ExplorePage';
 import { CommunitiesPage } from './pages/CommunitiesPage';
 import { GarageProPage } from './pages/GarageProPage';
+import { AboutCaseStudyPage } from './pages/AboutCaseStudyPage';
 import { CreatePostModal } from './components/feed/CreatePostModal';
 import { PrivacyCheckModal } from './components/common/PrivacyCheckModal';
 import { AcousticStudioModal } from './components/common/AcousticStudioModal';
@@ -119,6 +120,8 @@ function AppContent() {
             <Route path="/explore" element={<ExplorePage />} />
             <Route path="/communities" element={<CommunitiesPage />} />
             <Route path="/pro" element={<GarageProPage />} />
+            <Route path="/about" element={<AboutCaseStudyPage />} />
+            <Route path="/case-study" element={<AboutCaseStudyPage />} />
           </Routes>
         </main>
 
@@ -130,9 +133,11 @@ function AppContent() {
         }`}>
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className={`font-bold ${isWhiteYellow ? 'text-zinc-950 font-luxury-display' : 'text-zinc-300'}`}>GARAGE</span>
+              <span className={`font-bold ${isWhiteYellow ? 'text-zinc-950 font-luxury-display' : 'text-zinc-300'}`}>DATUM ATELIER</span>
               <span>•</span>
-              <span>The Digital Home for Your Car</span>
+              <Link to="/about" className={`font-bold transition ${isWhiteYellow ? 'text-yellow-700 hover:text-yellow-600' : 'text-amber-400 hover:text-amber-300'}`}>
+                Case Study & Blueprint →
+              </Link>
             </div>
             <div className="flex items-center gap-4">
               <button 
@@ -163,7 +168,9 @@ function AppContent() {
                 ATA Carnet Transit
               </button>
               <span>•</span>
-              <span>Privacy-First Architecture • Sovereign Car Identity</span>
+              <Link to="/about" className={`transition ${isWhiteYellow ? 'hover:text-yellow-600' : 'hover:text-amber-400'}`}>
+                About
+              </Link>
             </div>
           </div>
         </footer>

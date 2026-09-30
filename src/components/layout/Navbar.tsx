@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FC } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Shield, Plus, Search, Wrench, ChevronDown, Compass, Users, Sparkles, Volume2, Globe2, Sun, Moon } from 'lucide-react';
+import { Shield, Plus, Search, Wrench, ChevronDown, Compass, Users, Sparkles, Volume2, Globe2, Sun, Moon, FileText } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 interface NavbarProps {
@@ -133,6 +133,25 @@ export const Navbar: FC<NavbarProps> = ({
             >
               <Wrench className="w-3.5 h-3.5" />
               Pro
+            </NavLink>
+
+            {/* About / Case Study */}
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  isActive
+                    ? isWhiteYellow 
+                      ? 'text-zinc-950 font-bold bg-yellow-400/20 border border-yellow-400/40 shadow-xs' 
+                      : 'text-white bg-white/[0.08]'
+                    : isWhiteYellow 
+                      ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100' 
+                      : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.04]'
+                }`
+              }
+            >
+              <FileText className="w-3.5 h-3.5" />
+              About
             </NavLink>
           </nav>
         </div>
