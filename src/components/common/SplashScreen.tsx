@@ -488,73 +488,70 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
           />
         </div>
 
-        {/* High-Society Alabaster & Racing Yellow Scrims */}
-        {isWhiteYellow ? (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-b from-[#F8F9FA]/90 via-[#F8F9FA]/35 to-[#F8F9FA]/85 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#F8F9FA]/95 via-[#F8F9FA]/55 to-transparent pointer-events-none" />
-            <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-yellow-400/10 rounded-full blur-[140px] pointer-events-none" />
-          </>
-        ) : (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/40 to-black/90 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-transparent to-black/75 pointer-events-none" />
-          </>
-        )}
+        {/* Refined Spatial Lighting & Vignettes — Crystal Clarity for Garage & Vehicles */}
+        {/* Top subtle vignette for header legibility */}
+        <div className="absolute top-0 inset-x-0 h-44 bg-gradient-to-b from-black/55 via-black/20 to-transparent pointer-events-none" />
+        
+        {/* Bottom floor vignette grounding the console without obscuring reflections */}
+        <div className="absolute bottom-0 inset-x-0 h-72 bg-gradient-to-t from-black/60 via-black/25 to-transparent pointer-events-none" />
+
+        {/* Dynamic Architectural Floor & Ceiling Illumination Surge on Key Turn */}
+        <div 
+          className={`absolute inset-0 pointer-events-none transition-opacity duration-700 ${
+            keyPosition >= 1 ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {/* Ceiling linear LED luminescent wash */}
+          <div className="absolute top-0 inset-x-0 h-80 bg-gradient-to-b from-yellow-400/15 via-yellow-400/5 to-transparent blur-2xl" />
+          {/* Polished floor reflection pool */}
+          <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-yellow-400/25 rounded-full blur-[110px]" />
+        </div>
 
         {/* Fluid Ignition Combustion Shockwave Ripple */}
         {ignitionPulseFlash && (
           <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
-            <div className="w-[800px] h-[800px] rounded-full border-4 border-yellow-400/80 animate-ping opacity-60 blur-xs" />
-            <div className="absolute inset-0 bg-yellow-400/15 animate-in fade-in duration-100" />
+            <div className="w-[900px] h-[900px] rounded-full border-4 border-yellow-400/80 animate-ping opacity-60 blur-xs" />
+            <div className="absolute inset-0 bg-yellow-400/20 backdrop-brightness-125 animate-in fade-in duration-100" />
           </div>
         )}
       </div>
 
       {/* ========================================================= */}
-      {/* 2. TOP ATELIER CONCIERGE BAR                              */}
+      {/* 2. TOP FLOATING ATELIER CONCIERGE CAPSULE                 */}
       {/* ========================================================= */}
-      <header className={`relative z-20 px-6 sm:px-10 py-5 flex items-center justify-between border-b backdrop-blur-xl ${
-        isWhiteYellow ? 'bg-white/85 border-zinc-200/90 shadow-xs' : 'bg-black/40 border-white/10'
-      }`}>
+      <header className="relative z-20 pt-5 px-6 sm:px-10 max-w-7xl mx-auto w-full flex items-center justify-between">
         
-        {/* Brand identity */}
-        <div className="flex items-center gap-3.5">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs tracking-widest bg-yellow-400 text-zinc-950 font-luxury-display shadow-sm border border-yellow-500">
+        {/* Brand identity capsule */}
+        <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.06)] text-zinc-950">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs tracking-widest bg-yellow-400 text-zinc-950 font-luxury-display shadow-xs border border-yellow-500">
             D
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm tracking-[0.25em] font-luxury-display uppercase text-zinc-950">
-                DATUM ATELIER
-              </span>
-              <span className="text-[9px] font-mono-numbers px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-950 font-bold border border-yellow-300 uppercase">
-                SOVEREIGN ADMISSION
-              </span>
-            </div>
-            <p className="text-[10px] text-zinc-500 font-mono-numbers mt-0.5">
-              High-Society Automotive Provenance & Handover Protocol
-            </p>
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-xs tracking-[0.25em] font-luxury-display uppercase">
+              DATUM ATELIER
+            </span>
+            <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-yellow-400" />
+            <span className="hidden sm:inline text-[9px] font-mono-numbers px-2 py-0.5 rounded-full bg-yellow-100/90 text-yellow-950 font-bold border border-yellow-300 uppercase">
+              SOVEREIGN ADMISSION
+            </span>
           </div>
         </div>
 
-        {/* Quick controls: Empty Garage Toggle, Sound, Bypass */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        {/* Quick controls: Empty Bay Toggle, Sound, Bypass */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
           
           {/* Empty Garage Backdrop Switcher */}
           <button
             onClick={() => setForceEmptyBackdrop(!forceEmptyBackdrop)}
-            className={`px-3 py-1.5 rounded-full border text-xs font-mono-numbers transition flex items-center gap-1.5 shadow-xs ${
+            className={`px-3.5 py-1.5 rounded-full border text-xs font-mono-numbers transition-all flex items-center gap-1.5 backdrop-blur-xl shadow-xs ${
               forceEmptyBackdrop
                 ? 'bg-yellow-400 text-zinc-950 font-bold border-yellow-500 shadow-sm'
-                : isWhiteYellow
-                ? 'bg-white/90 border-zinc-200 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-50'
-                : 'bg-black/60 border-white/10 text-zinc-300 hover:text-white'
+                : 'bg-white/75 border-white/80 text-zinc-800 hover:text-zinc-950 hover:bg-white'
             }`}
             title="Toggle between Empty Architectural Bay and Vehicle On-Location"
           >
             <Maximize2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline font-semibold">
+            <span className="hidden md:inline font-semibold">
               {forceEmptyBackdrop ? 'Empty Bay Active' : 'View Empty Bay'}
             </span>
           </button>
@@ -562,10 +559,10 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
           {/* Audio toggle */}
           <button
             onClick={() => setAudioEnabled(!audioEnabled)}
-            className={`px-3 py-1.5 rounded-full border text-xs font-mono-numbers transition flex items-center gap-1.5 shadow-xs ${
-              isWhiteYellow
-                ? 'bg-white/90 border-zinc-200 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-50'
-                : 'bg-black/60 border-white/10 text-zinc-300 hover:text-white'
+            className={`px-3 py-1.5 rounded-full border text-xs font-mono-numbers transition-all flex items-center gap-1.5 backdrop-blur-xl shadow-xs ${
+              audioEnabled
+                ? 'bg-white/75 border-white/80 text-zinc-800 hover:bg-white'
+                : 'bg-white/50 border-white/60 text-zinc-500'
             }`}
             title={audioEnabled ? 'Mechanical Ignition Audio Active' : 'Audio Muted'}
           >
@@ -585,7 +582,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
           {/* Instant admission button */}
           <button
             onClick={handleInstantBypass}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-400 text-zinc-950 text-xs font-mono-numbers font-bold hover:bg-yellow-300 transition border border-yellow-500 shadow-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-400 text-zinc-950 text-xs font-mono-numbers font-bold hover:bg-yellow-300 transition-all border border-yellow-500 shadow-sm backdrop-blur-md active:scale-98"
           >
             <span>Enter Atelier</span>
             <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -594,326 +591,323 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       </header>
 
       {/* ========================================================= */}
-      {/* 3. CENTER / LOWER ATELIER ADMISSION CHAMBER               */}
+      {/* 3. CENTER STAGE & ARCHITECTURAL HANDOVER PLINTH           */}
       {/* ========================================================= */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 py-6 flex-1 flex flex-col justify-between w-full">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 py-4 flex-1 flex flex-col justify-between w-full">
         
-        {/* Top: Station & Real-Time Weather HUD */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+        {/* Floating Spatial Provenance HUD (Upper Left) */}
+        <div className="pt-2 sm:pt-4 max-w-2xl">
           
-          {/* Location Badge */}
-          <div className={`inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border backdrop-blur-md text-xs font-mono-numbers shadow-xs ${
-            isWhiteYellow ? 'bg-white/90 border-zinc-200 text-zinc-800' : 'bg-black/60 border-white/10 text-zinc-200'
-          }`}>
-            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 ring-2 ring-yellow-400/30 animate-pulse" />
-            <span className="font-bold tracking-wide">
-              STATION: {car.location.toUpperCase()}
+          {/* Station & Sanctuary Cloak Pill */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl border border-white/85 text-xs font-mono-numbers text-zinc-800 shadow-xs mb-2">
+            <span className="w-2 h-2 rounded-full bg-yellow-500 ring-2 ring-yellow-400/40 animate-pulse" />
+            <span className="font-bold tracking-wider uppercase">
+              {car.location}
             </span>
             <span className="text-zinc-400">•</span>
-            <span className="text-emerald-600 font-semibold flex items-center gap-1">
+            <span className="text-emerald-700 font-semibold flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
               800m SANCTUARY CLOAKED
             </span>
           </div>
 
-          {/* Live Micro-Climate Readout */}
-          <div className={`hidden md:flex items-center gap-4 px-4 py-1.5 rounded-full border text-xs font-mono-numbers backdrop-blur-md shadow-xs ${
-            isWhiteYellow ? 'bg-white/80 border-zinc-200 text-zinc-600' : 'bg-black/50 border-white/10 text-zinc-400'
-          }`}>
-            <div className="flex items-center gap-1.5">
+          {/* Grand Vehicle / Chamber Monumental Title */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-luxury-display uppercase tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.7)] leading-none">
+            {car.name}
+          </h1>
+          <p className="text-sm sm:text-base text-white/95 font-medium font-luxury-display tracking-wide mt-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
+            {car.make} · {car.model}
+          </p>
+
+          {/* Floating Minimalist Spec Capsules */}
+          <div className="flex flex-wrap items-center gap-2 mt-3 text-xs font-mono-numbers">
+            <span className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl border border-white/85 text-zinc-950 font-bold shadow-xs">
+              {car.power}
+            </span>
+            <span className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl border border-white/85 text-zinc-800 shadow-xs">
+              {car.mileage}
+            </span>
+            <span className="px-3 py-1 rounded-full bg-emerald-50/90 backdrop-blur-xl border border-emerald-300 text-emerald-800 font-bold shadow-xs flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              {car.healthScore}% HEALTH
+            </span>
+            <span className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl border border-white/85 text-zinc-800 shadow-xs flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full border border-black/20" style={{ backgroundColor: car.paintHex }} />
+              <span>{car.paintName}</span>
+            </span>
+            <span className="px-3 py-1 rounded-full bg-white/80 backdrop-blur-xl border border-white/85 text-zinc-700 shadow-xs hidden md:inline-flex items-center gap-1.5">
               <Thermometer className="w-3.5 h-3.5 text-yellow-600" />
-              <strong className="text-zinc-900">{car.microClimate.tempC}°C</strong>
-            </div>
-            <span>•</span>
-            <div className="flex items-center gap-1.5">
-              <Gauge className="w-3.5 h-3.5 text-yellow-600" />
-              <span>Grip μ <strong className="text-zinc-900">{car.microClimate.frictionMu}</strong></span>
-            </div>
-            <span>•</span>
-            <div className="flex items-center gap-1.5">
+              <span>{car.microClimate.tempC}°C • Grip μ {car.microClimate.frictionMu}</span>
+              <span className="text-zinc-400">•</span>
               <Wind className="w-3.5 h-3.5 text-sky-600" />
               <span>{car.microClimate.windMph} mph</span>
-            </div>
+            </span>
           </div>
+
         </div>
 
-        {/* Middle / Bottom Handover Chamber: Left Chassis Plaque & Right Titanium Key Ignition */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end pt-6 pb-2">
+        {/* ========================================================= */}
+        {/* INTEGRATED ARCHITECTURAL HANDOVER CONSOLE PLINTH          */}
+        {/* Ultra-low profile, sheer optical glassmorphism            */}
+        {/* ========================================================= */}
+        <div className={`w-full rounded-3xl border p-5 sm:p-6 backdrop-blur-2xl transition-all shadow-[0_24px_60px_rgba(0,0,0,0.18)] relative overflow-hidden my-2 ${
+          isWhiteYellow 
+            ? 'bg-white/50 border-white/70 text-zinc-900' 
+            : 'bg-zinc-950/60 border-white/15 text-white'
+        }`}>
           
-          {/* LEFT 7 COLS: Stamped Chassis Provenance Plaque */}
-          <div className={`lg:col-span-7 rounded-3xl border p-6 sm:p-7 backdrop-blur-2xl transition-all shadow-md relative overflow-hidden ${
-            isWhiteYellow ? 'bg-white/95 border-zinc-200 text-zinc-900' : 'bg-zinc-950/90 border-white/10 text-white'
-          }`}>
+          {/* Architectural corner micro-rivets */}
+          <div className="absolute top-2.5 left-3 text-[10px] font-black text-zinc-400 font-mono-numbers select-none">+</div>
+          <div className="absolute top-2.5 right-3 text-[10px] font-black text-zinc-400 font-mono-numbers select-none">+</div>
+          <div className="absolute bottom-2.5 left-3 text-[10px] font-black text-zinc-400 font-mono-numbers select-none">+</div>
+          <div className="absolute bottom-2.5 right-3 text-[10px] font-black text-zinc-400 font-mono-numbers select-none">+</div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
             
-            {/* Corner Rivet Screws */}
-            <div className="absolute top-3 left-3 text-[9px] font-black text-zinc-400 font-mono-numbers">+</div>
-            <div className="absolute top-3 right-3 text-[9px] font-black text-zinc-400 font-mono-numbers">+</div>
-            <div className="absolute bottom-3 left-3 text-[9px] font-black text-zinc-400 font-mono-numbers">+</div>
-            <div className="absolute bottom-3 right-3 text-[9px] font-black text-zinc-400 font-mono-numbers">+</div>
-
-            <div className="space-y-4">
-              
-              {/* Header */}
-              <div className="flex items-start justify-between gap-3 border-b border-zinc-200/80 pb-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono-numbers px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 font-bold uppercase tracking-wider">
-                      {car.make}
-                    </span>
-                    <span className="text-[10px] font-mono-numbers text-yellow-700 font-bold">
-                      {car.chassisCode}
-                    </span>
-                  </div>
-                  <h1 className="text-2xl sm:text-4xl font-black font-luxury-display uppercase tracking-tight mt-1 text-zinc-950">
-                    {car.name}
-                  </h1>
-                  <p className="text-xs text-zinc-600 font-medium">
-                    {car.locationDetails}
-                  </p>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-mono-numbers font-bold">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{car.healthScore}% HEALTH</span>
-                  </span>
-                  <p className="text-[10px] font-mono-numbers text-zinc-400 mt-1">
-                    {car.mileage}
-                  </p>
-                </div>
-              </div>
-
-              {/* Engineering Specs Matrix */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-mono-numbers">
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/90">
-                  <span className="text-[10px] text-zinc-500 uppercase block font-semibold">Finish Spec</span>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className="w-3 h-3 rounded-full border border-black/20 shrink-0" style={{ backgroundColor: car.paintHex }} />
-                    <span className="font-bold text-zinc-900 text-[11px] truncate">{car.paintName}</span>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/90">
-                  <span className="text-[10px] text-zinc-500 uppercase block font-semibold">BHP & Output</span>
-                  <span className="font-bold text-yellow-700 text-sm block mt-1">
-                    {car.power} <span className="text-[10px] text-zinc-500 font-normal">({car.torque})</span>
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/90 col-span-2 sm:col-span-1">
-                  <span className="text-[10px] text-zinc-500 uppercase block font-semibold">DVSA Reference</span>
-                  <span className="font-bold text-zinc-900 text-[11px] block mt-1 truncate">
-                    {car.dvsaPassHash}
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/90 col-span-2 sm:col-span-3">
-                  <span className="text-[10px] text-zinc-500 uppercase block font-semibold">Chassis Setup & Hardware</span>
-                  <p className="text-zinc-700 text-[11px] font-medium mt-0.5 truncate">
-                    {car.setupSpec}
-                  </p>
-                </div>
-              </div>
-
-              {/* Handover Custodian Guarantee */}
-              <div className="pt-2 flex items-center justify-between text-xs font-mono-numbers text-zinc-500">
-                <span className="flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-yellow-600" />
-                  <span>Curator: <strong className="text-zinc-900">{car.curator}</strong></span>
+            {/* LEFT 4 COLS: Stamped Provenance & Chassis Dossier */}
+            <div className="lg:col-span-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono-numbers px-2 py-0.5 rounded bg-zinc-100/90 text-zinc-800 font-bold uppercase tracking-wider border border-zinc-200/80">
+                  {car.chassisCode}
                 </span>
-                <span className="text-emerald-700 font-semibold">DVSA Statutory Pass • Zero Advisories</span>
+                <span className="text-[10px] font-mono-numbers text-yellow-700 font-bold">
+                  {car.dvsaPassHash}
+                </span>
+              </div>
+
+              <div>
+                <h4 className="text-base font-bold font-luxury-display uppercase text-zinc-950">
+                  Handover Dossier
+                </h4>
+                <p className="text-xs text-zinc-600 line-clamp-2 mt-0.5">
+                  {car.locationDetails}
+                </p>
+              </div>
+
+              <div className="space-y-1.5 text-xs font-mono-numbers pt-1">
+                <div className="flex items-center justify-between text-zinc-600">
+                  <span className="flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-yellow-600" />
+                    <span>Curator:</span>
+                  </span>
+                  <strong className="text-zinc-950">{car.curator}</strong>
+                </div>
+
+                <div className="flex items-center justify-between text-zinc-600">
+                  <span className="flex items-center gap-1.5">
+                    <Gauge className="w-3.5 h-3.5 text-yellow-600" />
+                    <span>Atmospheric Chamber:</span>
+                  </span>
+                  <span className="text-zinc-900 font-semibold">{car.microClimate.barometerHpa} hPa • 20.5°C</span>
+                </div>
+
+                <div className="flex items-center justify-between text-zinc-600">
+                  <span className="flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Statutory Inspection:</span>
+                  </span>
+                  <span className="text-emerald-700 font-bold">DVSA Pass • 0 Advisories</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* RIGHT 5 COLS: The Ultra-Realistic Fluid Ignition Cylinder & Key Fob */}
-          <div className={`lg:col-span-5 rounded-3xl border p-6 backdrop-blur-2xl shadow-md flex flex-col items-center justify-between space-y-4 relative overflow-hidden ${
-            isWhiteYellow ? 'bg-white/95 border-zinc-200 text-zinc-900' : 'bg-zinc-950/90 border-white/10 text-white'
-          }`}>
-            
-            {/* Ambient metallic sheen highlight */}
-            <div className="absolute -top-16 -right-16 w-44 h-44 bg-yellow-400/10 rounded-full blur-2xl pointer-events-none" />
-
-            <div className="w-full text-center space-y-1">
-              <div className="flex items-center justify-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
-                <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-yellow-600 font-bold block">
-                  BILLET TITANIUM IGNITION CYLINDER
-                </span>
-              </div>
-              <h3 className="text-base font-bold font-luxury-display uppercase text-zinc-950">
-                Turn Sovereign Key To Fire
-              </h3>
-              <p className="text-[11px] text-zinc-500 font-mono-numbers truncate">
-                {car.fobMaterial}
-              </p>
-            </div>
-
-            {/* Circular Realistic 3D Ignition Dial & Fluid Tachometer Gauge */}
-            <div className="relative w-48 h-48 sm:w-52 sm:h-52 flex items-center justify-center my-1">
+            {/* CENTER 4 COLS: The Focal Billet Titanium Ignition Cylinder */}
+            <div className="lg:col-span-4 flex flex-col items-center justify-center space-y-3 px-2">
               
-              {/* Outer CNC Machined Flange with Engraved Tick Marks */}
-              <div 
-                className="absolute inset-0 rounded-full border-2 border-zinc-300 shadow-xl flex items-center justify-center"
-                style={{
-                  background: 'radial-gradient(circle at 40% 30%, #FFFFFF 0%, #F4F4F6 55%, #E2E3E7 100%)',
-                  boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.8), 0 10px 25px -4px rgba(0,0,0,0.1)'
-                }}
-              >
-                {/* Backlit Position Labels */}
-                <span className={`absolute top-2.5 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
-                  keyPosition === 0 ? 'text-zinc-950 font-black' : 'text-zinc-400'
-                }`}>
-                  0 · LOCK
+              <div className="text-center space-y-0.5">
+                <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-yellow-700 font-bold block">
+                  BILLET TITANIUM CYLINDER
                 </span>
-                <span className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
-                  keyPosition === 1 ? 'text-yellow-600 font-black' : 'text-zinc-400'
-                }`}>
-                  I · ACC
-                </span>
-                <span className={`absolute bottom-2.5 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
-                  keyPosition === 2 ? 'text-yellow-600 font-black animate-pulse' : 'text-zinc-400'
-                }`}>
-                  II · IGNITE
-                </span>
-
-                {/* 12 Concentric Milled Grooves */}
-                <div className="absolute inset-3 rounded-full border border-dashed border-zinc-300/80 pointer-events-none opacity-60" />
+                <p className="text-[11px] text-zinc-500 font-mono-numbers truncate">
+                  {car.fobMaterial}
+                </p>
               </div>
 
-              {/* Dynamic Fluid SVG Tachometer Gauge Ring */}
-              <svg className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] pointer-events-none -rotate-90">
-                <circle
-                  cx="50%"
-                  cy="50%"
-                  r="86"
-                  fill="none"
-                  stroke={isWhiteYellow ? '#E4E4E7' : '#27272A'}
-                  strokeWidth="6"
-                  strokeDasharray="540"
-                  strokeDashoffset="130"
-                />
-                <circle
-                  cx="50%"
-                  cy="50%"
-                  r="86"
-                  fill="none"
-                  stroke="url(#yellowFlameGradient)"
-                  strokeWidth="7"
-                  strokeDasharray="540"
-                  strokeDashoffset={540 - (tachometerRpm / (car.redlineRpm || 8000)) * 410}
-                  className="transition-all duration-300 ease-out"
-                  strokeLinecap="round"
-                  filter="drop-shadow(0 0 6px rgba(234, 179, 8, 0.6))"
-                />
-                <defs>
-                  <linearGradient id="yellowFlameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FACC15" />
-                    <stop offset="50%" stopColor="#EAB308" />
-                    <stop offset="100%" stopColor="#CA8A04" />
-                  </linearGradient>
-                </defs>
-              </svg>
-
-              {/* Central Billet Mechanical Key Barrel & Fob */}
-              <div 
-                className="relative z-10 w-32 h-32 rounded-full border-2 border-zinc-300/90 shadow-2xl flex items-center justify-center transition-transform duration-300 ease-out cursor-pointer active:scale-95 group"
-                style={{
-                  background: 'linear-gradient(145deg, #FFFFFF 0%, #EDEDF0 50%, #D8D9DE 100%)',
-                  transform: keyPosition === 0 ? 'rotate(0deg)' : keyPosition === 1 ? 'rotate(45deg)' : 'rotate(90deg)',
-                  boxShadow: '0 8px 24px -2px rgba(0,0,0,0.18), inset 0 2px 3px rgba(255,255,255,0.9)'
-                }}
-                onClick={() => {
-                  if (keyPosition === 0) handleKeyTurnAcc();
-                  else handleKeyTurnIgnite();
-                }}
-              >
-                {/* Laser-Cut Key Slot */}
-                <div className="w-16 h-4 rounded-md bg-zinc-950 border border-zinc-700 shadow-inner flex items-center justify-between px-2 relative overflow-hidden">
-                  <div className={`h-1.5 rounded-full transition-all duration-300 ${
-                    keyPosition > 0 ? 'w-10 bg-yellow-400 shadow-[0_0_12px_#EAB308]' : 'w-2 bg-zinc-600'
-                  }`} />
-                  <Key className={`w-3.5 h-3.5 transition-colors ${keyPosition > 0 ? 'text-yellow-400' : 'text-zinc-500'}`} />
-                </div>
-
-                {/* Rotating Billet Position Needle Arrow */}
-                <div className="absolute top-2 w-2 h-3.5 bg-yellow-500 rounded-full shadow-sm" />
-
-                {/* Tactile Key Fob Wing (Physical Luxury Handle) */}
+              {/* Circular Realistic 3D Ignition Dial */}
+              <div className="relative w-44 h-44 flex items-center justify-center">
+                
+                {/* CNC Machined Flange with Engraved Tick Marks */}
                 <div 
-                  className="absolute -top-7 w-7 h-10 rounded-t-xl border border-zinc-400/80 shadow-md flex items-center justify-center pointer-events-none transition-transform duration-300 group-hover:-translate-y-1"
+                  className="absolute inset-0 rounded-full border-2 border-zinc-300 shadow-xl flex items-center justify-center"
                   style={{
-                    background: 'linear-gradient(180deg, #E4E4E7 0%, #A1A1AA 100%)'
+                    background: 'radial-gradient(circle at 40% 30%, #FFFFFF 0%, #F4F4F6 55%, #E2E3E7 100%)',
+                    boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.9), 0 10px 25px -4px rgba(0,0,0,0.12)'
                   }}
                 >
-                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-900 border border-white/40" />
+                  {/* Position Labels */}
+                  <span className={`absolute top-2 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
+                    keyPosition === 0 ? 'text-zinc-950 font-black' : 'text-zinc-400'
+                  }`}>
+                    0 · LOCK
+                  </span>
+                  <span className={`absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
+                    keyPosition === 1 ? 'text-yellow-600 font-black' : 'text-zinc-400'
+                  }`}>
+                    I · ACC
+                  </span>
+                  <span className={`absolute bottom-2 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
+                    keyPosition === 2 ? 'text-yellow-600 font-black animate-pulse' : 'text-zinc-400'
+                  }`}>
+                    II · IGNITE
+                  </span>
+
+                  {/* Concentric Milled Grooves */}
+                  <div className="absolute inset-3 rounded-full border border-dashed border-zinc-300/80 pointer-events-none opacity-60" />
+                </div>
+
+                {/* Dynamic Fluid SVG Tachometer Gauge Ring */}
+                <svg className="absolute inset-1.5 w-[calc(100%-12px)] h-[calc(100%-12px)] pointer-events-none -rotate-90">
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="78"
+                    fill="none"
+                    stroke={isWhiteYellow ? '#E4E4E7' : '#27272A'}
+                    strokeWidth="6"
+                    strokeDasharray="490"
+                    strokeDashoffset="120"
+                  />
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="78"
+                    fill="none"
+                    stroke="url(#yellowFlameGradient)"
+                    strokeWidth="7"
+                    strokeDasharray="490"
+                    strokeDashoffset={490 - (tachometerRpm / (car.redlineRpm || 8000)) * 370}
+                    className="transition-all duration-300 ease-out"
+                    strokeLinecap="round"
+                    filter="drop-shadow(0 0 6px rgba(234, 179, 8, 0.7))"
+                  />
+                  <defs>
+                    <linearGradient id="yellowFlameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FACC15" />
+                      <stop offset="50%" stopColor="#EAB308" />
+                      <stop offset="100%" stopColor="#CA8A04" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                {/* Central Billet Mechanical Key Barrel */}
+                <div 
+                  className="relative z-10 w-28 h-28 rounded-full border-2 border-zinc-300/90 shadow-2xl flex items-center justify-center transition-transform duration-300 ease-out cursor-pointer active:scale-95 group"
+                  style={{
+                    background: 'linear-gradient(145deg, #FFFFFF 0%, #EDEDF0 50%, #D8D9DE 100%)',
+                    transform: keyPosition === 0 ? 'rotate(0deg)' : keyPosition === 1 ? 'rotate(45deg)' : 'rotate(90deg)',
+                    boxShadow: '0 8px 20px -2px rgba(0,0,0,0.2), inset 0 2px 3px rgba(255,255,255,0.9)'
+                  }}
+                  onClick={() => {
+                    if (keyPosition === 0) handleKeyTurnAcc();
+                    else handleKeyTurnIgnite();
+                  }}
+                  title="Click to turn mechanical key"
+                >
+                  {/* Laser-Cut Key Slot */}
+                  <div className="w-14 h-3.5 rounded-md bg-zinc-950 border border-zinc-700 shadow-inner flex items-center justify-between px-2 relative overflow-hidden">
+                    <div className={`h-1.5 rounded-full transition-all duration-300 ${
+                      keyPosition > 0 ? 'w-8 bg-yellow-400 shadow-[0_0_10px_#EAB308]' : 'w-2 bg-zinc-600'
+                    }`} />
+                    <Key className={`w-3 h-3 transition-colors ${keyPosition > 0 ? 'text-yellow-400' : 'text-zinc-500'}`} />
+                  </div>
+
+                  {/* Rotating Position Pointer */}
+                  <div className="absolute top-1.5 w-2 h-3 bg-yellow-500 rounded-full shadow-xs" />
+
+                  {/* Tactile Key Fob Wing */}
+                  <div 
+                    className="absolute -top-6 w-6 h-9 rounded-t-xl border border-zinc-400/80 shadow-md flex items-center justify-center pointer-events-none transition-transform duration-300 group-hover:-translate-y-0.5"
+                    style={{
+                      background: 'linear-gradient(180deg, #E4E4E7 0%, #A1A1AA 100%)'
+                    }}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-zinc-900 border border-white/40" />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Tactile Action Button */}
+              <div className="w-full max-w-xs space-y-1.5">
+                {keyPosition === 0 ? (
+                  <button
+                    onClick={handleKeyTurnAcc}
+                    className="w-full py-2.5 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white font-mono-numbers text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm border border-zinc-800 active:scale-98"
+                  >
+                    <Key className="w-3.5 h-3.5 text-yellow-400" />
+                    <span>Turn Key to [I · ACC]</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleKeyTurnIgnite}
+                    disabled={isAdmitting}
+                    className="w-full py-2.5 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-mono-numbers text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md border border-yellow-500 animate-pulse active:scale-98"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Fire Key to [II · IGNITE] & Enter</span>
+                  </button>
+                )}
+
+                <div className="flex items-center justify-between text-[11px] font-mono-numbers text-zinc-500 px-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${isEngineRunning ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-400'}`} />
+                    <span>{isEngineRunning ? 'Powertrain Live' : 'Ready for Induction'}</span>
+                  </span>
+                  <button
+                    onClick={handleInstantBypass}
+                    className="hover:text-yellow-600 transition underline underline-offset-2"
+                  >
+                    Bypass →
+                  </button>
                 </div>
               </div>
-            </div>
-
-            {/* Fluid Mechanical Telemetry Gauges (RPM, Fuel Pressure, Battery) */}
-            <div className="w-full grid grid-cols-3 gap-2 text-center text-xs font-mono-numbers py-1">
-              
-              {/* Tachometer Readout */}
-              <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/90">
-                <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Tachometer</span>
-                <span className="font-bold text-zinc-950 text-xs mt-0.5 block flex items-center justify-center gap-1">
-                  <Activity className="w-3 h-3 text-yellow-600" />
-                  {tachometerRpm} <span className="text-[9px] text-zinc-400">RPM</span>
-                </span>
-              </div>
-
-              {/* Fluid Fuel Pressure Bar */}
-              <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/90">
-                <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Fuel Rail</span>
-                <span className="font-bold text-yellow-700 text-xs mt-0.5 block flex items-center justify-center gap-1">
-                  <Zap className="w-3 h-3 text-yellow-600" />
-                  {fluidFuelPressure.toFixed(1)} <span className="text-[9px] text-zinc-400">bar</span>
-                </span>
-              </div>
-
-              {/* Battery Charge */}
-              <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/90">
-                <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Electrical</span>
-                <span className="font-bold text-zinc-950 text-xs mt-0.5 block">
-                  {batteryVoltage.toFixed(1)} <span className="text-[9px] text-zinc-400">V</span>
-                </span>
-              </div>
 
             </div>
 
-            {/* Action CTAs */}
-            <div className="w-full space-y-2">
-              {keyPosition === 0 ? (
-                <button
-                  onClick={handleKeyTurnAcc}
-                  className="w-full py-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm border border-zinc-800 active:scale-98"
-                >
-                  <Key className="w-4 h-4 text-yellow-400" />
-                  <span>Turn Key to [I · ACC] (Prime Circuit)</span>
-                </button>
-              ) : (
-                <button
-                  onClick={handleKeyTurnIgnite}
-                  disabled={isAdmitting}
-                  className="w-full py-3 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-2 shadow-md border border-yellow-500 animate-pulse active:scale-98"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Fire Key to [II · IGNITE] & Enter Atelier</span>
-                </button>
-              )}
+            {/* RIGHT 4 COLS: Live Mechanical Telemetry & Hardware Matrix */}
+            <div className="lg:col-span-4 space-y-2.5">
+              <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-500 font-bold block">
+                Powertrain Diagnostics
+              </span>
 
-              <div className="flex items-center justify-between text-[11px] font-mono-numbers text-zinc-500 px-1">
-                <span className="flex items-center gap-1">
-                  <span className={`w-2 h-2 rounded-full ${isEngineRunning ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-400'}`} />
-                  <span>{isEngineRunning ? 'Powertrain Live' : 'Ready for Induction'}</span>
-                </span>
-                <button
-                  onClick={handleInstantBypass}
-                  className="hover:text-yellow-600 transition underline underline-offset-2"
-                >
-                  Bypass Sequence →
-                </button>
+              {/* 3 Telemetry Gauges */}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-numbers">
+                {/* Tachometer Readout */}
+                <div className="p-2.5 rounded-2xl bg-white/80 border border-zinc-200/90 shadow-xs">
+                  <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Tachometer</span>
+                  <span className="font-bold text-zinc-950 text-xs mt-0.5 block flex items-center justify-center gap-1">
+                    <Activity className="w-3 h-3 text-yellow-600" />
+                    {tachometerRpm} <span className="text-[9px] text-zinc-400">RPM</span>
+                  </span>
+                </div>
+
+                {/* Fuel Rail */}
+                <div className="p-2.5 rounded-2xl bg-white/80 border border-zinc-200/90 shadow-xs">
+                  <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Fuel Rail</span>
+                  <span className="font-bold text-yellow-700 text-xs mt-0.5 block flex items-center justify-center gap-1">
+                    <Zap className="w-3 h-3 text-yellow-600" />
+                    {fluidFuelPressure.toFixed(1)} <span className="text-[9px] text-zinc-400">bar</span>
+                  </span>
+                </div>
+
+                {/* Battery Volts */}
+                <div className="p-2.5 rounded-2xl bg-white/80 border border-zinc-200/90 shadow-xs">
+                  <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Electrical</span>
+                  <span className="font-bold text-zinc-950 text-xs mt-0.5 block">
+                    {batteryVoltage.toFixed(1)} <span className="text-[9px] text-zinc-400">V</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Hardware Spec Box */}
+              <div className="p-3 rounded-2xl bg-white/80 border border-zinc-200/90 shadow-xs text-xs font-mono-numbers space-y-1">
+                <span className="text-[10px] text-zinc-500 uppercase block font-semibold">Engine & Hardware Architecture</span>
+                <p className="font-bold text-zinc-900 text-xs truncate">
+                  {car.engineSpec}
+                </p>
+                <p className="text-[11px] text-zinc-600 truncate">
+                  {car.setupSpec}
+                </p>
               </div>
             </div>
 
@@ -924,12 +918,10 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
         {/* ========================================================= */}
         {/* 4. CHASSIS PEDESTAL SELECTOR TABS                         */}
         {/* ========================================================= */}
-        <div className={`mt-4 pt-3 border-t flex flex-col sm:flex-row items-center justify-between gap-3 ${
-          isWhiteYellow ? 'border-zinc-200' : 'border-white/10'
-        }`}>
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
           
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            <span className="text-[11px] font-mono-numbers text-zinc-400 uppercase font-bold tracking-wider shrink-0 pr-1">
+            <span className="text-[11px] font-mono-numbers text-white/90 uppercase font-bold tracking-wider shrink-0 pr-1 drop-shadow-xs">
               Select Chassis:
             </span>
             {(Object.keys(ATELIER_CHASSIS_ROSTER) as PersonaId[]).map((pKey) => {
@@ -942,12 +934,10 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
                     setActivePersona(pKey);
                     if (pKey === 'empty') setForceEmptyBackdrop(true);
                   }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-mono-numbers font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-mono-numbers font-semibold whitespace-nowrap transition-all flex items-center gap-2 shadow-xs backdrop-blur-xl ${
                     isSelected
-                      ? 'bg-yellow-400 text-zinc-950 font-bold border border-yellow-500 shadow-sm'
-                      : isWhiteYellow
-                      ? 'bg-white border border-zinc-200 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-50'
-                      : 'bg-black/60 border border-white/10 text-zinc-300 hover:text-white'
+                      ? 'bg-yellow-400 text-zinc-950 font-bold border border-yellow-500 shadow-sm scale-105'
+                      : 'bg-white/80 border border-white/80 text-zinc-800 hover:text-zinc-950 hover:bg-white'
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full border border-black/20" style={{ backgroundColor: p.paintHex }} />
@@ -959,7 +949,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
           </div>
 
           {/* Don't show again toggle */}
-          <label className="flex items-center gap-2 text-xs font-mono-numbers text-zinc-500 cursor-pointer shrink-0">
+          <label className="flex items-center gap-2 text-xs font-mono-numbers text-white/90 cursor-pointer shrink-0 drop-shadow-xs">
             <input
               type="checkbox"
               checked={skipNextTime}
