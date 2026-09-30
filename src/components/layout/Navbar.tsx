@@ -37,33 +37,37 @@ export const Navbar: FC<NavbarProps> = ({
 
   return (
     // Ref: Luxury automotive lookbook navigation
-    <header className={`sticky top-0 z-40 h-14 flex items-center backdrop-blur-xl border-b px-4 lg:px-8 transition-colors duration-200 ${
-      isWhiteYellow
-        ? 'bg-white/95 border-zinc-200/90 shadow-xs text-zinc-900'
-        : 'bg-[#09090B]/96 border-white/[0.06] text-zinc-100'
-    }`}>
+    <header 
+      className="sticky top-0 z-40 h-14 flex items-center backdrop-blur-xl border-b px-4 lg:px-8 transition-colors duration-300"
+      style={{
+        backgroundColor: 'var(--bg-surface)',
+        borderColor: 'var(--border-subtle)',
+        color: 'var(--text-primary)'
+      }}
+    >
       <div className="max-w-7xl w-full mx-auto flex items-center justify-between gap-6">
 
         {/* ── BRAND ── */}
         <div className="flex items-center gap-7">
           <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             {/* Wordmark mark — bespoke luxury atelier badge */}
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition shadow-sm ${
-              isWhiteYellow
-                ? 'bg-gradient-to-br from-yellow-400 to-amber-500 border border-yellow-300 text-zinc-950 shadow-yellow-500/20 group-hover:scale-105'
-                : 'bg-gradient-to-br from-zinc-800 to-zinc-950 border border-white/20 text-white shadow-inner group-hover:border-white/40'
-            }`}>
-              <span className="font-luxury-display text-xs font-bold">G</span>
+            <div 
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition shadow-sm font-luxury-display text-xs font-bold"
+              style={{
+                backgroundColor: 'var(--accent)',
+                color: '#09090B'
+              }}
+            >
+              G
             </div>
             <div className="hidden sm:block">
-              <span className={`font-luxury-display text-xs sm:text-sm font-bold tracking-[0.2em] uppercase leading-none transition-colors ${
-                isWhiteYellow ? 'text-zinc-950' : 'text-[#F4F4F5]'
-              }`}>
+              <span className="font-luxury-display text-xs sm:text-sm font-bold tracking-[0.2em] uppercase leading-none transition-colors">
                 GARAGE
               </span>
-              <span className={`text-[9px] font-mono-numbers tracking-widest uppercase block mt-0.5 ${
-                isWhiteYellow ? 'text-yellow-700 font-semibold' : 'text-zinc-400'
-              }`}>
+              <span 
+                className="text-[9px] font-mono-numbers tracking-widest uppercase block mt-0.5"
+                style={{ color: 'var(--accent)' }}
+              >
                 Sovereign Automobile Atelier
               </span>
             </div>
@@ -71,27 +75,33 @@ export const Navbar: FC<NavbarProps> = ({
 
           {/* Search — minimal, icon-left */}
           <form onSubmit={handleSearchSubmit} className="hidden lg:flex items-center relative w-60 xl:w-72">
-            <Search className={`w-3.5 h-3.5 absolute left-3 pointer-events-none ${isWhiteYellow ? 'text-zinc-400' : 'text-zinc-500'}`} />
+            <Search className="w-3.5 h-3.5 absolute left-3 pointer-events-none opacity-50" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cars, routes, builds, communities…"
-              className={`w-full pl-8.5 pr-9 py-1.5 rounded-lg border text-xs transition font-sans ${
-                isWhiteYellow
-                  ? 'bg-zinc-100 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-yellow-500 focus:bg-white'
-                  : 'bg-[#1C1C1F] border-white/[0.07] text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-white/[0.15] focus:bg-[#252528]'
-              }`}
+              className="w-full pl-8.5 pr-9 py-1.5 rounded-lg border text-xs transition font-sans focus:outline-none"
+              style={{
+                backgroundColor: 'var(--bg-elevated)',
+                borderColor: 'var(--border-default)',
+                color: 'var(--text-primary)'
+              }}
             />
-            <span className={`absolute right-2.5 text-[10px] font-mono-numbers px-1.5 py-0.5 rounded border ${
-              isWhiteYellow ? 'bg-zinc-200 text-zinc-600 border-zinc-300' : 'bg-[#28282D] text-zinc-500 border-white/[0.07]'
-            }`}>
+            <span 
+              className="absolute right-2.5 text-[10px] font-mono-numbers px-1.5 py-0.5 rounded border"
+              style={{
+                backgroundColor: 'var(--bg-void)',
+                borderColor: 'var(--border-subtle)',
+                color: 'var(--text-muted)'
+              }}
+            >
               ⌘K
             </span>
           </form>
 
           {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-0.5">
+          <nav className="hidden md:flex items-center gap-1">
             {[
               { to: '/', label: 'Feed' },
               { to: '/explore', label: 'Explore', icon: <Compass className="w-3.5 h-3.5" /> },
@@ -101,15 +111,14 @@ export const Navbar: FC<NavbarProps> = ({
                 key={to}
                 to={to}
                 end={to === '/'}
+                style={({ isActive }) => ({
+                  backgroundColor: isActive ? 'var(--bg-elevated)' : 'transparent',
+                  borderColor: isActive ? 'var(--border-active)' : 'transparent',
+                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)'
+                })}
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                    isActive
-                      ? isWhiteYellow 
-                        ? 'text-zinc-950 font-bold bg-yellow-400/20 border border-yellow-400/40 shadow-xs' 
-                        : 'text-white bg-white/[0.08]'
-                      : isWhiteYellow 
-                        ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100' 
-                        : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.04]'
+                  `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+                    isActive ? 'font-bold shadow-xs' : 'hover:opacity-100 opacity-80'
                   }`
                 }
               >
@@ -121,15 +130,14 @@ export const Navbar: FC<NavbarProps> = ({
             {/* Garage Pro */}
             <NavLink
               to="/pro"
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? 'var(--bg-elevated)' : 'transparent',
+                borderColor: isActive ? 'var(--border-active)' : 'transparent',
+                color: isActive ? 'var(--accent)' : 'var(--text-secondary)'
+              })}
               className={({ isActive }) =>
-                `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  isActive
-                    ? isWhiteYellow 
-                      ? 'text-zinc-950 font-bold bg-yellow-400/20 border border-yellow-400/40 shadow-xs' 
-                      : 'text-white bg-white/[0.08]'
-                    : isWhiteYellow 
-                      ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100' 
-                      : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.04]'
+                `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+                  isActive ? 'font-bold shadow-xs' : 'hover:opacity-100 opacity-80'
                 }`
               }
             >
@@ -140,15 +148,14 @@ export const Navbar: FC<NavbarProps> = ({
             {/* About / Case Study */}
             <NavLink
               to="/about"
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? 'var(--bg-elevated)' : 'transparent',
+                borderColor: isActive ? 'var(--border-active)' : 'transparent',
+                color: isActive ? 'var(--accent)' : 'var(--text-secondary)'
+              })}
               className={({ isActive }) =>
-                `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  isActive
-                    ? isWhiteYellow 
-                      ? 'text-zinc-950 font-bold bg-yellow-400/20 border border-yellow-400/40 shadow-xs' 
-                      : 'text-white bg-white/[0.08]'
-                    : isWhiteYellow 
-                      ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100' 
-                      : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.04]'
+                `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+                  isActive ? 'font-bold shadow-xs' : 'hover:opacity-100 opacity-80'
                 }`
               }
             >

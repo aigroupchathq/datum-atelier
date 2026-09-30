@@ -20,7 +20,7 @@ interface FAQItem {
 }
 
 export const AboutCaseStudyPage: FC = () => {
-  const { isWhiteYellow } = useTheme();
+  const { themeMeta } = useTheme();
   
   // Navigation tabs
   const [activeSection, setActiveSection] = useState<'all' | 'manifesto' | 'architecture' | 'lab' | 'faq'>('all');
@@ -179,28 +179,43 @@ export const AboutCaseStudyPage: FC = () => {
   ];
 
   return (
-    <main className={`min-h-screen transition-colors duration-500 pb-24 ${
-      isWhiteYellow ? 'bg-[#FAFAF8] text-zinc-900' : 'bg-[#09090B] text-zinc-100'
-    }`}>
+    <main 
+      className="min-h-screen transition-colors duration-500 pb-24"
+      style={{
+        backgroundColor: 'var(--bg-void)',
+        color: 'var(--text-primary)'
+      }}
+    >
       
       {/* ========================================================= */}
       {/* 1. VOGUE EDITORIAL FOLIO & LUXURY COVER MASTHEAD          */}
       {/* ========================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-10 sm:pt-16 pb-12 border-b border-black/[0.08]">
+      <section 
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-10 sm:pt-16 pb-12 border-b"
+        style={{ borderColor: 'var(--border-subtle)' }}
+      >
         
         {/* Top Folio Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 text-[10px] font-mono-numbers uppercase tracking-[0.35em] text-zinc-400 border-b border-black/[0.06] pb-4 mb-8">
+        <div 
+          className="flex flex-wrap items-center justify-between gap-4 text-[10px] font-mono-numbers uppercase tracking-[0.35em] border-b pb-4 mb-8"
+          style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
+        >
           <div className="flex items-center gap-3">
-            <span className="font-bold text-zinc-900 bg-yellow-400 px-2 py-0.5 rounded-xs">FOLIO 04</span>
+            <span 
+              className="font-bold px-2 py-0.5 rounded-xs"
+              style={{ backgroundColor: 'var(--accent)', color: '#09090B' }}
+            >
+              FOLIO 04
+            </span>
             <span>THE ATELIER MONOGRAPH</span>
           </div>
           <div className="hidden md:flex items-center gap-6">
             <span>EDITION DE LUXE</span>
             <span>•</span>
-            <span>MAYFAIR // EDINBURGH // STUTTGART</span>
+            <span>{themeMeta.name}</span>
           </div>
-          <div className="flex items-center gap-2 text-zinc-800 font-semibold">
-            <Sparkles className="w-3 h-3 text-yellow-600" />
+          <div className="flex items-center gap-2 font-semibold" style={{ color: 'var(--text-primary)' }}>
+            <Sparkles className="w-3 h-3" style={{ color: 'var(--accent)' }} />
             <span>DIRECTED BY vD</span>
           </div>
         </div>
@@ -210,30 +225,44 @@ export const AboutCaseStudyPage: FC = () => {
           
           {/* Main Title */}
           <div className="lg:col-span-8 space-y-4">
-            <span className="text-[11px] font-mono-numbers uppercase tracking-[0.4em] text-yellow-700 font-semibold block">
+            <span 
+              className="text-[11px] font-mono-numbers uppercase tracking-[0.4em] font-semibold block"
+              style={{ color: 'var(--accent)' }}
+            >
               SYSTEM DESIGN & CUSTODIANSHIP ESSAY
             </span>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-light font-luxury-editorial leading-[0.95] tracking-tight text-zinc-950">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-light font-luxury-editorial leading-[0.95] tracking-tight">
               The Architecture <br />
-              <span className="italic font-serif font-normal text-yellow-600">of Pure Custodianship.</span>
+              <span className="italic font-serif font-normal" style={{ color: 'var(--accent)' }}>
+                of Pure Custodianship.
+              </span>
             </h1>
           </div>
 
           {/* Issue Meta & Lead */}
-          <div className="lg:col-span-4 space-y-4 border-l border-black/[0.08] pl-0 lg:pl-8 pb-2">
-            <p className="text-xs sm:text-sm font-luxury-editorial text-zinc-600 leading-relaxed italic">
+          <div 
+            className="lg:col-span-4 space-y-4 border-l pl-0 lg:pl-8 pb-2"
+            style={{ borderColor: 'var(--border-subtle)' }}
+          >
+            <p className="text-xs sm:text-sm font-luxury-editorial leading-relaxed italic" style={{ color: 'var(--text-secondary)' }}>
               "A definitive blueprint replacing ephemeral algorithmic feeds with cryptographic provenance, zero-knowledge residential cloaking, and generational automotive camaraderie."
             </p>
-            <div className="pt-2 flex items-center justify-between text-[10px] font-mono-numbers text-zinc-400 uppercase tracking-widest border-t border-black/[0.06]">
+            <div 
+              className="pt-2 flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-widest border-t"
+              style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
+            >
               <span>VOL. IV // ISS. 01</span>
-              <span className="text-zinc-900 font-bold">100% PROPRIETARY</span>
+              <span className="font-bold" style={{ color: 'var(--text-primary)' }}>100% PROPRIETARY</span>
             </div>
           </div>
 
         </div>
 
         {/* Editorial Chapter Switcher Tabs */}
-        <div className="mt-12 flex items-center gap-2 overflow-x-auto no-scrollbar pt-4 border-t border-black/[0.06]">
+        <div 
+          className="mt-12 flex items-center gap-2 overflow-x-auto no-scrollbar pt-4 border-t"
+          style={{ borderColor: 'var(--border-subtle)' }}
+        >
           {[
             { id: 'all', label: 'Complete Monograph', num: '00' },
             { id: 'manifesto', label: 'The Manifesto & Problem', num: '01' },
@@ -246,11 +275,15 @@ export const AboutCaseStudyPage: FC = () => {
               onClick={() => setActiveSection(tab.id as any)}
               className={`flex items-center gap-2.5 px-4 py-2 text-xs font-mono-numbers uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                 activeSection === tab.id
-                  ? 'border-b-2 border-zinc-950 text-zinc-950 font-bold -mb-px pb-2'
-                  : 'text-zinc-500 hover:text-zinc-950 pb-2'
+                  ? 'border-b-2 font-bold -mb-px pb-2'
+                  : 'opacity-70 hover:opacity-100 pb-2'
               }`}
+              style={{
+                borderColor: activeSection === tab.id ? 'var(--accent)' : 'transparent',
+                color: activeSection === tab.id ? 'var(--text-primary)' : 'var(--text-muted)'
+              }}
             >
-              <span className="text-[10px] text-yellow-600 font-bold">[{tab.num}]</span>
+              <span className="text-[10px] font-bold" style={{ color: 'var(--accent)' }}>[{tab.num}]</span>
               <span>{tab.label}</span>
             </button>
           ))}
@@ -262,11 +295,17 @@ export const AboutCaseStudyPage: FC = () => {
       {/* 2. SECTION 01: THE MANIFESTO & THE PROBLEM                */}
       {/* ========================================================= */}
       {(activeSection === 'all' || activeSection === 'manifesto') && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 border-b border-black/[0.08]">
+        <section 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 border-b"
+          style={{ borderColor: 'var(--border-subtle)' }}
+        >
           
           {/* Section Marker */}
-          <div className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] text-zinc-400 mb-8">
-            <span className="text-yellow-700 font-bold">CHAPTER 01 // THE MANIFESTO</span>
+          <div 
+            className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] mb-8"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 01 // THE MANIFESTO</span>
             <span>READING TIME: 4 MIN</span>
           </div>
 
@@ -275,12 +314,12 @@ export const AboutCaseStudyPage: FC = () => {
             
             {/* Left Column: Editorial Text Spread */}
             <div className="lg:col-span-7 space-y-6">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-luxury-editorial text-zinc-950 leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-luxury-editorial leading-tight">
                 Modern car culture is broken by advertising algorithms. We built its mathematical antidote.
               </h2>
 
-              <div className="space-y-4 text-sm sm:text-base font-luxury-editorial text-zinc-700 leading-relaxed">
-                <p className="first-letter:text-6xl first-letter:font-luxury-editorial first-letter:float-left first-letter:mr-3 first-letter:font-bold first-letter:text-zinc-950 first-letter:leading-none">
+              <div className="space-y-4 text-sm sm:text-base font-luxury-editorial leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                <p className="first-letter:text-6xl first-letter:font-luxury-editorial first-letter:float-left first-letter:mr-3 first-letter:font-bold first-letter:leading-none">
                   For the past two decades, genuine automotive culture has been fractured across fragmented WhatsApp group chats, ephemeral Instagram stories, and easily forged paper binder histories. The sacred relationship between custodian and machine has been reduced to click-driven noise and speculative auction flipping.
                 </p>
                 <p>
@@ -289,11 +328,17 @@ export const AboutCaseStudyPage: FC = () => {
               </div>
 
               {/* Editorial Pull Quote */}
-              <blockquote className="my-8 pl-6 border-l-2 border-yellow-500 py-2">
-                <p className="text-xl sm:text-2xl font-luxury-editorial italic text-zinc-900 leading-relaxed">
+              <blockquote 
+                className="my-8 pl-6 border-l-2 py-2"
+                style={{ borderColor: 'var(--accent)' }}
+              >
+                <p className="text-xl sm:text-2xl font-luxury-editorial italic leading-relaxed">
                   "A vehicle's true worth is forged in the integrity of its telemetry, the honesty of its torque specifications, and the camaraderie of the convoy that pulls you through the mountain pass."
                 </p>
-                <cite className="block mt-3 text-xs font-mono-numbers uppercase tracking-widest text-zinc-500 not-italic">
+                <cite 
+                  className="block mt-3 text-xs font-mono-numbers uppercase tracking-widest not-italic"
+                  style={{ color: 'var(--text-muted)' }}
+                >
                   — DATUM Sovereign Custody Manifesto
                 </cite>
               </blockquote>
@@ -303,18 +348,27 @@ export const AboutCaseStudyPage: FC = () => {
             <div className="lg:col-span-5 space-y-6">
               
               {/* Photo Plate 01 */}
-              <figure className="group overflow-hidden border border-black/[0.08] shadow-sm bg-zinc-900">
+              <figure 
+                className="group overflow-hidden border shadow-sm"
+                style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}
+              >
                 <img 
                   src="/feed/stone_garage_cobra_ferrari.jpg" 
                   alt="Open stone garage sanctuary" 
                   className="w-full h-80 object-cover group-hover:scale-103 transition-transform duration-700"
                 />
-                <figcaption className="p-4 bg-zinc-950 text-white">
-                  <div className="flex justify-between items-center text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-400 mb-1">
+                <figcaption 
+                  className="p-4 border-t"
+                  style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-subtle)' }}
+                >
+                  <div 
+                    className="flex justify-between items-center text-[10px] font-mono-numbers uppercase tracking-widest mb-1"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
                     <span>PLATE 01 // CUSTODIAL SANCTUARY</span>
-                    <span className="text-yellow-400">COTSWOLDS, UK</span>
+                    <span className="font-bold" style={{ color: 'var(--accent)' }}>COTSWOLDS, UK</span>
                   </div>
-                  <p className="text-xs text-zinc-300 font-luxury-editorial italic">
+                  <p className="text-xs font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
                     Shelby 427 & 488 Spider sharing private stone quarters under verified zero-knowledge cloaking.
                   </p>
                 </figcaption>
@@ -322,22 +376,31 @@ export const AboutCaseStudyPage: FC = () => {
 
               {/* Minimal Metric Trio */}
               <div className="grid grid-cols-3 gap-3 text-xs font-mono-numbers">
-                <div className="p-4 border border-black/[0.08] bg-white">
-                  <span className="text-[10px] text-zinc-400 block uppercase">Cloak Radius</span>
-                  <strong className="text-base font-bold text-zinc-950 block mt-1">800m</strong>
-                  <span className="text-[9px] text-emerald-700 uppercase font-semibold">Zero-Knowledge</span>
+                <div 
+                  className="p-4 border"
+                  style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+                >
+                  <span className="text-[10px] block uppercase" style={{ color: 'var(--text-muted)' }}>Cloak Radius</span>
+                  <strong className="text-base font-bold block mt-1">800m</strong>
+                  <span className="text-[9px] uppercase font-semibold" style={{ color: 'var(--accent)' }}>Zero-Knowledge</span>
                 </div>
 
-                <div className="p-4 border border-black/[0.08] bg-white">
-                  <span className="text-[10px] text-zinc-400 block uppercase">Ingestion</span>
-                  <strong className="text-base font-bold text-yellow-600 block mt-1">600k QPS</strong>
-                  <span className="text-[9px] text-zinc-500 uppercase">Kafka Stream</span>
+                <div 
+                  className="p-4 border"
+                  style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+                >
+                  <span className="text-[10px] block uppercase" style={{ color: 'var(--text-muted)' }}>Ingestion</span>
+                  <strong className="text-base font-bold block mt-1" style={{ color: 'var(--accent)' }}>600k QPS</strong>
+                  <span className="text-[9px] uppercase" style={{ color: 'var(--text-muted)' }}>Kafka Stream</span>
                 </div>
 
-                <div className="p-4 border border-black/[0.08] bg-white">
-                  <span className="text-[10px] text-zinc-400 block uppercase">Provenance</span>
-                  <strong className="text-base font-bold text-zinc-950 block mt-1">Merkle DAG</strong>
-                  <span className="text-[9px] text-zinc-500 uppercase">Ed25519 Sign</span>
+                <div 
+                  className="p-4 border"
+                  style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+                >
+                  <span className="text-[10px] block uppercase" style={{ color: 'var(--text-muted)' }}>Provenance</span>
+                  <strong className="text-base font-bold block mt-1">Merkle DAG</strong>
+                  <span className="text-[9px] uppercase" style={{ color: 'var(--text-muted)' }}>Ed25519 Sign</span>
                 </div>
               </div>
 
@@ -346,58 +409,61 @@ export const AboutCaseStudyPage: FC = () => {
           </div>
 
           {/* The Four Tenets Strip */}
-          <div className="mt-16 pt-12 border-t border-black/[0.08]">
+          <div 
+            className="mt-16 pt-12 border-t"
+            style={{ borderColor: 'var(--border-subtle)' }}
+          >
             <div className="mb-8">
-              <span className="text-[10px] font-mono-numbers uppercase tracking-[0.3em] text-yellow-700 font-bold block mb-1">
+              <span 
+                className="text-[10px] font-mono-numbers uppercase tracking-[0.3em] font-bold block mb-1"
+                style={{ color: 'var(--accent)' }}
+              >
                 SYSTEM PRINCIPLES
               </span>
-              <h3 className="text-2xl sm:text-3xl font-luxury-editorial text-zinc-950">
+              <h3 className="text-2xl sm:text-3xl font-luxury-editorial">
                 The Four Pillars of DATUM
               </h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              
-              <div className="p-6 border border-black/[0.08] bg-white space-y-3">
-                <span className="text-xs font-mono-numbers text-yellow-600 font-bold block">[ 01 ]</span>
-                <h4 className="text-sm font-bold uppercase tracking-wider font-luxury-display text-zinc-950">
-                  The Living Digital Twin
-                </h4>
-                <p className="text-xs font-luxury-editorial text-zinc-600 leading-relaxed">
-                  Real-time CAN-bus synchronization tracking brake pad thermals, oil degradation curves, and suspension dampening cycles with mathematical precision.
-                </p>
-              </div>
-
-              <div className="p-6 border border-black/[0.08] bg-white space-y-3">
-                <span className="text-xs font-mono-numbers text-yellow-600 font-bold block">[ 02 ]</span>
-                <h4 className="text-sm font-bold uppercase tracking-wider font-luxury-display text-zinc-950">
-                  Shared Guild Ateliers
-                </h4>
-                <p className="text-xs font-luxury-editorial text-zinc-600 leading-relaxed">
-                  Decentralized collector workshops granting multi-signature NFC access to hydraulic lifts, tire warmers, and clean-room assembly benches.
-                </p>
-              </div>
-
-              <div className="p-6 border border-black/[0.08] bg-white space-y-3">
-                <span className="text-xs font-mono-numbers text-yellow-600 font-bold block">[ 03 ]</span>
-                <h4 className="text-sm font-bold uppercase tracking-wider font-luxury-display text-zinc-950">
-                  Pass Grip Radar
-                </h4>
-                <p className="text-xs font-luxury-editorial text-zinc-600 leading-relaxed">
-                  Dynamic road friction ($\mu$) calculation synthesizing atmospheric radar with tyre carcass thermal curves before tires touch mountain pass asphalt.
-                </p>
-              </div>
-
-              <div className="p-6 border border-black/[0.08] bg-white space-y-3">
-                <span className="text-xs font-mono-numbers text-yellow-600 font-bold block">[ 04 ]</span>
-                <h4 className="text-sm font-bold uppercase tracking-wider font-luxury-display text-zinc-950">
-                  Autonomous Carnet
-                </h4>
-                <p className="text-xs font-luxury-editorial text-zinc-600 leading-relaxed">
-                  Tamper-evident vehicle passports powered by Merkle DAGs. Proof of maintenance and track history transferred without disclosing private ownership identity.
-                </p>
-              </div>
-
+              {[
+                {
+                  num: '[ 01 ]',
+                  title: 'The Living Digital Twin',
+                  desc: 'Real-time CAN-bus synchronization tracking brake pad thermals, oil degradation curves, and suspension dampening cycles with mathematical precision.'
+                },
+                {
+                  num: '[ 02 ]',
+                  title: 'Shared Guild Ateliers',
+                  desc: 'Decentralized collector workshops granting multi-signature NFC access to hydraulic lifts, tire warmers, and clean-room assembly benches.'
+                },
+                {
+                  num: '[ 03 ]',
+                  title: 'Pass Grip Radar',
+                  desc: 'Dynamic road friction (μ) calculation synthesizing atmospheric radar with tyre carcass thermal curves before tires touch mountain pass asphalt.'
+                },
+                {
+                  num: '[ 04 ]',
+                  title: 'Autonomous Carnet',
+                  desc: 'Tamper-evident vehicle passports powered by Merkle DAGs. Proof of maintenance and track history transferred without disclosing private ownership identity.'
+                }
+              ].map((tenet, idx) => (
+                <div 
+                  key={idx} 
+                  className="p-6 border space-y-3 transition-transform hover:-translate-y-1"
+                  style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+                >
+                  <span className="text-xs font-mono-numbers font-bold block" style={{ color: 'var(--accent)' }}>
+                    {tenet.num}
+                  </span>
+                  <h4 className="text-sm font-bold uppercase tracking-wider font-luxury-display">
+                    {tenet.title}
+                  </h4>
+                  <p className="text-xs font-luxury-editorial leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                    {tenet.desc}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -408,18 +474,24 @@ export const AboutCaseStudyPage: FC = () => {
       {/* 3. SECTION 02: LEVEL 1-6 DISTRIBUTED SYSTEM DESIGN        */}
       {/* ========================================================= */}
       {(activeSection === 'all' || activeSection === 'architecture') && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 border-b border-black/[0.08]">
+        <section 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 border-b"
+          style={{ borderColor: 'var(--border-subtle)' }}
+        >
           
-          <div className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] text-zinc-400 mb-8">
-            <span className="text-yellow-700 font-bold">CHAPTER 02 // DISTRIBUTED SYSTEM DESIGN</span>
+          <div 
+            className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] mb-8"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 02 // DISTRIBUTED SYSTEM DESIGN</span>
             <span>DONNE MARTIN PRIMER SPECIFICATION</span>
           </div>
 
           <div className="max-w-3xl mb-12 space-y-3">
-            <h2 className="text-3xl sm:text-5xl font-luxury-editorial text-zinc-950">
+            <h2 className="text-3xl sm:text-5xl font-luxury-editorial">
               Level 1 to 6 Architectural Specification
             </h2>
-            <p className="text-xs sm:text-sm font-luxury-editorial text-zinc-600 italic">
+            <p className="text-xs sm:text-sm font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
               Engineered to ingest 600,000 CAN-bus queries per second across 10 Hz telemetry streams with sub-45ms P99 latency.
             </p>
           </div>
@@ -435,14 +507,20 @@ export const AboutCaseStudyPage: FC = () => {
                   onClick={() => setSelectedArchTier(tier.level)}
                   className={`w-full text-left p-4 border transition-all cursor-pointer ${
                     selectedArchTier === tier.level
-                      ? 'bg-zinc-950 text-white border-zinc-950 shadow-md'
-                      : 'bg-white text-zinc-700 border-black/[0.08] hover:border-zinc-400'
+                      ? 'shadow-md ring-1'
+                      : 'hover:opacity-100'
                   }`}
+                  style={{
+                    backgroundColor: selectedArchTier === tier.level ? 'var(--bg-elevated)' : 'var(--bg-surface)',
+                    borderColor: selectedArchTier === tier.level ? 'var(--accent)' : 'var(--border-subtle)',
+                    color: 'var(--text-primary)'
+                  }}
                 >
-                  <div className="flex justify-between items-center text-[10px] font-mono-numbers uppercase tracking-wider mb-1">
-                    <span className={selectedArchTier === tier.level ? 'text-yellow-400 font-bold' : 'text-zinc-400'}>
-                      LEVEL 0{tier.level}
-                    </span>
+                  <div 
+                    className="flex justify-between items-center text-[10px] font-mono-numbers uppercase tracking-wider mb-1"
+                    style={{ color: selectedArchTier === tier.level ? 'var(--accent)' : 'var(--text-muted)' }}
+                  >
+                    <span className="font-bold">LEVEL 0{tier.level}</span>
                     <span className="text-[9px] opacity-75">{tier.latency}</span>
                   </div>
                   <div className="text-xs font-bold font-luxury-display uppercase truncate">
@@ -453,44 +531,66 @@ export const AboutCaseStudyPage: FC = () => {
             </div>
 
             {/* Right: Selected Tier Blueprint Dossier */}
-            <div className="lg:col-span-8 p-8 border border-black/[0.08] bg-white space-y-6">
+            <div 
+              className="lg:col-span-8 p-8 border space-y-6"
+              style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+            >
               {(() => {
                 const tier = architectureTiers.find(t => t.level === selectedArchTier) || architectureTiers[0];
                 return (
                   <>
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/[0.08] pb-4">
+                    <div 
+                      className="flex flex-wrap items-center justify-between gap-2 border-b pb-4"
+                      style={{ borderColor: 'var(--border-subtle)' }}
+                    >
                       <div>
-                        <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-yellow-700 font-bold block">
+                        <span 
+                          className="text-[10px] font-mono-numbers uppercase tracking-widest font-bold block"
+                          style={{ color: 'var(--accent)' }}
+                        >
                           TIER LEVEL 0{tier.level} DOSSIER
                         </span>
-                        <h3 className="text-xl sm:text-2xl font-bold font-luxury-display uppercase text-zinc-950">
+                        <h3 className="text-xl sm:text-2xl font-bold font-luxury-display uppercase">
                           {tier.name}
                         </h3>
                       </div>
-                      <span className="text-xs font-mono-numbers px-3 py-1 bg-zinc-100 border border-zinc-200 text-zinc-800 font-semibold">
+                      <span 
+                        className="text-xs font-mono-numbers px-3 py-1 border font-semibold"
+                        style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }}
+                      >
                         {tier.latency}
                       </span>
                     </div>
 
                     <div className="space-y-2 font-mono-numbers text-xs">
-                      <span className="text-[10px] text-zinc-400 uppercase block">Technology Stack:</span>
-                      <div className="p-3 bg-zinc-50 border border-zinc-200 text-zinc-900 font-bold">
+                      <span className="text-[10px] uppercase block" style={{ color: 'var(--text-muted)' }}>Technology Stack:</span>
+                      <div 
+                        className="p-3 border font-bold"
+                        style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }}
+                      >
                         {tier.stack}
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <span className="text-[10px] font-mono-numbers text-zinc-400 uppercase block">Architectural Role:</span>
-                      <p className="text-sm font-luxury-editorial text-zinc-700 leading-relaxed">
+                      <span className="text-[10px] font-mono-numbers uppercase block" style={{ color: 'var(--text-muted)' }}>Architectural Role:</span>
+                      <p className="text-sm font-luxury-editorial leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                         {tier.description}
                       </p>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-black/[0.06]">
-                      <span className="text-[10px] font-mono-numbers text-zinc-400 uppercase block">Key Technical Guarantees:</span>
+                    <div 
+                      className="space-y-2 pt-2 border-t"
+                      style={{ borderColor: 'var(--border-subtle)' }}
+                    >
+                      <span className="text-[10px] font-mono-numbers uppercase block" style={{ color: 'var(--text-muted)' }}>Key Technical Guarantees:</span>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {tier.specs.map((spec, idx) => (
-                          <div key={idx} className="p-2.5 bg-zinc-50 border border-zinc-200 text-[11px] font-mono-numbers text-zinc-800">
+                          <div 
+                            key={idx} 
+                            className="p-2.5 border text-[11px] font-mono-numbers"
+                            style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }}
+                          >
                             ✓ {spec}
                           </div>
                         ))}
@@ -510,18 +610,24 @@ export const AboutCaseStudyPage: FC = () => {
       {/* 4. SECTION 03: THE INTERACTIVE ENGINEERING LAB ANNEX      */}
       {/* ========================================================= */}
       {(activeSection === 'all' || activeSection === 'lab') && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 border-b border-black/[0.08]">
+        <section 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 border-b"
+          style={{ borderColor: 'var(--border-subtle)' }}
+        >
           
-          <div className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] text-zinc-400 mb-8">
-            <span className="text-yellow-700 font-bold">CHAPTER 03 // THE ENGINEERING ANNEX</span>
+          <div 
+            className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] mb-8"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 03 // THE ENGINEERING ANNEX</span>
             <span>3 LIVE ALGORITHMIC SIMULATORS</span>
           </div>
 
           <div className="max-w-3xl mb-12 space-y-3">
-            <h2 className="text-3xl sm:text-5xl font-luxury-editorial text-zinc-950">
+            <h2 className="text-3xl sm:text-5xl font-luxury-editorial">
               Interactive Mathematical Prototyping
             </h2>
-            <p className="text-xs sm:text-sm font-luxury-editorial text-zinc-600 italic">
+            <p className="text-xs sm:text-sm font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
               Directly manipulate the parameters governing residential coordinate cloaking, Merkle tree tampering detection, and road adhesion physics.
             </p>
           </div>
@@ -529,22 +635,31 @@ export const AboutCaseStudyPage: FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Lab 1: 800m Geofencing */}
-            <div className="p-6 border border-black/[0.08] bg-white space-y-4">
-              <div className="flex justify-between items-center text-[10px] font-mono-numbers text-zinc-400 uppercase tracking-wider">
+            <div 
+              className="p-6 border space-y-4"
+              style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+            >
+              <div 
+                className="flex justify-between items-center text-[10px] font-mono-numbers uppercase tracking-wider"
+                style={{ color: 'var(--text-muted)' }}
+              >
                 <span>SIMULATOR 01</span>
-                <span className="text-emerald-700 font-bold">PRIVACY</span>
+                <span className="font-bold" style={{ color: 'var(--accent)' }}>PRIVACY</span>
               </div>
-              <h3 className="text-sm font-bold uppercase tracking-wider font-luxury-display text-zinc-950">
+              <h3 className="text-sm font-bold uppercase tracking-wider font-luxury-display">
                 Zero-Knowledge 800m Truncation
               </h3>
-              <p className="text-xs font-luxury-editorial text-zinc-600">
+              <p className="text-xs font-luxury-editorial" style={{ color: 'var(--text-secondary)' }}>
                 Adjust the cloaking perimeter to observe real-time vector coordinate masking.
               </p>
 
-              <div className="p-4 bg-zinc-50 border border-zinc-200 space-y-3 font-mono-numbers text-xs">
+              <div 
+                className="p-4 border space-y-3 font-mono-numbers text-xs"
+                style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }}
+              >
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Radius:</span>
-                  <strong className="text-zinc-950">{geofenceRadius} meters</strong>
+                  <span style={{ color: 'var(--text-muted)' }}>Radius:</span>
+                  <strong>{geofenceRadius} meters</strong>
                 </div>
                 <input
                   type="range"
@@ -553,47 +668,66 @@ export const AboutCaseStudyPage: FC = () => {
                   step="50"
                   value={geofenceRadius}
                   onChange={(e) => setGeofenceRadius(Number(e.target.value))}
-                  className="w-full accent-yellow-500 cursor-pointer"
+                  className="w-full cursor-pointer"
+                  style={{ accentColor: 'var(--accent)' }}
                 />
-                <div className="p-2.5 bg-zinc-950 text-white text-[10px] rounded-xs space-y-1">
-                  <div className="text-yellow-400 font-bold">Client Ingress Boundary:</div>
-                  <div className="text-zinc-400">Raw: 51.5074° N, 0.1278° W</div>
-                  <div className="text-emerald-400">Masked: 51.51**° N (+{geofenceRadius}m hash)</div>
+                <div 
+                  className="p-2.5 text-[10px] rounded-xs space-y-1"
+                  style={{ backgroundColor: 'var(--bg-void)', border: '1px solid var(--border-default)' }}
+                >
+                  <div className="font-bold" style={{ color: 'var(--accent)' }}>Client Ingress Boundary:</div>
+                  <div style={{ color: 'var(--text-muted)' }}>Raw: 51.5074° N, 0.1278° W</div>
+                  <div style={{ color: 'var(--text-primary)' }}>Masked: 51.51**° N (+{geofenceRadius}m hash)</div>
                 </div>
               </div>
             </div>
 
             {/* Lab 2: Merkle Tree Validator */}
-            <div className="p-6 border border-black/[0.08] bg-white space-y-4">
-              <div className="flex justify-between items-center text-[10px] font-mono-numbers text-zinc-400 uppercase tracking-wider">
+            <div 
+              className="p-6 border space-y-4"
+              style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+            >
+              <div 
+                className="flex justify-between items-center text-[10px] font-mono-numbers uppercase tracking-wider"
+                style={{ color: 'var(--text-muted)' }}
+              >
                 <span>SIMULATOR 02</span>
-                <span className="text-yellow-700 font-bold">PROVENANCE</span>
+                <span className="font-bold" style={{ color: 'var(--accent)' }}>PROVENANCE</span>
               </div>
-              <h3 className="text-sm font-bold uppercase tracking-wider font-luxury-display text-zinc-950">
+              <h3 className="text-sm font-bold uppercase tracking-wider font-luxury-display">
                 Merkle DAG Integrity Engine
               </h3>
-              <p className="text-xs font-luxury-editorial text-zinc-600">
+              <p className="text-xs font-luxury-editorial" style={{ color: 'var(--text-secondary)' }}>
                 Simulate an unauthorized odometer tamper to trigger cryptographic rejection.
               </p>
 
-              <div className="p-4 bg-zinc-50 border border-zinc-200 space-y-3 font-mono-numbers text-xs">
+              <div 
+                className="p-4 border space-y-3 font-mono-numbers text-xs"
+                style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }}
+              >
                 <button
                   onClick={() => setMerkleTampered(!merkleTampered)}
-                  className={`w-full py-2 px-3 text-[11px] font-bold uppercase transition cursor-pointer border ${
-                    merkleTampered
-                      ? 'bg-red-600 text-white border-red-700'
-                      : 'bg-yellow-400 text-zinc-950 border-yellow-500 hover:bg-yellow-300'
-                  }`}
+                  className="w-full py-2 px-3 text-[11px] font-bold uppercase transition cursor-pointer border"
+                  style={{
+                    backgroundColor: merkleTampered ? '#DC2626' : 'var(--accent)',
+                    color: merkleTampered ? '#FFFFFF' : '#09090B',
+                    borderColor: merkleTampered ? '#B91C1C' : 'var(--accent)'
+                  }}
                 >
                   {merkleTampered ? 'Restore Genuine DAG' : 'Simulate Forged Mileage Entry'}
                 </button>
-                <div className={`p-2.5 text-[10px] border ${
-                  merkleTampered ? 'bg-red-50 text-red-800 border-red-300' : 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                }`}>
+                <div 
+                  className="p-2.5 text-[10px] border"
+                  style={{
+                    backgroundColor: merkleTampered ? 'rgba(220, 38, 38, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                    borderColor: merkleTampered ? '#EF4444' : '#10B981',
+                    color: merkleTampered ? '#FCA5A5' : '#6EE7B7'
+                  }}
+                >
                   <div className="font-bold">
                     {merkleTampered ? '⚠️ REJECTED: ROOT HASH MISMATCH' : '✓ VERIFIED: MERKLE TREE VALID'}
                   </div>
-                  <div className="truncate text-[9px] mt-0.5 text-zinc-600">
+                  <div className="truncate text-[9px] mt-0.5 opacity-80">
                     Root: {merkleTampered ? '0x8f02b... [CONSENSUS DROP]' : '0x4e29b18274a10f82... [AUTHENTIC]'}
                   </div>
                 </div>
@@ -601,41 +735,56 @@ export const AboutCaseStudyPage: FC = () => {
             </div>
 
             {/* Lab 3: Road Friction Calculator */}
-            <div className="p-6 border border-black/[0.08] bg-white space-y-4">
-              <div className="flex justify-between items-center text-[10px] font-mono-numbers text-zinc-400 uppercase tracking-wider">
+            <div 
+              className="p-6 border space-y-4"
+              style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+            >
+              <div 
+                className="flex justify-between items-center text-[10px] font-mono-numbers uppercase tracking-wider"
+                style={{ color: 'var(--text-muted)' }}
+              >
                 <span>SIMULATOR 03</span>
-                <span className="text-sky-700 font-bold">RADAR</span>
+                <span className="font-bold" style={{ color: 'var(--accent)' }}>RADAR</span>
               </div>
-              <h3 className="text-sm font-bold uppercase tracking-wider font-luxury-display text-zinc-950">
+              <h3 className="text-sm font-bold uppercase tracking-wider font-luxury-display">
                 Pass Grip Friction (μ) Engine
               </h3>
-              <p className="text-xs font-luxury-editorial text-zinc-600">
+              <p className="text-xs font-luxury-editorial" style={{ color: 'var(--text-secondary)' }}>
                 Model thermodynamic adhesion across weather and tire thermal curves.
               </p>
 
-              <div className="p-4 bg-zinc-50 border border-zinc-200 space-y-2.5 font-mono-numbers text-xs">
+              <div 
+                className="p-4 border space-y-2.5 font-mono-numbers text-xs"
+                style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }}
+              >
                 <div className="flex gap-2">
                   <button
                     onClick={() => setIsRaining(!isRaining)}
-                    className={`flex-1 py-1.5 text-[10px] font-bold uppercase border cursor-pointer ${
-                      isRaining ? 'bg-sky-600 text-white border-sky-700' : 'bg-white text-zinc-700 border-zinc-300'
-                    }`}
+                    className="flex-1 py-1.5 text-[10px] font-bold uppercase border cursor-pointer"
+                    style={{
+                      backgroundColor: isRaining ? 'var(--accent)' : 'var(--bg-surface)',
+                      color: isRaining ? '#FFFFFF' : 'var(--text-primary)',
+                      borderColor: 'var(--border-default)'
+                    }}
                   >
                     {isRaining ? 'Wet Spray' : 'Dry Tarmac'}
                   </button>
                   <button
                     onClick={() => setIsFrost(!isFrost)}
-                    className={`flex-1 py-1.5 text-[10px] font-bold uppercase border cursor-pointer ${
-                      isFrost ? 'bg-cyan-600 text-white border-cyan-700' : 'bg-white text-zinc-700 border-zinc-300'
-                    }`}
+                    className="flex-1 py-1.5 text-[10px] font-bold uppercase border cursor-pointer"
+                    style={{
+                      backgroundColor: isFrost ? '#0677A1' : 'var(--bg-surface)',
+                      color: isFrost ? '#FFFFFF' : 'var(--text-primary)',
+                      borderColor: 'var(--border-default)'
+                    }}
                   >
                     {isFrost ? 'Black Ice' : 'Frost Clear'}
                   </button>
                 </div>
 
                 <div className="flex justify-between text-[10px]">
-                  <span className="text-zinc-500">Tyre Temp:</span>
-                  <strong className="text-zinc-900">{tyreTemp}°C</strong>
+                  <span style={{ color: 'var(--text-muted)' }}>Tyre Temp:</span>
+                  <strong>{tyreTemp}°C</strong>
                 </div>
                 <input
                   type="range"
@@ -643,14 +792,18 @@ export const AboutCaseStudyPage: FC = () => {
                   max="85"
                   value={tyreTemp}
                   onChange={(e) => setTyreTemp(Number(e.target.value))}
-                  className="w-full accent-yellow-500 cursor-pointer"
+                  className="w-full cursor-pointer"
+                  style={{ accentColor: 'var(--accent)' }}
                 />
 
-                <div className="p-3 bg-zinc-950 text-white text-center rounded-xs">
-                  <div className="text-2xl font-black font-luxury-display text-yellow-400">
+                <div 
+                  className="p-3 text-center rounded-xs"
+                  style={{ backgroundColor: 'var(--bg-void)', border: '1px solid var(--border-default)' }}
+                >
+                  <div className="text-2xl font-black font-luxury-display" style={{ color: 'var(--accent)' }}>
                     μ {calculatedMu.toFixed(2)}
                   </div>
-                  <span className="text-[9px] text-zinc-400 block uppercase tracking-widest">
+                  <span className="text-[9px] block uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                     {calculatedMu > 0.75 ? 'Optimal Grip' : calculatedMu > 0.45 ? 'Caution Damp' : 'Hazard Ice'}
                   </span>
                 </div>
@@ -668,32 +821,43 @@ export const AboutCaseStudyPage: FC = () => {
       {(activeSection === 'all' || activeSection === 'faq') && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16">
           
-          <div className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] text-zinc-400 mb-8">
-            <span className="text-yellow-700 font-bold">CHAPTER 04 // THE TECHNICAL INQUIRY</span>
+          <div 
+            className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] mb-8"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 04 // THE TECHNICAL INQUIRY</span>
             <span>FREQUENTLY ASKED QUESTIONS</span>
           </div>
 
           <div className="max-w-3xl mb-10 space-y-3">
-            <h2 className="text-3xl sm:text-5xl font-luxury-editorial text-zinc-950">
+            <h2 className="text-3xl sm:text-5xl font-luxury-editorial">
               The Curated Q&A Dossier
             </h2>
-            <p className="text-xs sm:text-sm font-luxury-editorial text-zinc-600 italic">
+            <p className="text-xs sm:text-sm font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
               Direct technical answers regarding zero-knowledge privacy, Merkle DAG ledger mathematics, hardware telemetry, and code custody.
             </p>
           </div>
 
           {/* Search & Category Filter Toolbar */}
-          <div className="p-6 border border-black/[0.08] bg-white space-y-4 mb-8">
+          <div 
+            className="p-6 border space-y-4 mb-8"
+            style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
+          >
             
             {/* Search Input */}
             <div className="relative">
-              <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 opacity-50" />
               <input
                 type="text"
                 value={faqSearchQuery}
                 onChange={(e) => setFaqSearchQuery(e.target.value)}
                 placeholder="Search queries (e.g. Geofence, Merkle, CAN-bus, Radar, Guilds, IP)..."
-                className="w-full pl-10 pr-4 py-2.5 border border-zinc-200 bg-zinc-50 text-xs font-mono-numbers text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-950"
+                className="w-full pl-10 pr-4 py-2.5 border text-xs font-mono-numbers focus:outline-none"
+                style={{
+                  backgroundColor: 'var(--bg-elevated)',
+                  borderColor: 'var(--border-default)',
+                  color: 'var(--text-primary)'
+                }}
               />
             </div>
 
@@ -710,11 +874,13 @@ export const AboutCaseStudyPage: FC = () => {
                 <button
                   key={cat.id}
                   onClick={() => setActiveFaqCategory(cat.id)}
-                  className={`px-3 py-1.5 text-[10px] uppercase tracking-wider transition whitespace-nowrap cursor-pointer border ${
-                    activeFaqCategory === cat.id
-                      ? 'bg-zinc-950 text-yellow-400 border-zinc-950 font-bold'
-                      : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'
-                  }`}
+                  className="px-3 py-1.5 text-[10px] uppercase tracking-wider transition whitespace-nowrap cursor-pointer border"
+                  style={{
+                    backgroundColor: activeFaqCategory === cat.id ? 'var(--accent)' : 'var(--bg-surface)',
+                    color: activeFaqCategory === cat.id ? '#FFFFFF' : 'var(--text-secondary)',
+                    borderColor: activeFaqCategory === cat.id ? 'var(--accent)' : 'var(--border-default)',
+                    fontWeight: activeFaqCategory === cat.id ? 'bold' : 'normal'
+                  }}
                 >
                   {cat.label}
                 </button>
@@ -726,7 +892,10 @@ export const AboutCaseStudyPage: FC = () => {
           {/* Q&A Dossier Items */}
           <div className="space-y-4">
             {filteredFaqs.length === 0 ? (
-              <div className="p-8 text-center border border-black/[0.08] bg-white text-xs font-mono-numbers text-zinc-500">
+              <div 
+                className="p-8 text-center border text-xs font-mono-numbers"
+                style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
+              >
                 No matching inquiries found for "{faqSearchQuery}".
               </div>
             ) : (
@@ -735,50 +904,64 @@ export const AboutCaseStudyPage: FC = () => {
                 return (
                   <article
                     key={faq.id}
-                    className={`border transition-all ${
-                      isExpanded
-                        ? 'border-zinc-950 bg-white shadow-sm'
-                        : 'border-black/[0.08] bg-white hover:border-zinc-400'
-                    }`}
+                    className="border transition-all"
+                    style={{
+                      backgroundColor: 'var(--bg-surface)',
+                      borderColor: isExpanded ? 'var(--accent)' : 'var(--border-subtle)'
+                    }}
                   >
                     <button
                       onClick={() => setExpandedFaqId(isExpanded ? null : faq.id)}
                       className="w-full text-left p-6 sm:p-8 flex items-start justify-between gap-6 cursor-pointer"
                     >
                       <div className="space-y-2">
-                        <div className="flex items-center gap-3 text-[10px] font-mono-numbers text-zinc-400 uppercase tracking-widest">
-                          <span className="text-yellow-600 font-bold">QUERY {faq.num}</span>
+                        <div 
+                          className="flex items-center gap-3 text-[10px] font-mono-numbers uppercase tracking-widest"
+                          style={{ color: 'var(--text-muted)' }}
+                        >
+                          <span className="font-bold" style={{ color: 'var(--accent)' }}>QUERY {faq.num}</span>
                           <span>•</span>
                           <span>{faq.tier}</span>
                         </div>
 
-                        <h3 className="text-base sm:text-xl font-bold font-luxury-editorial text-zinc-950 leading-snug">
+                        <h3 className="text-base sm:text-xl font-bold font-luxury-editorial leading-snug">
                           {faq.question}
                         </h3>
 
                         {!isExpanded && (
-                          <p className="text-xs font-luxury-editorial text-zinc-500 italic line-clamp-1">
+                          <p className="text-xs font-luxury-editorial italic line-clamp-1" style={{ color: 'var(--text-muted)' }}>
                             {faq.shortAnswer}
                           </p>
                         )}
                       </div>
 
-                      <div className={`p-2 border transition-all ${
-                        isExpanded ? 'bg-zinc-950 text-yellow-400 border-zinc-950' : 'bg-zinc-50 text-zinc-400 border-zinc-200'
-                      }`}>
+                      <div 
+                        className="p-2 border transition-all"
+                        style={{
+                          backgroundColor: isExpanded ? 'var(--accent)' : 'var(--bg-elevated)',
+                          color: isExpanded ? '#FFFFFF' : 'var(--text-muted)',
+                          borderColor: 'var(--border-default)'
+                        }}
+                      >
                         {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </div>
                     </button>
 
                     {isExpanded && (
-                      <div className="px-6 sm:px-8 pb-8 pt-2 border-t border-black/[0.06] space-y-4 animate-in fade-in duration-200">
-                        <p className="text-sm sm:text-base font-luxury-editorial text-zinc-800 leading-relaxed">
+                      <div 
+                        className="px-6 sm:px-8 pb-8 pt-2 border-t space-y-4 animate-in fade-in duration-200"
+                        style={{ borderColor: 'var(--border-subtle)' }}
+                      >
+                        <p className="text-sm sm:text-base font-luxury-editorial leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                           {faq.detailedAnswer}
                         </p>
 
-                        <div className="p-3 bg-zinc-50 border border-zinc-200 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono-numbers text-zinc-500">
+                        <div 
+                          className="p-3 border flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono-numbers"
+                          style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)', color: 'var(--text-muted)' }}
+                        >
                           <span>Verification: Ed25519 Cryptographic Block Proof</span>
-                          <span className="text-emerald-700 font-bold uppercase">✓ 100% Mathematically Proven</span>
+                          <span className="font-bold uppercase" style={{ color: 'var(--accent)' }}>✓ 100% Mathematically Proven</span>
                         </div>
                       </div>
                     )}
@@ -789,22 +972,32 @@ export const AboutCaseStudyPage: FC = () => {
           </div>
 
           {/* Direct Concierge Contact Box */}
-          <div className="mt-12 p-8 sm:p-12 border border-black/[0.08] bg-zinc-950 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+          <div 
+            className="mt-12 p-8 sm:p-12 border flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl"
+            style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-default)' }}
+          >
             <div className="space-y-2 text-center md:text-left">
-              <span className="text-[10px] font-mono-numbers uppercase tracking-[0.3em] text-yellow-400 font-bold block">
+              <span 
+                className="text-[10px] font-mono-numbers uppercase tracking-[0.3em] font-bold block"
+                style={{ color: 'var(--accent)' }}
+              >
                 SYSTEM ARCHITECT CONCIERGE
               </span>
               <h3 className="text-2xl sm:text-3xl font-luxury-editorial">
                 Require a bespoke integration or telematics consultation?
               </h3>
-              <p className="text-xs font-luxury-editorial text-zinc-400 italic max-w-xl">
+              <p className="text-xs font-luxury-editorial italic max-w-xl" style={{ color: 'var(--text-secondary)' }}>
                 The DATUM systems engineering council is available for custom MoTeC CAN-bus integrations and private guild deployments.
               </p>
             </div>
 
             <Link
               to="/pro"
-              className="px-6 py-3 bg-yellow-400 text-zinc-950 font-bold text-xs font-mono-numbers uppercase tracking-widest hover:bg-yellow-300 transition whitespace-nowrap"
+              className="px-6 py-3 font-bold text-xs font-mono-numbers uppercase tracking-widest transition whitespace-nowrap shadow-md"
+              style={{
+                backgroundColor: 'var(--accent)',
+                color: '#09090B'
+              }}
             >
               Consult System Architect
             </Link>
@@ -816,7 +1009,10 @@ export const AboutCaseStudyPage: FC = () => {
       {/* ========================================================= */}
       {/* 6. EDITORIAL COLOPHON & FOOTER                            */}
       {/* ========================================================= */}
-      <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-12 border-t border-black/[0.08] text-center text-xs font-mono-numbers text-zinc-500 space-y-4">
+      <footer 
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-12 border-t text-center text-xs font-mono-numbers space-y-4"
+        style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
+      >
         <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] uppercase tracking-[0.25em]">
           <span>DATUM ATELIER // VOL. IV</span>
           <span>•</span>
@@ -824,7 +1020,7 @@ export const AboutCaseStudyPage: FC = () => {
           <span>•</span>
           <span>AUTHORED BY vD</span>
         </div>
-        <p className="text-xs font-luxury-editorial italic text-zinc-400 max-w-lg mx-auto">
+        <p className="text-xs font-luxury-editorial italic max-w-lg mx-auto opacity-70">
           "Precision in mechanics. Integrity in code. Sanctity in camaraderie."
         </p>
       </footer>
