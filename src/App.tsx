@@ -15,6 +15,7 @@ import { AcousticStudioModal } from './components/common/AcousticStudioModal';
 import { PassGripRadarModal } from './components/telemetry/PassGripRadarModal';
 import { TransitCarnetModal } from './components/logistics/TransitCarnetModal';
 import { SplashScreen } from './components/common/SplashScreen';
+import { BackendInspectorModal } from './components/system/BackendInspectorModal';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { mockFeedPosts } from './data/mockData';
@@ -31,7 +32,7 @@ function AppContent() {
   const [isPassRadarOpen, setIsPassRadarOpen] = useState<boolean>(false);
   const [passRadarTarget, setPassRadarTarget] = useState<string>('snake-pass-a57');
   const [isTransitCarnetOpen, setIsTransitCarnetOpen] = useState<boolean>(false);
-  
+  const [isBackendInspectorOpen, setIsBackendInspectorOpen] = useState<boolean>(false);
   // Splash screen state: checks localStorage skip setting
   const [showSplash, setShowSplash] = useState<boolean>(() => {
     return localStorage.getItem('garage_splash_skip') !== 'true';
@@ -100,6 +101,7 @@ function AppContent() {
           onOpenAcousticStudio={() => setIsAcousticStudioOpen(true)}
           onOpenPassRadar={() => { setPassRadarTarget('snake-pass-a57'); setIsPassRadarOpen(true); }}
           onOpenTransitCarnet={() => setIsTransitCarnetOpen(true)}
+          onOpenBackendInspector={() => setIsBackendInspectorOpen(true)}
         />
 
         {/* Dynamic Route Viewport */}
@@ -209,6 +211,12 @@ function AppContent() {
         <TransitCarnetModal
           isOpen={isTransitCarnetOpen}
           onClose={() => setIsTransitCarnetOpen(false)}
+        />
+
+        {/* Modal: Live Backend Systems Inspector & Control Room */}
+        <BackendInspectorModal
+          isOpen={isBackendInspectorOpen}
+          onClose={() => setIsBackendInspectorOpen(false)}
         />
 
       </div>

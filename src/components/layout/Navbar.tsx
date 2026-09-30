@@ -25,6 +25,7 @@ interface NavbarProps {
   onOpenAcousticStudio?: () => void;
   onOpenPassRadar?: () => void;
   onOpenTransitCarnet?: () => void;
+  onOpenBackendInspector?: () => void;
 }
 
 export type FontMode = 'horlogerie' | 'modernist' | 'technical';
@@ -35,7 +36,8 @@ export const Navbar: FC<NavbarProps> = ({
   onOpenSplashScreen,
   onOpenAcousticStudio,
   onOpenPassRadar,
-  onOpenTransitCarnet
+  onOpenTransitCarnet,
+  onOpenBackendInspector
 }) => {
   const { theme, setTheme, themeMeta } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
@@ -472,6 +474,22 @@ export const Navbar: FC<NavbarProps> = ({
               </button>
             )}
 
+            {/* Backend Systems Inspector trigger */}
+            {onOpenBackendInspector && (
+              <button
+                onClick={onOpenBackendInspector}
+                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-mono-numbers transition cursor-pointer"
+                style={{
+                  backgroundColor: 'var(--bg-elevated)',
+                  borderColor: 'var(--border-default)',
+                  color: 'var(--text-secondary)'
+                }}
+                title="Backend Systems Inspector"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Inspector</span>
+              </button>
+            )}
             {/* Quick Create Post Action */}
             <button
               onClick={() => onOpenCreatePost('post')}
