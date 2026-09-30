@@ -11,7 +11,10 @@ import {
   FileText, 
   CheckCircle2, 
   Wind, 
-  Thermometer
+  Thermometer,
+  Zap,
+  Activity,
+  Maximize2
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -21,7 +24,7 @@ interface SplashScreenProps {
   carModel?: string;
 }
 
-export type PersonaId = 'maya' | 'kuro' | 'dan' | 'expedition';
+export type PersonaId = 'empty' | 'maya' | 'kuro' | 'dan' | 'expedition';
 
 interface AtelierChassis {
   id: PersonaId;
@@ -47,6 +50,8 @@ interface AtelierChassis {
   imageSrc: string;
   fobMaterial: string;
   fobAccent: string;
+  fuelPressureBar: number;
+  batteryVolts: number;
   microClimate: {
     tempC: number;
     frictionMu: number;
@@ -57,6 +62,40 @@ interface AtelierChassis {
 }
 
 const ATELIER_CHASSIS_ROSTER: Record<PersonaId, AtelierChassis> = {
+  empty: {
+    id: 'empty',
+    name: 'SANCTUARY BAY 01',
+    badgeLabel: 'Empty Bay',
+    make: 'DATUM Architectural Atelier',
+    model: 'Mayfair Private Collector Vault',
+    chassisCode: 'BAY-01-MAYFAIR-LONDON',
+    curator: 'vD — Sovereign Custody',
+    location: 'Mayfair, Central London',
+    locationDetails: 'Pristine acoustic-slatted chamber • Polished reflective grey epoxy • Climate controlled 20.5°C',
+    paintName: 'Architectural Oak & Brushed Titanium',
+    paintHex: '#EAB308',
+    power: 'Vault Ready',
+    torque: '100% Induction',
+    redlineRpm: 8000,
+    idleRpm: 0,
+    engineSpec: 'Atmospheric Air Filtration • HEPA Enclave',
+    setupSpec: 'Linear LED Floor Guides • Recessed Ceiling Luminescence',
+    mileage: '0 mi (Chamber)',
+    healthScore: 100,
+    dvsaPassHash: 'VAULT-SANCTUARY-2026',
+    imageSrc: '/empty_atelier_garage.jpg',
+    fobMaterial: 'Solid Milled Titanium Master Chamber Key',
+    fobAccent: '#EAB308',
+    fuelPressureBar: 0,
+    batteryVolts: 12.8,
+    microClimate: {
+      tempC: 20.5,
+      frictionMu: 0.99,
+      barometerHpa: 1020,
+      weatherDesc: 'Climate Controlled • Zero Humidity Drift',
+      windMph: 0
+    }
+  },
   maya: {
     id: 'maya',
     name: 'MAYA',
@@ -81,6 +120,8 @@ const ATELIER_CHASSIS_ROSTER: Record<PersonaId, AtelierChassis> = {
     imageSrc: '/real_uk_m3_cottage.jpg',
     fobMaterial: 'Milled Titanium & British Racing Green Alcantara',
     fobAccent: '#EAB308',
+    fuelPressureBar: 5.8,
+    batteryVolts: 12.6,
     microClimate: {
       tempC: 7.2,
       frictionMu: 0.74,
@@ -113,6 +154,8 @@ const ATELIER_CHASSIS_ROSTER: Record<PersonaId, AtelierChassis> = {
     imageSrc: '/real_uk_gt3_suburb.jpg',
     fobMaterial: 'Billet Chalk Aluminum with Guards Red Lanyard',
     fobAccent: '#FACC15',
+    fuelPressureBar: 5.5,
+    batteryVolts: 12.5,
     microClimate: {
       tempC: 6.4,
       frictionMu: 0.82,
@@ -145,6 +188,8 @@ const ATELIER_CHASSIS_ROSTER: Record<PersonaId, AtelierChassis> = {
     imageSrc: '/real_uk_e30_terrace.jpg',
     fobMaterial: '1989 Bavarian Stamped Brass & Munich Leather Roundel',
     fobAccent: '#EAB308',
+    fuelPressureBar: 3.2,
+    batteryVolts: 12.2,
     microClimate: {
       tempC: 9.1,
       frictionMu: 0.78,
@@ -177,6 +222,8 @@ const ATELIER_CHASSIS_ROSTER: Record<PersonaId, AtelierChassis> = {
     imageSrc: '/real_uk_defender_farm.jpg',
     fobMaterial: 'Knurled Gunmetal Stainless Steel & Paracord',
     fobAccent: '#EAB308',
+    fuelPressureBar: 6.0,
+    batteryVolts: 12.7,
     microClimate: {
       tempC: 5.8,
       frictionMu: 0.69,
@@ -190,9 +237,15 @@ const ATELIER_CHASSIS_ROSTER: Record<PersonaId, AtelierChassis> = {
 export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
   const { isWhiteYellow } = useTheme();
   const [activePersona, setActivePersona] = useState<PersonaId>('maya');
-  const [keyPosition, setKeyPosition] = useState<0 | 1 | 2>(0); // 0: Lock, 1: ACC / Telemetry, 2: IGNITION
+  const [keyPosition, setKeyPosition] = useState<0 | 1 | 2>(0); // 0: LOCK, 1: ACC / TELEMETRY, 2: IGNITION
   const [isAdmitting, setIsAdmitting] = useState<boolean>(false);
   const [tachometerRpm, setTachometerRpm] = useState<number>(0);
+  const [fluidFuelPressure, setFluidFuelPressure] = useState<number>(0);
+  const [batteryVoltage, setBatteryVoltage] = useState<number>(12.4);
+  const [isEngineRunning, setIsEngineRunning] = useState<boolean>(false);
+  const [ignitionPulseFlash, setIgnitionPulseFlash] = useState<boolean>(false);
+  const [forceEmptyBackdrop, setForceEmptyBackdrop] = useState<boolean>(false);
+
   const [audioEnabled, setAudioEnabled] = useState<boolean>(() => {
     return localStorage.getItem('garage_splash_audio') !== 'false';
   });
@@ -227,7 +280,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     }
   }, []);
 
-  // Web Audio engine synthesis for tactile key mechanical clicks and engine ignition
+  // Web Audio engine synthesis
   const getAudioContext = () => {
     if (!audioCtxRef.current) {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -245,36 +298,36 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       const ctx = getAudioContext();
       if (!ctx) return;
 
-      // Mechanical lock cylinder snap
+      // Crisp mechanical lock tumbler contact
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(420, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.05);
+      osc.frequency.setValueAtTime(480, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.04);
 
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 0.07);
+      osc.stop(ctx.currentTime + 0.06);
 
       // Low fuel pump relay hum on ACC
       const pump = ctx.createOscillator();
       const pumpGain = ctx.createGain();
       pump.type = 'sine';
-      pump.frequency.setValueAtTime(140, ctx.currentTime);
-      pumpGain.gain.setValueAtTime(0.01, ctx.currentTime);
-      pumpGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.08);
-      pumpGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      pump.frequency.setValueAtTime(160, ctx.currentTime + 0.02);
+      pumpGain.gain.setValueAtTime(0.01, ctx.currentTime + 0.02);
+      pumpGain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.08);
+      pumpGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
 
       pump.connect(pumpGain);
       pumpGain.connect(ctx.destination);
-      pump.start();
-      pump.stop(ctx.currentTime + 0.45);
+      pump.start(ctx.currentTime + 0.02);
+      pump.stop(ctx.currentTime + 0.55);
     } catch {
-      // Fallback if audio policy requires gesture
+      // Audio autoplay policy fallback
     }
   };
 
@@ -284,75 +337,93 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       const ctx = getAudioContext();
       if (!ctx) return;
 
-      // 1. Starter motor crank pulse (3 rhythmic pulses)
-      [0, 0.12, 0.24].forEach((timeOffset) => {
+      // 1. Starter motor crank pulse (3 rhythmic starter teeth engagements)
+      [0, 0.11, 0.22].forEach((timeOffset) => {
         const crank = ctx.createOscillator();
         const crankGain = ctx.createGain();
         crank.type = 'sawtooth';
-        crank.frequency.setValueAtTime(65, ctx.currentTime + timeOffset);
-        crankGain.gain.setValueAtTime(0.18, ctx.currentTime + timeOffset);
-        crankGain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + timeOffset + 0.09);
+        crank.frequency.setValueAtTime(72, ctx.currentTime + timeOffset);
+        crankGain.gain.setValueAtTime(0.22, ctx.currentTime + timeOffset);
+        crankGain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + timeOffset + 0.08);
         crank.connect(crankGain);
         crankGain.connect(ctx.destination);
         crank.start(ctx.currentTime + timeOffset);
-        crank.stop(ctx.currentTime + timeOffset + 0.1);
+        crank.stop(ctx.currentTime + timeOffset + 0.09);
       });
 
-      // 2. High-power ignition surge (engine fires up)
-      const fireTime = ctx.currentTime + 0.38;
+      // 2. High-power ignition surge (combustion flare)
+      const fireTime = ctx.currentTime + 0.36;
       const fireOsc = ctx.createOscillator();
       const fireFilter = ctx.createBiquadFilter();
       const fireGain = ctx.createGain();
 
       fireOsc.type = 'sawtooth';
-      fireOsc.frequency.setValueAtTime(55, fireTime);
-      fireOsc.frequency.exponentialRampToValueAtTime(240, fireTime + 0.3); // Flare to 2,500 RPM equivalent
-      fireOsc.frequency.exponentialRampToValueAtTime(car.idleRpm / 15, fireTime + 0.9); // Settle to idle
+      fireOsc.frequency.setValueAtTime(60, fireTime);
+      fireOsc.frequency.exponentialRampToValueAtTime(260, fireTime + 0.35); // Rev flare
+      fireOsc.frequency.exponentialRampToValueAtTime(Math.max(50, car.idleRpm / 14), fireTime + 0.95);
 
       fireFilter.type = 'lowpass';
-      fireFilter.frequency.setValueAtTime(180, fireTime);
-      fireFilter.frequency.exponentialRampToValueAtTime(850, fireTime + 0.3);
-      fireFilter.frequency.exponentialRampToValueAtTime(280, fireTime + 0.9);
+      fireFilter.frequency.setValueAtTime(220, fireTime);
+      fireFilter.frequency.exponentialRampToValueAtTime(950, fireTime + 0.35);
+      fireFilter.frequency.exponentialRampToValueAtTime(320, fireTime + 0.95);
 
       fireGain.gain.setValueAtTime(0.01, fireTime);
-      fireGain.gain.linearRampToValueAtTime(0.38, fireTime + 0.2);
-      fireGain.gain.exponentialRampToValueAtTime(0.01, fireTime + 1.2);
+      fireGain.gain.linearRampToValueAtTime(0.42, fireTime + 0.22);
+      fireGain.gain.exponentialRampToValueAtTime(0.02, fireTime + 1.25);
 
       fireOsc.connect(fireFilter);
       fireFilter.connect(fireGain);
       fireGain.connect(ctx.destination);
 
       fireOsc.start(fireTime);
-      fireOsc.stop(fireTime + 1.3);
+      fireOsc.stop(fireTime + 1.35);
     } catch {
       // Audio autoplay policy fallback
     }
   };
 
-  // Turn Key to position 1 (ACC)
+  // Turn Key to Position I (ACC / Telemetry Prime)
   const handleKeyTurnAcc = () => {
     if (keyPosition === 0) {
       setKeyPosition(1);
       playKeyLatchClick();
-      setTachometerRpm(car.idleRpm);
+      setTachometerRpm(car.idleRpm > 0 ? car.idleRpm : 600);
+      setFluidFuelPressure(car.fuelPressureBar > 0 ? car.fuelPressureBar : 4.5);
+      setBatteryVoltage(12.6);
     }
   };
 
-  // Turn Key to position 2 (Ignition & Enter Atelier)
+  // Turn Key to Position II (Fluid Ignition & Admission)
   const handleKeyTurnIgnite = () => {
     setKeyPosition(2);
-    setIsAdmitting(true);
+    setIgnitionPulseFlash(true);
     playEngineIgnitionSound();
 
-    // Needle flare to redline
-    setTachometerRpm(car.redlineRpm * 0.75);
+    // Fluid ignition flare to redline
+    setTachometerRpm(car.redlineRpm * 0.78);
+    setFluidFuelPressure(car.fuelPressureBar * 1.4);
+    setBatteryVoltage(14.2); // Alternator charging voltage
+    setIsEngineRunning(true);
+
+    // Spring detention: key naturally springs back to Position I after firing
+    setTimeout(() => {
+      setKeyPosition(1);
+      setIgnitionPulseFlash(false);
+      setTachometerRpm(car.idleRpm > 0 ? car.idleRpm : 750);
+      setFluidFuelPressure(car.fuelPressureBar > 0 ? car.fuelPressureBar : 5.2);
+    }, 450);
+
+    // Smooth admission into the atelier
+    setTimeout(() => {
+      setIsAdmitting(true);
+    }, 850);
 
     localStorage.setItem('garage_splash_audio', String(audioEnabled));
     localStorage.setItem('garage_splash_skip', String(skipNextTime));
 
     setTimeout(() => {
       onEnter();
-    }, 750);
+    }, 1450);
   };
 
   const handleInstantBypass = () => {
@@ -365,7 +436,25 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
   useEffect(() => {
     setKeyPosition(0);
     setTachometerRpm(0);
+    setFluidFuelPressure(0);
+    setIsEngineRunning(false);
   }, [activePersona]);
+
+  // Subtle breathing idle pulse when engine is active
+  useEffect(() => {
+    if (!isEngineRunning || isAdmitting) return;
+    const interval = setInterval(() => {
+      const jitter = (Math.random() - 0.5) * 35;
+      const baseRpm = car.idleRpm > 0 ? car.idleRpm : 750;
+      setTachometerRpm(Math.round(baseRpm + jitter));
+    }, 180);
+    return () => clearInterval(interval);
+  }, [isEngineRunning, isAdmitting, car.idleRpm]);
+
+  // Current active backdrop image (empty garage or vehicle on-location)
+  const currentBackdrop = forceEmptyBackdrop || activePersona === 'empty' 
+    ? '/empty_atelier_garage.jpg' 
+    : car.imageSrc;
 
   return (
     <div 
@@ -377,7 +466,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     >
       
       {/* ========================================================= */}
-      {/* 1. MASTER PHOTOGRAPHIC CANVAS WITH SERENE ATELIER TINT    */}
+      {/* 1. MASTER PHOTOGRAPHIC CANVAS WITH REALISTIC DEPTH        */}
       {/* ========================================================= */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         
@@ -391,8 +480,8 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
           }}
         >
           <img
-            src={car.imageSrc}
-            alt={`${car.name} — ${car.location}`}
+            src={currentBackdrop}
+            alt={car.name}
             className={`w-full h-full object-cover object-center transition-all duration-1000 ${
               isAdmitting ? 'scale-105 filter brightness-105' : 'scale-100'
             }`}
@@ -402,11 +491,8 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
         {/* High-Society Alabaster & Racing Yellow Scrims */}
         {isWhiteYellow ? (
           <>
-            {/* Top gradient for navbar clarity */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#F8F9FA]/90 via-[#F8F9FA]/40 to-[#F8F9FA]/85 pointer-events-none" />
-            {/* Horizontal reading balance */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#F8F9FA]/95 via-[#F8F9FA]/60 to-transparent pointer-events-none" />
-            {/* Golden hour warm atelier glow */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#F8F9FA]/90 via-[#F8F9FA]/35 to-[#F8F9FA]/85 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#F8F9FA]/95 via-[#F8F9FA]/55 to-transparent pointer-events-none" />
             <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-yellow-400/10 rounded-full blur-[140px] pointer-events-none" />
           </>
         ) : (
@@ -415,13 +501,21 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-transparent to-black/75 pointer-events-none" />
           </>
         )}
+
+        {/* Fluid Ignition Combustion Shockwave Ripple */}
+        {ignitionPulseFlash && (
+          <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
+            <div className="w-[800px] h-[800px] rounded-full border-4 border-yellow-400/80 animate-ping opacity-60 blur-xs" />
+            <div className="absolute inset-0 bg-yellow-400/15 animate-in fade-in duration-100" />
+          </div>
+        )}
       </div>
 
       {/* ========================================================= */}
       {/* 2. TOP ATELIER CONCIERGE BAR                              */}
       {/* ========================================================= */}
       <header className={`relative z-20 px-6 sm:px-10 py-5 flex items-center justify-between border-b backdrop-blur-xl ${
-        isWhiteYellow ? 'bg-white/80 border-zinc-200/90 shadow-xs' : 'bg-black/40 border-white/10'
+        isWhiteYellow ? 'bg-white/85 border-zinc-200/90 shadow-xs' : 'bg-black/40 border-white/10'
       }`}>
         
         {/* Brand identity */}
@@ -431,22 +525,40 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm tracking-[0.25em] font-luxury-display uppercase">
+              <span className="font-bold text-sm tracking-[0.25em] font-luxury-display uppercase text-zinc-950">
                 DATUM ATELIER
               </span>
               <span className="text-[9px] font-mono-numbers px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-950 font-bold border border-yellow-300 uppercase">
-                CURATED ADMISSION
+                SOVEREIGN ADMISSION
               </span>
             </div>
             <p className="text-[10px] text-zinc-500 font-mono-numbers mt-0.5">
-              High-Society Automotive Provenance & Sovereign Digital Custody
+              High-Society Automotive Provenance & Handover Protocol
             </p>
           </div>
         </div>
 
-        {/* Quick controls: Sound, Skip, Instant Enter */}
-        <div className="flex items-center gap-3">
+        {/* Quick controls: Empty Garage Toggle, Sound, Bypass */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
           
+          {/* Empty Garage Backdrop Switcher */}
+          <button
+            onClick={() => setForceEmptyBackdrop(!forceEmptyBackdrop)}
+            className={`px-3 py-1.5 rounded-full border text-xs font-mono-numbers transition flex items-center gap-1.5 shadow-xs ${
+              forceEmptyBackdrop
+                ? 'bg-yellow-400 text-zinc-950 font-bold border-yellow-500 shadow-sm'
+                : isWhiteYellow
+                ? 'bg-white/90 border-zinc-200 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-50'
+                : 'bg-black/60 border-white/10 text-zinc-300 hover:text-white'
+            }`}
+            title="Toggle between Empty Architectural Bay and Vehicle On-Location"
+          >
+            <Maximize2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline font-semibold">
+              {forceEmptyBackdrop ? 'Empty Bay Active' : 'View Empty Bay'}
+            </span>
+          </button>
+
           {/* Audio toggle */}
           <button
             onClick={() => setAudioEnabled(!audioEnabled)}
@@ -460,7 +572,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
             {audioEnabled ? (
               <>
                 <Volume2 className="w-3.5 h-3.5 text-yellow-600" />
-                <span className="hidden md:inline font-semibold">Sound Active</span>
+                <span className="hidden md:inline font-semibold">Sound On</span>
               </>
             ) : (
               <>
@@ -556,7 +668,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
                     {car.name}
                   </h1>
                   <p className="text-xs text-zinc-600 font-medium">
-                    {car.model}
+                    {car.locationDetails}
                   </p>
                 </div>
 
@@ -566,7 +678,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
                     <span>{car.healthScore}% HEALTH</span>
                   </span>
                   <p className="text-[10px] font-mono-numbers text-zinc-400 mt-1">
-                    {car.mileage} Logged
+                    {car.mileage}
                   </p>
                 </div>
               </div>
@@ -614,72 +726,102 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
             </div>
           </div>
 
-          {/* RIGHT 5 COLS: The Interactive Titanium Handover Key & Ignition */}
-          <div className={`lg:col-span-5 rounded-3xl border p-6 backdrop-blur-2xl shadow-md flex flex-col items-center justify-between space-y-5 ${
+          {/* RIGHT 5 COLS: The Ultra-Realistic Fluid Ignition Cylinder & Key Fob */}
+          <div className={`lg:col-span-5 rounded-3xl border p-6 backdrop-blur-2xl shadow-md flex flex-col items-center justify-between space-y-4 relative overflow-hidden ${
             isWhiteYellow ? 'bg-white/95 border-zinc-200 text-zinc-900' : 'bg-zinc-950/90 border-white/10 text-white'
           }`}>
             
+            {/* Ambient metallic sheen highlight */}
+            <div className="absolute -top-16 -right-16 w-44 h-44 bg-yellow-400/10 rounded-full blur-2xl pointer-events-none" />
+
             <div className="w-full text-center space-y-1">
-              <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-yellow-600 font-bold block">
-                CUSTODIAN IGNITION PROTOCOL
-              </span>
+              <div className="flex items-center justify-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
+                <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-yellow-600 font-bold block">
+                  BILLET TITANIUM IGNITION CYLINDER
+                </span>
+              </div>
               <h3 className="text-base font-bold font-luxury-display uppercase text-zinc-950">
-                Turn Sovereign Key To Admit
+                Turn Sovereign Key To Fire
               </h3>
-              <p className="text-xs text-zinc-500 font-mono-numbers">
+              <p className="text-[11px] text-zinc-500 font-mono-numbers truncate">
                 {car.fobMaterial}
               </p>
             </div>
 
-            {/* Circular Ignition Cylinder & Key Fob */}
-            <div className="relative w-44 h-44 sm:w-48 sm:h-48 flex items-center justify-center my-2">
+            {/* Circular Realistic 3D Ignition Dial & Fluid Tachometer Gauge */}
+            <div className="relative w-48 h-48 sm:w-52 sm:h-52 flex items-center justify-center my-1">
               
-              {/* Outer Dial Flange with Tick Marks */}
-              <div className="absolute inset-0 rounded-full border-2 border-zinc-200 bg-gradient-to-tr from-zinc-100 via-white to-zinc-50 shadow-inner flex items-center justify-center">
-                {/* 3 Position Labels */}
-                <span className={`absolute top-3 text-[9px] font-mono-numbers font-bold ${keyPosition === 0 ? 'text-zinc-950' : 'text-zinc-400'}`}>
+              {/* Outer CNC Machined Flange with Engraved Tick Marks */}
+              <div 
+                className="absolute inset-0 rounded-full border-2 border-zinc-300 shadow-xl flex items-center justify-center"
+                style={{
+                  background: 'radial-gradient(circle at 40% 30%, #FFFFFF 0%, #F4F4F6 55%, #E2E3E7 100%)',
+                  boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.8), 0 10px 25px -4px rgba(0,0,0,0.1)'
+                }}
+              >
+                {/* Backlit Position Labels */}
+                <span className={`absolute top-2.5 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
+                  keyPosition === 0 ? 'text-zinc-950 font-black' : 'text-zinc-400'
+                }`}>
                   0 · LOCK
                 </span>
-                <span className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[9px] font-mono-numbers font-bold ${keyPosition === 1 ? 'text-yellow-600 font-black' : 'text-zinc-400'}`}>
+                <span className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
+                  keyPosition === 1 ? 'text-yellow-600 font-black' : 'text-zinc-400'
+                }`}>
                   I · ACC
                 </span>
-                <span className={`absolute bottom-3 text-[9px] font-mono-numbers font-bold ${keyPosition === 2 ? 'text-yellow-600 font-black animate-pulse' : 'text-zinc-400'}`}>
+                <span className={`absolute bottom-2.5 text-[9px] font-mono-numbers font-black tracking-wider transition-colors ${
+                  keyPosition === 2 ? 'text-yellow-600 font-black animate-pulse' : 'text-zinc-400'
+                }`}>
                   II · IGNITE
                 </span>
+
+                {/* 12 Concentric Milled Grooves */}
+                <div className="absolute inset-3 rounded-full border border-dashed border-zinc-300/80 pointer-events-none opacity-60" />
               </div>
 
-              {/* Live Tachometer SVG Gauge Ring */}
-              <svg className="absolute inset-1 w-[calc(100%-8px)] h-[calc(100%-8px)] pointer-events-none -rotate-90">
+              {/* Dynamic Fluid SVG Tachometer Gauge Ring */}
+              <svg className="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] pointer-events-none -rotate-90">
                 <circle
                   cx="50%"
                   cy="50%"
-                  r="78"
+                  r="86"
                   fill="none"
                   stroke={isWhiteYellow ? '#E4E4E7' : '#27272A'}
-                  strokeWidth="4"
-                  strokeDasharray="490"
-                  strokeDashoffset="120"
+                  strokeWidth="6"
+                  strokeDasharray="540"
+                  strokeDashoffset="130"
                 />
                 <circle
                   cx="50%"
                   cy="50%"
-                  r="78"
+                  r="86"
                   fill="none"
-                  stroke="#EAB308"
-                  strokeWidth="5"
-                  strokeDasharray="490"
-                  strokeDashoffset={490 - (tachometerRpm / car.redlineRpm) * 370}
+                  stroke="url(#yellowFlameGradient)"
+                  strokeWidth="7"
+                  strokeDasharray="540"
+                  strokeDashoffset={540 - (tachometerRpm / (car.redlineRpm || 8000)) * 410}
                   className="transition-all duration-300 ease-out"
                   strokeLinecap="round"
+                  filter="drop-shadow(0 0 6px rgba(234, 179, 8, 0.6))"
                 />
+                <defs>
+                  <linearGradient id="yellowFlameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FACC15" />
+                    <stop offset="50%" stopColor="#EAB308" />
+                    <stop offset="100%" stopColor="#CA8A04" />
+                  </linearGradient>
+                </defs>
               </svg>
 
-              {/* Central Billet Tumbler & Key Grip */}
+              {/* Central Billet Mechanical Key Barrel & Fob */}
               <div 
-                className="relative z-10 w-28 h-28 rounded-full border-2 border-zinc-300 shadow-xl flex items-center justify-center transition-transform duration-300 ease-out cursor-pointer group"
+                className="relative z-10 w-32 h-32 rounded-full border-2 border-zinc-300/90 shadow-2xl flex items-center justify-center transition-transform duration-300 ease-out cursor-pointer active:scale-95 group"
                 style={{
-                  background: 'linear-gradient(135deg, #FFFFFF 0%, #F4F4F5 50%, #E4E4E7 100%)',
-                  transform: keyPosition === 0 ? 'rotate(0deg)' : keyPosition === 1 ? 'rotate(45deg)' : 'rotate(90deg)'
+                  background: 'linear-gradient(145deg, #FFFFFF 0%, #EDEDF0 50%, #D8D9DE 100%)',
+                  transform: keyPosition === 0 ? 'rotate(0deg)' : keyPosition === 1 ? 'rotate(45deg)' : 'rotate(90deg)',
+                  boxShadow: '0 8px 24px -2px rgba(0,0,0,0.18), inset 0 2px 3px rgba(255,255,255,0.9)'
                 }}
                 onClick={() => {
                   if (keyPosition === 0) handleKeyTurnAcc();
@@ -687,14 +829,57 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
                 }}
               >
                 {/* Laser-Cut Key Slot */}
-                <div className="w-14 h-4 rounded-md bg-zinc-900 border border-zinc-700 shadow-inner flex items-center justify-center relative">
-                  <div className="w-8 h-1 bg-yellow-400 rounded-full shadow-[0_0_8px_#EAB308]" />
-                  <Key className="w-3 h-3 text-zinc-400 absolute right-1 pointer-events-none" />
+                <div className="w-16 h-4 rounded-md bg-zinc-950 border border-zinc-700 shadow-inner flex items-center justify-between px-2 relative overflow-hidden">
+                  <div className={`h-1.5 rounded-full transition-all duration-300 ${
+                    keyPosition > 0 ? 'w-10 bg-yellow-400 shadow-[0_0_12px_#EAB308]' : 'w-2 bg-zinc-600'
+                  }`} />
+                  <Key className={`w-3.5 h-3.5 transition-colors ${keyPosition > 0 ? 'text-yellow-400' : 'text-zinc-500'}`} />
                 </div>
 
-                {/* Rotating Indicator Arrow */}
-                <div className="absolute top-1.5 w-1.5 h-3 bg-yellow-500 rounded-full" />
+                {/* Rotating Billet Position Needle Arrow */}
+                <div className="absolute top-2 w-2 h-3.5 bg-yellow-500 rounded-full shadow-sm" />
+
+                {/* Tactile Key Fob Wing (Physical Luxury Handle) */}
+                <div 
+                  className="absolute -top-7 w-7 h-10 rounded-t-xl border border-zinc-400/80 shadow-md flex items-center justify-center pointer-events-none transition-transform duration-300 group-hover:-translate-y-1"
+                  style={{
+                    background: 'linear-gradient(180deg, #E4E4E7 0%, #A1A1AA 100%)'
+                  }}
+                >
+                  <div className="w-2.5 h-2.5 rounded-full bg-zinc-900 border border-white/40" />
+                </div>
               </div>
+            </div>
+
+            {/* Fluid Mechanical Telemetry Gauges (RPM, Fuel Pressure, Battery) */}
+            <div className="w-full grid grid-cols-3 gap-2 text-center text-xs font-mono-numbers py-1">
+              
+              {/* Tachometer Readout */}
+              <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/90">
+                <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Tachometer</span>
+                <span className="font-bold text-zinc-950 text-xs mt-0.5 block flex items-center justify-center gap-1">
+                  <Activity className="w-3 h-3 text-yellow-600" />
+                  {tachometerRpm} <span className="text-[9px] text-zinc-400">RPM</span>
+                </span>
+              </div>
+
+              {/* Fluid Fuel Pressure Bar */}
+              <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/90">
+                <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Fuel Rail</span>
+                <span className="font-bold text-yellow-700 text-xs mt-0.5 block flex items-center justify-center gap-1">
+                  <Zap className="w-3 h-3 text-yellow-600" />
+                  {fluidFuelPressure.toFixed(1)} <span className="text-[9px] text-zinc-400">bar</span>
+                </span>
+              </div>
+
+              {/* Battery Charge */}
+              <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/90">
+                <span className="text-[9px] text-zinc-500 uppercase block font-semibold">Electrical</span>
+                <span className="font-bold text-zinc-950 text-xs mt-0.5 block">
+                  {batteryVoltage.toFixed(1)} <span className="text-[9px] text-zinc-400">V</span>
+                </span>
+              </div>
+
             </div>
 
             {/* Action CTAs */}
@@ -702,24 +887,27 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
               {keyPosition === 0 ? (
                 <button
                   onClick={handleKeyTurnAcc}
-                  className="w-full py-3 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full py-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm border border-zinc-800 active:scale-98"
                 >
                   <Key className="w-4 h-4 text-yellow-400" />
-                  <span>Insert & Turn Key to [I · ACC]</span>
+                  <span>Turn Key to [I · ACC] (Prime Circuit)</span>
                 </button>
               ) : (
                 <button
                   onClick={handleKeyTurnIgnite}
                   disabled={isAdmitting}
-                  className="w-full py-3 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-2 shadow-md border border-yellow-500 animate-pulse"
+                  className="w-full py-3 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-2 shadow-md border border-yellow-500 animate-pulse active:scale-98"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>Turn to [II · IGNITE] & Enter Atelier</span>
+                  <span>Fire Key to [II · IGNITE] & Enter Atelier</span>
                 </button>
               )}
 
-              <div className="flex items-center justify-between text-[11px] font-mono-numbers text-zinc-500 px-1 pt-1">
-                <span>RPM: <strong className="text-zinc-900 font-bold">{tachometerRpm}</strong></span>
+              <div className="flex items-center justify-between text-[11px] font-mono-numbers text-zinc-500 px-1">
+                <span className="flex items-center gap-1">
+                  <span className={`w-2 h-2 rounded-full ${isEngineRunning ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-400'}`} />
+                  <span>{isEngineRunning ? 'Powertrain Live' : 'Ready for Induction'}</span>
+                </span>
                 <button
                   onClick={handleInstantBypass}
                   className="hover:text-yellow-600 transition underline underline-offset-2"
@@ -750,7 +938,10 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
               return (
                 <button
                   key={pKey}
-                  onClick={() => setActivePersona(pKey)}
+                  onClick={() => {
+                    setActivePersona(pKey);
+                    if (pKey === 'empty') setForceEmptyBackdrop(true);
+                  }}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-mono-numbers font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${
                     isSelected
                       ? 'bg-yellow-400 text-zinc-950 font-bold border border-yellow-500 shadow-sm'
