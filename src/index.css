@@ -1,0 +1,343 @@
+@import "tailwindcss";
+
+/* ================================================================
+   GARAGE — GLOBAL DESIGN TOKENS
+   Ref: Porsche Design System + Material Dark + Spotify dark-first
+   ================================================================ */
+
+@layer base {
+  /* ================================================================
+     GARAGE — GLOBAL DESIGN TOKENS
+     Default: High-Society White & Racing Yellow Luxury Atelier
+     ================================================================ */
+  :root,
+  .theme-white-yellow {
+    /* Background depth staircase — warm porcelain & gallery white */
+    --bg-void:       #F8F9FA;   /* Page root — Gallery Alabaster White */
+    --bg-surface:    #FFFFFF;   /* Cards, panels */
+    --bg-elevated:   #F4F4F5;   /* Hover, dropdowns, inputs */
+    --bg-overlay:    #E4E4E7;   /* Tooltips, skeletons */
+
+    /* Text — deep obsidian & crisp ink readability */
+    --text-primary:   #09090B;  /* Ink black — headlines */
+    --text-secondary: #52525B;  /* Zinc-600 — captions */
+    --text-muted:     #71717A;  /* Zinc-500 — disabled */
+
+    /* Borders — delicate hairline */
+    --border-subtle:  rgba(0, 0, 0, 0.06);
+    --border-default: rgba(0, 0, 0, 0.09);
+    --border-active:  rgba(234, 179, 8, 0.45);
+
+    /* Accent — Racing Speed Yellow */
+    --accent:         #EAB308;  /* Vibrant Racing Yellow */
+    --accent-glow:    rgba(234, 179, 8, 0.25);
+  }
+
+  .theme-obsidian {
+    --bg-void:       #09090B;   /* Zinc-950 */
+    --bg-surface:    #111113;
+    --bg-elevated:   #1C1C1F;
+    --bg-overlay:    #28282D;
+
+    --text-primary:   #F4F4F5;
+    --text-secondary: #A1A1AA;
+    --text-muted:     #52525B;
+
+    --border-subtle:  rgba(255, 255, 255, 0.06);
+    --border-default: rgba(255, 255, 255, 0.09);
+    --border-active:  rgba(245, 158, 11, 0.30);
+
+    --accent:         #F59E0B;
+    --accent-glow:    rgba(245, 158, 11, 0.18);
+  }
+
+  body {
+    background-color: #F8F9FA;
+    color: #09090B;
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    /* Subtle paper grain overlay for tactile editorial depth */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .theme-obsidian body {
+    background-color: #09090B;
+    color: #F4F4F5;
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
+  }
+}
+
+/* JetBrains Mono for all data/metrics */
+.font-mono-numbers {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* Haute Horlogerie / Bespoke Automotive Serif */
+.font-luxury-display {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.12em;
+}
+
+.font-luxury-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Metallic and Foil Accents */
+.foil-gold {
+  background: linear-gradient(135deg, #FFF6DD 0%, #D4AF37 40%, #AA7C11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.foil-platinum {
+  background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.foil-emerald {
+  background: linear-gradient(135deg, #A7F3D0 0%, #34D399 45%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Stamped Chassis Metal Plate */
+.chassis-plate {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F4F4F5 100%);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.theme-obsidian .chassis-plate {
+  background: linear-gradient(180deg, rgba(30, 32, 40, 0.95) 0%, rgba(14, 15, 20, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 30px rgba(0, 0, 0, 0.7);
+}
+
+/* Posh Atelier Card */
+.posh-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.posh-card:hover {
+  border-color: rgba(234, 179, 8, 0.45);
+  box-shadow: 0 16px 40px rgba(234, 179, 8, 0.12);
+}
+
+.theme-obsidian .posh-card {
+  background: rgba(14, 15, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.theme-obsidian .posh-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Automatic plate redaction overlay */
+.plate-blur {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background-color: rgba(9, 9, 11, 0.82);
+}
+
+/* ================================================================
+   CARD PRIMITIVES — White & Yellow Default / Obsidian Toggle
+   ================================================================ */
+
+.card-surface {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 26px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-surface:hover {
+  transform: translateY(-2px);
+  border-color: rgba(234, 179, 8, 0.45);
+  box-shadow: 0 12px 30px -4px rgba(234, 179, 8, 0.15), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.card-surface-elevated {
+  background: #F4F4F5;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 18px;
+}
+
+.theme-obsidian .card-surface {
+  background: linear-gradient(180deg, rgba(22, 22, 28, 0.72) 0%, rgba(13, 13, 17, 0.94) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.theme-obsidian .card-surface:hover {
+  border-color: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(245, 158, 11, 0.12);
+}
+
+.theme-obsidian .card-surface-elevated {
+  background: rgba(26, 26, 32, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Racing Yellow accent glow */
+.accent-glow {
+  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.35), 0 0 18px rgba(234, 179, 8, 0.20);
+}
+
+/* ================================================================
+   TYPOGRAPHY SCALE
+   Ref: Bentley/Rolls-Royce digital + Spotify irradiation rules
+   ================================================================ */
+
+/* Display — splash screen car names */
+.text-display {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: #09090B;
+}
+
+.theme-obsidian .text-display {
+  color: #F4F4F5;
+}
+
+/* Handle / author name */
+.text-handle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #09090B;
+  letter-spacing: -0.01em;
+}
+
+.theme-obsidian .text-handle {
+  color: #F4F4F5;
+}
+
+/* Caption body */
+.text-body {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #52525B;
+  line-height: 1.6;
+}
+
+.theme-obsidian .text-body {
+  color: #A1A1AA;
+}
+
+/* ================================================================
+   STORY AVATAR RINGS — Racing Yellow Conic Gradients
+   ================================================================ */
+
+.ring-maya {
+  background: conic-gradient(from 0deg, #FACC15, #EAB308, #FDE047, #CA8A04, #FACC15);
+}
+.ring-kuro {
+  background: conic-gradient(from 0deg, #F59E0B, #D97706, #FBBF24, #F59E0B);
+}
+.ring-community {
+  background: conic-gradient(from 0deg, #FDE047, #FACC15, #CA8A04, #FDE047);
+}
+.ring-unseen {
+  background: rgba(234, 179, 8, 0.25);
+}
+
+.theme-obsidian .ring-maya {
+  background: conic-gradient(from 0deg, #10B981, #059669, #34D399, #10B981);
+}
+.theme-obsidian .ring-kuro {
+  background: conic-gradient(from 0deg, #F59E0B, #D97706, #FBBF24, #F59E0B);
+}
+.theme-obsidian .ring-community {
+  background: conic-gradient(from 0deg, #E2E8F0, #94A3B8, #CBD5E1, #E2E8F0);
+}
+.theme-obsidian .ring-unseen {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ================================================================
+   SCROLLBARS
+   ================================================================ */
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #F8F9FA; }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.12); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.22); }
+
+.theme-obsidian ::-webkit-scrollbar-track { background: #09090B; }
+.theme-obsidian ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
+.theme-obsidian ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ================================================================
+   DRIVE TELEMETRY SCRUB BAR
+   ================================================================ */
+
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #EAB308;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.6);
+  transition: transform 0.15s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type=range]::-moz-range-thumb {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #EAB308;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.6);
+}
+
+.theme-obsidian input[type=range]::-webkit-slider-thumb {
+  background: #F59E0B;
+  border: 2px solid #F4F4F5;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+.theme-obsidian input[type=range]::-moz-range-thumb {
+  background: #F59E0B;
+  border: 2px solid #F4F4F5;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #F4F4F5 25%, #E4E4E7 50%, #F4F4F5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.theme-obsidian .skeleton {
+  background: linear-gradient(90deg, #1C1C1F 25%, #252528 50%, #1C1C1F 75%);
+}
