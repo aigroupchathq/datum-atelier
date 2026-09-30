@@ -83,7 +83,7 @@ const ATELIER_CHASSIS_ROSTER: Record<PersonaId, AtelierChassis> = {
     mileage: '0 mi (Chamber)',
     healthScore: 100,
     dvsaPassHash: 'VAULT-SANCTUARY-2026',
-    imageSrc: '/empty_atelier_garage.jpg',
+    imageSrc: '/splash_curated.jpg',
     fobMaterial: 'Solid Milled Titanium Master Chamber Key',
     fobAccent: '#EAB308',
     fuelPressureBar: 0,
@@ -453,7 +453,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
 
   // Current active backdrop image (empty garage or vehicle on-location)
   const currentBackdrop = forceEmptyBackdrop || activePersona === 'empty' 
-    ? '/empty_atelier_garage.jpg' 
+    ? '/splash_curated.jpg' 
     : car.imageSrc;
 
   return (
