@@ -1,10 +1,8 @@
 import type { FC } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Home, Compass, Users, Wrench, Shield, FileText } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
 
 export const MobileNav: FC = () => {
-  const { themeMeta } = useTheme();
 
   return (
     <nav 
@@ -101,7 +99,7 @@ export const MobileNav: FC = () => {
         <NavLink
           to="/car/car-maya-m3"
           style={({ isActive }) => ({
-            color: isActive ? themeMeta.accentHex : 'var(--text-muted)'
+            color: isActive ? 'var(--accent)' : 'var(--text-muted)'
           })}
           className={({ isActive }) =>
             `flex flex-col items-center gap-1 py-1 px-2.5 rounded-lg text-[10px] font-medium transition ${

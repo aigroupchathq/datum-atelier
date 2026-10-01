@@ -333,14 +333,14 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-luxury-display text-xs sm:text-sm font-bold tracking-[0.25em] text-amber-200 uppercase">
-                  VALVETRAIN ACOUSTIC ATELIER
+                  EXHAUST & VALVETRAIN SOUND STUDIO
                 </span>
                 <span className="text-[9px] font-mono-numbers px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/30 uppercase">
-                  WEB AUDIO SYNTHESIS
+                  LIVE AUDIO ENGINE
                 </span>
               </div>
               <p className="text-[11px] text-zinc-400 font-mono-numbers tracking-wider uppercase mt-0.5">
-                Real-Time Valvetrain Harmonic Analysis & Multi-Chassis Superposition
+                Real-Time Valvetrain & Exhaust Harmonics • Multi-Vehicle Comparison
               </p>
             </div>
           </div>
@@ -355,7 +355,7 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
               }`}
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>{compareMode ? 'Superposition Matrix: Active' : 'Single Vehicle'}</span>
+              <span>{compareMode ? 'Dual Comparison: Active' : 'Single Vehicle'}</span>
             </button>
 
             <button
@@ -381,7 +381,7 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
             <div className="flex items-center justify-between gap-3 border-b border-zinc-850 pb-4">
               <div>
                 <span className="text-[10px] font-mono-numbers text-amber-400 uppercase font-bold tracking-wider block">
-                  ACTIVE ACOUSTIC TEST BENCH
+                  ACTIVE VEHICLE SOUND PROFILE
                 </span>
                 <h3 className="text-xl sm:text-2xl font-bold text-white font-luxury-display uppercase tracking-wide mt-0.5">
                   {vehicleA.name} • {vehicleA.engineCode}

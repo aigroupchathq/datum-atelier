@@ -120,7 +120,7 @@ const VEHICLES: Record<PersonaId, VehiclePersona> = {
     make: 'DATUM Atelier',
     model: 'Mayfair Architectural Chamber 01',
     chassisCode: 'VAULT // BAY-01-LONDON',
-    engine: 'Acoustic Slatted HEPA Enclave',
+    engine: 'Acoustic Slatted Climate Studio',
     power: 'Vault Ready',
     torque: '100% Induction',
     redlineRpm: 8000,

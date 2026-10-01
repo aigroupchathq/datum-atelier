@@ -201,7 +201,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
       if (postType === 'BUILD_UPDATE') {
         enrichedContent += `\n\n[PROVENANCE LEDGER: ${componentCategory} fitted by ${workshopName} • £${invoicedCost} • Delta: ${performanceDelta} • VAT receipt cryptographically notarized]`;
       } else if (postType === 'DRIVE') {
-        enrichedContent += `\n\n[TELEMETRY: Surface ${surfaceCondition} • Fuel: ${fuelGrade} • Ambient: ${barometricPressure} • 800m residential perimeter cloaked]`;
+        enrichedContent += `\n\n[TELEMETRY: Surface ${surfaceCondition} • Fuel: ${fuelGrade} • Ambient: ${barometricPressure} • 800m residential perimeter protected]`;
       }
 
       onSubmitPost({
@@ -432,7 +432,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
                 {isVeilActive && (
                   <div className="text-center px-1">
                     <span className="text-[9px] font-mono-numbers text-zinc-300 tracking-widest uppercase block font-bold">
-                      {veilStyle === 'pixel' ? '▓▓▓▓▓▓▓' : '[CLOAKED]'}
+                      {veilStyle === 'pixel' ? '▓▓▓▓▓▓▓' : '[PROTECTED]'}
                     </span>
                   </div>
                 )}

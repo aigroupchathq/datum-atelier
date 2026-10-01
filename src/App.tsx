@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { MobileNav } from './components/layout/MobileNav';
 import { FeedPage } from './pages/FeedPage';
@@ -121,12 +121,14 @@ function AppContent() {
               } 
             />
             <Route path="/car/:carId" element={<CarProfilePage />} />
+            <Route path="/car" element={<Navigate to="/car/car-maya-m3" replace />} />
             <Route path="/drive/:driveId" element={<DriveDetailPage />} />
             <Route path="/explore" element={<ExplorePage />} />
             <Route path="/communities" element={<CommunitiesPage />} />
             <Route path="/pro" element={<GarageProPage />} />
             <Route path="/about" element={<AboutCaseStudyPage />} />
             <Route path="/case-study" element={<AboutCaseStudyPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
 

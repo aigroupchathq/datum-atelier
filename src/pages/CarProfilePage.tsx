@@ -147,7 +147,7 @@ const ATELIER_VEHICLES: Record<string, CarProfileData> = {
     vin: 'WBA-AF92-0019-E30',
     factoryColor: 'Brilliant Red (Brilliantrot 308)',
     location: 'Bristol Victorian Residential Street',
-    locationDetails: 'Victorian Terraced Bay Curbside • Plates Cloaked',
+    locationDetails: 'Victorian Terraced Bay Curbside • Plates Protected',
     heroImage: '/real_uk_e30_terrace.jpg',
     coverImage: '/real_uk_e30_terrace.jpg',
     engineSpec: '1.8L 16V M42 Twin-Cam Inline-4',
@@ -879,7 +879,7 @@ export const CarProfilePage: FC = () => {
                 </span>
                 <span className="px-3 py-1 rounded-full text-xs font-mono-numbers text-zinc-400 bg-white/[0.04] border border-white/[0.08] flex items-center gap-1">
                   <Lock className="w-3 h-3 text-zinc-500" />
-                  REG: [CLOAKED]
+                  REG: [PROTECTED]
                 </span>
               </div>
               <p className="text-sm sm:text-base text-zinc-300 font-mono-numbers mt-1.5 font-medium">
