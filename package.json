@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "test": "tsx --test tests/gripCalculation.test.mjs",
+    "test": "tsx --test tests/gripCalculation.test.mjs tests/openMeteoWeather.test.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },

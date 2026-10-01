@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { FC } from 'react';
 import { 
   X, 
@@ -11,7 +11,7 @@ import {
   Navigation, 
   CheckCircle2, 
   Copy, 
-  Sparkles,
+  Sparkles, 
   RefreshCw,
   Eye,
   Info,
@@ -22,6 +22,7 @@ import {
 import { useToast } from '../../context/ToastContext';
 import { calculateRoadGrip } from '../../utils/gripCalculation';
 import { GripCalculatorModal } from './GripCalculatorModal';
+import { fetchPassLiveWeather, type PassLiveWeatherData } from '../../utils/openMeteoWeather';
 
 export interface PassTelemetryData {
   id: string;
@@ -202,25 +203,53 @@ export const PassGripRadarModal: FC<PassGripRadarModalProps> = ({
   const [selectedPassId, setSelectedPassId] = useState<string>(initialPassId);
   const [simColdDrop, setSimColdDrop] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [liveWeatherMap, setLiveWeatherMap] = useState<Record<string, PassLiveWeatherData>>({});
   const { showToast } = useToast();
 
   const currentPass = UK_PASSES_TELEMETRY[selectedPassId] || UK_PASSES_TELEMETRY['snake-pass-a57'];
+  const liveWeather = liveWeatherMap[selectedPassId];
 
   const [isCalculatorOpen, setIsCalculatorOpen] = useState<boolean>(false);
 
+  // Automatically fetch live Open-Meteo weather when modal opens or selected pass changes
+  useEffect(() => {
+    if (!isOpen) return;
+    let isCancelled = false;
+    
+    if (!liveWeatherMap[selectedPassId]) {
+      fetchPassLiveWeather(selectedPassId).then((data) => {
+        if (!isCancelled) {
+          setLiveWeatherMap((prev) => ({ ...prev, [selectedPassId]: data }));
+        }
+      });
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isOpen, selectedPassId, liveWeatherMap]);
+
+  // Use real-time live Open-Meteo data if available, otherwise fallback to sensor baseline
+  const baseAirTemp = liveWeather?.airTempC ?? currentPass.airTempC;
+  const baseSurfaceTemp = liveWeather?.surfaceTempC ?? currentPass.surfaceTempC;
+  const baseCondition = liveWeather?.surfaceCondition ?? currentPass.surfaceCondition;
+  const sourceAttribution = liveWeather?.sourceAttribution ?? 'UK Met Office Road Sensors';
+  const freshness = liveWeather?.freshness ?? 'Updated 3 min ago';
+
   // Adjusted figures when simulating early dawn cold front
-  const effectiveAirTemp = simColdDrop ? currentPass.airTempC - 5.5 : currentPass.airTempC;
-  const effectiveSurfaceTemp = simColdDrop ? currentPass.surfaceTempC - 5.8 : currentPass.surfaceTempC;
+  const effectiveAirTemp = simColdDrop ? baseAirTemp - 5.5 : baseAirTemp;
+  const effectiveSurfaceTemp = simColdDrop ? baseSurfaceTemp - 5.8 : baseSurfaceTemp;
 
   // Compute live verified grip from real sensor and weather inputs
   const currentGripResult = useMemo(() => {
     return calculateRoadGrip({
       surfaceTempC: effectiveSurfaceTemp,
       airTempC: effectiveAirTemp,
-      surfaceCondition: currentPass.surfaceCondition,
+      surfaceCondition: baseCondition,
+      rainMmPerHour: liveWeather?.rainMmPerHour ?? (baseCondition.includes('Wet') ? 2.5 : baseCondition.includes('Damp') ? 0.8 : 0),
       tyreTempC: simColdDrop ? 12 : 36
-    }, 'UK Met Office Road Sensors', 'Updated 3 min ago');
-  }, [effectiveSurfaceTemp, effectiveAirTemp, currentPass.surfaceCondition, simColdDrop]);
+    }, sourceAttribution, freshness);
+  }, [effectiveSurfaceTemp, effectiveAirTemp, baseCondition, liveWeather, simColdDrop, sourceAttribution, freshness]);
 
   const effectiveFriction = currentGripResult.frictionNumber ?? 0.65;
   const isBlackIceRisk = currentGripResult.gripLevel === 'ice_hazard';
@@ -237,17 +266,22 @@ export const PassGripRadarModal: FC<PassGripRadarModalProps> = ({
     });
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
+    try {
+      const fresh = await fetchPassLiveWeather(selectedPassId);
+      setLiveWeatherMap((prev) => ({ ...prev, [selectedPassId]: fresh }));
       showToast({
-        title: 'Micro-Climate Telemetry Refreshed',
-        message: `Synced with Met Office & Derbyshire/Welsh Dales road surface sensors`,
-        type: 'success',
-        badge: 'LIVE'
+        title: fresh.isLive ? 'Open-Meteo Live Data Synced' : 'Offline Baseline Restored',
+        message: fresh.isLive 
+          ? `${fresh.passName}: Surface ${fresh.surfaceTempC}°C • Rain ${fresh.rainMmPerHour} mm/h • Zero API Key` 
+          : `Using station baseline: ${fresh.errorReason || 'Offline'}`,
+        type: fresh.isLive ? 'success' : 'drive',
+        badge: fresh.isLive ? 'OPEN-METEO' : 'OFFLINE'
       });
-    }, 600);
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleLogToDossier = () => {
@@ -294,8 +328,9 @@ export const PassGripRadarModal: FC<PassGripRadarModalProps> = ({
                 <h2 className="text-base font-bold text-white font-luxury-display tracking-wider">
                   UK PASS SURFACE GRIP & MICRO-CLIMATE RADAR
                 </h2>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono-numbers font-bold bg-white/[0.06] text-zinc-300 border border-white/[0.08]">
-                  MET OFFICE & SENSOR STREAM
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono-numbers font-bold bg-white/[0.06] text-zinc-300 border border-white/[0.08] flex items-center gap-1.5">
+                  <span className={`w-1.5 h-1.5 rounded-full ${liveWeather?.isLive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                  {liveWeather?.isLive ? 'OPEN-METEO LIVE (NO API KEY)' : 'BASELINE TELEMETRY'}
                 </span>
               </div>
               <p className="text-xs text-zinc-400 font-mono-numbers mt-0.5">

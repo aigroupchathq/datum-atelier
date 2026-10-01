@@ -6,6 +6,7 @@ import type { CommunityPost } from '../types';
 import { FeedCard } from '../components/feed/FeedCard';
 import { StoriesBar } from '../components/feed/StoriesBar';
 import { GripMetricCard } from '../components/telemetry/GripMetricCard';
+import { fetchPassLiveWeather, type PassLiveWeatherData } from '../utils/openMeteoWeather';
 import { useTheme } from '../context/ThemeContext';
 import {
   Compass,
@@ -59,6 +60,17 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
   const [followedCars, setFollowedCars] = useState<Record<string, boolean>>({
     'kuro_gt3': true, 'yuki_gr_yaris': false, 'apex_720s': false, 'e30_heritage': false
   });
+  const [liveSnakePassWeather, setLiveSnakePassWeather] = useState<PassLiveWeatherData | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchPassLiveWeather('snake-pass-a57').then((data) => {
+      if (isMounted) setLiveSnakePassWeather(data);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setIsLoading(false), 800);
@@ -442,15 +454,15 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
             locationName="Snake Pass"
             roadNumber="A57"
             inputs={{
-              surfaceTempC: 6.1,
-              airTempC: 7.2,
-              surfaceCondition: 'Damp Bitumen',
-              rainMmPerHour: 0.8,
+              surfaceTempC: liveSnakePassWeather?.surfaceTempC ?? 6.1,
+              airTempC: liveSnakePassWeather?.airTempC ?? 7.2,
+              surfaceCondition: liveSnakePassWeather?.surfaceCondition ?? 'Damp Bitumen',
+              rainMmPerHour: liveSnakePassWeather?.rainMmPerHour ?? 0.8,
               tyreTempC: 38
             }}
             onOpenRadarModal={onOpenPassRadar ? () => onOpenPassRadar('snake-pass-a57') : undefined}
-            sourceLabel="Source: Met Office UK Road Sensors"
-            freshnessLabel="Updated 4m ago"
+            sourceLabel={liveSnakePassWeather?.sourceAttribution ?? "UK Met Office Road Sensors"}
+            freshnessLabel={liveSnakePassWeather?.freshness ?? "Updated 4m ago"}
           />
 
           {/* Privacy guardian */}
