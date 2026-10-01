@@ -1,14 +1,19 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import type { FC } from 'react';
 import {
   Activity,
-  Gauge,
   Flame,
   Droplets,
   Wind,
   Disc,
   Radio,
-  Sliders
+  Sliders,
+  Gauge,
+  Maximize2,
+  Minimize2,
+  Play,
+  Pause,
+  CheckCircle2
 } from 'lucide-react';
 import { datumBackend } from '../../services/backend/DatumBackendEngine';
 import type { DecodedTelemetryPacket } from '../../core/telemetry/CanBusStreamDecoder';
@@ -19,35 +24,40 @@ interface RadialDynamicsClusterProps {
   carModel?: string;
 }
 
-export type DynamicsSectorId = 
-  | 'powertrain' 
-  | 'thermals' 
-  | 'friction' 
-  | 'braking' 
-  | 'kinematics' 
-  | 'dampers' 
-  | 'aerodynamics' 
+export type DynamicsSectorId =
+  | 'powertrain'
+  | 'thermals'
+  | 'friction'
+  | 'braking'
+  | 'kinematics'
+  | 'dampers'
+  | 'aerodynamics'
   | 'can_bus';
 
-interface DynamicsSubMetric {
-  label: string;
+export interface TransducerNode {
+  id: string;
+  code: string;
+  name: string;
+  shortLabel: string;
   value: string | number;
   unit: string;
-  status: 'optimal' | 'elevated' | 'caution';
-  iconText?: string;
+  status: 'nominal' | 'elevated' | 'optimal';
+  hardwareSupplier: string;
+  specTolerance: string;
+  ringLevel: 1 | 2 | 3; // 1 = inner, 2 = mid, 3 = outer concentric tier
+  history: number[]; // Sparkline buffer
 }
 
-interface DynamicsSector {
+export interface DynamicsSector {
   id: DynamicsSectorId;
-  angleIndex: number; // 0 to 7 (for 8 sectors)
+  angleIndex: number; // 0 to 7 (45° segments)
   title: string;
-  subtitle: string;
-  category: string;
-  colorHex: string;
+  categoryLabel: string;
+  badgeAccent: string;
   icon: typeof Activity;
-  primaryValue: string;
-  subMetrics: DynamicsSubMetric[];
-  description: string;
+  leadTelemetry: string;
+  transducers: TransducerNode[];
+  engineeringMemo: string;
 }
 
 export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
@@ -55,10 +65,18 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
   carModel = 'BMW M3 Competition (G80)'
 }) => {
   const [selectedSector, setSelectedSector] = useState<DynamicsSectorId>('friction');
+  const [activeTransducerId, setActiveTransducerId] = useState<string>('mu_friction');
+  const [isSweepActive, setIsSweepActive] = useState<boolean>(true);
+  const [sweepAngle, setSweepAngle] = useState<number>(0);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [telemetryHistory, setTelemetryHistory] = useState<number[]>([]);
+  
+  // Real-time telemetry feed from backend
   const [telemetry, setTelemetry] = useState<DecodedTelemetryPacket | null>(null);
   const [gripResult, setGripResult] = useState<GripAnalysisResult | null>(null);
+  const historyRef = useRef<number[]>([]);
 
-  // Subscribe to live telemetry backend stream
+  // 10Hz backend stream subscription
   useEffect(() => {
     datumBackend.startTelemetryStream(10);
     const unsubscribe = datumBackend.subscribe((frame) => {
@@ -66,6 +84,11 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
       if (frame.gripSnapshot) {
         setGripResult(frame.gripSnapshot);
       }
+
+      // Maintain live 24-point rolling waveform buffer
+      const currentVal = frame.gripSnapshot ? frame.gripSnapshot.muEffective * 100 : 88;
+      historyRef.current = [...historyRef.current.slice(-23), currentVal];
+      setTelemetryHistory([...historyRef.current]);
     });
 
     return () => {
@@ -73,7 +96,19 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
     };
   }, []);
 
-  // Compute 8 Dynamic Sectors based on live telemetry & grip calculations
+  // Smooth continuous radar sweep arm animation (subtle analog scan line)
+  useEffect(() => {
+    if (!isSweepActive) return;
+    let animId: number;
+    const animate = () => {
+      setSweepAngle((prev) => (prev + 0.45) % 360);
+      animId = requestAnimationFrame(animate);
+    };
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [isSweepActive]);
+
+  // Dynamic 8-Sector Taxonomy modeled after the UX Reference
   const sectors: Record<DynamicsSectorId, DynamicsSector> = useMemo(() => {
     const rpm = telemetry?.engineRpm || 4850;
     const speed = telemetry?.speedKph || 84.5;
@@ -92,426 +127,718 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
     return {
       powertrain: {
         id: 'powertrain',
-        angleIndex: 0, // Top (12 o'clock)
-        title: 'Powertrain & Boost',
-        subtitle: 'S58 Twin-Turbo Combustion',
-        category: 'ENGINE DYNAMICS',
-        colorHex: '#EAB308', // Speed Yellow
+        angleIndex: 0, // 12 o'clock
+        title: 'Powertrain & Combustion',
+        categoryLabel: 'Powertrain',
+        badgeAccent: '#EAB308',
         icon: Flame,
-        primaryValue: `${rpm} RPM`,
-        description: 'Bi-turbo twin mono-scroll induction. Wastegate duty cycle active with immediate throttle pickup on apex exits.',
-        subMetrics: [
-          { label: 'Engine Speed', value: rpm, unit: 'RPM', status: rpm > 6800 ? 'elevated' : 'optimal' },
-          { label: 'Road Velocity', value: speed, unit: 'KM/H', status: 'optimal' },
-          { label: 'Throttle Position', value: throttle, unit: '%', status: 'optimal' },
-          { label: 'Air-Fuel Ratio', value: '12.4', unit: 'λ', status: 'optimal' }
+        leadTelemetry: `${rpm} RPM • ${(rpm * 0.071).toFixed(0)} BHP`,
+        engineeringMemo: 'BMW M S58 twin-turbo straight-six. Forged crankshaft with wire-arc sprayed iron cylinder bores maintaining 1.45 BAR peak manifold charge pressure.',
+        transducers: [
+          { id: 'rpm_sensor', code: 'S58-RPM', name: 'Engine Crank Speed', shortLabel: 'Crank RPM', value: rpm, unit: 'RPM', status: rpm > 6800 ? 'elevated' : 'optimal', hardwareSupplier: 'Bosch Motronic', specTolerance: '±10 RPM @ 7,200 Redline', ringLevel: 1, history: [4100, 4300, 4600, 4850, 5200, 4850] },
+          { id: 'road_speed', code: 'V-KPH', name: 'Road Velocity Vector', shortLabel: 'Road Speed', value: speed, unit: 'KM/H', status: 'optimal', hardwareSupplier: 'ABS Wheel Hall Effect', specTolerance: '±0.5 km/h Linear Range', ringLevel: 2, history: [78, 80, 82, 84, 85, 84.5] },
+          { id: 'boost_sensor', code: 'MAP-01', name: 'Manifold Absolute Boost', shortLabel: 'Boost Pressure', value: '1.45', unit: 'BAR', status: 'optimal', hardwareSupplier: 'Continental Sensor', specTolerance: '0.2 - 2.2 BAR Nominal', ringLevel: 2, history: [1.1, 1.25, 1.4, 1.45, 1.42, 1.45] },
+          { id: 'throttle_tps', code: 'TPS-DUAL', name: 'Drive-By-Wire Throttle', shortLabel: 'Throttle TPS', value: throttle, unit: '%', status: 'optimal', hardwareSupplier: 'BMW M Motorsport', specTolerance: '0 - 100% Linear Hall Effect', ringLevel: 3, history: [35, 50, 65, 68, 62, 68] },
+          { id: 'afr_lambda', code: 'O2-LAMBDA', name: 'Wideband Air-Fuel Ratio', shortLabel: 'AFR Lambda', value: '12.4', unit: 'λ:1', status: 'nominal', hardwareSupplier: 'NTK Wideband', specTolerance: '11.8 - 14.7 λ Range', ringLevel: 3, history: [12.6, 12.5, 12.4, 12.4, 12.5, 12.4] },
         ]
       },
       thermals: {
         id: 'thermals',
-        angleIndex: 1, // 1:30 position
-        title: 'Thermodynamic Fluids',
-        subtitle: 'Heat Dissipation & Viscosity',
-        category: 'COOLING ENCLAVE',
-        colorHex: '#F97316', // Orange
+        angleIndex: 1, // 1:30
+        title: 'Thermodynamics & Heat Exchanger',
+        categoryLabel: 'Thermals',
+        badgeAccent: '#F97316',
         icon: Droplets,
-        primaryValue: `${oilTemp}°C Oil`,
-        description: 'Castrol 5W-30 synthetic fluid film integrity. Dual auxiliary radiators maintaining thermal equilibrium under heavy load.',
-        subMetrics: [
-          { label: 'Synthetic Oil Temp', value: oilTemp, unit: '°C', status: oilTemp > 110 ? 'elevated' : 'optimal' },
-          { label: 'Coolant Flow', value: coolantTemp, unit: '°C', status: 'optimal' },
-          { label: 'Oil Hydraulic Pressure', value: oilPress, unit: 'BAR', status: oilPress < 1.5 ? 'caution' : 'optimal' },
-          { label: 'Charge Air Temp', value: '28.5', unit: '°C', status: 'optimal' }
+        leadTelemetry: `${oilTemp}°C Oil • ${coolantTemp}°C Coolant`,
+        engineeringMemo: 'Dual auxiliary wheel-well radiators and mechanical water pump circulating 12.8 L/min. Synthetic oil shear stability preserved at high track temperature.',
+        transducers: [
+          { id: 'oil_temp', code: 'OT-5W30', name: 'Synthetic Oil Sump Temp', shortLabel: 'Oil Sump', value: oilTemp, unit: '°C', status: 'optimal', hardwareSupplier: 'Castrol EDGE Professional', specTolerance: '85°C - 118°C Safe Corridor', ringLevel: 1, history: [92, 93, 94, 95, 96, 96] },
+          { id: 'coolant_temp', code: 'CT-FLOW', name: 'Engine Block Coolant', shortLabel: 'Coolant Core', value: coolantTemp, unit: '°C', status: 'optimal', hardwareSupplier: 'Behr Hella Exchanger', specTolerance: '88°C - 102°C Thermostat', ringLevel: 2, history: [88, 89, 89, 90, 90, 90] },
+          { id: 'oil_pressure', code: 'OP-LINE', name: 'Main Gallery Oil Pressure', shortLabel: 'Oil Line Bar', value: oilPress, unit: 'BAR', status: 'optimal', hardwareSupplier: 'Sensata Automotive', specTolerance: '1.8 - 5.5 BAR Active Window', ringLevel: 3, history: [4.6, 4.7, 4.8, 4.75, 4.72, 4.75] },
+          { id: 'charge_air', code: 'IAT-IC', name: 'Indirect Charge Air Temp', shortLabel: 'Charge Temp', value: '28.5', unit: '°C', status: 'optimal', hardwareSupplier: 'CSF High-Flow Core', specTolerance: '+8°C Ambient Delta Max', ringLevel: 3, history: [26, 27, 27.5, 28, 28.5, 28.5] }
         ]
       },
       friction: {
         id: 'friction',
         angleIndex: 2, // 3 o'clock
-        title: 'Pacejka Tarmac Grip',
-        subtitle: 'Dynamic Friction Coefficient (μ)',
-        category: 'ROAD ADHESION',
-        colorHex: '#10B981', // Emerald
+        title: 'Pacejka Tarmac Grip Adhesion',
+        categoryLabel: 'Road Adhesion',
+        badgeAccent: '#10B981',
         icon: Activity,
-        primaryValue: `μ ${mu}`,
-        description: 'Pacejka Magic Formula tire-road friction model synthesizing bitumen wetness, micro-texture, and Michelin PS4S contact patch.',
-        subMetrics: [
-          { label: 'Friction Coefficient', value: `μ ${mu}`, unit: '', status: mu < 0.65 ? 'caution' : 'optimal' },
-          { label: 'Pass Safety Index', value: `${psiScore}/100`, unit: 'PSI', status: psiScore < 60 ? 'caution' : 'optimal' },
-          { label: 'Hydroplaning Risk', value: `${hydroRisk}%`, unit: '', status: hydroRisk > 40 ? 'elevated' : 'optimal' },
-          { label: 'Cornering Stiffness', value: '1,280', unit: 'N/°', status: 'optimal' }
+        leadTelemetry: `μ ${mu} Adhesion • ${psiScore}/100 PSI`,
+        engineeringMemo: 'NASA-derived hydroplaning and Pacejka semi-empirical magic formula cornering stiffness solver evaluating tarmac micro-roughness in real time.',
+        transducers: [
+          { id: 'mu_friction', code: 'PAC-MU', name: 'Peak Friction Coefficient', shortLabel: 'Grip Adhesion', value: `μ ${mu}`, unit: '', status: 'optimal', hardwareSupplier: 'DATUM Physics Engine', specTolerance: 'μ 0.20 (Ice) - 1.25 (Cup2)', ringLevel: 1, history: [84, 86, 88, 87, 89, 88] },
+          { id: 'psi_score', code: 'PASS-PSI', name: 'Pass Surface Safety Score', shortLabel: 'Pass Safety Index', value: `${psiScore}`, unit: '/100', status: 'optimal', hardwareSupplier: 'Atelier Met Office Sync', specTolerance: '≥75 Receptive / <40 Hazard', ringLevel: 2, history: [86, 87, 88, 89, 89, 89] },
+          { id: 'hydro_risk', code: 'HYDRO-H2O', name: 'Standing Water Film Risk', shortLabel: 'Hydroplane Margin', value: `${hydroRisk}%`, unit: '', status: 'optimal', hardwareSupplier: 'Doppler Radar Ingestion', specTolerance: 'NASA V_crit = 6.36√P_psi', ringLevel: 3, history: [15, 14, 13, 12, 12, 12] },
+          { id: 'cornering_stiff', code: 'C-ALPHA', name: 'Slip Angle Cornering Stiffness', shortLabel: 'Cornering Force', value: '1,280', unit: 'N/°', status: 'optimal', hardwareSupplier: 'Michelin PS4S Matrix', specTolerance: '1,100 - 1,450 N/° Linear Range', ringLevel: 3, history: [1220, 1250, 1270, 1280, 1275, 1280] }
         ]
       },
       braking: {
         id: 'braking',
-        angleIndex: 3, // 4:30 position
-        title: 'Braking Hydraulics',
-        subtitle: 'Brembo DOT 5.1 & Pad Thermal',
-        category: 'DECELERATION',
-        colorHex: '#EF4444', // Red
+        angleIndex: 3, // 4:30
+        title: 'Braking Hydraulics & Deceleration',
+        categoryLabel: 'Braking',
+        badgeAccent: '#EF4444',
         icon: Disc,
-        primaryValue: `${brakePress > 0 ? brakePress : '0.0'} BAR`,
-        description: 'AP Racing 6-piston monobloc calipers with Ferodo DS2500 high-friction pad compound. Brake disc temperatures within target fade window.',
-        subMetrics: [
-          { label: 'Brake Line Pressure', value: brakePress, unit: 'BAR', status: brakePress > 45 ? 'elevated' : 'optimal' },
-          { label: 'Front Rotor Temp', value: '342', unit: '°C', status: 'optimal' },
-          { label: 'Rear Rotor Temp', value: '285', unit: '°C', status: 'optimal' },
-          { label: 'ABS Modulation', value: 'STANDBY', unit: '', status: 'optimal' }
+        leadTelemetry: `${brakePress > 0 ? brakePress : '0.0'} BAR • 342°C Rotor`,
+        engineeringMemo: 'AP Racing Radi-CAL 6-piston monobloc front calipers biting 380mm floating slotted curved-vane iron rotors with Ferodo DS2500 high-friction compound.',
+        transducers: [
+          { id: 'brake_press', code: 'HYD-LINE', name: 'Brake Line Hydraulic Pressure', shortLabel: 'Line Pressure', value: brakePress, unit: 'BAR', status: 'optimal', hardwareSupplier: 'Brembo S.p.A.', specTolerance: '0 - 120 BAR Trail-Brake Range', ringLevel: 1, history: [0, 15, 45, 60, 20, 0] },
+          { id: 'rotor_temp', code: 'ROTOR-FL', name: 'Front Left Rotor Temperature', shortLabel: 'Front Discs', value: '342', unit: '°C', status: 'optimal', hardwareSupplier: 'AP Racing UK', specTolerance: '180°C - 580°C Bite Window', ringLevel: 2, history: [310, 325, 338, 345, 342, 342] },
+          { id: 'fluid_boiling', code: 'DOT-5.1', name: 'Brake Fluid Dry Boiling Point', shortLabel: 'Fluid Reserve', value: '295', unit: '°C', status: 'optimal', hardwareSupplier: 'Motul RBF 660', specTolerance: 'Dry: 325°C / Wet: 205°C Min', ringLevel: 3, history: [298, 296, 295, 295, 295, 295] },
+          { id: 'abs_cycling', code: 'BOSCH-ABS', name: 'Cornering ABS Frequency', shortLabel: 'ABS Status', value: 'STANDBY', unit: '', status: 'nominal', hardwareSupplier: 'Bosch Motorsport M5', specTolerance: '12-Phase Multi-Map Logic', ringLevel: 3, history: [0, 0, 0, 0, 0, 0] }
         ]
       },
       kinematics: {
         id: 'kinematics',
-        angleIndex: 4, // 6 o'clock (Bottom)
-        title: 'Chassis Kinematics',
-        subtitle: '3-Axis G-Force & Yaw Vector',
-        category: 'INERTIAL MATRIX',
-        colorHex: '#06B6D4', // Cyan
+        angleIndex: 4, // 6 o'clock
+        title: 'Chassis Kinematics & Inertial G',
+        categoryLabel: 'Kinematics',
+        badgeAccent: '#06B6D4',
         icon: Gauge,
-        primaryValue: `${latG}G Lat`,
-        description: 'Bi-directional accelerometer logging roll center and pitch acceleration through high-speed mountain pass sweeping transitions.',
-        subMetrics: [
-          { label: 'Lateral G-Force', value: `${latG}G`, unit: '', status: Math.abs(latG) > 1.0 ? 'elevated' : 'optimal' },
-          { label: 'Longitudinal G-Force', value: `${longG}G`, unit: '', status: 'optimal' },
-          { label: 'Steering Wheel Angle', value: `${steerAngle}°`, unit: '', status: 'optimal' },
-          { label: 'Yaw Rotation Rate', value: '12.8', unit: '°/s', status: 'optimal' }
+        leadTelemetry: `${latG}G Lat • ${longG}G Long`,
+        engineeringMemo: '3-Axis MEMS accelerometer logging yaw rate, chassis roll center height, and longitudinal squat under full S58 xDrive acceleration.',
+        transducers: [
+          { id: 'lat_g_force', code: 'ACCEL-Y', name: 'Apex Lateral G-Force', shortLabel: 'Lateral Accel', value: `${latG}G`, unit: '', status: 'optimal', hardwareSupplier: 'Analog Devices IMU', specTolerance: '±1.45G Peak Adhesion Band', ringLevel: 1, history: [0.65, 0.72, 0.81, 0.88, 0.84, 0.88] },
+          { id: 'long_g_force', code: 'ACCEL-X', name: 'Longitudinal Accelerometer', shortLabel: 'Drive Squat', value: `${longG}G`, unit: '', status: 'optimal', hardwareSupplier: 'Analog Devices IMU', specTolerance: '±1.10G Launch & Braking', ringLevel: 2, history: [0.32, 0.38, 0.45, 0.42, 0.40, 0.42] },
+          { id: 'steering_angle', code: 'SAS-CAN', name: 'Pinion Steering Wheel Angle', shortLabel: 'Steering Angle', value: `${steerAngle}°`, unit: '', status: 'optimal', hardwareSupplier: 'ZF Servotronic M', specTolerance: '14.1:1 Variable Sport Ratio', ringLevel: 3, history: [8, 12, 14, 15, 14.5, 14.5] },
+          { id: 'yaw_velocity', code: 'YAW-GYRO', name: 'Chassis Yaw Rotation Rate', shortLabel: 'Yaw Velocity', value: '12.8', unit: '°/s', status: 'optimal', hardwareSupplier: 'Bosch Inertial Sensor', specTolerance: '<45°/s Controlled Oversteer', ringLevel: 3, history: [9.5, 11.2, 12.5, 13.0, 12.8, 12.8] }
         ]
       },
       dampers: {
         id: 'dampers',
-        angleIndex: 5, // 7:30 position
-        title: 'KW V4 Suspension',
-        subtitle: '3-Way Independent Damping',
-        category: 'CHASSIS ARTICULATION',
-        colorHex: '#8B5CF6', // Purple
+        angleIndex: 5, // 7:30
+        title: 'Suspension & Damper Articulation',
+        categoryLabel: 'Suspension',
+        badgeAccent: '#8B5CF6',
         icon: Sliders,
-        primaryValue: '50:50 Cross',
-        description: 'KW Variant 4 independent high/low speed compression and rebound valves eliminating chassis bounce over frost heaves and pavement drops.',
-        subMetrics: [
-          { label: 'FL High-Speed Comp', value: '8 clicks', unit: '', status: 'optimal' },
-          { label: 'FR High-Speed Comp', value: '8 clicks', unit: '', status: 'optimal' },
-          { label: 'Cross-Weight Balance', value: '50.1%', unit: '', status: 'optimal' },
-          { label: 'Dynamic Pitch Offset', value: '-0.8°', unit: '', status: 'optimal' }
+        leadTelemetry: 'KW V4 3-Way • 50:50 Balance',
+        engineeringMemo: 'Independent high and low speed compression valves with twin-tube stainless steel bodies. Corner-balanced for B-road frost heaves.',
+        transducers: [
+          { id: 'comp_fl', code: 'KW-FL-HS', name: 'Front Left High-Speed Compression', shortLabel: 'FL Comp Valve', value: '8 clicks', unit: '', status: 'optimal', hardwareSupplier: 'KW automotive GmbH', specTolerance: '16-Click Adjustable Sweep', ringLevel: 1, history: [8, 8, 8, 8, 8, 8] },
+          { id: 'rebound_rr', code: 'KW-RR-RB', name: 'Rear Right Rebound Damping', shortLabel: 'RR Rebound', value: '11 clicks', unit: '', status: 'optimal', hardwareSupplier: 'KW automotive GmbH', specTolerance: '16-Click TVR-A Valve', ringLevel: 2, history: [11, 11, 11, 11, 11, 11] },
+          { id: 'corner_weight', code: 'SCALE-CROSS', name: 'Static Cross-Weight Ratio', shortLabel: 'Corner Weight', value: '50.1%', unit: '', status: 'optimal', hardwareSupplier: 'Intercomp Scales', specTolerance: '50.0% ± 0.5% Target Window', ringLevel: 3, history: [50.1, 50.1, 50.1, 50.1, 50.1, 50.1] },
+          { id: 'ride_height', code: 'RIDE-MM', name: 'Static Front Axle Ground Clearance', shortLabel: 'Ride Clearance', value: '114', unit: 'MM', status: 'optimal', hardwareSupplier: 'KW V4 Adjustable Perch', specTolerance: '105 - 130mm Road Legal', ringLevel: 3, history: [114, 114, 114, 114, 114, 114] }
         ]
       },
       aerodynamics: {
         id: 'aerodynamics',
         angleIndex: 6, // 9 o'clock
-        title: 'Aero Downforce',
-        subtitle: 'Venturi Underbody & Wing Flux',
-        category: 'FLUID DYNAMICS',
-        colorHex: '#3B82F6', // Blue
+        title: 'Aerodynamic Flux & Ground Effect',
+        categoryLabel: 'Aerodynamics',
+        badgeAccent: '#3B82F6',
         icon: Wind,
-        primaryValue: '125 kg @ 120kph',
-        description: 'Rear carbon diffuser and front splitter generating stable underbody suction with minimal parasite drag coefficient (Cd 0.33).',
-        subMetrics: [
-          { label: 'Front Splitter Downforce', value: '45', unit: 'KG', status: 'optimal' },
-          { label: 'Rear Spoiler Load', value: '80', unit: 'KG', status: 'optimal' },
-          { label: 'Drag Coefficient', value: '0.33', unit: 'Cd', status: 'optimal' },
-          { label: 'Ground Clearance', value: '112', unit: 'MM', status: 'optimal' }
+        leadTelemetry: '125 kg Downforce @ 120 km/h',
+        engineeringMemo: 'Chassis underside Venturi strakes and functional front air curtains channeling high-pressure laminar air away from rotating wheels.',
+        transducers: [
+          { id: 'splitter_load', code: 'AERO-FR', name: 'Front Splitter Aerodynamic Load', shortLabel: 'Splitter Load', value: '45', unit: 'KG', status: 'optimal', hardwareSupplier: 'M Performance Carbon', specTolerance: 'Linear v² Aerodynamic Curve', ringLevel: 1, history: [32, 38, 42, 45, 43, 45] },
+          { id: 'diffuser_suction', code: 'AERO-VENT', name: 'Underbody Diffuser Suction', shortLabel: 'Diffuser Ground', value: '80', unit: 'KG', status: 'optimal', hardwareSupplier: 'Akrapovič Aerodynamics', specTolerance: 'Bernoulli Negative Pressure', ringLevel: 2, history: [58, 68, 75, 80, 78, 80] },
+          { id: 'drag_coeff', code: 'AERO-CD', name: 'Total Drag Coefficient', shortLabel: 'Drag Coeff Cd', value: '0.33', unit: 'Cd', status: 'optimal', hardwareSupplier: 'BMW Aero Wind Tunnel', specTolerance: '0.31 - 0.35 Flap Configuration', ringLevel: 3, history: [0.33, 0.33, 0.33, 0.33, 0.33, 0.33] },
+          { id: 'air_curtain', code: 'AERO-CURT', name: 'Wheelhouse Pressure Bleed', shortLabel: 'Air Curtains', value: 'OPTIMAL', unit: '', status: 'optimal', hardwareSupplier: 'Bumper Duct Intake', specTolerance: 'Boundary Layer Separation Free', ringLevel: 3, history: [1, 1, 1, 1, 1, 1] }
         ]
       },
       can_bus: {
         id: 'can_bus',
-        angleIndex: 7, // 10:30 position
-        title: 'CAN-Bus Integrity',
-        subtitle: 'ISO 11898-1 High-Speed Telemetry',
-        category: 'ELECTRONIC BACKBONE',
-        colorHex: '#EC4899', // Pink
+        angleIndex: 7, // 10:30
+        title: 'CAN-Bus Electronic Infrastructure',
+        categoryLabel: 'CAN Network',
+        badgeAccent: '#EC4899',
         icon: Radio,
-        primaryValue: '10 Hz Sync',
-        description: 'Full-duplex CAN 2.0B differential bus operating with zero packet checksum drops and real-time mechanical anomaly detection.',
-        subMetrics: [
-          { label: 'Bus Transmission Rate', value: '500', unit: 'KBPS', status: 'optimal' },
-          { label: 'Frame Error Counter', value: '0', unit: 'DROPS', status: 'optimal' },
-          { label: 'System Voltage', value: '14.2', unit: 'V', status: 'optimal' },
-          { label: 'Signal Latency', value: '< 2.4', unit: 'MS', status: 'optimal' }
+        leadTelemetry: '500 kbps • 0 Dropped Packets',
+        engineeringMemo: 'ISO 11898-1 high-speed differential serial network logging 10Hz to 50Hz arbitration frames with synchronous CRC verification.',
+        transducers: [
+          { id: 'can_baud', code: 'CAN-BAUD', name: 'Differential Transmission Speed', shortLabel: 'Network Baud', value: '500', unit: 'KBPS', status: 'optimal', hardwareSupplier: 'Bosch CAN Transceiver', specTolerance: 'ISO 11898-2 High-Speed Spec', ringLevel: 1, history: [500, 500, 500, 500, 500, 500] },
+          { id: 'frame_drop', code: 'CAN-CRC', name: 'Frame Integrity Error Counter', shortLabel: 'Packet Drops', value: '0', unit: 'DROPS', status: 'optimal', hardwareSupplier: 'DATUM Stream Decoder', specTolerance: '<0.001% Permissible Jitter', ringLevel: 2, history: [0, 0, 0, 0, 0, 0] },
+          { id: 'alt_voltage', code: 'ELEC-V', name: 'Charging Alternator Potential', shortLabel: 'Bus Voltage', value: '14.2', unit: 'V', status: 'optimal', hardwareSupplier: 'Valeo 180A Alternator', specTolerance: '13.6V - 14.8V Regulated Float', ringLevel: 3, history: [14.1, 14.2, 14.2, 14.2, 14.1, 14.2] },
+          { id: 'bus_latency', code: 'CAN-LAT', name: 'Serial Ingress Frame Latency', shortLabel: 'Frame Latency', value: '<2.1', unit: 'MS', status: 'optimal', hardwareSupplier: 'Silicon Labs Isolator', specTolerance: '<5.0 ms Critical Safety Window', ringLevel: 3, history: [2.0, 2.1, 2.0, 2.1, 2.0, 2.1] }
         ]
       }
     };
   }, [telemetry, gripResult]);
 
   const activeSector = sectors[selectedSector];
+  const activeTransducer = useMemo(() => {
+    return (
+      activeSector.transducers.find((t) => t.id === activeTransducerId) ||
+      activeSector.transducers[0]
+    );
+  }, [activeSector, activeTransducerId]);
 
-  // Helper to compute SVG sector wedge path and icon coordinates
-  const getSectorCoordinates = (index: number) => {
-    // 8 sectors = 45 degrees each. Offset by -90 deg so index 0 is at 12 o'clock (top)
-    const startAngleDeg = index * 45 - 90 - 22.5;
-    const endAngleDeg = startAngleDeg + 45;
-    const midAngleDeg = (startAngleDeg + endAngleDeg) / 2;
+  // Polar coordinate math for 8 sectors (45° segments)
+  const cx = 300;
+  const cy = 300;
+  const rCore = 80;
+  const rRing1 = 135;
+  const rRing2 = 195;
+  const rOuter = 260;
 
-    const startAngleRad = (startAngleDeg * Math.PI) / 180;
-    const endAngleRad = (endAngleDeg * Math.PI) / 180;
-    const midAngleRad = (midAngleDeg * Math.PI) / 180;
+  // Sector wedge geometry
+  const getSectorGeometry = (index: number) => {
+    // Offset by -90° - 22.5° so sector 0 centers at 12 o'clock
+    const startDeg = index * 45 - 90 - 22.5;
+    const endDeg = startDeg + 45;
+    const midDeg = (startDeg + endDeg) / 2;
 
-    const outerRadius = 140;
-    const innerRadius = 75;
-    const iconRadius = 108;
+    const startRad = (startDeg * Math.PI) / 180;
+    const endRad = (endDeg * Math.PI) / 180;
+    const midRad = (midDeg * Math.PI) / 180;
 
-    const x1 = 150 + outerRadius * Math.cos(startAngleRad);
-    const y1 = 150 + outerRadius * Math.sin(startAngleRad);
-    const x2 = 150 + outerRadius * Math.cos(endAngleRad);
-    const y2 = 150 + outerRadius * Math.sin(endAngleRad);
-    const x3 = 150 + innerRadius * Math.cos(endAngleRad);
-    const y3 = 150 + innerRadius * Math.sin(endAngleRad);
-    const x4 = 150 + innerRadius * Math.cos(startAngleRad);
-    const y4 = 150 + innerRadius * Math.sin(startAngleRad);
+    const x1 = cx + rOuter * Math.cos(startRad);
+    const y1 = cy + rOuter * Math.sin(startRad);
+    const x2 = cx + rOuter * Math.cos(endRad);
+    const y2 = cy + rOuter * Math.sin(endRad);
+    const x3 = cx + rCore * Math.cos(endRad);
+    const y3 = cy + rCore * Math.sin(endRad);
+    const x4 = cx + rCore * Math.cos(startRad);
+    const y4 = cy + rCore * Math.sin(startRad);
 
-    const iconX = 150 + iconRadius * Math.cos(midAngleRad);
-    const iconY = 150 + iconRadius * Math.sin(midAngleRad);
+    const pathD = `M ${x1} ${y1} A ${rOuter} ${rOuter} 0 0 1 ${x2} ${y2} L ${x3} ${y3} A ${rCore} ${rCore} 0 0 0 ${x4} ${y4} Z`;
 
-    // SVG path definition
-    const pathD = `M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 0 1 ${x2} ${y2} L ${x3} ${y3} A ${innerRadius} ${innerRadius} 0 0 0 ${x4} ${y4} Z`;
+    // Coordinates for the 3 concentric transducer nodes
+    const node1X = cx + rRing1 * Math.cos(midRad);
+    const node1Y = cy + rRing1 * Math.sin(midRad);
 
-    return { pathD, iconX, iconY, midAngleDeg };
+    const node2OffsetRad = midRad - (11 * Math.PI) / 180;
+    const node2X = cx + rRing2 * Math.cos(node2OffsetRad);
+    const node2Y = cy + rRing2 * Math.sin(node2OffsetRad);
+
+    const node3OffsetRad = midRad + (11 * Math.PI) / 180;
+    const node3X = cx + rRing2 * Math.cos(node3OffsetRad);
+    const node3Y = cy + rRing2 * Math.sin(node3OffsetRad);
+
+    // Pill badge placement at outer rim
+    const pillRadius = 282;
+    const pillX = cx + pillRadius * Math.cos(midRad);
+    const pillY = cy + pillRadius * Math.sin(midRad);
+
+    return {
+      pathD,
+      midDeg,
+      nodes: [
+        { x: node1X, y: node1Y },
+        { x: node2X, y: node2Y },
+        { x: node3X, y: node3Y },
+      ],
+      pillX,
+      pillY
+    };
   };
 
   return (
-    <div 
-      className="rounded-3xl border p-6 sm:p-8 space-y-6 shadow-2xl transition-all duration-300"
+    <div
+      className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-2xl ${
+        isFullscreen ? 'fixed inset-4 z-[99] m-0 max-h-screen' : 'relative'
+      }`}
       style={{
         backgroundColor: 'var(--bg-surface)',
-        borderColor: 'var(--border-subtle)'
+        borderColor: 'var(--border-subtle)',
       }}
     >
-      {/* Top Header Rail */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4" style={{ borderColor: 'var(--border-subtle)' }}>
+      {/* ========================================================= */}
+      {/* 1. EDITORIAL HEADER BAR                                   */}
+      {/* ========================================================= */}
+      <div
+        className="flex flex-wrap items-center justify-between px-6 py-4 border-b gap-4"
+        style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+      >
         <div className="flex items-center gap-3">
-          <div 
+          <div
             className="w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-xs shadow-md border"
             style={{
               backgroundColor: 'var(--accent)',
               color: '#09090B',
-              borderColor: 'var(--border-default)'
+              borderColor: 'var(--border-default)',
             }}
           >
-            <Activity className="w-5 h-5" />
+            <Gauge className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-luxury-display text-base sm:text-lg font-bold uppercase tracking-wider" style={{ color: 'var(--text-primary)' }}>
-                Radial Telemetry Dynamics Cluster
+              <h3
+                className="font-luxury-display text-base sm:text-lg font-bold uppercase tracking-wider"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                Chrono-Dynamics Radar Cluster
               </h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono-numbers font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                10 HZ LIVE
+              <span
+                className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-numbers font-bold border"
+                style={{
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  borderColor: 'rgba(16, 185, 129, 0.3)',
+                  color: '#10B981',
+                }}
+              >
+                10 HZ SYNCHRONOUS
               </span>
             </div>
             <p className="text-xs font-mono-numbers text-zinc-400">
-              8-Sector Multi-Dimensional Vehicle Adhesion & Kinematics Taxonomy
+              {carModel} • 8-Sector Polar Taxonomy • Milled Bezel & Transducer Matrix
             </p>
           </div>
         </div>
 
-        {/* Live Stream Indicator Badge */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 text-xs font-mono-numbers text-zinc-300">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>CAN 2.0B FEED ACTIVE</span>
-          <span className="text-zinc-500">•</span>
-          <span className="text-zinc-400">{carModel}</span>
+        {/* Toolbar Controls */}
+        <div className="flex items-center gap-2">
+          {/* Radar Sweep Toggle */}
+          <button
+            onClick={() => setIsSweepActive(!isSweepActive)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono-numbers transition cursor-pointer"
+            style={{
+              backgroundColor: isSweepActive ? 'rgba(234, 179, 8, 0.1)' : 'transparent',
+              borderColor: isSweepActive ? 'var(--accent)' : 'var(--border-subtle)',
+              color: isSweepActive ? 'var(--accent)' : 'var(--text-secondary)',
+            }}
+            title={isSweepActive ? 'Pause Radar Sweep' : 'Resume Radar Sweep'}
+          >
+            {isSweepActive ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">{isSweepActive ? 'Live Sweep' : 'Paused'}</span>
+          </button>
+
+          {/* Fullscreen Expand */}
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="p-2 rounded-xl border text-zinc-400 hover:text-white transition cursor-pointer"
+            style={{
+              backgroundColor: 'transparent',
+              borderColor: 'var(--border-subtle)',
+            }}
+            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen View'}
+          >
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </button>
         </div>
       </div>
 
-      {/* Main Grid: Radial Dial on Left + Deep Telemetry Dimension Matrix on Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      {/* ========================================================= */}
+      {/* 2. MAIN COCKPIT: RADIAL DIAL + SUBSYSTEM INSPECTOR       */}
+      {/* ========================================================= */}
+      <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
-        {/* ========================================================= */}
-        {/* 1. LEFT: 8-SECTOR CIRCULAR RADAR WHEEL (SVG VISUALIZER)    */}
-        {/* ========================================================= */}
-        <div className="lg:col-span-5 flex flex-col items-center justify-center relative select-none">
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* LEFT: 8-SECTOR PRECISION RADIAL RADAR CANVAS (SVG)       */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <div className="lg:col-span-7 flex flex-col items-center justify-center select-none relative">
           
-          <div className="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
+          <div className="relative w-full max-w-[540px] aspect-square flex items-center justify-center">
             
-            {/* Ambient Backlight Glow */}
-            <div 
-              className="absolute inset-0 rounded-full blur-3xl opacity-30 transition-all duration-500 pointer-events-none"
-              style={{ backgroundColor: activeSector.colorHex }}
-            />
-
-            {/* SVG 8-Sector Radar Wheel */}
-            <svg 
-              className="w-full h-full transform hover:scale-[1.01] transition-transform duration-300" 
-              viewBox="0 0 300 300"
+            {/* SVG Precision Radar Engine */}
+            <svg
+              className="w-full h-full"
+              viewBox="0 0 600 600"
+              style={{ overflow: 'visible' }}
             >
               <defs>
-                {/* Sector Glow Filter */}
-                <filter id="sector-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
+                {/* Metallic Dial Subtle Texture */}
+                <radialGradient id="dial-metallic-bg" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="rgba(255, 255, 255, 0.03)" />
+                  <stop offset="65%" stopColor="rgba(0, 0, 0, 0.2)" />
+                  <stop offset="100%" stopColor="rgba(0, 0, 0, 0.7)" />
+                </radialGradient>
+
+                {/* Sweep Hand Gradient */}
+                <linearGradient id="sweep-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="transparent" />
+                  <stop offset="85%" stopColor="rgba(234, 179, 8, 0.08)" />
+                  <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.8" />
+                </linearGradient>
               </defs>
 
-              {/* Background Outer Ring Track */}
+              {/* 1. Outer Knurled Bezel Track with 120 Swiss Milled Ticks */}
               <circle
-                cx="150"
-                cy="150"
-                r="142"
+                cx={cx}
+                cy={cy}
+                r={rOuter + 8}
+                fill="url(#dial-metallic-bg)"
+                stroke="rgba(255, 255, 255, 0.12)"
+                strokeWidth="1.5"
+              />
+
+              {/* Chronometer Hairspring 360-Tick Ring */}
+              {Array.from({ length: 72 }).map((_, i) => {
+                const deg = i * 5;
+                const isMajor = deg % 45 === 0;
+                const isMedium = deg % 15 === 0;
+                const rad = (deg * Math.PI) / 180;
+                const tickLen = isMajor ? 8 : isMedium ? 5 : 3;
+                const innerR = rOuter + 8 - tickLen;
+                const xStart = cx + innerR * Math.cos(rad);
+                const yStart = cy + innerR * Math.sin(rad);
+                const xEnd = cx + (rOuter + 8) * Math.cos(rad);
+                const yEnd = cy + (rOuter + 8) * Math.sin(rad);
+
+                return (
+                  <line
+                    key={i}
+                    x1={xStart}
+                    y1={yStart}
+                    x2={xEnd}
+                    y2={yEnd}
+                    stroke={isMajor ? 'var(--accent)' : 'rgba(255, 255, 255, 0.2)'}
+                    strokeWidth={isMajor ? 2 : 1}
+                  />
+                );
+              })}
+
+              {/* 2. Concentric Range Rings (Core, Tier 1, Tier 2, Tier 3) */}
+              <circle
+                cx={cx}
+                cy={cy}
+                r={rRing1}
                 fill="none"
-                stroke="rgba(255,255,255,0.06)"
+                stroke="rgba(255, 255, 255, 0.08)"
+                strokeWidth="1"
+                strokeDasharray="3 3"
+              />
+              <circle
+                cx={cx}
+                cy={cy}
+                r={rRing2}
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.08)"
                 strokeWidth="1"
                 strokeDasharray="4 4"
               />
 
-              {/* Inner Chassis Enclave Ring */}
-              <circle
-                cx="150"
-                cy="150"
-                r="72"
-                fill="rgba(9, 9, 11, 0.95)"
-                stroke="rgba(255,255,255,0.15)"
-                strokeWidth="2"
-              />
-
-              {/* Render 8 Interactive Sector Wedges */}
+              {/* 3. 8 Interactive Radial Wedges */}
               {(Object.keys(sectors) as DynamicsSectorId[]).map((secId) => {
                 const sec = sectors[secId];
                 const isSelected = selectedSector === secId;
-                const { pathD, iconX, iconY } = getSectorCoordinates(sec.angleIndex);
+                const geo = getSectorGeometry(sec.angleIndex);
 
                 return (
-                  <g 
-                    key={secId} 
-                    className="cursor-pointer transition-all duration-300 group"
-                    onClick={() => setSelectedSector(secId)}
+                  <g
+                    key={secId}
+                    className="cursor-pointer transition-all duration-300"
+                    onClick={() => {
+                      setSelectedSector(secId);
+                      setActiveTransducerId(sec.transducers[0].id);
+                    }}
                   >
                     {/* Wedge Segment */}
                     <path
-                      d={pathD}
-                      fill={isSelected ? sec.colorHex : 'rgba(255,255,255,0.03)'}
-                      fillOpacity={isSelected ? 0.28 : 0.6}
-                      stroke={isSelected ? sec.colorHex : 'rgba(255,255,255,0.12)'}
-                      strokeWidth={isSelected ? 2.5 : 1}
-                      className="transition-all duration-300 hover:fill-opacity-40"
-                      filter={isSelected ? 'url(#sector-glow)' : undefined}
+                      d={geo.pathD}
+                      fill={isSelected ? sec.badgeAccent : 'rgba(255, 255, 255, 0.015)'}
+                      fillOpacity={isSelected ? 0.22 : 0.4}
+                      stroke={isSelected ? sec.badgeAccent : 'rgba(255, 255, 255, 0.12)'}
+                      strokeWidth={isSelected ? 2 : 1}
+                      className="transition-all duration-300 hover:fill-opacity-35"
                     />
 
-                    {/* Sector Node Marker Point */}
-                    <circle
-                      cx={iconX}
-                      cy={iconY}
-                      r={isSelected ? 7 : 4}
-                      fill={isSelected ? '#FFFFFF' : sec.colorHex}
-                      stroke={sec.colorHex}
-                      strokeWidth={isSelected ? 3 : 1}
-                      className="transition-all duration-300"
+                    {/* Radiating Spoke Boundary Line */}
+                    <line
+                      x1={cx + rCore * Math.cos(((sec.angleIndex * 45 - 90 - 22.5) * Math.PI) / 180)}
+                      y1={cy + rCore * Math.sin(((sec.angleIndex * 45 - 90 - 22.5) * Math.PI) / 180)}
+                      x2={cx + rOuter * Math.cos(((sec.angleIndex * 45 - 90 - 22.5) * Math.PI) / 180)}
+                      y2={cy + rOuter * Math.sin(((sec.angleIndex * 45 - 90 - 22.5) * Math.PI) / 180)}
+                      stroke="rgba(255, 255, 255, 0.18)"
+                      strokeWidth="1"
                     />
+
+                    {/* Transducer Micro-Nodes Plotted in Wedge (Concentric Tiers) */}
+                    {sec.transducers.slice(0, 3).map((node, nodeIdx) => {
+                      const pos = geo.nodes[nodeIdx];
+                      const isNodeActive = activeTransducerId === node.id;
+
+                      return (
+                        <g
+                          key={node.id}
+                          className="cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSector(secId);
+                            setActiveTransducerId(node.id);
+                          }}
+                        >
+                          {/* Node Halo Ring */}
+                          <circle
+                            cx={pos.x}
+                            cy={pos.y}
+                            r={isNodeActive ? 12 : 8}
+                            fill={isNodeActive ? sec.badgeAccent : '#18181B'}
+                            stroke={isNodeActive ? '#FFFFFF' : sec.badgeAccent}
+                            strokeWidth={isNodeActive ? 2.5 : 1.5}
+                            className="transition-all duration-200"
+                          />
+
+                          {/* Node Glyph or Value */}
+                          <text
+                            x={pos.x}
+                            y={pos.y + 3}
+                            textAnchor="middle"
+                            fontSize="8"
+                            fontFamily="monospace"
+                            fontWeight="bold"
+                            fill={isNodeActive ? '#09090B' : '#FFFFFF'}
+                            className="select-none pointer-events-none"
+                          >
+                            {nodeIdx + 1}
+                          </text>
+
+                          {/* Micro-Label Badge */}
+                          {isSelected && (
+                            <text
+                              x={pos.x}
+                              y={pos.y + 20}
+                              textAnchor="middle"
+                              fontSize="8"
+                              fontFamily="monospace"
+                              fill="rgba(255, 255, 255, 0.85)"
+                              className="select-none pointer-events-none font-bold"
+                            >
+                              {node.shortLabel}
+                            </text>
+                          )}
+                        </g>
+                      );
+                    })}
                   </g>
                 );
               })}
+
+              {/* 4. Dynamic Sweep Arm Scanner */}
+              {isSweepActive && (
+                <line
+                  x1={cx}
+                  y1={cy}
+                  x2={cx + rOuter * Math.cos((sweepAngle * Math.PI) / 180)}
+                  y2={cy + rOuter * Math.sin((sweepAngle * Math.PI) / 180)}
+                  stroke="var(--accent)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.8"
+                />
+              )}
+
+              {/* 5. Center Core Cockpit Enclave */}
+              <circle
+                cx={cx}
+                cy={cy}
+                r={rCore}
+                fill="#09090B"
+                stroke="rgba(255, 255, 255, 0.2)"
+                strokeWidth="2.5"
+              />
+
+              {/* Central Chronometer Dial Telemetry Display */}
+              <text
+                x={cx}
+                y={cy - 20}
+                textAnchor="middle"
+                fontSize="9"
+                fontFamily="monospace"
+                letterSpacing="0.2em"
+                fill="rgba(255, 255, 255, 0.5)"
+                className="select-none uppercase"
+              >
+                {carName} // TELEMETRY
+              </text>
+              <text
+                x={cx}
+                y={cy + 6}
+                textAnchor="middle"
+                fontSize="18"
+                fontFamily="monospace"
+                fontWeight="bold"
+                fill={activeSector.badgeAccent}
+                className="select-none"
+              >
+                {activeSector.leadTelemetry.split(' ')[0]} {activeSector.leadTelemetry.split(' ')[1]}
+              </text>
+              <text
+                x={cx}
+                y={cy + 24}
+                textAnchor="middle"
+                fontSize="9"
+                fontFamily="monospace"
+                letterSpacing="0.15em"
+                fill="rgba(255, 255, 255, 0.8)"
+                className="select-none uppercase font-bold"
+              >
+                {activeSector.categoryLabel}
+              </text>
             </svg>
 
-            {/* Central Core Cockpit HUD Display */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-32 h-32 rounded-full flex flex-col items-center justify-center text-center p-2 bg-[#09090B]/90 backdrop-blur-md border border-white/15 shadow-2xl">
-                <span className="text-[9px] font-mono-numbers uppercase tracking-widest text-zinc-400">
-                  {carName} LIVE
-                </span>
-                <span 
-                  className="text-base sm:text-lg font-bold font-mono-numbers leading-tight mt-0.5"
-                  style={{ color: activeSector.colorHex }}
-                >
-                  {activeSector.primaryValue}
-                </span>
-                <span className="text-[9px] font-mono-numbers uppercase tracking-wider text-zinc-300 mt-0.5 truncate max-w-[90px]">
-                  {activeSector.category.split(' ')[0]}
-                </span>
-              </div>
-            </div>
-
           </div>
 
-          {/* Dial Interaction Tip */}
-          <p className="text-[11px] font-mono-numbers text-zinc-500 mt-3 text-center">
-            Click or tap any radial sector to inspect deep subsystem telemetry
-          </p>
+          {/* Bottom Taxonomy Sector Badges Strip (Inspired by the Reference Image) */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-4 max-w-xl">
+            {(Object.keys(sectors) as DynamicsSectorId[]).map((secId) => {
+              const sec = sectors[secId];
+              const isSelected = selectedSector === secId;
 
-        </div>
-
-        {/* ========================================================= */}
-        {/* 2. RIGHT: DETAILED SUBSYSTEM TELEMETRY MATRIX            */}
-        {/* ========================================================= */}
-        <div className="lg:col-span-7 space-y-5">
-          
-          {/* Active Sector Dossier Header */}
-          <div 
-            className="p-5 rounded-2xl border transition-all duration-300 space-y-2"
-            style={{
-              backgroundColor: 'var(--bg-elevated)',
-              borderColor: activeSector.colorHex
-            }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs font-mono-numbers font-bold uppercase tracking-widest text-zinc-400">
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeSector.colorHex }} />
-                <span>{activeSector.category}</span>
-                <span>•</span>
-                <span>SECTOR 0{activeSector.angleIndex + 1}</span>
-              </div>
-              <span className="text-xs font-bold font-mono-numbers px-2.5 py-1 rounded-full bg-black/40 border border-white/10" style={{ color: activeSector.colorHex }}>
-                {activeSector.primaryValue}
-              </span>
-            </div>
-
-            <h4 className="text-xl font-bold font-luxury-display uppercase" style={{ color: 'var(--text-primary)' }}>
-              {activeSector.title}
-            </h4>
-            
-            <p className="text-xs text-zinc-300 leading-relaxed">
-              {activeSector.description}
-            </p>
-          </div>
-
-          {/* 4-Card Sub-Metric Telemetry Grid */}
-          <div className="grid grid-cols-2 gap-3">
-            {activeSector.subMetrics.map((m, idx) => (
-              <div 
-                key={idx}
-                className="p-3.5 rounded-xl border space-y-1 transition-all"
-                style={{
-                  backgroundColor: 'rgba(0,0,0,0.25)',
-                  borderColor: 'var(--border-subtle)'
-                }}
-              >
-                <div className="flex items-center justify-between text-[10px] font-mono-numbers text-zinc-400 uppercase tracking-wider">
-                  <span>{m.label}</span>
-                  <span className={`w-1.5 h-1.5 rounded-full ${
-                    m.status === 'optimal' ? 'bg-emerald-400' : m.status === 'elevated' ? 'bg-amber-400' : 'bg-red-400'
-                  }`} />
-                </div>
-                <div className="flex items-baseline gap-1 pt-0.5">
-                  <span className="text-base sm:text-lg font-bold font-mono-numbers text-white">
-                    {m.value}
-                  </span>
-                  {m.unit && (
-                    <span className="text-xs font-mono-numbers text-zinc-400">
-                      {m.unit}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Sector Quick-Select Pills Strip (8 Domains) */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2">
-            {(Object.keys(sectors) as DynamicsSectorId[]).map((sId) => {
-              const s = sectors[sId];
-              const isSelected = selectedSector === sId;
               return (
                 <button
-                  key={sId}
-                  onClick={() => setSelectedSector(sId)}
-                  className={`px-3 py-1.5 rounded-xl text-[11px] font-mono-numbers font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 border ${
-                    isSelected ? 'shadow-xs' : 'opacity-60 hover:opacity-100 hover:bg-white/5'
+                  key={secId}
+                  onClick={() => {
+                    setSelectedSector(secId);
+                    setActiveTransducerId(sec.transducers[0].id);
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-mono-numbers font-bold transition cursor-pointer border flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'shadow-md scale-105'
+                      : 'opacity-70 hover:opacity-100 hover:bg-white/5'
                   }`}
                   style={{
-                    backgroundColor: isSelected ? s.colorHex : 'transparent',
-                    color: isSelected ? '#09090B' : 'var(--text-secondary)',
-                    borderColor: isSelected ? s.colorHex : 'var(--border-subtle)',
+                    backgroundColor: isSelected ? sec.badgeAccent : 'rgba(255, 255, 255, 0.04)',
+                    color: isSelected ? '#09090B' : 'var(--text-primary)',
+                    borderColor: isSelected ? sec.badgeAccent : 'rgba(255, 255, 255, 0.12)',
                   }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: isSelected ? '#09090B' : s.colorHex }} />
-                  <span>{s.title.split(' ')[0]}</span>
+                  <span
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: isSelected ? '#09090B' : sec.badgeAccent }}
+                  />
+                  <span>{sec.categoryLabel}</span>
                 </button>
               );
             })}
+          </div>
+
+        </div>
+
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* RIGHT: SUBSYSTEM TRANSDUCER INSPECTOR (FLIGHT-RECORDER)   */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <div className="lg:col-span-5 space-y-6">
+          
+          {/* Active Sector Dossier Header */}
+          <div
+            className="p-5 rounded-2xl border space-y-3"
+            style={{
+              backgroundColor: 'var(--bg-elevated)',
+              borderColor: activeSector.badgeAccent,
+            }}
+          >
+            <div className="flex items-center justify-between">
+              <span
+                className="text-[10px] font-mono-numbers font-bold uppercase tracking-widest px-2.5 py-1 rounded-md"
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  color: activeSector.badgeAccent,
+                }}
+              >
+                DIMENSION 0{activeSector.angleIndex + 1} // {activeSector.categoryLabel}
+              </span>
+              <span className="text-xs font-bold font-mono-numbers text-white">
+                {activeSector.leadTelemetry}
+              </span>
+            </div>
+
+            <h4
+              className="text-lg sm:text-xl font-bold font-luxury-display uppercase"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              {activeSector.title}
+            </h4>
+
+            <p className="text-xs text-zinc-300 leading-relaxed font-sans">
+              {activeSector.engineeringMemo}
+            </p>
+          </div>
+
+          {/* Concentric Transducer Sub-App Buttons Grid (Matching Reference) */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-400 font-bold block">
+              Active Transducers in {activeSector.categoryLabel} Sector:
+            </label>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              {activeSector.transducers.map((t) => {
+                const isActive = activeTransducerId === t.id;
+
+                return (
+                  <div
+                    key={t.id}
+                    onClick={() => setActiveTransducerId(t.id)}
+                    className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                      isActive ? 'border shadow-md' : 'opacity-70 hover:opacity-100 hover:bg-white/5'
+                    }`}
+                    style={{
+                      backgroundColor: isActive ? 'var(--bg-elevated)' : 'rgba(0,0,0,0.2)',
+                      borderColor: isActive ? activeSector.badgeAccent : 'var(--border-subtle)',
+                    }}
+                  >
+                    <div className="flex items-center justify-between text-[9px] font-mono-numbers text-zinc-400 uppercase">
+                      <span>Tier {t.ringLevel} • {t.code}</span>
+                      <span
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ backgroundColor: activeSector.badgeAccent }}
+                      />
+                    </div>
+
+                    <div className="text-xs font-bold font-mono-numbers text-white mt-1">
+                      {t.name}
+                    </div>
+
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span
+                        className="text-base font-bold font-mono-numbers"
+                        style={{ color: isActive ? activeSector.badgeAccent : '#FFFFFF' }}
+                      >
+                        {t.value}
+                      </span>
+                      {t.unit && (
+                        <span className="text-[10px] font-mono-numbers text-zinc-400">
+                          {t.unit}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Active Transducer Deep Telemetry Scope & Waveform */}
+          <div
+            className="p-4 rounded-2xl border space-y-3"
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              borderColor: 'var(--border-subtle)',
+            }}
+          >
+            <div className="flex items-center justify-between text-xs font-mono-numbers">
+              <span className="text-zinc-400 uppercase tracking-widest text-[10px]">
+                Active Oscilloscope // {activeTransducer.name}
+              </span>
+              <span className="text-emerald-400 font-bold flex items-center gap-1 text-[11px]">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>CALIBRATED</span>
+              </span>
+            </div>
+
+            {/* Sparkline Waveform */}
+            <div className="h-16 w-full flex items-end gap-1 pt-2 pb-1 px-1 rounded-xl bg-black/60 border border-white/10">
+              {telemetryHistory.map((val, i) => {
+                const heightPct = Math.max(15, Math.min(95, ((val - 60) / 40) * 100));
+                return (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-t-sm transition-all duration-200"
+                    style={{
+                      height: `${heightPct}%`,
+                      backgroundColor:
+                        i === telemetryHistory.length - 1
+                          ? activeSector.badgeAccent
+                          : 'rgba(255, 255, 255, 0.25)',
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Hardware & Tolerance Specs */}
+            <div className="grid grid-cols-2 gap-2 text-[10px] font-mono-numbers text-zinc-300 pt-1">
+              <div>
+                <span className="text-zinc-500 block uppercase">Supplier Hardware</span>
+                <strong className="text-white">{activeTransducer.hardwareSupplier}</strong>
+              </div>
+              <div>
+                <span className="text-zinc-500 block uppercase">Spec Tolerance Band</span>
+                <strong className="text-white">{activeTransducer.specTolerance}</strong>
+              </div>
+            </div>
           </div>
 
         </div>
