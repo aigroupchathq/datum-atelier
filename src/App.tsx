@@ -16,6 +16,7 @@ import { PassGripRadarModal } from './components/telemetry/PassGripRadarModal';
 import { TransitCarnetModal } from './components/logistics/TransitCarnetModal';
 import { SplashScreen } from './components/common/SplashScreen';
 import { BackendInspectorModal } from './components/system/BackendInspectorModal';
+import { ArchitecturalChamberModal } from './components/atelier/ArchitecturalChamberModal';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { mockFeedPosts } from './data/mockData';
@@ -33,6 +34,7 @@ function AppContent() {
   const [passRadarTarget, setPassRadarTarget] = useState<string>('snake-pass-a57');
   const [isTransitCarnetOpen, setIsTransitCarnetOpen] = useState<boolean>(false);
   const [isBackendInspectorOpen, setIsBackendInspectorOpen] = useState<boolean>(false);
+  const [isArchitecturalChamberOpen, setIsArchitecturalChamberOpen] = useState<boolean>(false);
   // Splash screen state: checks localStorage skip setting
   const [showSplash, setShowSplash] = useState<boolean>(() => {
     return localStorage.getItem('garage_splash_skip') !== 'true';
@@ -102,6 +104,7 @@ function AppContent() {
           onOpenPassRadar={() => { setPassRadarTarget('snake-pass-a57'); setIsPassRadarOpen(true); }}
           onOpenTransitCarnet={() => setIsTransitCarnetOpen(true)}
           onOpenBackendInspector={() => setIsBackendInspectorOpen(true)}
+          onOpenArchitecturalChamber={() => setIsArchitecturalChamberOpen(true)}
         />
 
         {/* Dynamic Route Viewport */}
@@ -164,6 +167,13 @@ function AppContent() {
               </button>
               <span>•</span>
               <button
+                onClick={() => setIsArchitecturalChamberOpen(true)}
+                className={`transition ${isWhiteYellow ? 'hover:text-yellow-600' : 'hover:text-amber-400'}`}
+              >
+                Chamber Studio
+              </button>
+              <span>•</span>
+              <button
                 onClick={() => setIsTransitCarnetOpen(true)}
                 className={`transition ${isWhiteYellow ? 'hover:text-yellow-600' : 'hover:text-amber-400'}`}
               >
@@ -217,6 +227,12 @@ function AppContent() {
         <BackendInspectorModal
           isOpen={isBackendInspectorOpen}
           onClose={() => setIsBackendInspectorOpen(false)}
+        />
+
+        {/* Modal: Architectural Atelier Chamber Designer */}
+        <ArchitecturalChamberModal
+          isOpen={isArchitecturalChamberOpen}
+          onClose={() => setIsArchitecturalChamberOpen(false)}
         />
 
       </div>

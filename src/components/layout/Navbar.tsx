@@ -26,6 +26,7 @@ interface NavbarProps {
   onOpenPassRadar?: () => void;
   onOpenTransitCarnet?: () => void;
   onOpenBackendInspector?: () => void;
+  onOpenArchitecturalChamber?: () => void;
 }
 
 export type FontMode = 'horlogerie' | 'modernist' | 'technical';
@@ -37,7 +38,8 @@ export const Navbar: FC<NavbarProps> = ({
   onOpenAcousticStudio,
   onOpenPassRadar,
   onOpenTransitCarnet,
-  onOpenBackendInspector
+  onOpenBackendInspector,
+  onOpenArchitecturalChamber
 }) => {
   const { theme, setTheme, themeMeta } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
@@ -490,6 +492,23 @@ export const Navbar: FC<NavbarProps> = ({
                 <span>Inspector</span>
               </button>
             )}
+
+            {/* Architectural Chamber Studio trigger */}
+            {onOpenArchitecturalChamber && (
+              <button
+                onClick={onOpenArchitecturalChamber}
+                className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-mono-numbers transition cursor-pointer"
+                style={{
+                  backgroundColor: 'var(--bg-elevated)',
+                  borderColor: 'var(--border-default)',
+                  color: 'var(--text-secondary)'
+                }}
+                title="Architectural Atelier Chamber Designer"
+              >
+                <Wrench className="w-3.5 h-3.5 text-amber-500" />
+                <span>Chamber</span>
+              </button>
+            )}
             {/* Quick Create Post Action */}
             <button
               onClick={() => onOpenCreatePost('post')}
@@ -515,6 +534,7 @@ export const Navbar: FC<NavbarProps> = ({
         onOpenAcousticStudio={onOpenAcousticStudio}
         onOpenPassRadar={onOpenPassRadar}
         onOpenTransitCarnet={onOpenTransitCarnet}
+        onOpenArchitecturalChamber={onOpenArchitecturalChamber}
       />
     </>
   );

@@ -25,6 +25,7 @@ interface CommandPaletteProps {
   onOpenAcousticStudio?: () => void;
   onOpenPassRadar?: () => void;
   onOpenTransitCarnet?: () => void;
+  onOpenArchitecturalChamber?: () => void;
 }
 
 interface CommandItem {
@@ -43,7 +44,8 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
   onOpenSplashScreen,
   onOpenAcousticStudio,
   onOpenPassRadar,
-  onOpenTransitCarnet
+  onOpenTransitCarnet,
+  onOpenArchitecturalChamber
 }) => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
@@ -225,6 +227,15 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
       sublabel: 'Generate border pass & cryptographically cloaked carnet',
       icon: <Cpu className="w-4 h-4 text-emerald-400" />,
       action: () => { if (onOpenTransitCarnet) onOpenTransitCarnet(); onClose(); }
+    },
+    {
+      id: 'tool-chamber',
+      category: 'Engineering & Tools',
+      label: 'Architectural Chamber Designer',
+      sublabel: 'Bespoke Lighting Physics, Terrazzo, Acoustic Slats & Climate Telemetry',
+      icon: <Wrench className="w-4 h-4 text-amber-400" />,
+      badge: 'STUDIO',
+      action: () => { if (onOpenArchitecturalChamber) onOpenArchitecturalChamber(); onClose(); }
     }
   ];
 
