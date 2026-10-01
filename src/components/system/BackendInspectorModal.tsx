@@ -18,16 +18,7 @@ import {
 
 import type { DecodedTelemetryPacket } from '../../core/telemetry/CanBusStreamDecoder';
 import type { GripAnalysisResult } from '../../core/radar/GripPhysicsEngine';
-
-// Lazy import to avoid circular — we'll use dynamic getter
-let _backend: typeof import('../../services/backend/DatumBackendEngine').datumBackend | null = null;
-const getBackend = async () => {
-  if (!_backend) {
-    const mod = await import('../../services/backend/DatumBackendEngine');
-    _backend = mod.datumBackend;
-  }
-  return _backend;
-};
+import { datumBackend } from '../../services/backend/DatumBackendEngine';
 
 interface BackendInspectorModalProps {
   isOpen: boolean;
@@ -71,12 +62,11 @@ export const BackendInspectorModal: FC<BackendInspectorModalProps> = ({ isOpen, 
   const unsubRef = useRef<(() => void) | null>(null);
 
   // Initialize backend and start stream
-  const initBackend = useCallback(async () => {
-    const backend = await getBackend();
-    backend.seedDemoData();
+  const initBackend = useCallback(() => {
+    datumBackend.seedDemoData();
 
     // Refresh static data
-    const status = backend.getSystemStatus();
+    const status = datumBackend.getSystemStatus();
     setSystemStatus({
       rootHash: status.ledger.rootHash,
       blockCount: status.ledger.blockCount,
@@ -86,7 +76,7 @@ export const BackendInspectorModal: FC<BackendInspectorModalProps> = ({ isOpen, 
       simHz: status.simulationHz,
     });
 
-    const blocks = backend.getLedger().getBlocks();
+    const blocks = datumBackend.getLedger().getBlocks();
     setLedgerBlocks(blocks.map(b => ({
       blockIndex: b.blockIndex,
       eventType: b.eventType,
@@ -96,7 +86,7 @@ export const BackendInspectorModal: FC<BackendInspectorModalProps> = ({ isOpen, 
       details: b.details,
     })));
 
-    const tokens = backend.getVaultEngine().getAllTokens();
+    const tokens = datumBackend.getVaultEngine().getAllTokens();
     setCarnetTokens(tokens.map(t => ({
       id: t.id,
       vin: t.vin,
@@ -107,12 +97,11 @@ export const BackendInspectorModal: FC<BackendInspectorModalProps> = ({ isOpen, 
     })));
   }, []);
 
-  const startStream = useCallback(async () => {
-    const backend = await getBackend();
-    backend.startTelemetryStream(10);
+  const startStream = useCallback(() => {
+    datumBackend.startTelemetryStream(10);
     setIsStreaming(true);
 
-    unsubRef.current = backend.subscribe((frame) => {
+    unsubRef.current = datumBackend.subscribe((frame) => {
       setTelemetry(frame.decoded);
       setGripData(frame.gripSnapshot);
       setCanDumpLog(prev => {
@@ -122,9 +111,8 @@ export const BackendInspectorModal: FC<BackendInspectorModalProps> = ({ isOpen, 
     });
   }, []);
 
-  const stopStream = useCallback(async () => {
-    const backend = await getBackend();
-    backend.stopTelemetryStream();
+  const stopStream = useCallback(() => {
+    datumBackend.stopTelemetryStream();
     setIsStreaming(false);
     if (unsubRef.current) {
       unsubRef.current();
@@ -155,9 +143,8 @@ export const BackendInspectorModal: FC<BackendInspectorModalProps> = ({ isOpen, 
   // Refresh system status periodically
   useEffect(() => {
     if (!isOpen) return;
-    const interval = setInterval(async () => {
-      const backend = await getBackend();
-      const status = backend.getSystemStatus();
+    const interval = setInterval(() => {
+      const status = datumBackend.getSystemStatus();
       setSystemStatus({
         rootHash: status.ledger.rootHash,
         blockCount: status.ledger.blockCount,

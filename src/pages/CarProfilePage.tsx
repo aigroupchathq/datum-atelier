@@ -8,6 +8,7 @@ import { AcousticStudioModal } from '../components/common/AcousticStudioModal';
 import { CommissioningAtelierModal } from '../components/atelier/CommissioningAtelierModal';
 import { TransitCarnetModal } from '../components/logistics/TransitCarnetModal';
 import { TyrePyrometerModal } from '../components/telemetry/TyrePyrometerModal';
+import { RadialDynamicsCluster } from '../components/telemetry/RadialDynamicsCluster';
 import { DynoStudio } from '../components/profile/DynoStudio';
 import { useToast } from '../context/ToastContext';
 import { 
@@ -1355,6 +1356,12 @@ export const CarProfilePage: FC = () => {
               <span>3-ZONE TYRE PYROMETER</span>
             </button>
           </div>
+
+          {/* Interactive Radial Dynamics & Telemetry Radar Cluster */}
+          <RadialDynamicsCluster 
+            carName={car.name} 
+            carModel={car.fullName} 
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-6 rounded-2xl bg-[#0B0C10] border border-white/[0.08] space-y-3">
