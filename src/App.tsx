@@ -35,8 +35,9 @@ function AppContent() {
   const [isTransitCarnetOpen, setIsTransitCarnetOpen] = useState<boolean>(false);
   const [isBackendInspectorOpen, setIsBackendInspectorOpen] = useState<boolean>(false);
   const [isArchitecturalChamberOpen, setIsArchitecturalChamberOpen] = useState<boolean>(false);
-  // Splash screen state: checks localStorage skip setting
+  // Splash screen state: checks localStorage skip setting or nosplash query param
   const [showSplash, setShowSplash] = useState<boolean>(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('nosplash')) return false;
     return localStorage.getItem('garage_splash_skip') !== 'true';
   });
 

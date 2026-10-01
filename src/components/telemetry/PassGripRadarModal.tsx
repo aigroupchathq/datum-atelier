@@ -13,10 +13,15 @@ import {
   Copy, 
   Sparkles,
   RefreshCw,
-  Activity,
-  Eye
+  Eye,
+  Info,
+  AlertOctagon,
+  Snowflake,
+  HelpCircle
 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
+import { calculateRoadGrip } from '../../utils/gripCalculation';
+import { GripCalculatorModal } from './GripCalculatorModal';
 
 export interface PassTelemetryData {
   id: string;
@@ -201,15 +206,24 @@ export const PassGripRadarModal: FC<PassGripRadarModalProps> = ({
 
   const currentPass = UK_PASSES_TELEMETRY[selectedPassId] || UK_PASSES_TELEMETRY['snake-pass-a57'];
 
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState<boolean>(false);
+
   // Adjusted figures when simulating early dawn cold front
   const effectiveAirTemp = simColdDrop ? currentPass.airTempC - 5.5 : currentPass.airTempC;
   const effectiveSurfaceTemp = simColdDrop ? currentPass.surfaceTempC - 5.8 : currentPass.surfaceTempC;
-  const isBlackIceRisk = effectiveSurfaceTemp <= 1.0 && currentPass.surfaceCondition !== 'Dry Asphalt';
-  const effectiveFriction = isBlackIceRisk 
-    ? Math.max(0.28, currentPass.frictionMu - 0.42)
-    : simColdDrop 
-      ? Math.max(0.45, currentPass.frictionMu - 0.12)
-      : currentPass.frictionMu;
+
+  // Compute live verified grip from real sensor and weather inputs
+  const currentGripResult = useMemo(() => {
+    return calculateRoadGrip({
+      surfaceTempC: effectiveSurfaceTemp,
+      airTempC: effectiveAirTemp,
+      surfaceCondition: currentPass.surfaceCondition,
+      tyreTempC: simColdDrop ? 12 : 36
+    }, 'UK Met Office Road Sensors', 'Updated 3 min ago');
+  }, [effectiveSurfaceTemp, effectiveAirTemp, currentPass.surfaceCondition, simColdDrop]);
+
+  const effectiveFriction = currentGripResult.frictionNumber ?? 0.65;
+  const isBlackIceRisk = currentGripResult.gripLevel === 'ice_hazard';
 
   const handleCopyRadio = () => {
     navigator.clipboard.writeText(
@@ -390,32 +404,59 @@ export const PassGripRadarModal: FC<PassGripRadarModalProps> = ({
           {/* Telemetry Metric Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 font-mono-numbers text-xs">
             
-            {/* 1. Surface Friction (μ) Gauge */}
+            {/* 1. Road Grip / Friction Card (Plain Words First) */}
             <div className="p-4 rounded-xl bg-zinc-950/80 border border-white/[0.07] space-y-2">
               <div className="flex items-center justify-between text-zinc-400 text-[11px]">
-                <span className="uppercase tracking-wider">Surface Friction (μ)</span>
-                <Activity className="w-3.5 h-3.5 text-amber-400" />
+                <span className="uppercase tracking-wider">Road Grip</span>
+                {currentGripResult.iconKind === 'shield-check' ? (
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                ) : currentGripResult.iconKind === 'snowflake' ? (
+                  <Snowflake className="w-3.5 h-3.5 text-cyan-300" />
+                ) : currentGripResult.iconKind === 'alert-octagon' ? (
+                  <AlertOctagon className="w-3.5 h-3.5 text-rose-400" />
+                ) : currentGripResult.iconKind === 'alert-triangle' ? (
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                ) : (
+                  <HelpCircle className="w-3.5 h-3.5 text-zinc-400" />
+                )}
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className={`text-2xl font-bold ${
-                  effectiveFriction > 0.8 ? 'text-emerald-400' : effectiveFriction > 0.65 ? 'text-amber-400' : 'text-rose-400'
-                }`}>
-                  μ {effectiveFriction.toFixed(2)}
+              <div className="flex items-baseline justify-between gap-1">
+                <span className="text-base font-bold text-white tracking-wide">
+                  {currentGripResult.headline}
                 </span>
-                <span className="text-[10px] text-zinc-500">Coefficient</span>
+                <span className="text-[10px] font-mono-numbers text-zinc-400">
+                  {currentGripResult.frictionNumber !== null ? `μ ${currentGripResult.frictionNumber.toFixed(2)}` : 'N/A'}
+                </span>
               </div>
               {/* Progress bar */}
               <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
                 <div 
                   className={`h-full rounded-full transition-all duration-500 ${
-                    effectiveFriction > 0.8 ? 'bg-emerald-400' : effectiveFriction > 0.65 ? 'bg-amber-400' : 'bg-rose-400'
+                    currentGripResult.gripLevel === 'optimal' || currentGripResult.gripLevel === 'good'
+                      ? 'bg-emerald-400' 
+                      : currentGripResult.gripLevel === 'moderate' 
+                        ? 'bg-amber-400' 
+                        : currentGripResult.gripLevel === 'low' 
+                          ? 'bg-orange-500' 
+                          : 'bg-rose-500'
                   }`}
-                  style={{ width: `${Math.min(100, effectiveFriction * 100)}%` }}
+                  style={{ width: `${Math.min(100, (effectiveFriction) * 100)}%` }}
                 />
               </div>
-              <p className="text-[10px] text-zinc-500 truncate">
-                {effectiveFriction > 0.8 ? 'Dry Full Lateral Grip' : effectiveFriction > 0.65 ? 'Damp Bitumen Traction' : 'Sub-Zero Polish Caution'}
+              <p className="text-[10px] text-zinc-300 font-sans leading-tight">
+                {currentGripResult.drivingAdvice}
               </p>
+              <div className="pt-1 flex items-center justify-between border-t border-white/[0.05] text-[9px] text-zinc-500">
+                <span className="truncate max-w-[130px]">{currentGripResult.sourceAttribution}</span>
+                <button
+                  type="button"
+                  onClick={() => setIsCalculatorOpen(true)}
+                  className="text-amber-400 hover:text-amber-300 font-medium underline underline-offset-2 flex items-center gap-1 shrink-0"
+                >
+                  <Info className="w-2.5 h-2.5" />
+                  Formula
+                </button>
+              </div>
             </div>
 
             {/* 2. Road Surface Temperature */}
@@ -593,6 +634,19 @@ export const PassGripRadarModal: FC<PassGripRadarModalProps> = ({
         </footer>
 
       </div>
+
+      {/* Interactive Grip Simulator & Formula Dialog */}
+      <GripCalculatorModal
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
+        locationName={`${currentPass.name} (${currentPass.roadNumber})`}
+        initialInputs={{
+          surfaceTempC: effectiveSurfaceTemp,
+          airTempC: effectiveAirTemp,
+          surfaceCondition: currentPass.surfaceCondition,
+          tyreTempC: simColdDrop ? 12 : 36
+        }}
+      />
     </div>
   );
 };

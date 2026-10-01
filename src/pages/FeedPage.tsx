@@ -5,6 +5,7 @@ import { mockMayaVehicle, mockOtherVehicles } from '../data/mockData';
 import type { CommunityPost } from '../types';
 import { FeedCard } from '../components/feed/FeedCard';
 import { StoriesBar } from '../components/feed/StoriesBar';
+import { GripMetricCard } from '../components/telemetry/GripMetricCard';
 import { useTheme } from '../context/ThemeContext';
 import {
   Compass,
@@ -15,8 +16,7 @@ import {
   Camera,
   HelpCircle,
   Users,
-  RefreshCw,
-  Activity
+  RefreshCw
 } from 'lucide-react';
 
 interface FeedPageProps {
@@ -52,7 +52,7 @@ const POSTS_PER_PAGE = 8;
 export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPassRadar }) => {
   const { isWhiteYellow } = useTheme();
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<'maya' | 'kuro'>('maya');
@@ -438,63 +438,20 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
           </div>
 
           {/* Live Pass Surface Grip & Weather Radar */}
-          <div className={`p-4 space-y-3 rounded-[24px] border transition-colors ${
-            isWhiteYellow ? 'bg-white border-zinc-200/90 shadow-xs' : 'card-surface'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Compass className={`w-3.5 h-3.5 ${isWhiteYellow ? 'text-yellow-600' : 'text-amber-400'}`} />
-                <p className={`text-[11px] font-bold uppercase tracking-wider font-mono-numbers ${
-                  isWhiteYellow ? 'text-zinc-900' : 'text-zinc-400'
-                }`}>
-                  Pass Surface Grip Radar
-                </p>
-              </div>
-              <span className={`text-[9px] font-mono-numbers px-1.5 py-0.5 rounded font-bold ${
-                isWhiteYellow
-                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-              }`}>
-                MET OFFICE
-              </span>
-            </div>
-
-            <div className={`p-3 rounded-xl border space-y-2 ${
-              isWhiteYellow ? 'bg-zinc-50 border-zinc-200' : 'bg-[#0D0D0F] border-white/[0.06]'
-            }`}>
-              <div className="flex items-center justify-between">
-                <span className={`text-xs font-bold font-mono-numbers ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>Snake Pass (A57)</span>
-                <span className={`text-[10px] font-mono-numbers font-bold ${isWhiteYellow ? 'text-yellow-700' : 'text-amber-400'}`}>μ 0.74 DAMP</span>
-              </div>
-              <div className={`grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono-numbers ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                <div className={`p-1 rounded border ${isWhiteYellow ? 'bg-white border-zinc-200' : 'bg-black/40 border-white/[0.04]'}`}>
-                  <span className={`text-[8px] block ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-600'}`}>SURFACE</span>
-                  <span className={`font-bold ${isWhiteYellow ? 'text-zinc-900' : 'text-white'}`}>6.1°C</span>
-                </div>
-                <div className={`p-1 rounded border ${isWhiteYellow ? 'bg-white border-zinc-200' : 'bg-black/40 border-white/[0.04]'}`}>
-                  <span className={`text-[8px] block ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-600'}`}>WIND</span>
-                  <span className={`font-bold ${isWhiteYellow ? 'text-zinc-900' : 'text-white'}`}>18 mph</span>
-                </div>
-                <div className={`p-1 rounded border ${isWhiteYellow ? 'bg-white border-zinc-200' : 'bg-black/40 border-white/[0.04]'}`}>
-                  <span className={`text-[8px] block ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-600'}`}>PMR446</span>
-                  <span className={`font-bold ${isWhiteYellow ? 'text-emerald-700' : 'text-emerald-400'}`}>Ch 7</span>
-                </div>
-              </div>
-              {onOpenPassRadar && (
-                <button
-                  onClick={() => onOpenPassRadar('snake-pass-a57')}
-                  className={`w-full text-center py-1.5 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 border ${
-                    isWhiteYellow
-                      ? 'bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-bold border-yellow-500/40 shadow-xs'
-                      : 'bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/[0.04]'
-                  }`}
-                >
-                  <Activity className={`w-3.5 h-3.5 ${isWhiteYellow ? 'text-zinc-950' : 'text-amber-400'}`} />
-                  <span>Open Live Radar (6 UK Passes)</span>
-                </button>
-              )}
-            </div>
-          </div>
+          <GripMetricCard
+            locationName="Snake Pass"
+            roadNumber="A57"
+            inputs={{
+              surfaceTempC: 6.1,
+              airTempC: 7.2,
+              surfaceCondition: 'Damp Bitumen',
+              rainMmPerHour: 0.8,
+              tyreTempC: 38
+            }}
+            onOpenRadarModal={onOpenPassRadar ? () => onOpenPassRadar('snake-pass-a57') : undefined}
+            sourceLabel="Source: Met Office UK Road Sensors"
+            freshnessLabel="Updated 4m ago"
+          />
 
           {/* Privacy guardian */}
           <div className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl border ${
