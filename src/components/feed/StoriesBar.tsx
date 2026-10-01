@@ -11,15 +11,20 @@ interface StoriesBarProps {
 }
 
 const RING_CLASS: Record<string, string> = {
-  'story-cobra':      'ring-kuro',
-  'story-workshop':   'ring-community',
-  'story-collective': 'ring-maya',
-  'story-overland':   'ring-community',
-  'story-maya':       'ring-maya',
-  'story-kuro':       'ring-kuro',
-  'story-e30':        'ring-community',
-  'story-defender':   'ring-community',
-  'story-wash':       'ring-maya',
+  'story-nova':          'ring-maya',
+  'story-messerschmitt': 'ring-community',
+  'story-splitty':       'ring-kuro',
+  'story-speedhunters':  'ring-maya',
+  'story-buggy':         'ring-community',
+  'story-cobra':         'ring-kuro',
+  'story-workshop':      'ring-community',
+  'story-collective':    'ring-maya',
+  'story-overland':      'ring-community',
+  'story-maya':          'ring-maya',
+  'story-kuro':          'ring-kuro',
+  'story-e30':           'ring-community',
+  'story-defender':      'ring-community',
+  'story-wash':          'ring-maya',
 };
 
 export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
@@ -27,6 +32,66 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
   const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
 
   const storiesData: StoryItem[] = [
+    {
+      id: 'story-nova',
+      authorName: 'Callum',
+      authorHandle: 'c20_k77_nova',
+      authorModel: 'Nova Turbo (K77 NVA)',
+      avatarUrl: '/feed/nova_turbo_arden_k77_nva.jpg',
+      storyMediaUrl: '/feed/nova_turbo_arden_k77_nva.jpg',
+      timeAgo: '20m',
+      caption: 'K77 NVA: 6 years of cold lockup wrenching rewarded. C20LET turbo swap dialled in at 1.4 bar on the paddock.',
+      location: 'National Heritage Meet • Paddock Stand #4',
+      telemetry: '315 BHP @ 890kg • 1.4 Bar Boost • C20LET'
+    },
+    {
+      id: 'story-messerschmitt',
+      authorName: 'Toby',
+      authorHandle: 'bubblecar_odyssey',
+      authorModel: '1954 Messerschmitt KR200',
+      avatarUrl: '/feed/messerschmitt_kr200_bubblecar.jpg',
+      storyMediaUrl: '/feed/messerschmitt_kr200_bubblecar.jpg',
+      timeAgo: '35m',
+      caption: 'Canopy open, Sachs 200 buzzing over the wet cobblestones. Pure unfiltered joy behind handlebar steering!',
+      location: 'Historic Old Town • Wet Cobblestones',
+      telemetry: '191cc Sachs 2-Stroke • 230kg • Canopy Open'
+    },
+    {
+      id: 'story-speedhunters',
+      authorName: 'Marcus',
+      authorHandle: 'timeattack_van',
+      authorModel: 'Widebody Zafira A',
+      avatarUrl: '/feed/widebody_zafira_speedhunters_aero.jpg',
+      storyMediaUrl: '/feed/widebody_zafira_speedhunters_aero.jpg',
+      timeAgo: '50m',
+      caption: 'Dawn shakedown on the new track width. Splitter tie-rods and canards gave absurd front-end turn-in bite!',
+      location: 'Peak District Lanes • Derbyshire',
+      telemetry: '410 BHP GTX2867R • +120mm Track • AP Brakes'
+    },
+    {
+      id: 'story-splitty',
+      authorName: 'Arthur',
+      authorHandle: 'aircooled_doka_69',
+      authorModel: '1968 VW Single-Cab Pick-Up',
+      avatarUrl: '/feed/vw_splitty_singlecab_ubd_214g.jpg',
+      storyMediaUrl: '/feed/vw_splitty_singlecab_ubd_214g.jpg',
+      timeAgo: '1h',
+      caption: '55 years young. Teak drop-sides restored with marine oil, safari screens open cruising at 52 mph.',
+      location: 'Shuttleworth Aerodrome • Airfield',
+      telemetry: '1600cc Flat-4 • Safari Screens • Teak Bed'
+    },
+    {
+      id: 'story-buggy',
+      authorName: 'Trevor',
+      authorHandle: 'volt_and_valley',
+      authorModel: 'Electric Beach Buggy (BPO 684W)',
+      avatarUrl: '/feed/green_energy_electric_buggy_bpo_684w.jpg',
+      storyMediaUrl: '/feed/green_energy_electric_buggy_bpo_684w.jpg',
+      timeAgo: '1h',
+      caption: 'Built not bought: instant 220 Nm torque at 0 RPM in a 650kg tubular frame. The future of grassroots wrenching!',
+      location: 'Kit Car Festival • Paddock',
+      telemetry: 'Hyper 9 Motor • 32 kWh • 220 Nm @ 0 RPM'
+    },
     {
       id: 'story-cobra',
       authorName: 'Julian Vane',
