@@ -6,18 +6,14 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
-  Search
+  Search,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  FileText,
+  Lightbulb
 } from 'lucide-react';
-
-interface FAQItem {
-  id: string;
-  num: string;
-  category: 'protocol' | 'provenance' | 'privacy' | 'hardware' | 'guilds';
-  question: string;
-  shortAnswer: string;
-  detailedAnswer: string;
-  tier: string;
-}
+import { MASTER_DOSSIER_FAQS } from '../data/dossierFaqs';
 
 export const AboutCaseStudyPage: FC = () => {
   const { themeMeta } = useTheme();
@@ -51,78 +47,13 @@ export const AboutCaseStudyPage: FC = () => {
   const tempFactor = (tyreTemp - 20) * 0.0025;
   const calculatedMu = Math.max(0.15, Math.min(1.0, baseMu - rainPenalty - frostPenalty + tempFactor));
 
-  // FAQ Database
-  const faqs: FAQItem[] = [
-    {
-      id: 'faq-1',
-      num: '01',
-      category: 'privacy',
-      tier: 'Client Privacy & Geofence Protocol',
-      question: 'How does DATUM guarantee private home address security during public drive broadcasts?',
-      shortAnswer: 'Deterministic 800-meter vector truncation enforced locally at the client boundary before packet transmission.',
-      detailedAnswer: 'Every telemetry stream and GPS route trace is automatically clipped at an exact 800-meter radius around verified residential anchors before leaving the user\'s local client application. Vectors are cryptographically truncated and salted before ingestion into public or guild event logs. This boundary ensures home garages remain completely invisible on public maps while preserving open-road track data and driving dynamics.'
-    },
-    {
-      id: 'faq-2',
-      num: '02',
-      category: 'provenance',
-      tier: 'Provenance & Service Ledger',
-      question: 'How does the DATUM Digital Twin differ from a conventional physical service book?',
-      shortAnswer: 'An immutable cryptographic ledger binding every maintenance event to an authorized Ed25519 signature.',
-      detailedAnswer: 'Conventional service books rely on easily forged paper stamps or siloed dealership databases that evaporate upon sale. DATUM links each vehicle VIN to a Merkle Directed Acyclic Graph (DAG). Every maintenance event, torque specification, dyno run, and ECU calibration is signed with an authorized mechanic\'s Ed25519 keypair and hashed into an immutable ledger block, providing tamper-evident proof of heritage and mechanical integrity.'
-    },
-    {
-      id: 'faq-3',
-      num: '03',
-      category: 'hardware',
-      tier: 'Heritage Documentation Protocol',
-      question: 'Can classic and analog vehicles without modern CAN-bus systems participate?',
-      shortAnswer: 'Yes. Heritage Carnet Mode provides high-resolution photographic, acoustic, and analog sensor anchoring.',
-      detailedAnswer: 'Vintage and classic custodians use DATUM\'s Heritage Carnet Mode. High-resolution photographic scans of period documentation, Weber carburetor balance sheets, dyno printouts, and master engineer voice memos are timestamped and cryptographically anchored into the vehicle\'s permanent dossier. Optional BLE analog telemetry sensors can also monitor oil pressure, coolant temp, and cylinder head thermals.'
-    },
-    {
-      id: 'faq-4',
-      num: '04',
-      category: 'protocol',
-      tier: 'Pass Grip Radar & Adhesion Model',
-      question: 'How does the Pass Grip Radar calculate dynamic road friction (μ) in real time?',
-      shortAnswer: 'By fusing live Doppler weather feeds with peer vehicle ABS slip-angles and thermodynamic tyre curves.',
-      detailedAnswer: 'The radar synthesizes micro-climate meteorological radar feeds with live telemetry from convoy vehicles traversing mountain passes. It models the thermodynamic adhesion equation: μ = μ_dry - Δμ_precip - Δμ_frost + (T_tyre - 20°C) × 0.0025. This dynamically alerts drivers to black ice or standing surface water on iconic routes like Snake Pass (A57) and Bealach na Bà before they enter hazardous corners.'
-    },
-    {
-      id: 'faq-5',
-      num: '05',
-      category: 'guilds',
-      tier: 'Level 3 Domain / Multi-Sig Atelier Protocol',
-      question: 'How does collective garage access and multi-signature bay booking work?',
-      shortAnswer: 'Time-locked cryptographic NFC passes authorized by a multi-signature guild council of peer owners.',
-      detailedAnswer: 'Guild ateliers operate as decentralized collector cooperatives. Physical access to shared four-post lifts, calibrated Snap-on tool chests, and climate-controlled storage is orchestrated through temporary time-locked NFC credentials signed by the guild\'s multi-signature council. Equipment usage and consumable parts are automatically reconciled against the guild\'s collective maintenance treasury.'
-    },
-    {
-      id: 'faq-6',
-      num: '06',
-      category: 'hardware',
-      tier: 'Level 2 Ingress / Envoy mTLS Gateway',
-      question: 'Is DATUM compatible with motorsport telemetry systems like MoTeC and AiM?',
-      shortAnswer: 'Yes. High-speed bidirectional gRPC and WebSocket ingestion pipelines support standard motorsport data formats.',
-      detailedAnswer: 'DATUM provides bidirectional gRPC and WebSocket API endpoints for MoTeC, AiM, RaceCapture, and custom ESP32 CAN-bus bridges. All external telemetry is validated through Envoy mTLS gateways with strict token-bucket rate limits handling up to 600,000 QPS at 10 Hz per active vehicle.'
-    },
-    {
-      id: 'faq-7',
-      num: '07',
-      category: 'provenance',
-      tier: 'Sovereign Code Ownership & IP',
-      question: 'Who owns the intellectual property and codebase of DATUM Atelier?',
-      shortAnswer: '100% of the DATUM Atelier architecture and codebase are proprietary assets authored exclusively by vD.',
-      detailedAnswer: 'DATUM Atelier is built under strict sovereign code custody. All system designs, UI implementations, mathematical friction models, and cryptographic algorithms are exclusively owned and authored by vD (<vD@users.noreply.github.com>).'
-    }
-  ];
-
-  // Filtered FAQs
-  const filteredFaqs = faqs.filter(faq => {
+  // Filtered FAQs from Master Dossier Database
+  const filteredFaqs = MASTER_DOSSIER_FAQS.filter(faq => {
     const matchesCategory = activeFaqCategory === 'all' || faq.category === activeFaqCategory;
     const matchesSearch = faq.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
-                          faq.detailedAnswer.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                          faq.directAnswer.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                          faq.evidenceAndReasoning.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                          faq.realWorldExample.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
                           faq.tier.toLowerCase().includes(faqSearchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -861,23 +792,46 @@ export const AboutCaseStudyPage: FC = () => {
               />
             </div>
 
+            {/* Master Dossier Announcement Banner */}
+            <div 
+              className="p-4 border mb-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-lg"
+              style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }}
+            >
+              <div className="flex items-center gap-3">
+                <FileText className="w-5 h-5 text-amber-400 shrink-0" />
+                <div>
+                  <h4 className="text-xs font-bold font-luxury-editorial text-white">
+                    Master Project Dossier Published (Investment & Due Diligence Edition v2.0)
+                  </h4>
+                  <p className="text-[11px] text-zinc-400 font-mono-numbers">
+                    Complete 50-question manifesto with TAM/SAM/SOM market math and tri-pillar impact models is archived in DOSSIER.md.
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono-numbers px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 whitespace-nowrap">
+                20 Interactive Inquiries Loaded
+              </span>
+            </div>
+
             {/* Category Filter Pills */}
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1 text-xs font-mono-numbers">
               {[
-                { id: 'all', label: 'All Inquiries' },
-                { id: 'privacy', label: 'Privacy & 800m Geofencing' },
-                { id: 'provenance', label: 'Merkle DAG Provenance' },
-                { id: 'protocol', label: 'Pass Grip Radar' },
-                { id: 'guilds', label: 'Guild Ateliers' },
-                { id: 'hardware', label: 'Hardware & Telemetry' },
+                { id: 'all', label: 'All 20 Inquiries' },
+                { id: 'market', label: 'Market & Scope' },
+                { id: 'impact', label: 'Economic & Industrial Impact' },
+                { id: 'marketing', label: 'Marketing & Community' },
+                { id: 'data', label: 'Data Sources & Lineage' },
+                { id: 'collaboration', label: 'Collaboration & Garages' },
+                { id: 'deployment', label: 'Deployment & Security' },
+                { id: 'due-diligence', label: 'Core Due Diligence' },
               ].map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveFaqCategory(cat.id)}
-                  className="px-3 py-1.5 text-[10px] uppercase tracking-wider transition whitespace-nowrap cursor-pointer border"
+                  className="px-3 py-1.5 text-[10px] uppercase tracking-wider transition whitespace-nowrap cursor-pointer border rounded-md"
                   style={{
                     backgroundColor: activeFaqCategory === cat.id ? 'var(--accent)' : 'var(--bg-surface)',
-                    color: activeFaqCategory === cat.id ? '#FFFFFF' : 'var(--text-secondary)',
+                    color: activeFaqCategory === cat.id ? '#000000' : 'var(--text-secondary)',
                     borderColor: activeFaqCategory === cat.id ? 'var(--accent)' : 'var(--border-default)',
                     fontWeight: activeFaqCategory === cat.id ? 'bold' : 'normal'
                   }}
@@ -893,7 +847,7 @@ export const AboutCaseStudyPage: FC = () => {
           <div className="space-y-4">
             {filteredFaqs.length === 0 ? (
               <div 
-                className="p-8 text-center border text-xs font-mono-numbers"
+                className="p-8 text-center border text-xs font-mono-numbers rounded-xl"
                 style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
               >
                 No matching inquiries found for "{faqSearchQuery}".
@@ -904,7 +858,7 @@ export const AboutCaseStudyPage: FC = () => {
                 return (
                   <article
                     key={faq.id}
-                    className="border transition-all"
+                    className="border transition-all rounded-xl overflow-hidden"
                     style={{
                       backgroundColor: 'var(--bg-surface)',
                       borderColor: isExpanded ? 'var(--accent)' : 'var(--border-subtle)'
@@ -929,17 +883,17 @@ export const AboutCaseStudyPage: FC = () => {
                         </h3>
 
                         {!isExpanded && (
-                          <p className="text-xs font-luxury-editorial italic line-clamp-1" style={{ color: 'var(--text-muted)' }}>
-                            {faq.shortAnswer}
+                          <p className="text-xs font-luxury-editorial italic line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
+                            {faq.directAnswer}
                           </p>
                         )}
                       </div>
 
                       <div 
-                        className="p-2 border transition-all"
+                        className="p-2 border transition-all rounded-lg shrink-0 mt-1"
                         style={{
                           backgroundColor: isExpanded ? 'var(--accent)' : 'var(--bg-elevated)',
-                          color: isExpanded ? '#FFFFFF' : 'var(--text-muted)',
+                          color: isExpanded ? '#000000' : 'var(--text-muted)',
                           borderColor: 'var(--border-default)'
                         }}
                       >
@@ -949,19 +903,78 @@ export const AboutCaseStudyPage: FC = () => {
 
                     {isExpanded && (
                       <div 
-                        className="px-6 sm:px-8 pb-8 pt-2 border-t space-y-4 animate-in fade-in duration-200"
+                        className="px-6 sm:px-8 pb-8 pt-2 border-t space-y-5 animate-in fade-in duration-200"
                         style={{ borderColor: 'var(--border-subtle)' }}
                       >
-                        <p className="text-sm sm:text-base font-luxury-editorial leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                          {faq.detailedAnswer}
-                        </p>
-
+                        {/* 1. Direct Answer (One Sentence Callout) */}
                         <div 
-                          className="p-3 border flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono-numbers"
+                          className="p-4 border rounded-xl space-y-1"
+                          style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--accent)' }}
+                        >
+                          <span className="text-[10px] font-mono-numbers uppercase tracking-wider font-bold block" style={{ color: 'var(--accent)' }}>
+                            1. Direct Answer
+                          </span>
+                          <p className="text-sm font-semibold leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+                            {faq.directAnswer}
+                          </p>
+                        </div>
+
+                        {/* 2. Evidence & Reasoning */}
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] font-mono-numbers uppercase tracking-wider font-bold text-zinc-400 block">
+                            2. Evidence & Reasoning
+                          </span>
+                          <p className="text-xs sm:text-sm font-luxury-editorial leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                            {faq.evidenceAndReasoning}
+                          </p>
+                        </div>
+
+                        {/* 3. Real-World Example */}
+                        <div className="p-3.5 border rounded-xl flex items-start gap-3 bg-emerald-500/[0.04] border-emerald-500/20 text-xs">
+                          <Lightbulb className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <div className="space-y-0.5">
+                            <strong className="block text-emerald-300 font-mono-numbers text-[10px] uppercase tracking-wide">
+                              3. Real-World Practical Example
+                            </strong>
+                            <p className="text-zinc-300 leading-relaxed font-sans text-xs">
+                              {faq.realWorldExample}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* 4. Honest Limit or Risk */}
+                        <div className="p-3.5 border rounded-xl flex items-start gap-3 bg-amber-500/[0.04] border-amber-500/20 text-xs">
+                          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                          <div className="space-y-0.5">
+                            <strong className="block text-amber-300 font-mono-numbers text-[10px] uppercase tracking-wide">
+                              4. Honest Limit, Risk or Boundary
+                            </strong>
+                            <p className="text-zinc-300 leading-relaxed font-sans text-xs">
+                              {faq.honestLimit}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Audit Provenance Footer */}
+                        <div 
+                          className="p-3 border flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono-numbers rounded-xl"
                           style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)', color: 'var(--text-muted)' }}
                         >
-                          <span>Verification: Ed25519 Cryptographic Block Proof</span>
-                          <span className="font-bold uppercase" style={{ color: 'var(--accent)' }}>✓ 100% Mathematically Proven</span>
+                          <div className="flex items-center gap-2">
+                            {faq.implementationStatus === 'real_today' ? (
+                              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 font-bold">
+                                <CheckCircle2 className="w-3 h-3" />
+                                REAL IN APP TODAY
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1 font-bold">
+                                <Clock className="w-3 h-3" />
+                                PLANNED ROADMAP // PHASE 2
+                              </span>
+                            )}
+                            <span className="text-zinc-400">Basis: {faq.sourceOrEstimate}</span>
+                          </div>
+                          <span className="text-zinc-500">Strict 4-Part Provenance Audit</span>
                         </div>
                       </div>
                     )}
