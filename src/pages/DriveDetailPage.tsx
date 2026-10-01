@@ -132,7 +132,7 @@ const ROUTE_PRESETS: Record<string, RoutePreset> = {
       { progress: 0.45, distanceMi: 20.8, elevationFt: 1170, gradientPct: 6.8, speedMph: 34, gear: 2, rpm: 7200, lateralG: -0.98, throttlePct: 40, brakePct: 80, sectorName: 'Pen-y-Pass Crest Hairpin', notes: 'Apex at the base of Snowdon trail. GT3 Cup 2 tyres digging deep.', hazard: 'Tourist coaches & hikers crossing', xPct: 52, yPct: 30 },
       { progress: 0.65, distanceMi: 30.0, elevationFt: 780, gradientPct: -8.4, speedMph: 58, gear: 3, rpm: 6800, lateralG: 0.85, throttlePct: 50, brakePct: 45, sectorName: 'Slate Quarry Gorge S-Bends', notes: 'Vertical rock faces echo 9,000 RPM acoustic valvetrain note.', hazard: 'Fallen rock debris advisory', xPct: 70, yPct: 48 },
       { progress: 0.88, distanceMi: 40.6, elevationFt: 410, gradientPct: -3.5, speedMph: 50, gear: 4, rpm: 4200, lateralG: -0.15, throttlePct: 45, brakePct: 0, sectorName: 'Llyn Peris Lake Run', notes: 'Fast flowing lake perimeter road into Llanberis town.', xPct: 88, yPct: 66 },
-      { progress: 1.0, distanceMi: 46.2, elevationFt: 380, gradientPct: 0.0, speedMph: 28, gear: 2, rpm: 2100, lateralG: 0.01, throttlePct: 15, brakePct: 15, sectorName: 'Llanberis Terminal Enclave', notes: 'Expedition completed. Flat-six cooling tick recorded.', xPct: 95, yPct: 72 },
+      { progress: 1.0, distanceMi: 46.2, elevationFt: 380, gradientPct: 0.0, speedMph: 28, gear: 2, rpm: 2100, lateralG: 0.01, throttlePct: 15, brakePct: 15, sectorName: 'Llanberis Terminal', notes: 'Drive completed. Flat-six cooling tick recorded.', xPct: 95, yPct: 72 },
     ]
   },
   'cotswolds-b4425': {
@@ -471,7 +471,7 @@ export const DriveDetailPage: FC = () => {
               <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <div className="text-[10px] font-mono-numbers">
                 <span className="text-white font-bold block">800m Geofenced</span>
-                <span className="text-zinc-500">Residential endpoints cloaked</span>
+                <span className="text-zinc-500">Residential endpoints protected</span>
               </div>
             </div>
           </div>

@@ -46,7 +46,7 @@ const CONCIERGE_SERVICES = [
   },
   {
     id: 'dvsa-audit',
-    title: 'V5C Sovereign Provenance & Enclave Title Audit',
+    title: 'V5C Sovereign Provenance & Title History Audit',
     category: 'Provenance Certification',
     leadTime: '24h Digital Delivery',
     fixedFee: '£350.00',
@@ -500,7 +500,7 @@ export const GarageProPage: FC = () => {
         initialVin="WBA-33AY-08P-G8077"
       />
 
-      {/* Cross-Border ATA Carnet & Alpine Transit Enclave Modal */}
+      {/* Cross-Border ATA Carnet & Alpine Transit Modal */}
       <TransitCarnetModal
         isOpen={isTransitCarnetOpen}
         onClose={() => setIsTransitCarnetOpen(false)}

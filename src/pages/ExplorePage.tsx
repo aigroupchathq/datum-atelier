@@ -507,7 +507,7 @@ export const ExplorePage: FC = () => {
               {/* Privacy Shield Plate Protection Badge */}
               <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-emerald-500/30 text-[10px] font-mono-numbers text-emerald-400">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Plate Cloaked · 800m Geofenced</span>
+                <span>Plate Protected · 800m Geofenced</span>
               </div>
 
               {/* Carousel Arrows */}

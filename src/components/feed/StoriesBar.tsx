@@ -132,7 +132,7 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
       storyMediaUrl: '/real_uk_driveway_wash.jpg',
       timeAgo: '14h',
       caption: 'Sunday 07:00 AM snow-foam pre-wash outside suburban semi. Two-bucket method with grit guards.',
-      location: 'Driveway Enclave • Surrey',
+      location: 'Private Driveway • Surrey',
       telemetry: 'Bilt-Hamber Alkaline Decon • pH Neutral'
     }
   ];

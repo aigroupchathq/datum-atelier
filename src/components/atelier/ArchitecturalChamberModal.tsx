@@ -279,7 +279,7 @@ Floor Finish     : ${floor.name} (${floor.subtitle}) [Friction μ ${floor.fricti
 Wall System      : ${wall.name} [Acoustic NRC ${wall.acousticNrcScore}]
 Lighting Engine  : ${kelvinTemp}K Color Temp • ${luxIntensity}% Lux Output
 Fixtures Active  : ${spotlightFocus ? 'Spot Gimbal • ' : ''}${perimeterCove ? 'Perimeter Cove • ' : ''}${floorGrazingUplight ? 'Floor Uplight' : ''}
-Climate Enclave  : ${targetTempC}°C Target • ${targetHumidity}% RH • ${hepaAirChangesPerHour} ACH HEPA
+Climate Storage  : ${targetTempC}°C Target • ${targetHumidity}% RH • ${hepaAirChangesPerHour} ACH HEPA
 Provenance Hash  : ED25519-ARCH-${Date.now().toString(36).toUpperCase()}`;
 
     navigator.clipboard.writeText(spec);
@@ -343,11 +343,11 @@ Provenance Hash  : ED25519-ARCH-${Date.now().toString(36).toUpperCase()}`;
                   Architectural Chamber Designer
                 </h2>
                 <span className="font-serif italic text-xs hidden sm:inline" style={{ color: 'var(--accent)' }}>
-                  Vol. IV Spatial Studio
+                  Custom Garage Studio
                 </span>
               </div>
               <p className="text-[10px] font-mono-numbers tracking-widest uppercase" style={{ color: 'var(--text-secondary)' }}>
-                Bespoke Lighting Physics • Acoustic Slats • Terrazzo Reflectivity • HEPA Telemetry
+                Showroom Lighting, Material Finishes & Air Filtration
               </p>
             </div>
           </div>
@@ -775,7 +775,7 @@ Provenance Hash  : ED25519-ARCH-${Date.now().toString(36).toUpperCase()}`;
             >
               <div className="flex items-center gap-2 text-[10px] uppercase font-bold tracking-widest text-zinc-400">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Conservation Enclave</span>
+                <span>Climate & Clean Air Storage</span>
               </div>
               <div className="grid grid-cols-2 gap-2 text-[11px] text-zinc-300">
                 <div>

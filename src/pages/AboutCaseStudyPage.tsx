@@ -57,25 +57,25 @@ export const AboutCaseStudyPage: FC = () => {
       id: 'faq-1',
       num: '01',
       category: 'privacy',
-      tier: 'Level 2 Ingress / Zero-Knowledge Protocol',
+      tier: 'Client Privacy & Geofence Protocol',
       question: 'How does DATUM guarantee private home address security during public drive broadcasts?',
       shortAnswer: 'Deterministic 800-meter vector truncation enforced locally at the client boundary before packet transmission.',
-      detailedAnswer: 'Every telemetry stream and GPS route trace is automatically clipped at an exact 800-meter radius around verified residential anchors before leaving the user\'s local client enclave. Vectors are cryptographically truncated and salted before ingestion into public or guild event logs. This mathematical boundary ensures home garages remain completely invisible on public maps while preserving open-road track data and driving dynamics.'
+      detailedAnswer: 'Every telemetry stream and GPS route trace is automatically clipped at an exact 800-meter radius around verified residential anchors before leaving the user\'s local client application. Vectors are cryptographically truncated and salted before ingestion into public or guild event logs. This boundary ensures home garages remain completely invisible on public maps while preserving open-road track data and driving dynamics.'
     },
     {
       id: 'faq-2',
       num: '02',
       category: 'provenance',
-      tier: 'Level 3 Domain / Merkle DAG Ledger',
+      tier: 'Provenance & Service Ledger',
       question: 'How does the DATUM Digital Twin differ from a conventional physical service book?',
-      shortAnswer: 'An immutable cryptographic Merkle DAG binding every maintenance event to an authorized Ed25519 signature.',
-      detailedAnswer: 'Conventional service books rely on easily forged paper stamps or siloed dealership databases that evaporate upon sale. DATUM links each vehicle VIN to a Merkle Directed Acyclic Graph (DAG). Every maintenance event, torque specification, dyno run, and ECU calibration is signed with an authorized mechanic\'s Ed25519 keypair and hashed into an immutable ledger block, providing tamper-evident mathematical proof of heritage and mechanical integrity.'
+      shortAnswer: 'An immutable cryptographic ledger binding every maintenance event to an authorized Ed25519 signature.',
+      detailedAnswer: 'Conventional service books rely on easily forged paper stamps or siloed dealership databases that evaporate upon sale. DATUM links each vehicle VIN to a Merkle Directed Acyclic Graph (DAG). Every maintenance event, torque specification, dyno run, and ECU calibration is signed with an authorized mechanic\'s Ed25519 keypair and hashed into an immutable ledger block, providing tamper-evident proof of heritage and mechanical integrity.'
     },
     {
       id: 'faq-3',
       num: '03',
       category: 'hardware',
-      tier: 'Level 1 Client / Heritage Carnet Protocol',
+      tier: 'Heritage Documentation Protocol',
       question: 'Can classic and analog vehicles without modern CAN-bus systems participate?',
       shortAnswer: 'Yes. Heritage Carnet Mode provides high-resolution photographic, acoustic, and analog sensor anchoring.',
       detailedAnswer: 'Vintage and classic custodians use DATUM\'s Heritage Carnet Mode. High-resolution photographic scans of period documentation, Weber carburetor balance sheets, dyno printouts, and master engineer voice memos are timestamped and cryptographically anchored into the vehicle\'s permanent dossier. Optional BLE analog telemetry sensors can also monitor oil pressure, coolant temp, and cylinder head thermals.'
@@ -84,7 +84,7 @@ export const AboutCaseStudyPage: FC = () => {
       id: 'faq-4',
       num: '04',
       category: 'protocol',
-      tier: 'Level 3 & 4 / Pass Grip Radar Engine',
+      tier: 'Pass Grip Radar & Adhesion Model',
       question: 'How does the Pass Grip Radar calculate dynamic road friction (μ) in real time?',
       shortAnswer: 'By fusing live Doppler weather feeds with peer vehicle ABS slip-angles and thermodynamic tyre curves.',
       detailedAnswer: 'The radar synthesizes micro-climate meteorological radar feeds with live telemetry from convoy vehicles traversing mountain passes. It models the thermodynamic adhesion equation: μ = μ_dry - Δμ_precip - Δμ_frost + (T_tyre - 20°C) × 0.0025. This dynamically alerts drivers to black ice or standing surface water on iconic routes like Snake Pass (A57) and Bealach na Bà before they enter hazardous corners.'
@@ -142,12 +142,12 @@ export const AboutCaseStudyPage: FC = () => {
       stack: 'Envoy mTLS • Token Bucket WAF • Cloudflare',
       latency: '600k QPS Peak Throughput',
       description: 'Bi-directional gRPC and WebSocket termination handling 600,000 requests per second. Strict token-bucket rate limiters prevent distributed telemetry spoofing and DDoS injection attacks.',
-      specs: ['Mutual TLS (mTLS) Vehicle Auth', 'Token Bucket Rate Limiting (50 req/s)', 'Zero-Knowledge Vector Ingress Truncation']
+      specs: ['Mutual TLS (mTLS) Vehicle Auth', 'Token Bucket Rate Limiting (50 req/s)', 'Deterministic Vector Ingress Truncation']
     },
     {
       level: 3,
       name: 'Domain Microservices',
-      stack: 'Go 1.23 • Rust • Python ML Enclaves',
+      stack: 'Go 1.23 • Rust • Python High-Performance Services',
       latency: '< 15ms Internal Service RPC',
       description: 'Domain core orchestrating the Digital Twin State Machine, Merkle DAG Provenance Anchor, Pass Grip Radar Adhesion Engine, and Carnet Key Vault.',
       specs: ['Digital Twin State Engine', 'Merkle Directed Acyclic Graph Verifier', 'Thermodynamic Adhesion Engine (μ)']
@@ -245,7 +245,7 @@ export const AboutCaseStudyPage: FC = () => {
             style={{ borderColor: 'var(--border-subtle)' }}
           >
             <p className="text-xs sm:text-sm font-luxury-editorial leading-relaxed italic" style={{ color: 'var(--text-secondary)' }}>
-              "A definitive blueprint replacing ephemeral algorithmic feeds with cryptographic provenance, zero-knowledge residential cloaking, and generational automotive camaraderie."
+              "A definitive blueprint replacing ephemeral feeds with verified mechanical provenance, residential privacy protection, and generational automotive camaraderie."
             </p>
             <div 
               className="pt-2 flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-widest border-t"
@@ -369,7 +369,7 @@ export const AboutCaseStudyPage: FC = () => {
                     <span className="font-bold" style={{ color: 'var(--accent)' }}>COTSWOLDS, UK</span>
                   </div>
                   <p className="text-xs font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
-                    Shelby 427 & 488 Spider sharing private stone quarters under verified zero-knowledge cloaking.
+                    Shelby 427 & 488 Spider sharing private stone quarters with residential privacy protection.
                   </p>
                 </figcaption>
               </figure>
@@ -380,9 +380,9 @@ export const AboutCaseStudyPage: FC = () => {
                   className="p-4 border"
                   style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}
                 >
-                  <span className="text-[10px] block uppercase" style={{ color: 'var(--text-muted)' }}>Cloak Radius</span>
+                  <span className="text-[10px] block uppercase" style={{ color: 'var(--text-muted)' }}>Privacy Radius</span>
                   <strong className="text-base font-bold block mt-1">800m</strong>
-                  <span className="text-[9px] uppercase font-semibold" style={{ color: 'var(--accent)' }}>Zero-Knowledge</span>
+                  <span className="text-[9px] uppercase font-semibold text-emerald-400">Protected Buffer</span>
                 </div>
 
                 <div 
@@ -484,12 +484,12 @@ export const AboutCaseStudyPage: FC = () => {
             style={{ color: 'var(--text-muted)' }}
           >
             <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 02 // DISTRIBUTED SYSTEM DESIGN</span>
-            <span>DONNE MARTIN PRIMER SPECIFICATION</span>
+            <span>HIGH-CONCURRENCY ARCHITECTURE</span>
           </div>
 
           <div className="max-w-3xl mb-12 space-y-3">
             <h2 className="text-3xl sm:text-5xl font-luxury-editorial">
-              Level 1 to 6 Architectural Specification
+              High-Throughput Distributed Architecture
             </h2>
             <p className="text-xs sm:text-sm font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
               Engineered to ingest 600,000 CAN-bus queries per second across 10 Hz telemetry streams with sub-45ms P99 latency.
@@ -647,10 +647,10 @@ export const AboutCaseStudyPage: FC = () => {
                 <span className="font-bold" style={{ color: 'var(--accent)' }}>PRIVACY</span>
               </div>
               <h3 className="text-sm font-bold uppercase tracking-wider font-luxury-display">
-                Zero-Knowledge 800m Truncation
+                800m Residential Privacy Radius
               </h3>
               <p className="text-xs font-luxury-editorial" style={{ color: 'var(--text-secondary)' }}>
-                Adjust the cloaking perimeter to observe real-time vector coordinate masking.
+                Adjust the privacy perimeter to observe real-time vector coordinate protection.
               </p>
 
               <div 
@@ -834,7 +834,7 @@ export const AboutCaseStudyPage: FC = () => {
               The Curated Q&A Dossier
             </h2>
             <p className="text-xs sm:text-sm font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
-              Direct technical answers regarding zero-knowledge privacy, Merkle DAG ledger mathematics, hardware telemetry, and code custody.
+              Direct technical answers regarding residential privacy, tamper-evident service history, hardware telemetry, and vehicle custody.
             </p>
           </div>
 

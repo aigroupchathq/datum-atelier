@@ -461,7 +461,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
               title="Click to inspect privacy protection"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Plate Cloaked · 800m</span>
+              <span>Plate Protected · 800m</span>
               <Info className="w-2.5 h-2.5 text-zinc-400" />
             </button>
 
@@ -925,7 +925,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
                 </span>
               </div>
               <div className={`text-[11px] font-mono-numbers mt-0.5 truncate ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                Sennybridge → Crickhowell · 800m Cloaked · Zero Pace Drop
+                Sennybridge → Crickhowell · 800m Protected · Clean Run
               </div>
             </div>
           </div>
@@ -972,7 +972,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
                 </span>
               </div>
               <div className={`text-[11px] font-mono-numbers mt-0.5 truncate ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                Plates Cloaked · Geofence Radius: 800m · Sovereign Car Ledger
+                Plates Protected · Geofence Radius: 800m · Vehicle Ledger
               </div>
             </div>
           </div>
@@ -1397,7 +1397,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
                 setIsOptionsOpen(false);
                 showToast({
                   title: 'Privacy Shield Verified',
-                  message: 'Plates auto-blurred · 800m privacy cloaked',
+                  message: 'Plates auto-blurred · 800m privacy protected',
                   type: 'privacy',
                   badge: 'SECURE'
                 });

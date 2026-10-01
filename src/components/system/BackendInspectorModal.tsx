@@ -432,15 +432,15 @@ export const BackendInspectorModal: FC<BackendInspectorModalProps> = ({ isOpen, 
                   <div className="flex items-center gap-2">
                     <Lock className="w-5 h-5 text-emerald-400" />
                     <h3 className="text-sm font-bold font-luxury-display uppercase" style={{ color: 'var(--text-primary)' }}>
-                      Live Cloak Status
+                      Live Geofence Status
                     </h3>
                   </div>
                   <div className="space-y-2.5">
-                    <InfoRow label="Cloak Radius" value="800m ATELIER_PRIVACY_COMPLIANT" />
+                    <InfoRow label="Privacy Radius" value="800m ATELIER_PRIVACY_COMPLIANT" />
                     <InfoRow label="Epoch Bucket" value={`${Math.floor(Date.now() / 1000 / 3600)}`} />
-                    <InfoRow label="Algorithm" value="Haversine + SHA-256 ZK" />
+                    <InfoRow label="Algorithm" value="Haversine + SHA-256 Vector Truncation" />
                     <InfoRow label="Polygon Vertices" value="12 (dodecagonal envelope)" />
-                    <InfoRow label="Status" value="ACTIVE — All coordinates cloaked" accent />
+                    <InfoRow label="Status" value="ACTIVE — Residential coordinates protected" accent />
                   </div>
                 </div>
               </div>

@@ -744,7 +744,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
             <div className={`flex items-center justify-between text-xs font-bold ${isWhiteYellow ? 'text-emerald-950' : 'text-zinc-200'}`}>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span className="font-luxury-display uppercase tracking-wider text-[11px]">Sovereign Privacy Enclave (Mandatory)</span>
+                <span className="font-luxury-display uppercase tracking-wider text-[11px]">Residential Privacy Buffer (Active)</span>
               </div>
               <span className={`text-[10px] font-mono-numbers px-2 py-0.5 rounded border font-bold ${
                 isWhiteYellow

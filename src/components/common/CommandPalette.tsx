@@ -91,10 +91,10 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
     {
       id: 'nav-about',
       category: 'Navigation',
-      label: 'About & Case Study Monograph',
-      sublabel: 'Level 1–6 Donne Martin distributed system & FAQ',
+      label: 'About & Case Study',
+      sublabel: 'Architecture, engineering philosophy & FAQ',
       icon: <FileText className="w-4 h-4 text-emerald-500" />,
-      badge: 'Vogue Monograph',
+      badge: 'Atelier Monograph',
       action: () => { navigate('/about'); onClose(); }
     },
     {
@@ -199,40 +199,40 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
     {
       id: 'tool-splash',
       category: 'Engineering & Tools',
-      label: 'Launch Minimalist Engine Start Ignition',
-      sublabel: 'Experience the tactile Web Audio starter motor & rev flare',
+      label: 'Engine Starter & Tachometer Sweep',
+      sublabel: 'Realistic start-up sound, rev flare & chassis selector',
       icon: <Sparkles className="w-4 h-4 text-yellow-400" />,
       action: () => { if (onOpenSplashScreen) onOpenSplashScreen(); onClose(); }
     },
     {
       id: 'tool-acoustics',
       category: 'Engineering & Tools',
-      label: 'Acoustic Valvetrain DSP Studio',
-      sublabel: 'Simulate flat-plane V8 vs Boxer harmonic combustion',
+      label: 'Exhaust Sound & Valvetrain Studio',
+      sublabel: 'Experience flat-plane V8, inline-6, and boxer exhaust notes',
       icon: <Volume2 className="w-4 h-4 text-yellow-500" />,
       action: () => { if (onOpenAcousticStudio) onOpenAcousticStudio(); onClose(); }
     },
     {
       id: 'tool-radar',
       category: 'Engineering & Tools',
-      label: 'Pass Surface Grip & Meteorological Radar',
-      sublabel: 'Live telemetry friction (μ) calculation for UK mountain passes',
+      label: 'Mountain Pass Grip & Weather Radar',
+      sublabel: 'Live road grip, surface dampness, and mountain pass conditions',
       icon: <Sliders className="w-4 h-4 text-sky-400" />,
       action: () => { if (onOpenPassRadar) onOpenPassRadar(); onClose(); }
     },
     {
       id: 'tool-carnet',
       category: 'Engineering & Tools',
-      label: 'Zero-Knowledge Transit Carnet Protocol',
-      sublabel: 'Generate border pass & cryptographically cloaked carnet',
+      label: 'Digital ATA Carnet & Customs Pass',
+      sublabel: 'Cross-border vehicle transit documents & customs clearance',
       icon: <Cpu className="w-4 h-4 text-emerald-400" />,
       action: () => { if (onOpenTransitCarnet) onOpenTransitCarnet(); onClose(); }
     },
     {
       id: 'tool-chamber',
       category: 'Engineering & Tools',
-      label: 'Architectural Chamber Designer',
-      sublabel: 'Bespoke Lighting Physics, Terrazzo, Acoustic Slats & Climate Telemetry',
+      label: 'Custom Garage Studio & Lighting',
+      sublabel: 'Showroom lighting, floor materials, acoustic walls & climate',
       icon: <Wrench className="w-4 h-4 text-amber-400" />,
       badge: 'STUDIO',
       action: () => { if (onOpenArchitecturalChamber) onOpenArchitecturalChamber(); onClose(); }
@@ -393,7 +393,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
           </div>
           <div className="flex items-center gap-1.5">
             <Sparkles className="w-3 h-3" style={{ color: 'var(--accent)' }} />
-            <span>DATUM AI Smart Engine</span>
+            <span>DATUM Atelier • Cotswolds & Mayfair</span>
           </div>
         </div>
 

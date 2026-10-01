@@ -200,7 +200,7 @@ export const TransitCarnetModal: FC<TransitCarnetModalProps> = ({
                 </span>
               </div>
               <p className="text-xs text-zinc-400 font-sans mt-0.5">
-                Official International Customs Passage Enclave • UK & European Alpine Corridors
+                Official International Customs Passage • UK & European Alpine Corridors
               </p>
             </div>
           </div>
@@ -417,7 +417,7 @@ export const TransitCarnetModal: FC<TransitCarnetModalProps> = ({
                 { 
                   id: 'swissVignette', 
                   title: 'Swiss National Motorway E-Vignette (40 CHF)', 
-                  desc: 'Digital registration linked to cloaked chassis index for unrestricted transit across Swiss Autobahns.', 
+                  desc: 'Digital registration linked to verified chassis index for unrestricted transit across Swiss Autobahns.', 
                   required: true 
                 },
                 { 

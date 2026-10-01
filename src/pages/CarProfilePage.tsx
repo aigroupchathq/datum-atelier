@@ -75,7 +75,7 @@ const ATELIER_VEHICLES: Record<string, CarProfileData> = {
     vin: 'WBA-31AY-0084-M3',
     factoryColor: 'Isle of Man Green Metallic (C4G)',
     location: 'Cotswolds Private Estate',
-    locationDetails: 'B4425 Roman Road Sector • 800m Residential Enclave Active',
+    locationDetails: 'B4425 Roman Road Sector • 800m Residential Privacy Active',
     heroImage: '/real_uk_m3_cottage.jpg',
     coverImage: '/real_uk_m3_cottage.jpg',
     engineSpec: '3.0L S58 Twin-Turbocharged Inline-6',
@@ -110,7 +110,7 @@ const ATELIER_VEHICLES: Record<string, CarProfileData> = {
     chassisCode: '992-GT3-TOURING',
     vin: 'WP0-ZZZ-99Z-NS-1092',
     factoryColor: 'Chalk Grey / Crayon Non-Metallic (3H)',
-    location: 'Surrey Residential Enclave',
+    location: 'Surrey Private Residence',
     locationDetails: 'Private Block-Paved Driveway • 800m Geofence Active',
     heroImage: '/real_uk_gt3_suburb.jpg',
     coverImage: '/real_uk_gt3_suburb.jpg',
@@ -698,7 +698,7 @@ export const CarProfilePage: FC = () => {
   const handleMessageCustodian = () => {
     showToast({
       title: `Message Relayed to ${car.name}'s Custodian`,
-      message: 'End-to-end encrypted dispatch sent. Real identities and residential coordinates stay cloaked.',
+      message: 'End-to-end encrypted dispatch sent. Real identities and residential coordinates remain protected.',
       type: 'privacy',
       badge: 'ENCRYPTED'
     });
@@ -723,7 +723,7 @@ export const CarProfilePage: FC = () => {
                 SOVEREIGN ATELIER REGISTRY
               </span>
               <span className="text-[9px] font-mono-numbers px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20 uppercase">
-                ROYAL ENCLAVE
+                VERIFIED ATELIER
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 font-mono-numbers tracking-wider uppercase mt-0.5">
@@ -923,7 +923,7 @@ export const CarProfilePage: FC = () => {
                   <button
                     onClick={() => setIsTransitCarnetOpen(true)}
                     className="text-[11px] font-luxury-display text-emerald-300 hover:text-emerald-200 font-bold bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1 rounded border border-emerald-500/30 flex items-center gap-1.5 transition shadow-sm"
-                    title="Open Cross-Border ATA Carnet & Alpine Transit Enclave"
+                    title="Open Cross-Border ATA Carnet & Alpine Transit Pass"
                   >
                     <Globe2 className="w-3.5 h-3.5 text-emerald-400" />
                     <span>ATA CARNET</span>
@@ -1442,7 +1442,7 @@ export const CarProfilePage: FC = () => {
         initialVin={car.vin}
       />
 
-      {/* Phase 9: Cross-Border ATA Carnet & Alpine Transit Enclave */}
+      {/* Cross-Border ATA Carnet & Alpine Transit Pass */}
       <TransitCarnetModal
         isOpen={isTransitCarnetOpen}
         onClose={() => setIsTransitCarnetOpen(false)}

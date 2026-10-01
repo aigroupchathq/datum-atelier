@@ -505,14 +505,14 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <div>
               <p className={`text-[11px] font-bold ${isWhiteYellow ? 'text-emerald-900' : 'text-emerald-400'}`}>PRIVACY VEIL ACTIVE</p>
-              <p className={`text-[10px] font-mono-numbers ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-600'}`}>Plates blurred · 800m route cloaked</p>
+              <p className={`text-[10px] font-mono-numbers ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-600'}`}>Plates blurred · 800m route protected</p>
             </div>
           </div>
 
           {/* Footer */}
           <div className={`text-[10px] font-mono-numbers space-y-1.5 px-0.5 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-700'}`}>
             <div className="flex flex-wrap gap-x-2 gap-y-1">
-              {['About', 'Privacy', 'DVSA Enclave', 'Pro Directory', 'Rules'].map(l => (
+              {['About', 'Privacy', 'DVSA Registry', 'Pro Directory', 'Rules'].map(l => (
                 <span key={l} className={`cursor-pointer transition ${isWhiteYellow ? 'hover:text-zinc-900' : 'hover:text-zinc-500'}`}>{l}</span>
               ))}
             </div>

@@ -43,7 +43,7 @@ export const Header: FC<HeaderProps> = ({ isVeilActive, onToggleVeil }) => {
             <div className="flex flex-col items-end">
               <span className="text-[10px] uppercase font-mono-nums tracking-widest text-zinc-400">Privacy Veil</span>
               <span className={`text-xs font-bold font-mono-nums ${isVeilActive ? 'text-purple-400' : 'text-emerald-400'}`}>
-                {isVeilActive ? 'CLOAKED [PUBLIC]' : 'CUSTODIAN [OPEN]'}
+                {isVeilActive ? 'PROTECTED [PUBLIC]' : 'CUSTODIAN [OPEN]'}
               </span>
             </div>
 

@@ -72,7 +72,7 @@ function AppContent() {
 
     showToast({
       title: 'Recorded to MAYA\'s Digital Ledger',
-      message: 'Published with Privacy Veil active • Plates cloaked & 800m geofenced',
+      message: 'Published with Privacy Veil active • Plates protected & 800m geofenced',
       type: 'privacy',
       badge: 'LIVE'
     });
@@ -217,7 +217,7 @@ function AppContent() {
           initialPassId={passRadarTarget}
         />
 
-        {/* Modal: Phase 9 Cross-Border Transit & Carnet Logistics Enclave */}
+        {/* Modal: Cross-Border Transit & Carnet Logistics */}
         <TransitCarnetModal
           isOpen={isTransitCarnetOpen}
           onClose={() => setIsTransitCarnetOpen(false)}

@@ -296,7 +296,7 @@ export const VehiclePassportModal: FC<VehiclePassportModalProps> = ({
             </div>
           )}
 
-          {/* SECTION 4: PROVENANCE & ENCLAVE INTEGRITY */}
+          {/* SECTION 4: PROVENANCE & PRIVACY INTEGRITY */}
           {activeSection === 'integrity' && (
             <div className="space-y-4">
               <div className="rounded-2xl p-6 bg-[#121319] border border-white/[0.08] space-y-4">
@@ -317,7 +317,7 @@ export const VehiclePassportModal: FC<VehiclePassportModalProps> = ({
                     <span className="text-zinc-400 uppercase text-[10px]">Residential Perimeter Audit</span>
                     <div className="text-sm font-bold text-emerald-400">800m Geofence Maintained</div>
                     <p className="text-zinc-400 font-sans text-xs">
-                      Zero residential driveway GPS coordinates leaked across 184 documented expeditions. Departure coordinates clipped strictly outside residential sanctuary.
+                      Zero residential driveway GPS coordinates leaked across 184 documented expeditions. Departure coordinates clipped strictly outside residential perimeter.
                     </p>
                   </div>
 

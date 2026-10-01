@@ -161,16 +161,16 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
       friction: {
         id: 'friction',
         angleIndex: 2, // 3 o'clock
-        title: 'Pacejka Tarmac Grip Adhesion',
+        title: 'Tarmac Surface Grip & Adhesion',
         categoryLabel: 'Road Adhesion',
         badgeAccent: '#10B981',
         icon: Activity,
         leadTelemetry: `μ ${mu} Adhesion • ${psiScore}/100 PSI`,
-        engineeringMemo: 'NASA-derived hydroplaning and Pacejka semi-empirical magic formula cornering stiffness solver evaluating tarmac micro-roughness in real time.',
+        engineeringMemo: 'Real-time road surface model calculating dampness, tire contact patch, and cornering grip across alpine tarmac.',
         transducers: [
           { id: 'mu_friction', code: 'PAC-MU', name: 'Peak Friction Coefficient', shortLabel: 'Grip Adhesion', value: `μ ${mu}`, unit: '', status: 'optimal', hardwareSupplier: 'DATUM Physics Engine', specTolerance: 'μ 0.20 (Ice) - 1.25 (Cup2)', ringLevel: 1, history: [84, 86, 88, 87, 89, 88] },
           { id: 'psi_score', code: 'PASS-PSI', name: 'Pass Surface Safety Score', shortLabel: 'Pass Safety Index', value: `${psiScore}`, unit: '/100', status: 'optimal', hardwareSupplier: 'Atelier Met Office Sync', specTolerance: '≥75 Receptive / <40 Hazard', ringLevel: 2, history: [86, 87, 88, 89, 89, 89] },
-          { id: 'hydro_risk', code: 'HYDRO-H2O', name: 'Standing Water Film Risk', shortLabel: 'Hydroplane Margin', value: `${hydroRisk}%`, unit: '', status: 'optimal', hardwareSupplier: 'Doppler Radar Ingestion', specTolerance: 'NASA V_crit = 6.36√P_psi', ringLevel: 3, history: [15, 14, 13, 12, 12, 12] },
+          { id: 'hydro_risk', code: 'HYDRO-H2O', name: 'Standing Water Film Risk', shortLabel: 'Hydroplane Margin', value: `${hydroRisk}%`, unit: '', status: 'optimal', hardwareSupplier: 'Doppler Radar Ingestion', specTolerance: 'Aquaplane threshold based on tire pressure', ringLevel: 3, history: [15, 14, 13, 12, 12, 12] },
           { id: 'cornering_stiff', code: 'C-ALPHA', name: 'Slip Angle Cornering Stiffness', shortLabel: 'Cornering Force', value: '1,280', unit: 'N/°', status: 'optimal', hardwareSupplier: 'Michelin PS4S Matrix', specTolerance: '1,100 - 1,450 N/° Linear Range', ringLevel: 3, history: [1220, 1250, 1270, 1280, 1275, 1280] }
         ]
       },
@@ -359,7 +359,7 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
                 className="font-luxury-display text-base sm:text-lg font-bold uppercase tracking-wider"
                 style={{ color: 'var(--text-primary)' }}
               >
-                Chrono-Dynamics Radar Cluster
+                Chassis Dynamics & Telemetry
               </h3>
               <span
                 className="px-2.5 py-0.5 rounded-full text-[10px] font-mono-numbers font-bold border"
@@ -373,7 +373,7 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
               </span>
             </div>
             <p className="text-xs font-mono-numbers text-zinc-400">
-              {carModel} • 8-Sector Polar Taxonomy • Milled Bezel & Transducer Matrix
+              {carModel} • Real-Time Mechanical Diagnostics & Dynamics
             </p>
           </div>
         </div>
@@ -610,7 +610,7 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
                 />
               )}
 
-              {/* 5. Center Core Cockpit Enclave */}
+              {/* 5. Center Dial Core */}
               <circle
                 cx={cx}
                 cy={cy}
@@ -698,7 +698,7 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
         </div>
 
         {/* ───────────────────────────────────────────────────────── */}
-        {/* RIGHT: SUBSYSTEM TRANSDUCER INSPECTOR (FLIGHT-RECORDER)   */}
+        {/* RIGHT: SUBSYSTEM SENSOR INSPECTOR & TELEMETRY TRACE       */}
         {/* ───────────────────────────────────────────────────────── */}
         <div className="lg:col-span-5 space-y-6">
           
@@ -718,7 +718,7 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
                   color: activeSector.badgeAccent,
                 }}
               >
-                DIMENSION 0{activeSector.angleIndex + 1} // {activeSector.categoryLabel}
+                {activeSector.categoryLabel} Status
               </span>
               <span className="text-xs font-bold font-mono-numbers text-white">
                 {activeSector.leadTelemetry}
@@ -740,7 +740,7 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
           {/* Concentric Transducer Sub-App Buttons Grid (Matching Reference) */}
           <div className="space-y-2">
             <label className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-400 font-bold block">
-              Active Transducers in {activeSector.categoryLabel} Sector:
+              Key Telemetry & Sensors in {activeSector.categoryLabel}:
             </label>
 
             <div className="grid grid-cols-2 gap-2.5">
@@ -800,7 +800,7 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
           >
             <div className="flex items-center justify-between text-xs font-mono-numbers">
               <span className="text-zinc-400 uppercase tracking-widest text-[10px]">
-                Active Oscilloscope // {activeTransducer.name}
+                Live Telemetry Trace // {activeTransducer.name}
               </span>
               <span className="text-emerald-400 font-bold flex items-center gap-1 text-[11px]">
                 <CheckCircle2 className="w-3.5 h-3.5" />

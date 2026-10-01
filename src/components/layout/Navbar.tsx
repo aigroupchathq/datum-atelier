@@ -219,10 +219,10 @@ export const Navbar: FC<NavbarProps> = ({
                 borderColor: 'var(--border-subtle)',
                 color: 'var(--text-secondary)',
               }}
-              title="Zero-Knowledge 800m Privacy Envelope Active"
+              title="Home Privacy (800m Radius Protected)"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="hidden xl:inline text-emerald-400 font-bold">800m Cloaked</span>
+              <span className="hidden xl:inline text-emerald-400 font-bold">800m Protected</span>
             </button>
 
             {/* ── ATELIER STUDIO SUITES FLYOUT (Unifies 6 Tools Cleanly) ── */}
@@ -239,7 +239,7 @@ export const Navbar: FC<NavbarProps> = ({
                   borderColor: isStudioHubOpen ? 'var(--accent)' : 'var(--border-subtle)',
                   color: isStudioHubOpen ? 'var(--accent)' : 'var(--text-primary)',
                 }}
-                title="Atelier Engineering Suites & Diagnostics"
+                title="Atelier Tools & Diagnostics"
               >
                 <Layers className="w-3.5 h-3.5 text-amber-500" />
                 <span className="hidden sm:inline text-xs font-mono-numbers">Suites</span>
@@ -261,7 +261,7 @@ export const Navbar: FC<NavbarProps> = ({
                     <div className="px-3 py-2 border-b mb-1 flex items-center justify-between" style={{ borderColor: 'var(--border-subtle)' }}>
                       <span className="text-[10px] font-mono-numbers uppercase tracking-widest font-bold flex items-center gap-1.5 text-zinc-400">
                         <Layers className="w-3.5 h-3.5 text-amber-500" />
-                        ATELIER ENGINEERING SUITES
+                        ATELIER WORKSHOP & LABS
                       </span>
                     </div>
 
@@ -277,7 +277,7 @@ export const Navbar: FC<NavbarProps> = ({
                           </div>
                           <div>
                             <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Chamber Designer</div>
-                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Lighting Physics, Terrazzo, Acoustic Slats</div>
+                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Showroom lighting, finishes & acoustics</div>
                           </div>
                         </button>
                       )}
@@ -293,7 +293,7 @@ export const Navbar: FC<NavbarProps> = ({
                           </div>
                           <div>
                             <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Pass Grip Radar</div>
-                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Pacejka Road Adhesion & Weather</div>
+                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Alpine pass road grip & live weather</div>
                           </div>
                         </button>
                       )}
@@ -308,8 +308,8 @@ export const Navbar: FC<NavbarProps> = ({
                             <Volume2 className="w-3.5 h-3.5" />
                           </div>
                           <div>
-                            <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Acoustic Valvetrain DSP</div>
-                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Harmonic Cylinder Combustion Simulator</div>
+                            <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Exhaust Sound Studio</div>
+                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Engine sound & valvetrain acoustics</div>
                           </div>
                         </button>
                       )}
@@ -325,7 +325,7 @@ export const Navbar: FC<NavbarProps> = ({
                           </div>
                           <div>
                             <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>ATA Carnet Transit</div>
-                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Cross-Border Multi-Sig Digital Pass</div>
+                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Cross-border travel customs pass</div>
                           </div>
                         </button>
                       )}
@@ -340,8 +340,8 @@ export const Navbar: FC<NavbarProps> = ({
                             <Radio className="w-3.5 h-3.5" />
                           </div>
                           <div>
-                            <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Backend Inspector</div>
-                            <div className="text-[10px] text-zinc-400 font-mono-numbers">CAN-Bus Hex Dump & Merkle DAG</div>
+                            <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Vehicle Telemetry Ledger</div>
+                            <div className="text-[10px] text-zinc-400 font-mono-numbers">CAN bus telemetry & service ledger</div>
                           </div>
                         </button>
                       )}
@@ -356,8 +356,8 @@ export const Navbar: FC<NavbarProps> = ({
                             <Sparkles className="w-3.5 h-3.5" />
                           </div>
                           <div>
-                            <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Replay Starter Ignition</div>
-                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Web Audio Starter Motor & Rev Flare</div>
+                            <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Starter Ignition</div>
+                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Starter motor crank & exhaust flare</div>
                           </div>
                         </button>
                       )}
@@ -381,7 +381,7 @@ export const Navbar: FC<NavbarProps> = ({
                   borderColor: isFontDropdownOpen ? 'var(--accent)' : 'var(--border-subtle)',
                   color: isFontDropdownOpen ? 'var(--accent)' : 'var(--text-secondary)',
                 }}
-                title="Smart Typography Tuner"
+                title="Typography Style"
               >
                 <Type className="w-3.5 h-3.5" />
               </button>
@@ -401,7 +401,7 @@ export const Navbar: FC<NavbarProps> = ({
                     <div className="px-3 py-2 border-b mb-1 flex items-center justify-between" style={{ borderColor: 'var(--border-subtle)' }}>
                       <span className="text-[10px] font-mono-numbers uppercase tracking-widest font-bold flex items-center gap-1.5 text-zinc-400">
                         <Type className="w-3.5 h-3.5 text-amber-500" />
-                        TYPOGRAPHY TUNER
+                        TYPOGRAPHY STYLE
                       </span>
                     </div>
 
@@ -592,7 +592,7 @@ export const Navbar: FC<NavbarProps> = ({
           {/* Quick Studio Suite Triggers */}
           <div className="space-y-2 pt-2 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
             <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-400 font-bold block">
-              Atelier Engineering Suites:
+              Atelier Tools & Labs:
             </span>
             <div className="grid grid-cols-2 gap-2 text-xs font-mono-numbers">
               {onOpenArchitecturalChamber && (
@@ -622,7 +622,7 @@ export const Navbar: FC<NavbarProps> = ({
                   style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
                 >
                   <Volume2 className="w-3.5 h-3.5 text-yellow-500" />
-                  <span>Acoustic Studio</span>
+                  <span>Sound Studio</span>
                 </button>
               )}
               {onOpenBackendInspector && (
@@ -632,7 +632,7 @@ export const Navbar: FC<NavbarProps> = ({
                   style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
                 >
                   <Radio className="w-3.5 h-3.5 text-pink-500" />
-                  <span>Inspector</span>
+                  <span>Telemetry</span>
                 </button>
               )}
             </div>
@@ -640,7 +640,7 @@ export const Navbar: FC<NavbarProps> = ({
         </div>
       )}
 
-      {/* Smart Command Palette Modal Overlay */}
+      {/* Command Palette Modal Overlay */}
       <CommandPalette
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
