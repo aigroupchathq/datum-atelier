@@ -479,6 +479,21 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
         </div>
       </div>
 
+      {/* Infotainment Head Unit Bezel Header (when in Chronograph Cockpit Mode) */}
+      {layoutMode === 'chronograph' && mediaUrls.length > 0 && (
+        <div className="px-4 sm:px-6 py-1.5 bg-[#0C0C10] border-t border-b border-[#C5A059]/25 flex items-center justify-between text-[9px] font-mono-numbers text-zinc-400">
+          <span className="font-bold tracking-widest uppercase text-[#E6C687] flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-sm bg-[#D4AF37]" />
+            CENTER INFOTAINMENT HEAD UNIT // TELEMETRY & MEDIA
+          </span>
+          <span className="text-zinc-500 flex items-center gap-2">
+            <span>16:9 HD DISPLAY</span>
+            <span>•</span>
+            <span className="text-[#C5A059]">GEOFENCE SECURED</span>
+          </span>
+        </div>
+      )}
+
       {/* ── CINEMATIC EDGE-TO-EDGE MEDIA PLINTH ── */}
       {mediaUrls.length > 0 && (
         <div

@@ -178,30 +178,23 @@ export const ObsidianDashboardBinnacle: FC<ObsidianDashboardBinnacleProps> = ({
 
           {/* SVG Tachometer Dial Scale */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 200 200">
-            {/* Background track */}
-            <circle
-              cx="100"
-              cy="100"
-              r="76"
+            {/* Safe Rev Scale Arc (0 to 7,200 RPM) */}
+            <path
+              d="M 46.3 153.7 A 76 76 0 1 1 175 88"
               fill="none"
-              stroke="rgba(255, 255, 255, 0.08)"
-              strokeWidth="6"
-              strokeDasharray="360 120"
-              strokeDashoffset="60"
+              stroke="rgba(212, 175, 55, 0.20)"
+              strokeWidth="5"
               strokeLinecap="round"
             />
-            {/* Redline Arc (7,200 to 9,000 RPM) */}
-            <circle
-              cx="100"
-              cy="100"
-              r="76"
+            {/* Redline Danger Arc (7,200 to 9,000 RPM) */}
+            <path
+              d="M 175 88 A 76 76 0 0 1 146.3 162.7"
               fill="none"
               stroke="#E11D48"
               strokeWidth="6"
-              strokeDasharray="72 408"
-              strokeDashoffset="-228"
               strokeLinecap="round"
-              opacity="0.85"
+              opacity="0.9"
+              filter="drop-shadow(0 0 4px rgba(225, 29, 72, 0.6))"
             />
 
             {/* Dial Numerical Markers (0 to 9) */}
@@ -402,93 +395,120 @@ export const ObsidianDashboardBinnacle: FC<ObsidianDashboardBinnacleProps> = ({
       </div>
 
       {/* ─────────────────────────────────────────────────────────── */}
-      {/* 3. TACTILE DIAMOND-KNURLED SWITCHGEAR CONSOLE               */}
+      {/* 3. TACTILE ROTARY SWITCHGEAR POD (Automotive 3-Knob Console) */}
       {/* ─────────────────────────────────────────────────────────── */}
-      <div className="px-4 sm:px-6 py-3 bg-[#0A0A0D] border-t border-[#C5A059]/25 flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono-numbers relative z-10">
+      <div className="px-4 sm:px-6 py-4 bg-[#0A0A0D] border-t border-[#C5A059]/25 flex flex-wrap items-center justify-around gap-4 text-[10px] font-mono-numbers relative z-10">
         
-        {/* Left Bank: Drive Mode Rotary Program Selector */}
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
-          <span className="text-zinc-400 text-[9px] uppercase font-bold mr-1 hidden sm:inline">
-            PROGRAM:
+        {/* Rotary Dial 1: DRIVE PROGRAM */}
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="text-[8px] font-mono-numbers text-zinc-400 uppercase tracking-widest font-bold">
+            DRIVE PROGRAM
           </span>
-          {(['COMFORT', 'SPORT', 'SPORT+', 'TRACK', 'ATELIER'] as DriveMode[]).map((mode) => {
-            const isSelected = driveMode === mode;
-            return (
-              <button
-                key={mode}
-                onClick={() => {
-                  setDriveMode(mode);
-                  showToast({
-                    title: `Drive Mode // ${mode}`,
-                    message: `Calibration maps adjusted for ${mode} chassis and throttle dynamics.`,
-                    type: 'drive'
-                  });
-                }}
-                className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase transition-all duration-200 cursor-pointer ${
-                  isSelected
-                    ? 'gold-switch-active'
-                    : 'bg-black/50 text-zinc-400 border border-white/5 hover:border-[#C5A059]/40 hover:text-zinc-200'
-                }`}
-              >
-                {mode}
-              </button>
-            );
-          })}
+          <button
+            onClick={() => {
+              const modes: DriveMode[] = ['COMFORT', 'SPORT', 'SPORT+', 'TRACK', 'ATELIER'];
+              const nextIdx = (modes.indexOf(driveMode) + 1) % modes.length;
+              const nextMode = modes[nextIdx];
+              setDriveMode(nextMode);
+              showToast({
+                title: `Drive Mode // ${nextMode}`,
+                message: `Rotary calibration shifted to ${nextMode} powerband maps.`,
+                type: 'drive'
+              });
+            }}
+            className="w-14 h-14 rounded-full gold-dial-ring p-1 relative flex flex-col items-center justify-center knurled-dial cursor-pointer active:scale-95 transition-transform group shadow-md"
+            title="Click to rotate Drive Program"
+          >
+            {/* Outer notch indicator */}
+            <div 
+              className="absolute w-1 h-2.5 rounded bg-[#D4AF37] top-0.5 shadow-[0_0_6px_#D4AF37] transition-transform duration-300"
+              style={{
+                transform: `rotate(${['COMFORT', 'SPORT', 'SPORT+', 'TRACK', 'ATELIER'].indexOf(driveMode) * 72}deg)`,
+                transformOrigin: 'center 26px'
+              }}
+            />
+            <span className="text-[8.5px] font-bold font-mono-numbers text-[#E6C687] leading-tight mt-1">
+              {driveMode}
+            </span>
+            <span className="text-[6.5px] text-zinc-500 uppercase">CYCLE ↻</span>
+          </button>
         </div>
 
-        {/* Center / Right Bank: Aircraft Switchgear Toggles */}
-        <div className="flex items-center gap-2 flex-wrap">
-          
-          {/* Exhaust Valve Toggle */}
+        {/* Rotary Dial 2: PASM SUSPENSION */}
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="text-[8px] font-mono-numbers text-zinc-400 uppercase tracking-widest font-bold">
+            SUSPENSION
+          </span>
+          <button
+            onClick={() => {
+              setIsPasmFirm(!isPasmFirm);
+              showToast({
+                title: isPasmFirm ? 'Damper // PASM Soft (Touring)' : 'Damper // PASM Firm (Apex Attack)',
+                message: isPasmFirm ? 'Valving opened for compliant alpine road surface' : 'Stiffened compression & rebound for high-G stability',
+                type: 'drive'
+              });
+            }}
+            className={`w-14 h-14 rounded-full p-1 relative flex flex-col items-center justify-center knurled-dial cursor-pointer active:scale-95 transition-transform shadow-md ${
+              isPasmFirm ? 'gold-dial-ring' : 'bg-black/60 border border-white/10'
+            }`}
+            title="Click to toggle Adaptive Dampers"
+          >
+            <Sliders className={`w-3.5 h-3.5 mb-0.5 ${isPasmFirm ? 'text-[#D4AF37]' : 'text-zinc-500'}`} />
+            <span className={`text-[8px] font-bold font-mono-numbers ${isPasmFirm ? 'text-[#FFF8E7]' : 'text-zinc-400'}`}>
+              {isPasmFirm ? 'FIRM' : 'SOFT'}
+            </span>
+            <span className="text-[6.5px] text-zinc-500 uppercase">PASM</span>
+          </button>
+        </div>
+
+        {/* Rotary Dial 3: EXHAUST SOUND */}
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="text-[8px] font-mono-numbers text-zinc-400 uppercase tracking-widest font-bold">
+            EXHAUST
+          </span>
           <button
             onClick={() => {
               setIsExhaustOpen(!isExhaustOpen);
               showToast({
                 title: isExhaustOpen ? 'Exhaust // Quiet Flap Closed' : 'Exhaust // Sport Valves Open',
-                message: isExhaustOpen ? 'Secondary bypass closed for civil transit' : 'Straight-through acoustic resonance active',
+                message: isExhaustOpen ? 'Secondary bypass closed for civil neighborhood transit' : 'Full acoustic straight-pipe resonance armed',
                 type: 'drive'
               });
             }}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[9px] font-bold transition border cursor-pointer ${
-              isExhaustOpen
-                ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
-                : 'bg-black/40 border-white/10 text-zinc-400'
+            className={`w-14 h-14 rounded-full p-1 relative flex flex-col items-center justify-center knurled-dial cursor-pointer active:scale-95 transition-transform shadow-md ${
+              isExhaustOpen ? 'gold-dial-ring' : 'bg-black/60 border border-white/10'
             }`}
-            title="Toggle Exhaust Bypass Flaps"
+            title="Click to toggle Exhaust Bypass Flaps"
           >
-            {isExhaustOpen ? <Volume2 className="w-3 h-3 text-amber-400" /> : <VolumeX className="w-3 h-3 text-zinc-500" />}
-            <span>VALVES {isExhaustOpen ? 'OPEN' : 'CLOSED'}</span>
+            {isExhaustOpen ? <Volume2 className="w-3.5 h-3.5 text-amber-400 mb-0.5" /> : <VolumeX className="w-3.5 h-3.5 text-zinc-500 mb-0.5" />}
+            <span className={`text-[8px] font-bold font-mono-numbers ${isExhaustOpen ? 'text-amber-300' : 'text-zinc-400'}`}>
+              {isExhaustOpen ? 'OPEN' : 'CLOSED'}
+            </span>
+            <span className="text-[6.5px] text-zinc-500 uppercase">VALVES</span>
           </button>
+        </div>
 
-          {/* PASM Damper Firmness */}
-          <button
-            onClick={() => setIsPasmFirm(!isPasmFirm)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[9px] font-bold transition border cursor-pointer ${
-              isPasmFirm
-                ? 'bg-[#C5A059]/20 border-[#C5A059]/50 text-[#F5E6BE]'
-                : 'bg-black/40 border-white/10 text-zinc-400'
-            }`}
-            title="Toggle Adaptive Damper Stiffening"
-          >
-            <Sliders className="w-3 h-3 text-[#C5A059]" />
-            <span>PASM {isPasmFirm ? 'FIRM' : 'SOFT'}</span>
-          </button>
-
-          {/* Interactive Throttle Blip Button */}
+        {/* Push-Button Engine Ignition / Throttle Blip */}
+        <div className="flex flex-col items-center gap-1.5">
+          <span className="text-[8px] font-mono-numbers text-[#D4AF37] uppercase tracking-widest font-bold">
+            IGNITION
+          </span>
           <button
             onClick={handleThrottleBlip}
             disabled={isRevving}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md text-[9px] font-bold uppercase transition shadow-md cursor-pointer ${
+            className={`w-14 h-14 rounded-full p-1 relative flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all shadow-lg ${
               isRevving
-                ? 'bg-rose-600 text-white animate-pulse'
-                : 'bg-gradient-to-r from-[#C5A059] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E6C687] text-black font-extrabold active:scale-95'
+                ? 'bg-rose-600 text-white animate-pulse border-2 border-white'
+                : 'bg-gradient-to-b from-[#2B1B0E] to-[#120B05] border-2 border-[#D4AF37] hover:border-[#FFF8E7] text-[#D4AF37] hover:text-white'
             }`}
-            title="Tap to Blip Engine Throttle and Rev"
+            title="Push to Blip Throttle and Rev to 8,400 RPM"
           >
-            <Zap className="w-3 h-3 fill-current" />
-            <span>{isRevving ? 'REVVING…' : 'BLIP THROTTLE'}</span>
+            <Zap className={`w-3.5 h-3.5 fill-current mb-0.5 ${isRevving ? 'text-white' : 'text-[#D4AF37]'}`} />
+            <span className="text-[8px] font-extrabold font-mono-numbers leading-tight uppercase">
+              {isRevving ? 'REV' : 'START'}
+            </span>
+            <span className="text-[6.5px] text-[#C5A059] uppercase">BLIP</span>
           </button>
-
         </div>
 
       </div>
