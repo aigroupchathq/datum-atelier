@@ -145,7 +145,8 @@ const LikeCounter: FC<{ count: number; bumped: boolean; isWhiteYellow?: boolean 
 
 export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const { showToast } = useToast();
-  const { isWhiteYellow } = useTheme();
+  const { isWhiteYellow, themeMeta, layoutMode } = useTheme();
+  const [isBomOpen, setIsBomOpen] = useState(false);
 
   const [respected, setRespected] = useState(false);
   const [showRespectMenu, setShowRespectMenu] = useState(false);
@@ -350,12 +351,41 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const categoryBadge = getCategoryBadge(post.postType, isWhiteYellow);
 
   return (
-    // Haute-Horlogerie Milled Obsidian Plinth
+    // Polymorphic Cockpit Topology Plinth
     <article className={`group relative transition-all duration-300 ${
-      isWhiteYellow
+      layoutMode === 'monograph'
         ? 'bg-white border border-zinc-200/90 shadow-sm hover:border-yellow-400/60 rounded-[24px]'
+        : layoutMode === 'telemetry'
+        ? 'bg-[#150C13] border border-[#0677A1]/40 hover:border-[#0677A1] shadow-[0_0_30px_rgba(6,119,161,0.18)] rounded-[20px]'
+        : layoutMode === 'blueprint'
+        ? 'bg-[#101115] border border-[#273DB4]/45 hover:border-[#273DB4] shadow-md rounded-[16px]'
+        : layoutMode === 'expedition'
+        ? 'bg-[#09110E] border border-emerald-500/30 hover:border-emerald-400/50 shadow-lg rounded-[22px]'
         : 'bg-[#0B0C10] border border-white/[0.08] hover:border-amber-400/30 shadow-xl rounded-[24px]'
     } overflow-hidden`}>
+
+      {/* ── SPECIALIZED TOPOLOGY HEADER STRIP ── */}
+      {layoutMode === 'blueprint' && (
+        <div className="px-4 sm:px-6 py-1.5 bg-[#171922] border-b border-[#273DB4]/30 flex items-center justify-between text-[9.5px] font-mono-numbers text-blue-300">
+          <span className="font-bold tracking-widest uppercase">CAD DRAFTING BLUEPRINT // ECO-048</span>
+          <span className="text-zinc-400">TOLERANCE: ±0.05mm</span>
+        </div>
+      )}
+      {layoutMode === 'telemetry' && (
+        <div className="px-4 sm:px-6 py-1.5 bg-[#21111E] border-b border-[#0677A1]/30 flex items-center justify-between text-[9.5px] font-mono-numbers text-cyan-300">
+          <span className="font-bold tracking-widest uppercase flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+            LIVE TELEMETRY STREAM // S58-CANBUS
+          </span>
+          <span className="text-zinc-400">10 Hz TELEM ACTIVE</span>
+        </div>
+      )}
+      {layoutMode === 'expedition' && (
+        <div className="px-4 sm:px-6 py-1.5 bg-[#0D1813] border-b border-emerald-500/25 flex items-center justify-between text-[9.5px] font-mono-numbers text-emerald-300">
+          <span className="font-bold tracking-widest uppercase">ALPINE TRANSIT EXPEDITION // SECTOR UK-01</span>
+          <span className="text-zinc-400">CARNET NOTARIZED</span>
+        </div>
+      )}
 
       {/* ── HEADER ── */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 flex items-center justify-between gap-3">
@@ -441,7 +471,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
                 <PlateBlurImage
                   src={url}
                   alt={post.title || 'Vehicle photo'}
-                  aspectRatio="aspect-[16/10] sm:aspect-[16/9]"
+                  aspectRatio={themeMeta.aspectRatio}
                   className="rounded-none w-full object-cover"
                 />
               </div>
@@ -546,6 +576,99 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
           <div className="absolute bottom-3 left-3 opacity-0 group-hover/media:opacity-100 transition-opacity px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[9.5px] font-mono-numbers text-zinc-400 pointer-events-none z-10">
             Double-tap to ratify respect
           </div>
+        </div>
+      )}
+
+      {/* ── F1 PIT-WALL LIVE SENSOR TELEMETRY STRIP (bordeaux-cyan) ── */}
+      {layoutMode === 'telemetry' && (
+        <div className="px-4 sm:px-6 py-3 bg-[#1C0E1B] border-b border-[#0677A1]/35 space-y-2">
+          <div className="flex items-center justify-between text-[10px] font-mono-numbers">
+            <span className="text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <Activity className="w-3.5 h-3.5 text-cyan-400" />
+              <span>PYROMETER THERMAL TELEMETRY</span>
+            </span>
+            <span className="text-zinc-400 font-semibold">10 Hz CAN-BUS SYNC</span>
+          </div>
+          
+          <div className="grid grid-cols-4 gap-2 text-center text-[10px] font-mono-numbers">
+            <div className="p-1.5 rounded-lg bg-black/40 border border-cyan-500/30">
+              <span className="text-zinc-500 block text-[8.5px]">TYRE FL</span>
+              <span className="text-cyan-300 font-bold">84°C [OPT]</span>
+            </div>
+            <div className="p-1.5 rounded-lg bg-black/40 border border-cyan-500/20">
+              <span className="text-zinc-500 block text-[8.5px]">TYRE FR</span>
+              <span className="text-zinc-300 font-bold">72°C [WARM]</span>
+            </div>
+            <div className="p-1.5 rounded-lg bg-black/40 border border-cyan-500/20">
+              <span className="text-zinc-500 block text-[8.5px]">TYRE RL</span>
+              <span className="text-zinc-300 font-bold">78°C [OPT]</span>
+            </div>
+            <div className="p-1.5 rounded-lg bg-black/40 border border-cyan-500/20">
+              <span className="text-zinc-500 block text-[8.5px]">TYRE RR</span>
+              <span className="text-zinc-300 font-bold">76°C [OPT]</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-[9.5px] font-mono-numbers pt-1 border-t border-white/[0.05]">
+            <span className="text-rose-400 font-bold">APEX LOAD: -1.24G LATERAL</span>
+            <span className="text-emerald-400 font-bold">SECTOR DELTA: -0.42s (PURSUIT)</span>
+          </div>
+        </div>
+      )}
+
+      {/* ── CAD WORKSHOP DRAFTING BLUEPRINT DRAWER (c2mtl-avantgarde) ── */}
+      {layoutMode === 'blueprint' && (
+        <div className="px-4 sm:px-6 py-2.5 bg-[#14151B] border-b border-[#273DB4]/30 space-y-2">
+          <div className="flex items-center justify-between text-[10.5px] font-mono-numbers">
+            <div className="flex items-center gap-2">
+              <Wrench className="w-3.5 h-3.5 text-blue-400" />
+              <span className="font-bold text-zinc-200">SPECIFICATION DOSSIER & BOM</span>
+            </div>
+            <button
+              onClick={() => setIsBomOpen(!isBomOpen)}
+              className="px-2 py-0.5 rounded text-[9.5px] font-bold uppercase transition bg-blue-500/15 text-blue-300 border border-blue-500/30 hover:bg-blue-500/25 cursor-pointer"
+            >
+              {isBomOpen ? '[-] COLLAPSE BOM' : '[+] EXPLODE BOM & SPECS'}
+            </button>
+          </div>
+
+          {isBomOpen && (
+            <div className="p-2.5 rounded-xl bg-black/50 border border-[#273DB4]/30 text-[10px] font-mono-numbers space-y-1.5 animate-in fade-in duration-150">
+              <div className="flex justify-between py-0.5 border-b border-white/[0.06]">
+                <span className="text-zinc-500">Fastener Accord:</span>
+                <span className="text-white font-bold">85 Nm Grade 10.9 (Torqued & Marked)</span>
+              </div>
+              <div className="flex justify-between py-0.5 border-b border-white/[0.06]">
+                <span className="text-zinc-500">Alignment Kinematics:</span>
+                <span className="text-white font-bold">-2.2° Front Camber · 8.2° Caster</span>
+              </div>
+              <div className="flex justify-between py-0.5 border-b border-white/[0.06]">
+                <span className="text-zinc-500">Damper Rebound / Comp:</span>
+                <span className="text-amber-300 font-bold">12 Clicks Rebound · 6 Clicks Low-Speed Comp</span>
+              </div>
+              <div className="flex justify-between py-0.5">
+                <span className="text-zinc-500">Workshop Invoice & VAT:</span>
+                <span className="text-emerald-400 font-bold">£2,850.00 (Litchfield Motors Notarized)</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── TRANSCONTINENTAL TOPOGRAPHIC EXPEDITION RIBBON (alpine-emerald) ── */}
+      {layoutMode === 'expedition' && (
+        <div className="px-4 sm:px-6 py-2.5 bg-[#0D1813] border-b border-emerald-500/20 flex items-center justify-between text-[10.5px] font-mono-numbers">
+          <div className="flex items-center gap-2.5 text-zinc-300">
+            <Compass className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-emerald-300 font-bold">1,688 FT SUMMIT</span>
+            <span className="text-zinc-600">•</span>
+            <span>1018 hPa BAROMETER</span>
+            <span className="text-zinc-600">•</span>
+            <span className="text-amber-300 font-bold">μ 0.78 ROAD GRIP</span>
+          </div>
+          <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold">
+            ATA CARNET PASSED
+          </span>
         </div>
       )}
 

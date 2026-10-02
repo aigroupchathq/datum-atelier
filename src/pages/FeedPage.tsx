@@ -52,7 +52,7 @@ const SkeletonCard: FC = () => (
 const POSTS_PER_PAGE = 8;
 
 export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPassRadar, onOpenDriveTracker }) => {
-  const { isWhiteYellow } = useTheme();
+  const { isWhiteYellow, themeMeta, cycleTheme } = useTheme();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
@@ -123,9 +123,27 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
       <div className="flex flex-col lg:flex-row justify-center items-start gap-8 lg:gap-10">
 
         {/* ════════════════════════════════════════
-            MAIN ATELIER LEDGER COLUMN (640px Stance)
+            MAIN ATELIER LEDGER COLUMN (Dynamically adapted by Cockpit Typology)
         ════════════════════════════════════════ */}
-        <main className="w-full max-w-[640px] mx-auto lg:mx-0 space-y-6 shrink-0">
+        <main className={`w-full ${themeMeta.feedWidthClass} mx-auto lg:mx-0 space-y-6 shrink-0 transition-all duration-300`}>
+
+          {/* Active Cockpit Mode Indicator & Quick Ergonomic Selector */}
+          <div className="flex items-center justify-between px-2 py-1 text-[10px] font-mono-numbers text-zinc-400 border-b border-white/[0.05]">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="uppercase tracking-widest text-zinc-300 font-bold">
+                TOPOLOGY // {themeMeta.layoutTitle.toUpperCase()}
+              </span>
+            </div>
+            <button
+              onClick={cycleTheme}
+              className="text-[9.5px] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
+              title="Cycle through the 5 cockpit ergonomic layouts"
+            >
+              <span>Shift Mode ({themeMeta.name.split('&')[0].trim()})</span>
+              <span>→</span>
+            </button>
+          </div>
 
           {/* Stories rail */}
           <StoriesBar onAddStory={() => onOpenCreatePost('story')} />

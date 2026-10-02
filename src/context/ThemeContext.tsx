@@ -8,10 +8,22 @@ export type Theme =
   | 'c2mtl-avantgarde' 
   | 'alpine-emerald';
 
+export type LayoutMode = 
+  | 'monograph' 
+  | 'chronograph' 
+  | 'telemetry' 
+  | 'blueprint' 
+  | 'expedition';
+
 export interface ThemeMetadata {
   id: Theme;
   name: string;
   subtitle: string;
+  layoutMode: LayoutMode;
+  layoutTitle: string;
+  feedWidthClass: string;
+  aspectRatio: string;
+  density: 'comfortable' | 'compact' | 'ultra-dense';
   mode: 'light' | 'dark';
   primaryHex: string;
   accentHex: string;
@@ -24,6 +36,11 @@ export const ATELIER_THEMES: Record<Theme, ThemeMetadata> = {
     id: 'white-yellow',
     name: 'Mayfair White & Speed Yellow',
     subtitle: 'Porcelain Atelier • Racing Yellow Accents',
+    layoutMode: 'monograph',
+    layoutTitle: 'Concours Monograph Spread',
+    feedWidthClass: 'max-w-[700px]',
+    aspectRatio: 'aspect-[4/3] sm:aspect-[4/5]',
+    density: 'comfortable',
     mode: 'light',
     primaryHex: '#09090B',
     accentHex: '#EAB308',
@@ -34,6 +51,11 @@ export const ATELIER_THEMES: Record<Theme, ThemeMetadata> = {
     id: 'obsidian',
     name: 'Obsidian & Pure Gold',
     subtitle: 'Deep Carbon • Warm Horlogerie Gold',
+    layoutMode: 'chronograph',
+    layoutTitle: 'Haute-Horlogerie Flush Plinth',
+    feedWidthClass: 'max-w-[640px]',
+    aspectRatio: 'aspect-[16/10] sm:aspect-[16/9]',
+    density: 'comfortable',
     mode: 'dark',
     primaryHex: '#F4F4F5',
     accentHex: '#F59E0B',
@@ -44,6 +66,11 @@ export const ATELIER_THEMES: Record<Theme, ThemeMetadata> = {
     id: 'bordeaux-cyan',
     name: 'Bordeaux & Aero Cyan',
     subtitle: 'PTS Plum Velvet • Electric Aerospace Cyan',
+    layoutMode: 'telemetry',
+    layoutTitle: 'F1 Pit-Wall Telemetry HUD',
+    feedWidthClass: 'max-w-[760px]',
+    aspectRatio: 'aspect-[16/10]',
+    density: 'compact',
     mode: 'dark',
     primaryHex: '#FFFFFF',
     accentHex: '#0677A1',
@@ -54,6 +81,11 @@ export const ATELIER_THEMES: Record<Theme, ThemeMetadata> = {
     id: 'c2mtl-avantgarde',
     name: 'C2MTL Avant-Garde',
     subtitle: 'Graphic Noir • Electric Cobalt & Tangerine',
+    layoutMode: 'blueprint',
+    layoutTitle: 'CAD Workshop Drafting Blueprint',
+    feedWidthClass: 'max-w-[660px]',
+    aspectRatio: 'aspect-square sm:aspect-[4/3]',
+    density: 'comfortable',
     mode: 'dark',
     primaryHex: '#FFFFFF',
     accentHex: '#273DB4',
@@ -64,6 +96,11 @@ export const ATELIER_THEMES: Record<Theme, ThemeMetadata> = {
     id: 'alpine-emerald',
     name: 'Alpine British Racing Green',
     subtitle: 'Forest Petroleum • Emerald & Platinum',
+    layoutMode: 'expedition',
+    layoutTitle: 'Transcontinental Rallye Spine',
+    feedWidthClass: 'max-w-[680px]',
+    aspectRatio: 'aspect-[16/9]',
+    density: 'comfortable',
     mode: 'dark',
     primaryHex: '#F4FBF7',
     accentHex: '#10B981',
@@ -74,6 +111,7 @@ export const ATELIER_THEMES: Record<Theme, ThemeMetadata> = {
 
 interface ThemeContextType {
   theme: Theme;
+  layoutMode: LayoutMode;
   isWhiteYellow: boolean;
   themeMeta: ThemeMetadata;
   setTheme: (theme: Theme) => void;
@@ -103,8 +141,9 @@ export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
       root.classList.remove(`theme-${t}`);
     });
 
-    // Add current theme class
+    // Add current theme class and layout attribute
     root.classList.add(`theme-${theme}`);
+    root.setAttribute('data-layout', themeMeta.layoutMode);
     root.style.colorScheme = themeMeta.mode;
     document.body.style.backgroundColor = themeMeta.bgHex;
     document.body.style.color = themeMeta.primaryHex;
@@ -126,6 +165,7 @@ export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <ThemeContext.Provider value={{ 
       theme, 
+      layoutMode: themeMeta.layoutMode,
       isWhiteYellow: theme === 'white-yellow', 
       themeMeta,
       setTheme, 
