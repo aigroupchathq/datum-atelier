@@ -9,123 +9,23 @@ import {
   Gauge, 
   Activity, 
   ShieldCheck, 
-  RotateCcw
+  RotateCcw,
+  Download,
+  Copy,
+  Radio,
+  FileCheck
 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
-
-interface AcousticVehicle {
-  id: string;
-  name: string;
-  fullName: string;
-  chassisCode: string;
-  engineCode: string;
-  displacement: string;
-  valvetrainDesc: string;
-  exhaustSpec: string;
-  powerBhp: number;
-  torqueNm: number;
-  redlineRpm: number;
-  idleRpm: number;
-  baseFrequencyHz: number;
-  peakFrequencyHz: number;
-  musicalNote: string;
-  weightKg: number;
-  heroImage: string;
-  accentClass: string;
-  badgeFoil: string;
-  timbreDescription: string;
-}
-
-const ACOUSTIC_FLEET: Record<string, AcousticVehicle> = {
-  'car-maya-m3': {
-    id: 'car-maya-m3',
-    name: 'MAYA',
-    fullName: 'BMW M3 Competition (G80)',
-    chassisCode: 'G80-M3-COMP-UK',
-    engineCode: 'S58B30A Twin-Turbo',
-    displacement: '2,993 cc',
-    valvetrainDesc: '24V DOHC Double-VANOS • Valvetronic',
-    exhaustSpec: 'Akrapovič Evolution Line Titanium System',
-    powerBhp: 612,
-    torqueNm: 780,
-    redlineRpm: 7200,
-    idleRpm: 750,
-    baseFrequencyHz: 42,
-    peakFrequencyHz: 480,
-    musicalNote: 'B1 to A4 Harmonic Spool',
-    weightKg: 1730,
-    heroImage: '/real_uk_m3_cottage.jpg',
-    accentClass: 'text-emerald-400',
-    badgeFoil: 'foil-emerald',
-    timbreDescription: 'Deep baritone inline-six idle resonance with rapid twin-scroll turbo spool and metallic high-RPM induction rasp.'
-  },
-  'car-kuro-gt3': {
-    id: 'car-kuro-gt3',
-    name: 'KURO',
-    fullName: 'Porsche 911 GT3 Touring (992)',
-    chassisCode: '992-GT3-TOURING',
-    engineCode: '4.0L Boxer-6 Naturally Aspirated',
-    displacement: '3,996 cc',
-    valvetrainDesc: '24V DOHC Individual Throttle Bodies • Rigid Valve Drive',
-    exhaustSpec: 'Porsche Motorsport Titanium Sports System',
-    powerBhp: 502,
-    torqueNm: 470,
-    redlineRpm: 9000,
-    idleRpm: 850,
-    baseFrequencyHz: 68,
-    peakFrequencyHz: 840,
-    musicalNote: 'D2 to F#5 Valvetrain Howl',
-    weightKg: 1418,
-    heroImage: '/real_uk_gt3_suburb.jpg',
-    accentClass: 'text-amber-400',
-    badgeFoil: 'foil-gold',
-    timbreDescription: 'Spine-tingling, mechanical flat-six symphonics. Solid cam followers screaming to 9,000 RPM with pure atmospheric purity.'
-  },
-  'car-e30-retromod': {
-    id: 'car-e30-retromod',
-    name: 'RETRO MOD',
-    fullName: 'BMW 318is Slicktop (E30)',
-    chassisCode: 'E30-318IS-SLICKTOP',
-    engineCode: 'M42B18 16V Twin-Cam',
-    displacement: '1,796 cc',
-    valvetrainDesc: '16V DOHC Chain-Driven Twin-Cam • Hydraulic Lifters',
-    exhaustSpec: 'Supersprint Stainless 4-into-1 System',
-    powerBhp: 152,
-    torqueNm: 192,
-    redlineRpm: 6900,
-    idleRpm: 800,
-    baseFrequencyHz: 55,
-    peakFrequencyHz: 620,
-    musicalNote: 'A1 to E4 Analog Rasp',
-    weightKg: 1120,
-    heroImage: '/real_uk_e30_terrace.jpg',
-    accentClass: 'text-rose-400',
-    badgeFoil: 'foil-platinum',
-    timbreDescription: 'Raw, unassisted mechanical induction. Direct throttle-cable valve click, high-revving rasp with period-correct Supersprint growl.'
-  },
-  'car-expedition-110': {
-    id: 'car-expedition-110',
-    name: 'EXPEDITION',
-    fullName: 'Land Rover Defender 110 P400 SE',
-    chassisCode: 'L663-DEFENDER-110',
-    engineCode: 'Ingenium 3.0L MHEV I6',
-    displacement: '2,996 cc',
-    valvetrainDesc: '24V DOHC Continuous Variable Valve Lift (CVVL)',
-    exhaustSpec: 'Heavy-Duty Inconel Submerged Dual Runners',
-    powerBhp: 395,
-    torqueNm: 550,
-    redlineRpm: 6500,
-    idleRpm: 700,
-    baseFrequencyHz: 38,
-    peakFrequencyHz: 420,
-    musicalNote: 'G1 to C4 Overland Rumble',
-    weightKg: 2360,
-    heroImage: '/real_uk_defender_farm.jpg',
-    accentClass: 'text-lime-400',
-    badgeFoil: 'foil-platinum',
-    timbreDescription: 'Deep low-frequency bass with high-pitch 48V electric supercharger whine, designed for 900mm wading depth.'
-  }
-};
+import {
+  FLEET_ACOUSTIC_PROFILES,
+  analyzeAcousticProfile,
+  issueAcousticPassport
+} from '../../utils/acousticFingerprintEngine';
+import type {
+  EngineAcousticProfile,
+  AcousticSpectrumData,
+  AcousticPassportRecord
+} from '../../utils/acousticFingerprintEngine';
 
 interface AcousticStudioModalProps {
   isOpen: boolean;
@@ -147,24 +47,35 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isBlipActive, setIsBlipActive] = useState<boolean>(false);
   const [compareMode, setCompareMode] = useState<boolean>(true);
+  const [visMode, setVisMode] = useState<'spectrum' | 'oscilloscope'>('spectrum');
+  const [copiedHash, setCopiedHash] = useState<boolean>(false);
 
   const { showToast } = useToast();
 
-  const vehicleA = ACOUSTIC_FLEET[selectedVehicleId] || ACOUSTIC_FLEET['car-maya-m3'];
-  const vehicleB = ACOUSTIC_FLEET[compareVehicleId] || ACOUSTIC_FLEET['car-kuro-gt3'];
+  const profileA: EngineAcousticProfile = FLEET_ACOUSTIC_PROFILES[selectedVehicleId] || FLEET_ACOUSTIC_PROFILES['car-maya-m3'];
+  const profileB: EngineAcousticProfile = FLEET_ACOUSTIC_PROFILES[compareVehicleId] || FLEET_ACOUSTIC_PROFILES['car-kuro-gt3'];
+
+  // Current acoustic analytics
+  const analysisA: AcousticSpectrumData = analyzeAcousticProfile(profileA, currentRpm);
+  const analysisB: AcousticSpectrumData = analyzeAcousticProfile(profileB, profileB.idleRpm + (profileB.redlineRpm - profileB.idleRpm) * 0.5);
 
   // Web Audio Context refs
   const audioCtxRef = useRef<AudioContext | null>(null);
   const oscRef = useRef<OscillatorNode | null>(null);
   const oscSubRef = useRef<OscillatorNode | null>(null);
-  const gainRef = useRef<GainNode | null>(null);
   const filterRef = useRef<BiquadFilterNode | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+
+  // Canvas visualizer refs
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const animFrameRef = useRef<number | null>(null);
 
   // Stop audio synthesis cleanly
   const stopAudio = useCallback(() => {
     if (gainRef.current && audioCtxRef.current) {
       try {
-        gainRef.current.gain.linearRampToValueAtTime(0.0001, audioCtxRef.current.currentTime + 0.15);
+        gainRef.current.gain.linearRampToValueAtTime(0.0001, audioCtxRef.current.currentTime + 0.12);
       } catch {
         // Fallback
       }
@@ -180,22 +91,25 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
       oscSubRef.current = null;
       gainRef.current = null;
       filterRef.current = null;
+      analyserRef.current = null;
       setIsPlaying(false);
-    }, 180);
+    }, 140);
   }, []);
 
-  // Calculate synthesized frequency based on RPM
-  const calculateFrequency = useCallback((rpm: number, veh: AcousticVehicle) => {
-    const rpmFrac = (rpm - veh.idleRpm) / (veh.redlineRpm - veh.idleRpm);
+  // Calculate synthesized fundamental frequency based on combustion physics
+  const calculateFrequency = useCallback((rpm: number, prof: EngineAcousticProfile) => {
+    const rpmFrac = (rpm - prof.idleRpm) / (prof.redlineRpm - prof.idleRpm);
     const clampedFrac = Math.max(0, Math.min(1, rpmFrac));
-    return veh.baseFrequencyHz + clampedFrac * (veh.peakFrequencyHz - veh.baseFrequencyHz);
+    const baseHz = (prof.idleRpm / 60) * (prof.cylinders / 2);
+    const redlineHz = (prof.redlineRpm / 60) * (prof.cylinders / 2);
+    return Math.max(25, baseHz + clampedFrac * (redlineHz - baseHz));
   }, []);
 
-  // Start continuous audio synthesis
+  // Start continuous audio synthesis with real AnalyserNode
   const startAudio = useCallback((rpm: number) => {
     try {
       if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
-        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         audioCtxRef.current = new AudioContextClass();
       }
 
@@ -212,14 +126,14 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
         try { oscSubRef.current.stop(); } catch { /* ignore */ }
       }
 
-      const fundamentalFreq = calculateFrequency(rpm, vehicleA);
+      const fundamentalFreq = calculateFrequency(rpm, profileA);
 
-      // Primary tone oscillator (sawtooth for valvetrain bite)
+      // Primary tone oscillator (sawtooth for mechanical valvetrain bite)
       const osc = ctx.createOscillator();
-      osc.type = vehicleA.id === 'car-kuro-gt3' ? 'sawtooth' : 'triangle';
+      osc.type = profileA.configuration === 'F6' ? 'sawtooth' : 'triangle';
       osc.frequency.setValueAtTime(fundamentalFreq, ctx.currentTime);
 
-      // Sub-harmonic bass oscillator (for exhaust pulse depth)
+      // Sub-harmonic bass oscillator (for deep exhaust pulse depth)
       const oscSub = ctx.createOscillator();
       oscSub.type = 'sawtooth';
       oscSub.frequency.setValueAtTime(fundamentalFreq * 0.5, ctx.currentTime);
@@ -227,18 +141,24 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
       // Biquad resonance filter
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(Math.max(200, fundamentalFreq * 4), ctx.currentTime);
-      filter.Q.setValueAtTime(3.5, ctx.currentTime);
+      filter.frequency.setValueAtTime(Math.max(180, fundamentalFreq * 4.2), ctx.currentTime);
+      filter.Q.setValueAtTime(3.8, ctx.currentTime);
+
+      // AnalyserNode for Real-Time FFT & Waveform Visualization
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0.82;
 
       // Master output gain
       const gain = ctx.createGain();
       gain.gain.setValueAtTime(0.001, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.28, ctx.currentTime + 0.12);
+      gain.gain.linearRampToValueAtTime(0.26, ctx.currentTime + 0.1);
 
-      // Node graph routing
+      // Node graph routing: (Osc + OscSub) -> Filter -> Analyser -> Gain -> Destination
       osc.connect(filter);
       oscSub.connect(filter);
-      filter.connect(gain);
+      filter.connect(analyser);
+      analyser.connect(gain);
       gain.connect(ctx.destination);
 
       osc.start();
@@ -247,13 +167,14 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
       oscRef.current = osc;
       oscSubRef.current = oscSub;
       filterRef.current = filter;
+      analyserRef.current = analyser;
       gainRef.current = gain;
 
       setIsPlaying(true);
     } catch {
       // Audio autoplay policy fallback
     }
-  }, [calculateFrequency, vehicleA]);
+  }, [calculateFrequency, profileA]);
 
   // Handle throttle rev-blip simulation
   const handleThrottleBlip = () => {
@@ -264,35 +185,35 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
     setIsBlipActive(true);
     const ctx = audioCtxRef.current;
     if (ctx && oscRef.current && filterRef.current && gainRef.current) {
-      const targetRpm = Math.min(vehicleA.redlineRpm - 400, currentRpm + 3800);
-      const blipFreq = calculateFrequency(targetRpm, vehicleA);
+      const targetRpm = Math.min(profileA.redlineRpm - 300, currentRpm + 3600);
+      const blipFreq = calculateFrequency(targetRpm, profileA);
 
       // Instantaneous blip attack & decay
       oscRef.current.frequency.cancelScheduledValues(ctx.currentTime);
-      oscRef.current.frequency.exponentialRampToValueAtTime(blipFreq, ctx.currentTime + 0.22);
-      oscRef.current.frequency.exponentialRampToValueAtTime(calculateFrequency(currentRpm, vehicleA), ctx.currentTime + 0.85);
+      oscRef.current.frequency.exponentialRampToValueAtTime(blipFreq, ctx.currentTime + 0.2);
+      oscRef.current.frequency.exponentialRampToValueAtTime(calculateFrequency(currentRpm, profileA), ctx.currentTime + 0.82);
 
       if (oscSubRef.current) {
-        oscSubRef.current.frequency.exponentialRampToValueAtTime(blipFreq * 0.5, ctx.currentTime + 0.22);
-        oscSubRef.current.frequency.exponentialRampToValueAtTime(calculateFrequency(currentRpm, vehicleA) * 0.5, ctx.currentTime + 0.85);
+        oscSubRef.current.frequency.exponentialRampToValueAtTime(blipFreq * 0.5, ctx.currentTime + 0.2);
+        oscSubRef.current.frequency.exponentialRampToValueAtTime(calculateFrequency(currentRpm, profileA) * 0.5, ctx.currentTime + 0.82);
       }
 
-      filterRef.current.frequency.exponentialRampToValueAtTime(blipFreq * 6, ctx.currentTime + 0.22);
-      filterRef.current.frequency.exponentialRampToValueAtTime(Math.max(200, calculateFrequency(currentRpm, vehicleA) * 4), ctx.currentTime + 0.85);
+      filterRef.current.frequency.exponentialRampToValueAtTime(blipFreq * 5.5, ctx.currentTime + 0.2);
+      filterRef.current.frequency.exponentialRampToValueAtTime(Math.max(180, calculateFrequency(currentRpm, profileA) * 4), ctx.currentTime + 0.82);
 
-      gainRef.current.gain.linearRampToValueAtTime(0.42, ctx.currentTime + 0.2);
-      gainRef.current.gain.linearRampToValueAtTime(0.28, ctx.currentTime + 0.85);
+      gainRef.current.gain.linearRampToValueAtTime(0.38, ctx.currentTime + 0.18);
+      gainRef.current.gain.linearRampToValueAtTime(0.26, ctx.currentTime + 0.82);
 
       showToast({
-        title: `${vehicleA.name} Throttle Blip`,
-        message: `Rev blipped to ${targetRpm} RPM • Peak frequency ${Math.round(blipFreq)} Hz`,
+        title: `${profileA.name} Throttle Blip`,
+        message: `Rev blipped to ${targetRpm} RPM • Peak Combustion Hz: ${Math.round(blipFreq)} Hz`,
         type: 'garage'
       });
     }
 
     setTimeout(() => {
       setIsBlipActive(false);
-    }, 900);
+    }, 850);
   };
 
   // Update frequency when RPM changes via slider
@@ -300,21 +221,192 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
     setCurrentRpm(newRpm);
     const ctx = audioCtxRef.current;
     if (ctx && oscRef.current && filterRef.current) {
-      const freq = calculateFrequency(newRpm, vehicleA);
-      oscRef.current.frequency.setTargetAtTime(freq, ctx.currentTime, 0.05);
+      const freq = calculateFrequency(newRpm, profileA);
+      oscRef.current.frequency.setTargetAtTime(freq, ctx.currentTime, 0.04);
       if (oscSubRef.current) {
-        oscSubRef.current.frequency.setTargetAtTime(freq * 0.5, ctx.currentTime, 0.05);
+        oscSubRef.current.frequency.setTargetAtTime(freq * 0.5, ctx.currentTime, 0.04);
       }
-      filterRef.current.frequency.setTargetAtTime(Math.max(200, freq * 4), ctx.currentTime, 0.05);
+      filterRef.current.frequency.setTargetAtTime(Math.max(180, freq * 4.2), ctx.currentTime, 0.04);
     }
   };
 
-  // Cleanup on unmount or close
+  // Live Canvas FFT & Oscilloscope Rendering Loop
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let isSubscribed = true;
+
+    const render = () => {
+      if (!isSubscribed) return;
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.fillStyle = '#07080A';
+      ctx.fillRect(0, 0, width, height);
+
+      // Subtle engineering grid lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < height; y += 25) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      const analyser = analyserRef.current;
+
+      if (isPlaying && analyser) {
+        if (visMode === 'spectrum') {
+          // FFT Frequency Spectrum Bars
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          analyser.getByteFrequencyData(dataArray);
+
+          const barCount = 48;
+          const barWidth = (width / barCount) - 2;
+
+          for (let i = 0; i < barCount; i++) {
+            const dataIndex = Math.floor(Math.pow(i / barCount, 1.4) * (bufferLength / 3));
+            const value = dataArray[dataIndex] || 0;
+            const barHeight = Math.max(3, (value / 255) * (height - 18));
+
+            // Color gradient across acoustic frequency bands
+            let gradientColor = '#10B981'; // Sub-bass emerald
+            if (i > 12 && i <= 26) gradientColor = '#F59E0B'; // Exhaust throat amber
+            else if (i > 26 && i <= 38) gradientColor = '#EC4899'; // Valvetrain rasp rose
+            else if (i > 38) gradientColor = '#06B6D4'; // Turbo spool cyan
+
+            ctx.fillStyle = gradientColor;
+            ctx.shadowColor = gradientColor;
+            ctx.shadowBlur = 6;
+            ctx.fillRect(i * (barWidth + 2) + 2, height - barHeight - 4, barWidth, barHeight);
+            ctx.shadowBlur = 0;
+          }
+
+          // Spectrum Frequency Band Annotation Footers
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+          ctx.font = '9px monospace';
+          ctx.fillText('SUB-BASS (20-120Hz)', 10, 14);
+          ctx.fillText('EXHAUST THROAT (120-450Hz)', width * 0.28, 14);
+          ctx.fillText('VALVETRAIN (450-1.8kHz)', width * 0.62, 14);
+
+        } else {
+          // Time-Domain Mechanical Oscilloscope Waveform
+          const bufferLength = analyser.fftSize;
+          const dataArray = new Uint8Array(bufferLength);
+          analyser.getByteTimeDomainData(dataArray);
+
+          ctx.lineWidth = 2.2;
+          ctx.strokeStyle = '#F59E0B';
+          ctx.shadowColor = '#F59E0B';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+
+          const sliceWidth = width / bufferLength;
+          let x = 0;
+
+          for (let i = 0; i < bufferLength; i++) {
+            const v = dataArray[i] / 128.0;
+            const y = (v * height) / 2;
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+
+            x += sliceWidth;
+          }
+
+          ctx.lineTo(width, height / 2);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = 'rgba(245, 158, 11, 0.8)';
+          ctx.font = '9px monospace';
+          ctx.fillText('TIME-DOMAIN CYLINDER FIRING PRESSURE WAVEFORM', 10, 14);
+        }
+      } else {
+        // Resting Standby Baseline
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, height / 2);
+        ctx.lineTo(width, height / 2);
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('VALVETRAIN ACOUSTIC SENSORS IDLE • TAP PLAY TO INITIALIZE FFT SPECTRUM', width / 2, height / 2 - 10);
+        ctx.textAlign = 'left';
+      }
+
+      animFrameRef.current = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      isSubscribed = false;
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
+  }, [isPlaying, visMode]);
+
+  // Cleanup audio nodes on unmount or close
   useEffect(() => {
     return () => {
       stopAudio();
     };
   }, [stopAudio]);
+
+  // Export / Download Official Acoustic Valvetrain Passport
+  const handleExportPassport = () => {
+    const passport: AcousticPassportRecord = issueAcousticPassport(profileA);
+    const payload = {
+      document: 'DATUM_ATELIER_ACOUSTIC_VALVETRAIN_PASSPORT',
+      standard: 'ISO_10844_UK_NOISE_COMPLIANT',
+      passport,
+      fleetProfile: profileA,
+      harmonicAnalysis: analysisA
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ACOUSTIC_PASSPORT_${profileA.engineCode}_${profileA.name}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showToast({
+      title: 'Valvetrain Sound Passport Minted',
+      message: `Cryptographic Acoustic Hash ${passport.fingerprintHash} downloaded under Anti-ASD Protocol.`,
+      type: 'success',
+      badge: 'ACOUSTICS'
+    });
+  };
+
+  const handleCopyHash = () => {
+    navigator.clipboard.writeText(analysisA.acousticFingerprintHash);
+    setCopiedHash(true);
+    setTimeout(() => setCopiedHash(false), 2000);
+    showToast({
+      title: 'Acoustic Hash Copied',
+      message: `${analysisA.acousticFingerprintHash} copied to clipboard.`,
+      type: 'garage'
+    });
+  };
 
   if (!isOpen) return null;
 
@@ -322,10 +414,10 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
       
       {/* Studio Dialog Container */}
-      <div className="relative max-w-5xl w-full rounded-3xl bg-[#0B0C10] border border-amber-500/30 shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="relative max-w-5xl w-full rounded-3xl bg-[#0B0C10] border border-amber-500/30 shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col max-h-[94vh]">
         
         {/* Top Header */}
-        <div className="px-6 sm:px-8 py-5 border-b border-amber-500/20 bg-gradient-to-r from-[#14151C] via-[#0E0F14] to-[#14151C] flex items-center justify-between">
+        <div className="px-6 sm:px-8 py-4.5 border-b border-amber-500/20 bg-gradient-to-r from-[#14151C] via-[#0E0F14] to-[#14151C] flex items-center justify-between">
           <div className="flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600/30 to-amber-950/60 border border-amber-500/40 flex items-center justify-center text-amber-300">
               <Volume2 className="w-5 h-5" />
@@ -333,14 +425,14 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-luxury-display text-xs sm:text-sm font-bold tracking-[0.25em] text-amber-200 uppercase">
-                  EXHAUST & VALVETRAIN SOUND STUDIO
+                  VALVETRAIN ACOUSTIC HARMONICS STUDIO
                 </span>
                 <span className="text-[9px] font-mono-numbers px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/30 uppercase">
-                  LIVE AUDIO ENGINE
+                  FFT SPECTRUM ENGINE
                 </span>
               </div>
               <p className="text-[11px] text-zinc-400 font-mono-numbers tracking-wider uppercase mt-0.5">
-                Real-Time Valvetrain & Exhaust Harmonics • Multi-Vehicle Comparison
+                Real-Time Fast Fourier Transform • Cryptographic Audio Fingerprinting • Anti-ASD Ban
               </p>
             </div>
           </div>
@@ -350,12 +442,12 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
               onClick={() => setCompareMode(!compareMode)}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono-numbers transition border hidden sm:flex items-center gap-1.5 ${
                 compareMode 
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' 
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold' 
                   : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white'
               }`}
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>{compareMode ? 'Dual Comparison: Active' : 'Single Vehicle'}</span>
+              <span>{compareMode ? 'Dual Superposition: ON' : 'Single Vehicle'}</span>
             </button>
 
             <button
@@ -371,25 +463,31 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1 bg-[#090A0D]">
+        <div className="p-5 sm:p-7 overflow-y-auto space-y-6 flex-1 bg-[#090A0D]">
           
-          {/* Primary Acoustic Synthesizer Console */}
-          <div className="p-6 rounded-3xl bg-[#101117] border border-amber-500/20 space-y-6 shadow-xl relative overflow-hidden">
+          {/* Primary Acoustic Synthesizer & Canvas Console */}
+          <div className="p-6 rounded-3xl bg-[#101117] border border-amber-500/25 space-y-5 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Vehicle Selector Pills */}
-            <div className="flex items-center justify-between gap-3 border-b border-zinc-850 pb-4">
+            {/* Vehicle Selector Pills & Fingerprint Monogram */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-4">
               <div>
-                <span className="text-[10px] font-mono-numbers text-amber-400 uppercase font-bold tracking-wider block">
-                  ACTIVE VEHICLE SOUND PROFILE
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono-numbers text-amber-400 uppercase font-bold tracking-wider">
+                    ACOUSTIC REFERENCE BENCHMARK
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-mono-numbers font-bold border border-emerald-500/20 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" />
+                    ANTI-ASD PURITY: {analysisA.mechanicalAuthenticityScore}%
+                  </span>
+                </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-white font-luxury-display uppercase tracking-wide mt-0.5">
-                  {vehicleA.name} • {vehicleA.engineCode}
+                  {profileA.name} • {profileA.engineCode}
                 </h3>
               </div>
 
               <div className="flex items-center gap-1.5 overflow-x-auto p-1 bg-zinc-950 border border-zinc-800 rounded-2xl text-xs font-mono-numbers">
-                {Object.values(ACOUSTIC_FLEET).map((veh) => (
+                {Object.values(FLEET_ACOUSTIC_PROFILES).map((veh) => (
                   <button
                     key={veh.id}
                     onClick={() => {
@@ -410,11 +508,60 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
               </div>
             </div>
 
-            {/* Audio Synthesis Controls & Animated VU Meter */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+            {/* REAL-TIME HTML5 CANVAS VISUALIZER (FFT Spectrum vs Oscilloscope) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-mono-numbers px-1">
+                <div className="flex items-center gap-3">
+                  <span className="text-zinc-400 uppercase flex items-center gap-1.5">
+                    <Radio className="w-3.5 h-3.5 text-amber-400" />
+                    <span>ACOUSTIC HARMONICS MONITOR</span>
+                  </span>
+                  <span className="text-zinc-600">•</span>
+                  <span className="text-amber-300 font-bold text-[11px]">
+                    {analysisA.timbreProfileLabel}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 bg-zinc-950 p-0.5 rounded-lg border border-zinc-800">
+                  <button
+                    onClick={() => setVisMode('spectrum')}
+                    className={`px-2.5 py-1 rounded text-[10px] font-mono-numbers transition ${
+                      visMode === 'spectrum' 
+                        ? 'bg-amber-400 text-black font-bold' 
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    FFT Spectrum
+                  </button>
+                  <button
+                    onClick={() => setVisMode('oscilloscope')}
+                    className={`px-2.5 py-1 rounded text-[10px] font-mono-numbers transition ${
+                      visMode === 'oscilloscope' 
+                        ? 'bg-amber-400 text-black font-bold' 
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Oscilloscope
+                  </button>
+                </div>
+              </div>
+
+              {/* The HTML5 Canvas Viewport */}
+              <div className="rounded-2xl border border-zinc-800 overflow-hidden bg-black/60 shadow-inner relative">
+                <canvas
+                  ref={canvasRef}
+                  width={960}
+                  height={150}
+                  className="w-full h-36 block"
+                />
+              </div>
+            </div>
+
+            {/* Audio Synthesis Controls & Dynamic Telemetry Gauges */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-center">
               
               {/* Left: Playback & Blip Triggers */}
-              <div className="space-y-4">
+              <div className="space-y-3.5">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => {
@@ -424,14 +571,14 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                         startAudio(currentRpm);
                       }
                     }}
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-black transition-all shadow-xl active:scale-95 ${
+                    className={`w-13 h-13 rounded-2xl flex items-center justify-center font-bold text-black transition-all shadow-xl active:scale-95 cursor-pointer ${
                       isPlaying 
                         ? 'bg-amber-400 ring-4 ring-amber-400/30' 
                         : 'bg-white hover:bg-zinc-200'
                     }`}
                     title={isPlaying ? 'Halt Valvetrain Audio' : 'Ignite Valvetrain Soulprint'}
                   >
-                    {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
+                    {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
                   </button>
 
                   <div>
@@ -439,7 +586,7 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                       {isPlaying ? 'ACOUSTIC RUN ACTIVE' : 'ENGINE COLD • READY'}
                     </span>
                     <span className="text-[11px] text-zinc-400 font-mono-numbers">
-                      {vehicleA.musicalNote}
+                      {profileA.exhaustSystem}
                     </span>
                   </div>
                 </div>
@@ -447,17 +594,17 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleThrottleBlip}
-                    className={`flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-zinc-950 font-mono-numbers font-bold text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-1.5 active:scale-95 ${
+                    className={`flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-zinc-950 font-mono-numbers font-bold text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer ${
                       isBlipActive ? 'brightness-125 scale-95' : 'hover:brightness-105'
                     }`}
                   >
                     <Flame className="w-3.5 h-3.5" />
-                    <span>Free-Rev Blip</span>
+                    <span>Free-Rev Blip (+3,600 RPM)</span>
                   </button>
 
                   <button
-                    onClick={() => handleRpmChange(vehicleA.idleRpm)}
-                    className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition"
+                    onClick={() => handleRpmChange(profileA.idleRpm)}
+                    className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition cursor-pointer"
                     title="Return to Idle"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
@@ -473,14 +620,14 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                     <span>ENGINE TACHOMETER</span>
                   </span>
                   <span className="text-amber-400 font-bold text-base">
-                    {currentRpm} <span className="text-xs text-zinc-500">RPM</span>
+                    {currentRpm.toLocaleString()} <span className="text-xs text-zinc-500">RPM</span>
                   </span>
                 </div>
 
                 <input
                   type="range"
-                  min={vehicleA.idleRpm}
-                  max={vehicleA.redlineRpm}
+                  min={profileA.idleRpm}
+                  max={profileA.redlineRpm}
                   step={25}
                   value={currentRpm}
                   onChange={(e) => handleRpmChange(parseInt(e.target.value))}
@@ -488,58 +635,72 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                 />
 
                 <div className="flex items-center justify-between text-[10px] font-mono-numbers text-zinc-500">
-                  <span>Idle {vehicleA.idleRpm}</span>
-                  <span>Mid {Math.round(vehicleA.redlineRpm / 2)}</span>
-                  <span className="text-red-400 font-bold">Redline {vehicleA.redlineRpm}</span>
+                  <span>Idle {profileA.idleRpm}</span>
+                  <span>Mid {Math.round(profileA.redlineRpm / 2)}</span>
+                  <span className="text-red-400 font-bold">Redline {profileA.redlineRpm}</span>
                 </div>
               </div>
 
-              {/* Right: Multi-Channel Real-Time VU Meter */}
-              <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-850 space-y-2">
-                <div className="flex items-center justify-between text-[10px] font-mono-numbers text-zinc-400">
-                  <span>SPECTRUM FREQUENCY</span>
-                  <span className="text-emerald-400 font-bold">
-                    {Math.round(calculateFrequency(currentRpm, vehicleA))} HZ
+              {/* Right: Sound Pressure & Harmonic Ratios */}
+              <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-850 space-y-2.5 text-xs font-mono-numbers">
+                <div className="flex items-center justify-between">
+                  <span className="text-zinc-400 text-[10px] uppercase">DECIBEL SPL RATING</span>
+                  <span className="text-amber-400 font-bold text-sm">
+                    {analysisA.decibelSpl} dB(A)
                   </span>
                 </div>
 
-                {/* Animated Bars */}
-                <div className="flex items-end gap-1 h-12 py-1 justify-between">
-                  {[14, 22, 38, 48, 30, 24, 42, 54, 36, 28, 46, 52, 34, 20].map((h, i) => {
-                    const barHeight = isPlaying 
-                      ? Math.min(48, Math.max(6, (h * (currentRpm / vehicleA.redlineRpm)) + (i % 3) * 6)) 
-                      : 4;
-                    return (
-                      <div
-                        key={i}
-                        className={`w-full rounded-sm transition-all duration-75 ${
-                          isPlaying 
-                            ? i > 10 ? 'bg-rose-400' : i > 7 ? 'bg-amber-400' : 'bg-emerald-400'
-                            : 'bg-zinc-800'
-                        }`}
-                        style={{ height: `${barHeight}px` }}
-                      />
-                    );
-                  })}
+                <div className="grid grid-cols-2 gap-2 text-[10px]">
+                  <div className="p-1.5 rounded-lg bg-black/40 border border-zinc-800">
+                    <span className="text-zinc-500 block">Firing Freq</span>
+                    <strong className="text-emerald-400">{analysisA.fundamentalFreqHz} Hz</strong>
+                  </div>
+                  <div className="p-1.5 rounded-lg bg-black/40 border border-zinc-800">
+                    <span className="text-zinc-500 block">Valvetrain Hz</span>
+                    <strong className="text-rose-400">{analysisA.valvetrainRaspHz} Hz</strong>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[9px] font-mono-numbers text-zinc-500">
-                  <span>Sub-Bass</span>
-                  <span>Harmonics</span>
-                  <span>Valvetrain</span>
+                <div className="text-[10px] text-zinc-400 flex items-center justify-between pt-0.5">
+                  <span>UK Noise Compliance:</span>
+                  <span className="text-emerald-400 font-bold">Stationary Pass</span>
                 </div>
               </div>
 
             </div>
 
-            {/* Exhaust & Timbre Note */}
-            <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-850 text-xs font-mono-numbers flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <span className="text-zinc-300">
-                <strong className="text-white">Acoustic Timbre:</strong> {vehicleA.timbreDescription}
-              </span>
-              <span className="text-amber-400 font-bold shrink-0">
-                Exhaust: {vehicleA.exhaustSpec}
-              </span>
+            {/* Cryptographic Acoustic Fingerprint Bar & Passport Export Button */}
+            <div className="p-4 rounded-2xl bg-zinc-950 border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono-numbers">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                  <FileCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-zinc-400 uppercase">ACOUSTIC FINGERPRINT HASH:</span>
+                    <span className="text-amber-300 font-bold tracking-wider">{analysisA.acousticFingerprintHash}</span>
+                    <button
+                      onClick={handleCopyHash}
+                      className="p-1 rounded text-zinc-400 hover:text-white transition"
+                      title="Copy Hash"
+                    >
+                      <Copy className="w-3 h-3" />
+                    </button>
+                    {copiedHash && <span className="text-[9px] text-emerald-400 font-bold">Copied!</span>}
+                  </div>
+                  <p className="text-[10px] text-zinc-500 mt-0.5">
+                    Deterministic Timbre Hash derived from {profileA.cylinders}-cyl {profileA.configuration} {profileA.displacementCc}cc firing order {profileA.firingOrder}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleExportPassport}
+                className="px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs font-mono-numbers transition flex items-center justify-center gap-1.5 shadow-sm shrink-0 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Export Valvetrain Passport</span>
+              </button>
             </div>
           </div>
 
@@ -564,9 +725,9 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                   <select
                     value={compareVehicleId}
                     onChange={(e) => setCompareVehicleId(e.target.value)}
-                    className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                    className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400 cursor-pointer"
                   >
-                    {Object.values(ACOUSTIC_FLEET).filter(v => v.id !== vehicleA.id).map((v) => (
+                    {Object.values(FLEET_ACOUSTIC_PROFILES).filter(v => v.id !== profileA.id).map((v) => (
                       <option key={v.id} value={v.id}>{v.name} ({v.fullName})</option>
                     ))}
                   </select>
@@ -584,42 +745,42 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                         BENCH REFERENCE A
                       </span>
                       <h4 className="text-base font-bold text-white font-luxury-display">
-                        {vehicleA.name} ({vehicleA.fullName})
+                        {profileA.name} ({profileA.fullName})
                       </h4>
                     </div>
                     <span className="text-xs font-bold text-amber-400 font-mono-numbers">
-                      {vehicleA.powerBhp} BHP
+                      {profileA.engineCode}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 text-xs font-mono-numbers">
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
-                      <span className="text-[10px] text-zinc-500 block uppercase">Specific Power</span>
+                      <span className="text-[10px] text-zinc-500 block uppercase">Firing Frequency</span>
                       <span className="font-bold text-white text-sm">
-                        {(vehicleA.powerBhp / (parseFloat(vehicleA.displacement.replace(/[^0-9]/g, '')) / 1000)).toFixed(1)} BHP/L
+                        {analysisA.fundamentalFreqHz} Hz @ {currentRpm} RPM
                       </span>
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
-                      <span className="text-[10px] text-zinc-500 block uppercase">Power-to-Weight</span>
+                      <span className="text-[10px] text-zinc-500 block uppercase">Sound Pressure</span>
                       <span className="font-bold text-emerald-400 text-sm">
-                        {((vehicleA.powerBhp / vehicleA.weightKg) * 1000).toFixed(0)} BHP/Tonne
+                        {analysisA.decibelSpl} dB(A)
                       </span>
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
                       <span className="text-[10px] text-zinc-500 block uppercase">Rev Limit Redline</span>
-                      <span className="font-bold text-white text-sm">{vehicleA.redlineRpm.toLocaleString()} RPM</span>
+                      <span className="font-bold text-white text-sm">{profileA.redlineRpm.toLocaleString()} RPM</span>
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
-                      <span className="text-[10px] text-zinc-500 block uppercase">Peak Valvetrain Hz</span>
-                      <span className="font-bold text-amber-400 text-sm">{vehicleA.peakFrequencyHz} Hz</span>
+                      <span className="text-[10px] text-zinc-500 block uppercase">Valvetrain Clatter</span>
+                      <span className="font-bold text-amber-400 text-sm">{analysisA.valvetrainRaspHz} Hz</span>
                     </div>
                   </div>
 
                   <p className="text-[11px] text-zinc-400 font-mono-numbers">
-                    Valvetrain: {vehicleA.valvetrainDesc}
+                    Exhaust: {profileA.exhaustSystem}
                   </p>
                 </div>
 
@@ -631,42 +792,42 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
                         BENCH REFERENCE B
                       </span>
                       <h4 className="text-base font-bold text-white font-luxury-display">
-                        {vehicleB.name} ({vehicleB.fullName})
+                        {profileB.name} ({profileB.fullName})
                       </h4>
                     </div>
                     <span className="text-xs font-bold text-cyan-400 font-mono-numbers">
-                      {vehicleB.powerBhp} BHP
+                      {profileB.engineCode}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 text-xs font-mono-numbers">
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
-                      <span className="text-[10px] text-zinc-500 block uppercase">Specific Power</span>
+                      <span className="text-[10px] text-zinc-500 block uppercase">Firing Frequency</span>
                       <span className="font-bold text-white text-sm">
-                        {(vehicleB.powerBhp / (parseFloat(vehicleB.displacement.replace(/[^0-9]/g, '')) / 1000)).toFixed(1)} BHP/L
+                        {analysisB.fundamentalFreqHz} Hz @ 50% Load
                       </span>
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
-                      <span className="text-[10px] text-zinc-500 block uppercase">Power-to-Weight</span>
-                      <span className="font-bold text-emerald-400 text-sm">
-                        {((vehicleB.powerBhp / vehicleB.weightKg) * 1000).toFixed(0)} BHP/Tonne
+                      <span className="text-[10px] text-zinc-500 block uppercase">Sound Pressure</span>
+                      <span className="font-bold text-cyan-400 text-sm">
+                        {analysisB.decibelSpl} dB(A)
                       </span>
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
                       <span className="text-[10px] text-zinc-500 block uppercase">Rev Limit Redline</span>
-                      <span className="font-bold text-white text-sm">{vehicleB.redlineRpm.toLocaleString()} RPM</span>
+                      <span className="font-bold text-white text-sm">{profileB.redlineRpm.toLocaleString()} RPM</span>
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-850">
-                      <span className="text-[10px] text-zinc-500 block uppercase">Peak Valvetrain Hz</span>
-                      <span className="font-bold text-cyan-400 text-sm">{vehicleB.peakFrequencyHz} Hz</span>
+                      <span className="text-[10px] text-zinc-500 block uppercase">Valvetrain Clatter</span>
+                      <span className="font-bold text-cyan-400 text-sm">{analysisB.valvetrainRaspHz} Hz</span>
                     </div>
                   </div>
 
                   <p className="text-[11px] text-zinc-400 font-mono-numbers">
-                    Valvetrain: {vehicleB.valvetrainDesc}
+                    Exhaust: {profileB.exhaustSystem}
                   </p>
                 </div>
 
@@ -677,10 +838,10 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 sm:px-8 py-4 bg-black/60 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono-numbers">
+        <div className="px-6 sm:px-8 py-3.5 bg-black/60 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono-numbers">
           <div className="flex items-center gap-2 text-zinc-400">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Harmonic Valvetrain Calibration Certified under Garage Protocol v2.4</span>
+            <span>Valvetrain Harmonics & Acoustic Fingerprint Certified under DATUM Protocol v3.0</span>
           </div>
 
           <button
@@ -688,7 +849,7 @@ export const AcousticStudioModal: FC<AcousticStudioModalProps> = ({
               stopAudio();
               onClose();
             }}
-            className="px-5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs transition shadow-sm"
+            className="px-5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs transition shadow-sm cursor-pointer"
           >
             Close Studio
           </button>
