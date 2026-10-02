@@ -7,7 +7,9 @@ import {
   ShieldCheck, 
   Image as ImageIcon,
   Disc3,
-  Cpu
+  Cpu,
+  Flame,
+  Gauge
 } from 'lucide-react';
 
 interface SplashScreenProps {
@@ -142,6 +144,10 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
   const [isAdmitting, setIsAdmitting] = useState<boolean>(false);
   const [ignitionStage, setIgnitionStage] = useState<'idle' | 'solenoid' | 'combustion' | 'ready'>('idle');
   
+  // Interactive Playground State (Does NOT open the site)
+  const [isBlipping, setIsBlipping] = useState<boolean>(false);
+  const [sliderRpm, setSliderRpm] = useState<number>(0);
+
   // Wallpaper removed by default for classy posh minimalism, with an option to toggle
   const [showWallpaper, setShowWallpaper] = useState<boolean>(() => {
     return localStorage.getItem('datum_splash_wallpaper') === 'true';
@@ -179,7 +185,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     localStorage.setItem('datum_splash_wallpaper', String(next));
   };
 
-  // Web Audio engine synthesis for realistic mechanical starter & combustion flare
+  // Web Audio engine synthesis
   const getAudioContext = () => {
     if (!audioCtxRef.current) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -191,6 +197,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     return audioCtxRef.current;
   };
 
+  // Full Starter Ignition Sound (Triggered ONLY on "Start Engine & Enter")
   const playEngineIgnitionSound = () => {
     if (!audioEnabled) return;
     try {
@@ -242,6 +249,55 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     }
   };
 
+  // Pure Throttle Rev Blip Sound (For Interactive Playground — Does NOT enter site)
+  const playThrottleBlipSound = (targetRpm: number) => {
+    if (!audioEnabled) return;
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      const blipOsc = ctx.createOscillator();
+      const blipSubOsc = ctx.createOscillator();
+      const blipFilter = ctx.createBiquadFilter();
+      const blipGain = ctx.createGain();
+
+      const baseFreq = Math.max(38, (car.idleRpm / 60) * (car.cylinders / 2));
+      const peakFreq = Math.max(120, (targetRpm / 60) * (car.cylinders / 2));
+
+      blipOsc.type = car.id === 'kuro' ? 'sawtooth' : 'triangle';
+      blipOsc.frequency.setValueAtTime(baseFreq, ctx.currentTime);
+      blipOsc.frequency.exponentialRampToValueAtTime(peakFreq, ctx.currentTime + 0.18);
+      blipOsc.frequency.exponentialRampToValueAtTime(baseFreq, ctx.currentTime + 0.75);
+
+      blipSubOsc.type = 'sawtooth';
+      blipSubOsc.frequency.setValueAtTime(baseFreq * 0.5, ctx.currentTime);
+      blipSubOsc.frequency.exponentialRampToValueAtTime(peakFreq * 0.5, ctx.currentTime + 0.18);
+      blipSubOsc.frequency.exponentialRampToValueAtTime(baseFreq * 0.5, ctx.currentTime + 0.75);
+
+      blipFilter.type = 'lowpass';
+      blipFilter.frequency.setValueAtTime(260, ctx.currentTime);
+      blipFilter.frequency.exponentialRampToValueAtTime(Math.min(3200, peakFreq * 5.2), ctx.currentTime + 0.18);
+      blipFilter.frequency.exponentialRampToValueAtTime(280, ctx.currentTime + 0.75);
+      blipFilter.Q.setValueAtTime(3.6, ctx.currentTime);
+
+      blipGain.gain.setValueAtTime(0.01, ctx.currentTime);
+      blipGain.gain.linearRampToValueAtTime(0.32, ctx.currentTime + 0.14);
+      blipGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.82);
+
+      blipOsc.connect(blipFilter);
+      blipSubOsc.connect(blipFilter);
+      blipFilter.connect(blipGain);
+      blipGain.connect(ctx.destination);
+
+      blipOsc.start(ctx.currentTime);
+      blipSubOsc.start(ctx.currentTime);
+      blipOsc.stop(ctx.currentTime + 0.85);
+      blipSubOsc.stop(ctx.currentTime + 0.85);
+    } catch {
+      // Audio fallback
+    }
+  };
+
   // High-Precision 60fps Rotational Physics Loop
   useEffect(() => {
     let isSubscribed = true;
@@ -254,7 +310,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       p.lastTime = time;
 
       // Smooth RPM interpolation
-      p.currentRpm += (p.targetRpm - p.currentRpm) * Math.min(1, dt * 6.5);
+      p.currentRpm += (p.targetRpm - p.currentRpm) * Math.min(1, dt * 7.5);
 
       // Crank angle integration: degrees = (RPM / 60) * 360 * dt
       const degDelta = (p.currentRpm / 60) * 360 * dt;
@@ -277,8 +333,8 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       const firingIndex = Math.floor(cycleProgress * car.firingOrder.length) % car.firingOrder.length;
       const currentCyl = car.firingOrder[firingIndex] || 1;
 
-      // Periodically update telemetry display states (every ~60ms)
-      if (Math.random() < 0.3) {
+      // Periodically update telemetry display states
+      if (Math.random() < 0.32) {
         setLiveRpm(Math.round(p.currentRpm));
         setLiveAngle(Math.round(p.crankAngle % 360));
         setActiveCylinder(currentCyl);
@@ -295,6 +351,40 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     };
   }, [car.firingOrder]);
 
+  // 1. INTERACTIVE THROTTLE BLIP (DOES NOT ENTER OR OPEN SITE)
+  const handleInteractiveBlip = (intensity: 'blip' | 'redline' = 'blip') => {
+    if (isStarting || isAdmitting) return;
+    setIsBlipping(true);
+
+    const target = intensity === 'redline'
+      ? car.redlineRpm
+      : Math.min(car.redlineRpm - 300, Math.max(car.idleRpm + 3600, 4800));
+
+    physicsRef.current.targetRpm = target;
+    setSliderRpm(target);
+    playThrottleBlipSound(target);
+
+    // After throttle blip peak, return smoothly to rest without opening site
+    setTimeout(() => {
+      if (!isStarting) {
+        physicsRef.current.targetRpm = 0;
+        setSliderRpm(0);
+        setIsBlipping(false);
+      }
+    }, 850);
+  };
+
+  // 2. INTERACTIVE SLIDER DRAG (DOES NOT ENTER OR OPEN SITE)
+  const handleSliderChange = (newRpm: number) => {
+    if (isStarting || isAdmitting) return;
+    setSliderRpm(newRpm);
+    physicsRef.current.targetRpm = newRpm;
+    if (newRpm > 0 && Math.random() < 0.2) {
+      playThrottleBlipSound(newRpm);
+    }
+  };
+
+  // 3. START ENGINE & ENTER (ONLY THIS ACTION OPENS THE SITE)
   const handleEngageMachine = () => {
     if (isStarting || isAdmitting) return;
     setIsStarting(true);
@@ -310,7 +400,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       physicsRef.current.targetRpm = Math.min(3600, car.redlineRpm * 0.45);
     }, 380);
 
-    // Settle into steady idle cadence
+    // Settle into steady idle cadence and enter atelier
     setTimeout(() => {
       setIgnitionStage('ready');
       physicsRef.current.targetRpm = car.idleRpm;
@@ -334,12 +424,15 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     localStorage.setItem('garage_splash_audio', String(next));
   };
 
-  // Keyboard engagement: Space or Enter triggers ignition
+  // Keyboard engagement: Space = Rev Blip (Play), Enter = Start & Enter Site
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === ' ' || e.key === 'Enter') {
+      if (e.key === ' ') {
         e.preventDefault();
-        handleEngageMachine();
+        handleInteractiveBlip('blip'); // Space = Play with RPM mechanics without opening site
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        handleEngageMachine(); // Enter = Start engine and enter site
       } else if (e.key === 'Escape') {
         handleSkip();
       }
@@ -354,7 +447,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     const radius = 108;
     const x = 140 + radius * Math.cos(angleRad);
     const y = 140 + radius * Math.sin(angleRad);
-    const isCurrentlyFiring = isStarting && activeCylinder === cylNum;
+    const isCurrentlyFiring = (isStarting || isBlipping || liveRpm > 200) && activeCylinder === cylNum;
     return { cylNum, x, y, isCurrentlyFiring };
   });
 
@@ -390,10 +483,10 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full border border-white/[0.04] pointer-events-none" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full border border-white/[0.06] pointer-events-none" />
 
-        {/* Subtle Ambient Combustion Glow on Ignition */}
+        {/* Ambient Combustion Glow on Ignition or Interactive Blip */}
         <div 
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-amber-500/10 blur-[100px] pointer-events-none transition-opacity duration-500 ${
-            ignitionStage === 'combustion' ? 'opacity-100 scale-110' : 'opacity-0 scale-90'
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-amber-500/10 blur-[100px] pointer-events-none transition-opacity duration-300 ${
+            ignitionStage === 'combustion' || isBlipping ? 'opacity-100 scale-110' : 'opacity-0 scale-90'
           }`}
         />
       </div>
@@ -431,7 +524,11 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
             return (
               <button
                 key={pId}
-                onClick={() => setActivePersona(pId)}
+                onClick={() => {
+                  setActivePersona(pId);
+                  physicsRef.current.targetRpm = 0;
+                  setSliderRpm(0);
+                }}
                 className={`transition-all duration-200 cursor-pointer flex items-center gap-1.5 py-1 ${
                   isSelected
                     ? 'text-white font-bold'
@@ -487,14 +584,14 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       </header>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 3. CENTERPIECE: ROTATIONAL ENGINE MECHANICS VISUALIZER        */}
+      {/* 3. CENTERPIECE: ROTATIONAL ENGINE & INTERACTIVE PLAYGROUND    */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <main className="relative z-20 max-w-7xl mx-auto w-full px-6 sm:px-12 flex-1 flex flex-col items-center justify-center my-auto py-4">
+      <main className="relative z-20 max-w-7xl mx-auto w-full px-6 sm:px-12 flex-1 flex flex-col items-center justify-center my-auto py-2">
         
-        <div className="flex flex-col items-center justify-center space-y-6 max-w-2xl text-center">
+        <div className="flex flex-col items-center justify-center space-y-4 max-w-2xl text-center">
           
           {/* THE ROTATIONAL ENGINE ESCAPEMENT DIAL (Precision SVG) */}
-          <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
+          <div className="relative w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center">
             
             <svg 
               className="w-full h-full overflow-visible" 
@@ -661,7 +758,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
                     <circle
                       cx={x}
                       cy={y}
-                      r="16"
+                      r={16}
                       fill="none"
                       stroke="#F59E0B"
                       strokeWidth="1"
@@ -675,70 +772,134 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
 
             {/* Center Status Badge Overlay */}
             <div className="absolute flex flex-col items-center justify-center pointer-events-none text-center">
-              <span className="text-[10px] font-mono-numbers text-zinc-500 uppercase tracking-widest block">
-                {isStarting ? 'ROTATING' : 'STANDBY'}
+              <span className="text-[9px] font-mono-numbers text-zinc-500 uppercase tracking-widest block">
+                {liveRpm > 50 ? 'ROTATING' : 'STANDBY'}
               </span>
               <span className="text-xl sm:text-2xl font-black font-mono-numbers tracking-tight text-white mt-0.5">
                 {liveRpm} <span className="text-xs text-amber-400 font-normal">RPM</span>
               </span>
               <span className="text-[9px] font-mono-numbers text-zinc-400 tracking-wider uppercase mt-0.5">
-                {isStarting ? `CYL #${activeCylinder} IGNITING` : 'TDC READY'}
+                {liveRpm > 50 ? `CYL #${activeCylinder} IGNITING` : 'TDC READY'}
               </span>
             </div>
 
           </div>
 
+          {/* ───────────────────────────────────────────────────────── */}
+          {/* SEPARATE INTERACTIVE RPM PLAYGROUND (DOES NOT ENTER SITE) */}
+          {/* ───────────────────────────────────────────────────────── */}
+          <div className="flex flex-col items-center gap-2.5 p-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md w-full max-w-md shadow-lg">
+            <div className="flex items-center justify-between w-full text-[10px] font-mono-numbers px-1">
+              <span className="text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
+                <Flame className="w-3.5 h-3.5 text-amber-400" />
+                <span>ROTATIONAL TEST BENCH</span>
+              </span>
+              <span className="text-amber-300 font-bold bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
+                PLAYGROUND • DOES NOT ENTER
+              </span>
+            </div>
+
+            {/* Interactive Throttle Buttons */}
+            <div className="flex items-center gap-2 w-full">
+              <button
+                type="button"
+                onClick={() => handleInteractiveBlip('blip')}
+                disabled={isStarting}
+                className="flex-1 py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-xs"
+                title="Blip throttle to interact with rotational meter without entering site"
+              >
+                <Flame className="w-3.5 h-3.5" />
+                <span>⚡ Rev Throttle Blip</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleInteractiveBlip('redline')}
+                disabled={isStarting}
+                className="py-2 px-3.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-zinc-200 font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-xs"
+                title="Test high-RPM redline surge"
+              >
+                <Gauge className="w-3.5 h-3.5 text-rose-400" />
+                <span>Redline Surge</span>
+              </button>
+            </div>
+
+            {/* Interactive Continuous RPM Drag Slider */}
+            <div className="w-full space-y-1 pt-0.5">
+              <input
+                type="range"
+                min={0}
+                max={car.redlineRpm}
+                step={50}
+                value={sliderRpm}
+                onChange={(e) => handleSliderChange(parseInt(e.target.value))}
+                className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-400 focus:outline-none"
+                title="Drag to spin rotational meter manually"
+              />
+              <div className="flex items-center justify-between text-[9px] font-mono-numbers text-zinc-500">
+                <span>0 RPM (Rest)</span>
+                <span className="text-amber-400 font-bold">
+                  Drag to Spin: {sliderRpm.toLocaleString()} RPM
+                </span>
+                <span className="text-rose-400 font-bold">Redline {car.redlineRpm.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
           {/* Vehicle Identity & Engineering Specifications */}
-          <div className="space-y-2 pt-2">
-            <h1 className="font-luxury-display text-4xl sm:text-6xl font-light tracking-[0.2em] uppercase text-white/95 leading-none">
+          <div className="space-y-1.5 pt-1">
+            <h1 className="font-luxury-display text-4xl sm:text-5xl font-light tracking-[0.2em] uppercase text-white/95 leading-none">
               {car.name}
             </h1>
-            <p className="font-serif italic text-base sm:text-xl text-zinc-300 font-light tracking-wide">
+            <p className="font-serif italic text-sm sm:text-lg text-zinc-300 font-light tracking-wide">
               {car.subtitle}
             </p>
             
             {/* Fine Monospace Engineering Specification Strip */}
-            <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-mono-numbers text-zinc-400 pt-1">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 text-[11px] font-mono-numbers text-zinc-400">
               <span className="text-zinc-200">{car.engine}</span>
-              <span className="text-zinc-600">/</span>
+              <span className="text-zinc-600">•</span>
               <span className="text-white font-bold">{car.power}</span>
-              <span className="text-zinc-600">/</span>
+              <span className="text-zinc-600">•</span>
               <span>{car.torque}</span>
-              <span className="text-zinc-600">/</span>
-              <span className="text-amber-300">FIRING ORDER: {car.firingOrder.join(' - ')}</span>
+              <span className="text-zinc-600">•</span>
+              <span className="text-amber-300">FIRING: {car.firingOrder.join('-')}</span>
             </div>
           </div>
 
-          {/* ── THE TACTILE IGNITION ENGAGEMENT PILL ── */}
-          <div className="pt-2 flex flex-col items-center gap-3">
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* THE PRIMARY START BUTTON (ONLY THIS ACTION ENTERS THE SITE)   */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          <div className="pt-1 flex flex-col items-center gap-2">
             <button
+              type="button"
               onClick={handleEngageMachine}
               disabled={isStarting}
-              className={`group relative px-9 py-4 rounded-full font-mono-numbers text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 cursor-pointer flex items-center gap-3.5 border shadow-2xl ${
+              className={`group relative px-9 py-3.5 rounded-full font-mono-numbers text-xs font-bold uppercase tracking-[0.22em] transition-all duration-300 cursor-pointer flex items-center gap-3 border shadow-2xl ${
                 isStarting
                   ? 'bg-amber-400 text-black border-amber-300 scale-[0.98] shadow-[0_0_35px_rgba(251,191,36,0.35)]'
-                  : 'bg-white/[0.08] hover:bg-white/[0.18] text-white border-white/20 hover:border-amber-400/80 hover:shadow-[0_0_30px_rgba(251,191,36,0.2)] active:scale-95'
+                  : 'bg-white hover:bg-zinc-100 text-black border-white hover:shadow-[0_0_30px_rgba(255,255,255,0.25)] active:scale-95'
               }`}
             >
               <Disc3 className={`w-4 h-4 transition-transform duration-700 ${
-                isStarting ? 'animate-spin text-black' : 'group-hover:rotate-90 text-amber-400'
+                isStarting ? 'animate-spin text-black' : 'group-hover:rotate-90 text-amber-500'
               }`} />
               
               <span>
                 {ignitionStage === 'solenoid' && 'Engaging Starter Motor...'}
                 {ignitionStage === 'combustion' && 'Combustion Surge...'}
                 {ignitionStage === 'ready' && 'Systems Harmonized'}
-                {ignitionStage === 'idle' && 'Engage Machine'}
+                {ignitionStage === 'idle' && 'Start Engine & Enter Atelier'}
               </span>
 
               <ArrowRight className={`w-3.5 h-3.5 transition-transform duration-300 ${
-                isStarting ? 'translate-x-1' : 'group-hover:translate-x-1'
+                isStarting ? 'translate-x-1' : 'group-hover:translate-x-1 text-black'
               }`} />
             </button>
 
             {/* Keyboard Launch Tooltip */}
             <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-500">
-              Press <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/50 text-zinc-300">Space</kbd> or <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/50 text-zinc-300">Enter</kbd> to Ignite
+              Press <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/50 text-zinc-300">Space</kbd> to Rev Blip • <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/50 text-zinc-300">Enter</kbd> to Launch
             </span>
           </div>
 
@@ -749,7 +910,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       {/* ───────────────────────────────────────────────────────────── */}
       {/* 4. FOOTER: ROTATIONAL TELEMETRY & PROVENANCE HALLMARK         */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <footer className="relative z-20 pb-5 px-6 sm:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-2 text-[9px] font-mono-numbers uppercase tracking-[0.25em] text-zinc-500 border-t border-white/[0.06] pt-3">
+      <footer className="relative z-20 pb-4 px-6 sm:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-2 text-[9px] font-mono-numbers uppercase tracking-[0.25em] text-zinc-500 border-t border-white/[0.06] pt-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-zinc-400">
             <Cpu className="w-3 h-3 text-amber-400" />
