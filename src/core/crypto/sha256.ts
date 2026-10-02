@@ -1,5 +1,15 @@
 // High-performance cryptographic hashing utility for Merkle DAGs and CAN-bus packet verification
-export function sha256(ascii: string): string {
+export function sha256(rawInput: string): string {
+  // Normalize string to UTF-8 binary byte stream for international automotive marques and parts
+  let ascii = '';
+  try {
+    ascii = encodeURIComponent(rawInput).replace(/%([0-9A-F]{2})/g, (_, p1) =>
+      String.fromCharCode(parseInt(p1, 16))
+    );
+  } catch {
+    ascii = rawInput;
+  }
+
   function rightRotate(value: number, amount: number) {
     return (value >>> amount) | (value << (32 - amount));
   }

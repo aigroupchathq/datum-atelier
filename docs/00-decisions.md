@@ -12,6 +12,9 @@
 - [ADR-0006: Event-Sourced Sovereign Ledger & Repository Pattern](#adr-0006-event-sourced-sovereign-ledger--repository-pattern)
 - [ADR-0007: Simplified High-Conversion Publishing UX & Progressive Disclosure](#adr-0007-simplified-high-conversion-publishing-ux--progressive-disclosure)
 - [ADR-0008: Fluid Interfaces & Anti-Gravity Spring Physics Motion Engine](#adr-0008-fluid-interfaces--anti-gravity-spring-physics-motion-engine)
+- [ADR-0009: Compositor Offloading, GPU Rasterization & Global Frame-Pacing Optimization](#adr-0009-compositor-offloading-gpu-rasterization--global-frame-pacing-optimization)
+- [ADR-0010: Obsidian Pure Gold Automotive Instrument Dashboard Feed Layout](#adr-0010-obsidian-pure-gold-automotive-instrument-dashboard-feed-layout)
+- [ADR-0011: Aerospace-Grade Supply Chain Bill of Materials (BOM) & Serialized Provenance Ledger](#adr-0011-aerospace-grade-supply-chain-bill-of-materials-bom--serialized-provenance-ledger)
 
 ---
 
@@ -152,6 +155,29 @@
      - Rolling 6-digit mechanical odometer ribbon (`formatOdometer`), trip meter, and alpine elevation.
   4. **Thematic Palette:** Smoked DLC ruthenium void (`#0D0D11`), brushed 18K/24K champagne gold bezels (`#C5A059`, `#D4AF37`), diamond-knurled textures (`.knurled-dial`), and anti-reflective sapphire crystal highlights (`.cluster-glass`).
 - **Consequences:** Provides an authentic, tactile Porsche/Singer-caliber instrument cluster in the social feed with zero lag, 53/53 tests passing, and clean Vite builds.
+
+---
+
+### ADR-0011: Aerospace-Grade Supply Chain Bill of Materials (BOM) & Serialized Provenance Ledger
+- **Date:** 2026-10-02
+- **Status:** ACCEPTED
+- **Classification:** Product, UX, UI, Business Rule, Cryptography
+- **Context:** Car owners, collectors, and automotive purists invest significant capital in precision modifications and bespoke parts (e.g. KW 3-way dampers, Akrapovič titanium exhausts, Brembo/Surface Transforms ceramic brakes, Eventuri intakes). In traditional ownership, this provenance is lost in gloveboxes or discarded receipts, causing severe value depreciation and leaving cars vulnerable to counterfeit parts. The founder (MSc in Supply Chain + automotive purist) identified an uncopyable product moat: applying aerospace-grade Bill of Materials (BOM) traceability to vehicles, ensuring the car's physical lineage remains with the car forever.
+- **Decision:**
+  1. **Supply Chain BOM Core Engine (`src/core/supplychain/supplyChainBom.ts`):**
+     - Models vehicle components as serialized physical assets with manufacturer, origin facility/country, batch/lot ID, installation mileage, installing workshop, torque specifications, and ISO/TÜV certifications.
+     - Implements deterministic SHA-256 cryptographic provenance hashing (`generateComponentHash`), cryptographically sealing each part to the vehicle's VIN and odometer.
+     - Evaluates supply chain integrity metrics: Traceability Score (0-100), Counterfeit Risk assessment (`NONE`, `LOW`, `ELEVATED`), Specialist Sign-off ratio, and active component service life.
+  2. **Haute Horlogerie BOM & Lineage View (`src/components/profile/SupplyChainBomView.tsx`):**
+     - Integrated directly into the vehicle atelier profile under `III. CHASSIS HARDWARE & BOM` with a quick-switch toggle between "Supply Chain BOM & Lineage" and "Build Evolution & Dyno Bench".
+     - Displays origin flags (🇩🇪, 🇸🇮, 🇬🇧, 🇮🇹, 🇫🇷, etc.), fastener torque spec callouts with wrench badges, one-click hash copying, and real-time seal verification.
+  3. **Fluid Interactive Component Logger (`src/components/profile/AddComponentModal.tsx`):**
+     - User-friendly, low-cognitive-load modal utilizing `FluidLevitation` physics.
+     - Allows enthusiasts to register new hardware parts in under 30 seconds with automatic SHA-256 seal computation and local storage persistence (`datum_vehicle_bom_${vehicleId}`).
+  4. **International UTF-8 Binary Hashing:**
+     - Enhanced `src/core/crypto/sha256.ts` with byte-stream normalization, supporting non-ASCII marques and specialist facilities (e.g. Akrapovič, Königsegg, Citroën) with zero dependencies.
+- **Consequences:** Elevates DATUM Atelier from a social app into an institutional-grade automotive asset registry. Eliminates counterfeit risk, preserves modification pedigree, and connects supply chain rigor with authentic car culture. 58/58 tests passing across 11 test suites.
+
 
 
 

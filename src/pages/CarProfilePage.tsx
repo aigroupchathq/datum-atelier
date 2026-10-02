@@ -13,6 +13,7 @@ import { WorkshopStampingModal } from '../components/workshop/WorkshopStampingMo
 import { loadWorkshopStamps } from '../core/workshop/WorkshopStampEngine';
 import { RadialDynamicsCluster } from '../components/telemetry/RadialDynamicsCluster';
 import { DynoStudio } from '../components/profile/DynoStudio';
+import { SupplyChainBomView } from '../components/profile/SupplyChainBomView';
 import { useToast } from '../context/ToastContext';
 import { 
   Grid, 
@@ -36,7 +37,8 @@ import {
   Sliders,
   Sparkles,
   Globe2,
-  Thermometer
+  Thermometer,
+  Layers
 } from 'lucide-react';
 
 interface CarProfileData {
@@ -595,7 +597,8 @@ const VEHICLE_DIAGNOSTICS: Record<string, {
 export const CarProfilePage: FC = () => {
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'grid';
-  const [activeTab, setActiveTab] = useState<string>(initialTab);
+  const [activeTab, setActiveTab] = useState<string>(initialTab === 'bom' ? 'build' : initialTab);
+  const [hardwareViewMode, setHardwareViewMode] = useState<'bom' | 'evolution'>('bom');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('car-maya-m3');
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
@@ -1160,7 +1163,7 @@ export const CarProfilePage: FC = () => {
           {[
             { id: 'grid', label: 'I. ATELIER GALLERY', icon: Grid },
             { id: 'drives', label: 'II. DOCUMENTED EXPEDITIONS', icon: Compass, count: car.drivesCount },
-            { id: 'build', label: 'III. CHASSIS HARDWARE SPEC', icon: Wrench, count: currentBuilds.length },
+            { id: 'build', label: 'III. CHASSIS HARDWARE & BOM', icon: Wrench, count: currentBuilds.length },
             { id: 'memory', label: 'IV. SOVEREIGN LOGBOOK', icon: Clock, count: currentMemories.length },
             { id: 'health', label: 'V. DIAGNOSTIC TELEMETRY', icon: Activity },
           ].map((tab) => {
@@ -1287,56 +1290,98 @@ export const CarProfilePage: FC = () => {
         </div>
       )}
 
-      {/* TAB C: CHASSIS HARDWARE SPEC & EVOLUTION (Tailored per Vehicle) */}
+      {/* TAB C: CHASSIS HARDWARE SPEC & SUPPLY CHAIN BOM */}
       {activeTab === 'build' && (
         <div className="space-y-6">
-          {/* Interactive Dyno Studio & Torque Blueprint */}
-          <DynoStudio vehicleId={car.id} vehicleName={car.name} />
+          {/* Sub-Navigation Switcher: Supply Chain BOM vs Build Evolution */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 rounded-2xl bg-black/60 border border-white/[0.08] backdrop-blur-md">
+            <div className="flex items-center gap-2 p-1 rounded-xl bg-zinc-950/80 border border-white/[0.06] overflow-x-auto no-scrollbar">
+              <button
+                type="button"
+                onClick={() => setHardwareViewMode('bom')}
+                className={`px-4 py-2 rounded-lg text-xs font-mono-numbers font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+                  hardwareViewMode === 'bom'
+                    ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-500/10'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>SUPPLY CHAIN BOM & LINEAGE</span>
+              </button>
 
-          {currentBuilds.map((ver) => (
-            <div key={ver.versionCode} className="p-6 sm:p-8 rounded-3xl bg-[#0B0C10] border border-white/[0.08] space-y-4 shadow-xl">
-              <div className="flex justify-between items-center border-b border-white/[0.08] pb-3.5">
-                <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 rounded-full bg-white/[0.08] text-white text-xs font-mono-numbers font-bold border border-white/[0.12]">
-                    {ver.versionCode}
-                  </span>
-                  <h3 className="text-base sm:text-lg font-bold text-white">{ver.title}</h3>
-                </div>
-                <span className="text-xs font-mono-numbers text-zinc-400">{ver.date}</span>
-              </div>
-
-              <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
-                {ver.summary}
-              </p>
-
-              {ver.partsAdded.length > 0 && (
-                <div className="rounded-2xl border border-white/[0.08] overflow-hidden bg-black/40 text-xs font-mono-numbers">
-                  <table className="w-full text-left">
-                    <thead className="bg-white/[0.04] text-zinc-400 text-[10px] uppercase border-b border-white/[0.08]">
-                      <tr>
-                        <th className="py-3 px-4">Component Category</th>
-                        <th className="py-3 px-4">Hardware Installed</th>
-                        <th className="py-3 px-4">Engineering Rationale</th>
-                        <th className="py-3 px-4 text-right">Investment</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/[0.06]">
-                      {ver.partsAdded.map((part, i) => (
-                        <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3.5 px-4 font-semibold text-white">{part.category}</td>
-                          <td className="py-3.5 px-4 text-amber-400 font-bold">{part.componentName}</td>
-                          <td className="py-3.5 px-4 font-sans text-zinc-300 text-xs max-w-xs">{part.rationale}</td>
-                          <td className="py-3.5 px-4 text-right text-zinc-300 font-bold">
-                            {part.costGbp ? `£${part.costGbp.toLocaleString()}` : '—'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <button
+                type="button"
+                onClick={() => setHardwareViewMode('evolution')}
+                className={`px-4 py-2 rounded-lg text-xs font-mono-numbers font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+                  hardwareViewMode === 'evolution'
+                    ? 'bg-white text-black shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>BUILD EVOLUTION & DYNO BENCH</span>
+              </button>
             </div>
-          ))}
+
+            <div className="hidden md:flex items-center gap-2 px-3 text-[11px] font-mono-numbers text-zinc-500">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{hardwareViewMode === 'bom' ? 'ISO 9001 / TÜV Serialization Active' : 'Maha LPS 3000 Verified'}</span>
+            </div>
+          </div>
+
+          {hardwareViewMode === 'bom' ? (
+            <SupplyChainBomView vehicleId={car.id} vin={car.vin} vehicleName={car.name} />
+          ) : (
+            <div className="space-y-6">
+              {/* Interactive Dyno Studio & Torque Blueprint */}
+              <DynoStudio vehicleId={car.id} vehicleName={car.name} />
+
+              {currentBuilds.map((ver) => (
+                <div key={ver.versionCode} className="p-6 sm:p-8 rounded-3xl bg-[#0B0C10] border border-white/[0.08] space-y-4 shadow-xl">
+                  <div className="flex justify-between items-center border-b border-white/[0.08] pb-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="px-3 py-1 rounded-full bg-white/[0.08] text-white text-xs font-mono-numbers font-bold border border-white/[0.12]">
+                        {ver.versionCode}
+                      </span>
+                      <h3 className="text-base sm:text-lg font-bold text-white">{ver.title}</h3>
+                    </div>
+                    <span className="text-xs font-mono-numbers text-zinc-400">{ver.date}</span>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
+                    {ver.summary}
+                  </p>
+
+                  {ver.partsAdded.length > 0 && (
+                    <div className="rounded-2xl border border-white/[0.08] overflow-hidden bg-black/40 text-xs font-mono-numbers">
+                      <table className="w-full text-left">
+                        <thead className="bg-white/[0.04] text-zinc-400 text-[10px] uppercase border-b border-white/[0.08]">
+                          <tr>
+                            <th className="py-3 px-4">Component Category</th>
+                            <th className="py-3 px-4">Hardware Installed</th>
+                            <th className="py-3 px-4">Engineering Rationale</th>
+                            <th className="py-3 px-4 text-right">Investment</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/[0.06]">
+                          {ver.partsAdded.map((part, i) => (
+                            <tr key={i} className="hover:bg-white/[0.02] transition-colors">
+                              <td className="py-3.5 px-4 font-semibold text-white">{part.category}</td>
+                              <td className="py-3.5 px-4 text-amber-400 font-bold">{part.componentName}</td>
+                              <td className="py-3.5 px-4 font-sans text-zinc-300 text-xs max-w-xs">{part.rationale}</td>
+                              <td className="py-3.5 px-4 text-right text-zinc-300 font-bold">
+                                {part.costGbp ? `£${part.costGbp.toLocaleString()}` : '—'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
