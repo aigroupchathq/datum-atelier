@@ -17,7 +17,8 @@ import {
   Menu,
   X,
   Layers,
-  Radio
+  Radio,
+  FileCheck2
 } from 'lucide-react';
 import { useTheme, ATELIER_THEMES } from '../../context/ThemeContext';
 import type { Theme } from '../../context/ThemeContext';
@@ -32,6 +33,7 @@ interface NavbarProps {
   onOpenTransitCarnet?: () => void;
   onOpenBackendInspector?: () => void;
   onOpenArchitecturalChamber?: () => void;
+  onOpenWorkshopStamping?: () => void;
 }
 
 export type FontMode = 'horlogerie' | 'modernist' | 'technical';
@@ -44,7 +46,8 @@ export const Navbar: FC<NavbarProps> = ({
   onOpenPassRadar,
   onOpenTransitCarnet,
   onOpenBackendInspector,
-  onOpenArchitecturalChamber
+  onOpenArchitecturalChamber,
+  onOpenWorkshopStamping
 }) => {
   const { theme, setTheme, themeMeta } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
@@ -326,6 +329,22 @@ export const Navbar: FC<NavbarProps> = ({
                           <div>
                             <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>ATA Carnet Transit</div>
                             <div className="text-[10px] text-zinc-400 font-mono-numbers">Cross-border travel customs pass</div>
+                          </div>
+                        </button>
+                      )}
+
+                      {/* Workshop Stamping Desk */}
+                      {onOpenWorkshopStamping && (
+                        <button
+                          onClick={() => { onOpenWorkshopStamping(); closeAllDropdowns(); }}
+                          className="w-full text-left p-2.5 rounded-xl text-xs transition flex items-center gap-3 hover:bg-white/5 cursor-pointer"
+                        >
+                          <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
+                            <FileCheck2 className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <div className="font-bold text-xs" style={{ color: 'var(--text-primary)' }}>Workshop Stamping Desk</div>
+                            <div className="text-[10px] text-zinc-400 font-mono-numbers">Mechanic digital service seals (£49/mo)</div>
                           </div>
                         </button>
                       )}

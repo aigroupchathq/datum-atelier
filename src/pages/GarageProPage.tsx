@@ -21,6 +21,7 @@ import {
 import { useToast } from '../context/ToastContext';
 import { CommissioningAtelierModal } from '../components/atelier/CommissioningAtelierModal';
 import { TransitCarnetModal } from '../components/logistics/TransitCarnetModal';
+import { WorkshopStampingModal } from '../components/workshop/WorkshopStampingModal';
 
 // Concierge Bespoke Services
 const CONCIERGE_SERVICES = [
@@ -83,6 +84,16 @@ const CONCIERGE_SERVICES = [
     description: 'Official London Chamber of Commerce ATA Carnet registration, French/Swiss customs bond indemnity, and Eurotunnel wide-carriage clearance.',
     icon: Globe2,
     recommendedFor: 'Alpine Tours, Nürburgring & Concorso d’Eleganza'
+  },
+  {
+    id: 'workshop-stamping',
+    title: 'Certified Workshop Digital Provenance Stamping Desk',
+    category: 'Sovereign Provenance',
+    leadTime: 'Instant Cryptographic Issuance',
+    fixedFee: '£49.00 / mo',
+    description: 'Operator portal for verified master mechanics. Issue immutable service stamps with SHA-256 hash chains, itemized parts lineage, and VAT invoice hashes.',
+    icon: FileCheck2,
+    recommendedFor: 'Independent Marque Specialists & Master Technicians'
   }
 ];
 
@@ -94,6 +105,7 @@ export const GarageProPage: FC = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isCommissioningModalOpen, setIsCommissioningModalOpen] = useState(false);
   const [isTransitCarnetOpen, setIsTransitCarnetOpen] = useState(false);
+  const [isWorkshopStampingOpen, setIsWorkshopStampingOpen] = useState(false);
   const [activeServiceName, setActiveServiceName] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState('MAYA — BMW M3 Competition (G80)');
   const [preferredDate, setPreferredDate] = useState('2026-10-15');
@@ -114,6 +126,10 @@ export const GarageProPage: FC = () => {
     }
     if (serviceIdOrTitle === 'ata-carnet') {
       setIsTransitCarnetOpen(true);
+      return;
+    }
+    if (serviceIdOrTitle === 'workshop-stamping') {
+      setIsWorkshopStampingOpen(true);
       return;
     }
     const title = serviceTitle || serviceIdOrTitle;
@@ -181,6 +197,41 @@ export const GarageProPage: FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* SPECIALIST WORKSHOP STAMPING DESK (Operator Portal)       */}
+      {/* ========================================================= */}
+      <div className="rounded-3xl bg-gradient-to-r from-amber-500/15 via-amber-400/5 to-transparent border border-amber-500/30 p-6 sm:p-7 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
+        <div className="flex items-start sm:items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-amber-400 text-zinc-950 flex items-center justify-center font-bold shrink-0 shadow-lg shadow-amber-400/20">
+            <Wrench className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-luxury-display uppercase font-bold tracking-widest text-amber-400">
+                Specialist Workshop Portal (£49/mo B2B SaaS)
+              </span>
+              <span className="text-[10px] font-mono-numbers px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+                MECHANIC DESK
+              </span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-white font-luxury-display tracking-wide">
+              Certified Digital Service Stamping & Hash-Chain Notarization
+            </h3>
+            <p className="text-xs text-zinc-400 font-mono-numbers">
+              Sign off vehicle maintenance with cryptographic SHA-256 mechanic seals, torque specs & VAT invoice hashes.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsWorkshopStampingOpen(true)}
+          className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold text-xs uppercase tracking-wider font-mono-numbers transition shadow-lg shrink-0 flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <FileCheck2 className="w-4 h-4 text-zinc-950" />
+          <span>Open Stamping Desk →</span>
+        </button>
       </div>
 
       {/* ========================================================= */}
@@ -507,6 +558,13 @@ export const GarageProPage: FC = () => {
         carName="MAYA"
         carModel="BMW M3 Competition (G80)"
         vin="WBA-31AY-0084-M3"
+      />
+
+      {/* Specialist Workshop Stamping Desk Modal */}
+      <WorkshopStampingModal
+        isOpen={isWorkshopStampingOpen}
+        onClose={() => setIsWorkshopStampingOpen(false)}
+        preselectedVehicleId="car-maya-m3"
       />
 
     </div>

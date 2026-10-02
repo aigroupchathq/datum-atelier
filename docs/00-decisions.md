@@ -8,6 +8,7 @@
 - [ADR-0002: Dynamic Cockpit Typology Architecture](#adr-0002-dynamic-cockpit-typology-architecture)
 - [ADR-0003: Client-Side SHA-256 & Pure JS ISO/IEC 18004 QR Generation](#adr-0003-client-side-sha-256--pure-js-isoiec-18004-qr-generation)
 - [ADR-0004: In-Memory HTML5 Canvas Plate Scrubbing](#adr-0004-in-memory-html5-canvas-plate-scrubbing)
+- [ADR-0005: Specialist Workshop Cryptographic Stamping Protocol](#adr-0005-specialist-workshop-cryptographic-stamping-protocol)
 
 ---
 
@@ -51,3 +52,17 @@
 - **Context:** Vehicle registration marks (VRM) are high-risk targets for cloning and burglary syndicates. Visual SVG/CSS overlays leave raw license plate pixels intact in image payloads.
 - **Decision:** `plateRedactionCanvas.ts` permanently overwrites RGB bytes in an HTML5 Canvas pixel buffer before any image is encoded, previewed, or saved.
 - **Consequences:** True privacy-by-design compliance under UK GDPR Article 17/25.
+
+---
+
+### ADR-0005: Specialist Workshop Cryptographic Stamping Protocol
+- **Date:** 2026-10-02
+- **Status:** ACCEPTED
+- **Context:** Classical paper service booklets and dealer databases can be forged or lost, resulting in £10,000s in vehicle depreciation at auction. Independent specialists (Litchfield, Manthey, etc.) require a tamper-proof digital sign-off mechanism.
+- **Decision:** Implemented `WorkshopStampEngine.ts` utilizing:
+  1. Mechanic accreditation key signing over milestone metadata.
+  2. SHA-256 itemized VAT invoice hashing.
+  3. Immutable cryptographic hash-chaining linking each service stamp to the vehicle's previous stamp.
+  4. Instant reflection in the car's Sovereign Logbook.
+- **Consequences:** Provides certified investment-grade provenance (Grade A+) verifiable in offline or disconnected environments with zero database tampering vulnerability.
+

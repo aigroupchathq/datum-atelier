@@ -18,6 +18,7 @@ import { TransitCarnetModal } from './components/logistics/TransitCarnetModal';
 import { SplashScreen } from './components/common/SplashScreen';
 import { BackendInspectorModal } from './components/system/BackendInspectorModal';
 import { ArchitecturalChamberModal } from './components/atelier/ArchitecturalChamberModal';
+import { WorkshopStampingModal } from './components/workshop/WorkshopStampingModal';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { mockFeedPosts } from './data/mockData';
@@ -38,6 +39,7 @@ function AppContent() {
   const [isTransitCarnetOpen, setIsTransitCarnetOpen] = useState<boolean>(false);
   const [isBackendInspectorOpen, setIsBackendInspectorOpen] = useState<boolean>(false);
   const [isArchitecturalChamberOpen, setIsArchitecturalChamberOpen] = useState<boolean>(false);
+  const [isWorkshopStampingOpen, setIsWorkshopStampingOpen] = useState<boolean>(false);
   // Splash screen state: checks localStorage skip setting or nosplash query param
   const [showSplash, setShowSplash] = useState<boolean>(() => {
     if (typeof window !== 'undefined' && window.location.search.includes('nosplash')) return false;
@@ -130,6 +132,7 @@ function AppContent() {
           onOpenTransitCarnet={() => setIsTransitCarnetOpen(true)}
           onOpenBackendInspector={() => setIsBackendInspectorOpen(true)}
           onOpenArchitecturalChamber={() => setIsArchitecturalChamberOpen(true)}
+          onOpenWorkshopStamping={() => setIsWorkshopStampingOpen(true)}
         />
 
         {/* Dynamic Route Viewport */}
@@ -272,6 +275,12 @@ function AppContent() {
         <ArchitecturalChamberModal
           isOpen={isArchitecturalChamberOpen}
           onClose={() => setIsArchitecturalChamberOpen(false)}
+        />
+
+        {/* Modal: Specialist Workshop Digital Stamping Desk */}
+        <WorkshopStampingModal
+          isOpen={isWorkshopStampingOpen}
+          onClose={() => setIsWorkshopStampingOpen(false)}
         />
 
       </div>

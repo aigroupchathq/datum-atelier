@@ -9,6 +9,8 @@ import { AcousticStudioModal } from '../components/common/AcousticStudioModal';
 import { CommissioningAtelierModal } from '../components/atelier/CommissioningAtelierModal';
 import { TransitCarnetModal } from '../components/logistics/TransitCarnetModal';
 import { TyrePyrometerModal } from '../components/telemetry/TyrePyrometerModal';
+import { WorkshopStampingModal } from '../components/workshop/WorkshopStampingModal';
+import { loadWorkshopStamps } from '../core/workshop/WorkshopStampEngine';
 import { RadialDynamicsCluster } from '../components/telemetry/RadialDynamicsCluster';
 import { DynoStudio } from '../components/profile/DynoStudio';
 import { useToast } from '../context/ToastContext';
@@ -603,12 +605,26 @@ export const CarProfilePage: FC = () => {
   const [isTransitCarnetOpen, setIsTransitCarnetOpen] = useState<boolean>(false);
   const [isTyrePyrometerOpen, setIsTyrePyrometerOpen] = useState<boolean>(false);
   const [isProvenanceBreakdownOpen, setIsProvenanceBreakdownOpen] = useState<boolean>(false);
+  const [isWorkshopStampingOpen, setIsWorkshopStampingOpen] = useState<boolean>(false);
   const { showToast } = useToast();
 
   const car = ATELIER_VEHICLES[selectedVehicleId] || ATELIER_VEHICLES['car-maya-m3'];
   const currentExpedition = VEHICLE_EXPEDITIONS[selectedVehicleId] || VEHICLE_EXPEDITIONS['car-maya-m3'];
   const currentBuilds = VEHICLE_BUILDS[selectedVehicleId] || VEHICLE_BUILDS['car-maya-m3'];
-  const currentMemories = VEHICLE_MEMORIES[selectedVehicleId] || VEHICLE_MEMORIES['car-maya-m3'];
+  const baseMemories = VEHICLE_MEMORIES[selectedVehicleId] || VEHICLE_MEMORIES['car-maya-m3'];
+  const dynamicStamps = loadWorkshopStamps()
+    .filter(s => s.vehicleId === selectedVehicleId)
+    .map(s => ({
+      id: s.stampId,
+      title: s.title,
+      date: s.serviceDate,
+      mileage: s.mileage,
+      description: `${s.workDescription} [Seal Hash: ${s.stampSignatureHash.slice(0, 16)}…]`,
+      provenance: 'verified_professional' as const,
+      verifiedSignatory: `${s.workshop.name} (${s.workshop.masterMechanic})`,
+      costGbp: s.totalCostGbp
+    }));
+  const currentMemories = [...dynamicStamps, ...baseMemories.filter(bm => !dynamicStamps.some(ds => ds.title === bm.title))];
   const currentDiagnostics = VEHICLE_DIAGNOSTICS[selectedVehicleId] || VEHICLE_DIAGNOSTICS['car-maya-m3'];
 
   // Synthesize realistic acoustic rumble based on car profile
@@ -943,6 +959,16 @@ export const CarProfilePage: FC = () => {
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                     <span>BESPOKE ATELIER</span>
+                  </button>
+
+                  {/* Feature 5: Specialist Workshop Digital Stamping */}
+                  <button
+                    onClick={() => setIsWorkshopStampingOpen(true)}
+                    className="text-[11px] font-luxury-display text-cyan-300 hover:text-cyan-200 font-bold bg-cyan-500/10 hover:bg-cyan-500/20 px-3 py-1 rounded border border-cyan-500/30 flex items-center gap-1.5 transition shadow-sm"
+                    title="Sign Off Maintenance via Specialist Workshop Stamping Desk"
+                  >
+                    <Wrench className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>WORKSHOP STAMP</span>
                   </button>
                 </div>
               </div>
@@ -1480,6 +1506,13 @@ export const CarProfilePage: FC = () => {
         chassisCode={car.chassisCode}
         vin={car.vin}
         provenanceScore={car.provenanceScore}
+      />
+
+      {/* Specialist Workshop Stamping Desk Modal */}
+      <WorkshopStampingModal
+        isOpen={isWorkshopStampingOpen}
+        onClose={() => setIsWorkshopStampingOpen(false)}
+        preselectedVehicleId={selectedVehicleId}
       />
 
     </div>
