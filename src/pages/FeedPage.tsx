@@ -118,14 +118,14 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
   ];
 
   return (
-    // Page root — void black, curated Instagram web golden proportions
-    <div className="max-w-[860px] mx-auto px-4 lg:px-6 py-6 animate-in fade-in duration-200">
-      <div className="flex flex-col lg:flex-row justify-center items-start gap-8">
+    // Atelier Cockpit Horizon — Authoritative 640px stage + 360px Telemetry Co-Pilot Console
+    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 animate-in fade-in duration-200">
+      <div className="flex flex-col lg:flex-row justify-center items-start gap-8 lg:gap-10">
 
         {/* ════════════════════════════════════════
-            MAIN FEED COLUMN (Golden 480px width)
+            MAIN ATELIER LEDGER COLUMN (640px Stance)
         ════════════════════════════════════════ */}
-        <main className="w-full max-w-[480px] mx-auto lg:mx-0 space-y-5 shrink-0">
+        <main className="w-full max-w-[640px] mx-auto lg:mx-0 space-y-6 shrink-0">
 
           {/* Stories rail */}
           <StoriesBar onAddStory={() => onOpenCreatePost('story')} />
@@ -314,9 +314,9 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
         </main>
 
         {/* ════════════════════════════════════════
-            RIGHT SIDEBAR (Fixed 320px width)
+            RIGHT TELEMETRY CO-PILOT CONSOLE (360px width)
         ════════════════════════════════════════ */}
-        <aside className="hidden lg:flex w-[320px] shrink-0 flex-col gap-5 sticky top-20">
+        <aside className="hidden lg:flex w-[360px] xl:w-[380px] shrink-0 flex-col gap-5 sticky top-20">
 
           {/* Active car profile */}
           <div className={`p-4 rounded-[24px] border transition-colors ${

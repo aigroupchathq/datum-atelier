@@ -48,14 +48,18 @@ interface CommentEntry {
   isVerifiedPro?: boolean;
 }
 
-// Automotive emoji reactions
-const CAR_REACTIONS = [
-  { id: 'heart', emoji: '❤️', label: 'Respect' },
-  { id: 'fire', emoji: '🔥', label: 'Flames' },
-  { id: 'track', emoji: '🏎️', label: 'Apex' },
-  { id: 'boost', emoji: '⚡', label: 'Boost' },
-  { id: 'drift', emoji: '💨', label: 'Drift' },
-  { id: 'wrench', emoji: '🛠️', label: 'Build' },
+// Certified Custodian Respect criteria (grounded in respectRatingEngine)
+export interface RespectCriterion {
+  id: string;
+  label: string;
+  points: number;
+}
+
+export const RESPECT_CRITERIA: RespectCriterion[] = [
+  { id: 'flow', label: 'Smooth Flow (Cornering Composure)', points: 30 },
+  { id: 'thermal', label: 'Thermal Tempo (Warmup Patience)', points: 25 },
+  { id: 'waypoint', label: 'Scenic Waypoint Photo Verification', points: 20 },
+  { id: 'hazard', label: 'Community Road Hazard Alert', points: 50 },
 ];
 
 // Snake Pass sample elevation profile for drive scrub bar
@@ -143,13 +147,12 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const { showToast } = useToast();
   const { isWhiteYellow } = useTheme();
 
-  const [liked, setLiked] = useState(false);
-  const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
-  const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [respected, setRespected] = useState(false);
+  const [showRespectMenu, setShowRespectMenu] = useState(false);
   const [saved, setSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [likeCountBumped, setLikeCountBumped] = useState(false);
-  const [showHeartBurst, setShowHeartBurst] = useState(false);
+  const [showRespectBurst, setShowRespectBurst] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [showPrivacyPopover, setShowPrivacyPopover] = useState(false);
@@ -221,55 +224,52 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
     dragStartX.current = null;
   };
 
-  const triggerLike = () => {
-    if (!liked) {
-      setLikesCount(c => c + 1);
-      setLiked(true);
-      setSelectedReaction('heart');
+  const triggerRespect = () => {
+    if (!respected) {
+      setLikesCount(c => c + 25);
+      setRespected(true);
       setLikeCountBumped(true);
       setTimeout(() => setLikeCountBumped(false), 600);
       showToast({
-        title: 'Kudos Sent to MAYA',
+        title: `Respect Ratified for ${post.authorVehicleName || 'Chassis'}`,
         message: 'Driver telemetry respect recorded',
         type: 'kudos',
-        badge: 'RESPECT'
+        badge: '+25 RESPECT'
       });
     }
-    setShowHeartBurst(true);
-    setTimeout(() => setShowHeartBurst(false), 900);
+    setShowRespectBurst(true);
+    setTimeout(() => setShowRespectBurst(false), 900);
   };
 
-  const handleLike = () => {
-    if (liked) {
-      setLikesCount(c => c - 1);
-      setLiked(false);
-      setSelectedReaction(null);
+  const handleToggleRespect = () => {
+    if (respected) {
+      setLikesCount(c => Math.max(0, c - 25));
+      setRespected(false);
     } else {
-      setLikesCount(c => c + 1);
-      setLiked(true);
-      setSelectedReaction('heart');
+      setLikesCount(c => c + 25);
+      setRespected(true);
       setLikeCountBumped(true);
       setTimeout(() => setLikeCountBumped(false), 600);
       showToast({
-        title: 'Kudos Sent to MAYA',
+        title: `Respect Ratified for ${post.authorVehicleName || 'Chassis'}`,
         message: 'Driver telemetry respect recorded',
         type: 'kudos',
-        badge: 'RESPECT'
+        badge: '+25 RESPECT'
       });
     }
   };
 
-  const handleSelectReaction = (reaction: typeof CAR_REACTIONS[0]) => {
-    if (!liked) {
-      setLikesCount(c => c + 1);
-      setLiked(true);
+  const handleAwardCriterion = (criterion: RespectCriterion) => {
+    if (!respected) {
+      setRespected(true);
     }
-    setSelectedReaction(reaction.id);
-    setShowReactionPicker(false);
+    setLikesCount(c => c + criterion.points);
+    setShowRespectMenu(false);
     showToast({
-      title: `${reaction.emoji} ${reaction.label} Reacted`,
-      message: `Tagged on ${post.authorVehicleName}'s post`,
-      type: 'kudos'
+      title: `${criterion.label}`,
+      message: `+${criterion.points} Certified Respects awarded to ${post.authorVehicleName}`,
+      type: 'kudos',
+      badge: `+${criterion.points} PTS`
     });
   };
 
@@ -350,15 +350,15 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const categoryBadge = getCategoryBadge(post.postType, isWhiteYellow);
 
   return (
-    // Ref: Spotify card surface + F1 TV editorial card anatomy
-    <article className={`group relative transition-all duration-200 ${
+    // Haute-Horlogerie Milled Obsidian Plinth
+    <article className={`group relative transition-all duration-300 ${
       isWhiteYellow
-        ? 'bg-white border border-zinc-200/90 shadow-sm hover:border-yellow-400/60 rounded-[26px]'
-        : 'card-surface rounded-[26px]'
-    }`}>
+        ? 'bg-white border border-zinc-200/90 shadow-sm hover:border-yellow-400/60 rounded-[24px]'
+        : 'bg-[#0B0C10] border border-white/[0.08] hover:border-amber-400/30 shadow-xl rounded-[24px]'
+    } overflow-hidden`}>
 
       {/* ── HEADER ── */}
-      <div className="px-4 sm:px-5 pt-4 pb-3 flex items-center justify-between gap-3">
+      <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
 
           {/* Avatar ring */}
@@ -409,7 +409,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
 
           <button
             onClick={() => setIsOptionsOpen(true)}
-            className={`p-2 rounded-full transition ${
+            className={`p-2 rounded-full transition cursor-pointer ${
               isWhiteYellow
                 ? 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
                 : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.06]'
@@ -421,18 +421,16 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
         </div>
       </div>
 
-      {/* ── MEDIA CAROUSEL ── */}
+      {/* ── CINEMATIC EDGE-TO-EDGE MEDIA PLINTH ── */}
       {mediaUrls.length > 0 && (
         <div
-          className={`relative mx-3 sm:mx-4 rounded-2xl overflow-hidden bg-black/40 cursor-pointer select-none group/media shadow-md border ${
-            isWhiteYellow ? 'border-zinc-200 shadow-sm' : 'border-white/[0.08]'
-          }`}
-          onDoubleClick={triggerLike}
+          className="relative w-full overflow-hidden bg-black/80 cursor-pointer select-none group/media"
+          onDoubleClick={triggerRespect}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
           {/* Subtle editorial vignette overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 opacity-60 z-[1]" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/25 opacity-70 z-[1]" />
 
           <div
             className="flex transition-transform duration-300 ease-in-out"
@@ -443,39 +441,39 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
                 <PlateBlurImage
                   src={url}
                   alt={post.title || 'Vehicle photo'}
-                  aspectRatio="aspect-[4/3] sm:aspect-[16/10]"
+                  aspectRatio="aspect-[16/10] sm:aspect-[16/9]"
                   className="rounded-none w-full object-cover"
                 />
               </div>
             ))}
           </div>
 
-          {/* Privacy Badge overlay (Plate Redacted + 800m Geofence) */}
-          <div className="absolute top-3 left-3 z-10">
+          {/* Privacy Badge Watermark overlay (Plate Redacted + 800m Geofence) in bottom-right */}
+          <div className="absolute bottom-3 right-3 z-10">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowPrivacyPopover(!showPrivacyPopover);
               }}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10.5px] font-mono-numbers text-emerald-300 hover:bg-black/80 transition-all shadow-md"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-[9.5px] font-mono-numbers text-emerald-300 hover:bg-black/90 transition-all shadow-md cursor-pointer"
               title="Click to inspect privacy protection"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Plate Protected · 800m</span>
+              <span>VEIL // 800M SANCTUARY</span>
               <Info className="w-2.5 h-2.5 text-zinc-400" />
             </button>
 
             {/* Privacy details popover */}
             {showPrivacyPopover && (
               <div
-                className={`absolute top-8 left-0 w-64 p-3.5 rounded-2xl border shadow-2xl backdrop-blur-2xl z-30 text-[11px] space-y-2 animate-in fade-in duration-150 ${
+                className={`absolute bottom-8 right-0 w-64 p-3.5 rounded-2xl border shadow-2xl backdrop-blur-2xl z-30 text-[11px] space-y-2 animate-in fade-in duration-150 ${
                   isWhiteYellow
                     ? 'bg-white/98 border-emerald-400/50 text-zinc-800'
                     : 'bg-[#141418]/95 border-emerald-500/30 text-zinc-300'
                 }`}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex items-center justify-between text-emerald-600 font-bold font-mono-numbers">
+                <div className="flex items-center justify-between text-emerald-500 font-bold font-mono-numbers">
                   <span>VEIL PROTOCOL ACTIVE</span>
                   <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/10 border border-emerald-500/20">SHA-256</span>
                 </div>
@@ -486,7 +484,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
                   isWhiteYellow ? 'border-zinc-200 text-zinc-500' : 'border-white/[0.08] text-zinc-500'
                 }`}>
                   <span>Owner: Anonymous</span>
-                  <span className="text-emerald-600 font-semibold">100% Compliant</span>
+                  <span className="text-emerald-500 font-semibold">100% Compliant</span>
                 </div>
               </div>
             )}
@@ -535,28 +533,28 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
             </div>
           )}
 
-          {/* Double-tap heart burst with ethereal frosted bloom */}
-          {showHeartBurst && (
+          {/* Double-tap Respect burst with gold/amber bloom */}
+          {showRespectBurst && (
             <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-              <div className="w-20 h-20 rounded-full bg-rose-500/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_40px_rgba(244,63,94,0.6)] animate-in zoom-in-75 fade-in duration-200">
-                <Heart className="w-11 h-11 text-rose-500 fill-rose-500 drop-shadow-[0_0_14px_rgba(244,63,94,0.9)]" />
+              <div className="w-20 h-20 rounded-full bg-amber-500/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_40px_rgba(251,191,36,0.6)] animate-in zoom-in-75 fade-in duration-200 border border-amber-400/40">
+                <ShieldCheck className="w-11 h-11 text-amber-400 fill-amber-400/30 drop-shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
               </div>
             </div>
           )}
 
           {/* Hover hint */}
-          <div className="absolute bottom-3 right-3 opacity-0 group-hover/media:opacity-100 transition-opacity px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-mono-numbers text-zinc-400 pointer-events-none z-10">
-            Double-tap to respect
+          <div className="absolute bottom-3 left-3 opacity-0 group-hover/media:opacity-100 transition-opacity px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[9.5px] font-mono-numbers text-zinc-400 pointer-events-none z-10">
+            Double-tap to ratify respect
           </div>
         </div>
       )}
 
       {/* ── INTERACTIVE DRIVE TELEMETRY & ELEVATION SCRUB BAR ── */}
       {post.postType === 'DRIVE' && (
-        <div className={`mx-3 sm:mx-4 mt-3 rounded-2xl border p-3.5 space-y-3 ${
+        <div className={`px-4 sm:px-6 py-4 border-b space-y-3 ${
           isWhiteYellow
-            ? 'bg-zinc-50/90 border-zinc-200/90 shadow-xs'
-            : 'bg-zinc-900/50 backdrop-blur-md border-white/[0.07] shadow-inner'
+            ? 'bg-amber-50/40 border-zinc-200'
+            : 'bg-white/[0.015] border-white/[0.06]'
         }`}>
           
           {/* Header Row */}
@@ -620,10 +618,10 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
           </div>
 
           {/* Interactive Scrub Bar & Elevation Sparkline */}
-          <div className={`space-y-1.5 p-2.5 rounded-xl border ${
+          <div className={`space-y-2 p-3 rounded-xl border ${
             isWhiteYellow
-              ? 'bg-white border-zinc-200/90 shadow-inner'
-              : 'bg-black/40 border-white/[0.05]'
+              ? 'bg-white border-zinc-200/90 shadow-sm'
+              : 'bg-[#08090C] border-white/[0.06] shadow-inner'
           }`}>
             
             {/* Live HUD telemetry readouts during scrub */}
@@ -991,115 +989,133 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
       )}
 
       {/* ── ACTION BAR + BODY ── */}
-      <div className="px-4 sm:px-5 pt-3.5 pb-4 space-y-3">
+      <div className="px-4 sm:px-6 pt-3.5 pb-4 space-y-3">
 
-        {/* Action row with Reaction Bar overlay */}
+        {/* ── ACTION ROW: CERTIFIED CUSTODIAN RESPECT ACTUATOR & LOGBOOK ── */}
         <div className="relative flex items-center justify-between">
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-2">
 
-            {/* Reaction Trigger Container */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setShowReactionPicker(true)}
-              onMouseLeave={() => setShowReactionPicker(false)}
-            >
+            {/* The Milled Titanium Respect Actuator */}
+            <div className="relative flex items-center">
               <button
-                onClick={handleLike}
-                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all focus:outline-none ${
-                  isWhiteYellow
-                    ? 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/[0.06]'
+                onClick={handleToggleRespect}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-mono-numbers font-bold transition-all duration-200 cursor-pointer shadow-sm ${
+                  respected
+                    ? 'bg-amber-400 text-black border-amber-300 shadow-[0_0_16px_rgba(251,191,36,0.45)]'
+                    : isWhiteYellow
+                    ? 'bg-zinc-100 hover:bg-yellow-100 border-zinc-200 text-zinc-900'
+                    : 'bg-white/[0.04] hover:bg-white/[0.09] border-white/15 text-zinc-200 hover:text-amber-300'
                 }`}
-                title="Respect or react"
+                title="Ratify Custodian Respect for this machine"
               >
-                {selectedReaction ? (
-                  <span className="text-xl leading-none animate-in zoom-in-75 duration-150">
-                    {CAR_REACTIONS.find(r => r.id === selectedReaction)?.emoji || '❤️'}
-                  </span>
-                ) : (
-                  <Heart
-                    className={`w-5 h-5 transition-all ${
-                      liked
-                        ? 'fill-rose-500 text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.4)] scale-110'
-                        : isWhiteYellow ? 'text-zinc-500 hover:scale-110' : 'text-zinc-400 hover:scale-110'
-                    }`}
-                  />
-                )}
+                <ShieldCheck className={`w-3.5 h-3.5 ${respected ? 'text-black' : 'text-amber-400'}`} />
+                <span>{respected ? 'RESPECTED' : 'RESPECT'}</span>
+                <span className="opacity-40">|</span>
+                <LikeCounter count={likesCount} bumped={likeCountBumped} isWhiteYellow={isWhiteYellow} />
               </button>
 
-              {/* Emoji reaction picker popup */}
-              {showReactionPicker && (
+              {/* Discreet Criterion Exploder Button */}
+              <button
+                onClick={() => setShowRespectMenu(!showRespectMenu)}
+                className={`ml-1.5 p-1.5 rounded-full border transition text-[10px] cursor-pointer ${
+                  isWhiteYellow 
+                    ? 'border-zinc-200 text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100' 
+                    : 'border-white/10 text-zinc-400 hover:text-amber-300 hover:bg-white/[0.06]'
+                }`}
+                title="Inspect or award specific custodian criteria"
+              >
+                <Award className="w-3.5 h-3.5 text-amber-400" />
+              </button>
+
+              {/* Respect Criteria Popover */}
+              {showRespectMenu && (
                 <div 
-                  className={`absolute bottom-11 left-0 z-30 flex items-center gap-1 p-1.5 rounded-full border shadow-2xl animate-in slide-in-from-bottom-2 fade-in duration-150 ${
+                  className={`absolute bottom-11 left-0 z-30 w-72 p-3 rounded-2xl border shadow-2xl backdrop-blur-2xl animate-in slide-in-from-bottom-2 fade-in duration-150 ${
                     isWhiteYellow
                       ? 'bg-white/98 border-zinc-200 text-zinc-900 shadow-xl'
-                      : 'bg-zinc-900/95 backdrop-blur-2xl border-white/[0.12]'
+                      : 'bg-[#121318]/95 border-amber-500/30 text-zinc-200 shadow-2xl'
                   }`}
-                  style={{ boxShadow: isWhiteYellow ? '0 10px 25px rgba(0,0,0,0.1)' : '0 12px 30px rgba(0,0,0,0.8)' }}
                 >
-                  {CAR_REACTIONS.map((reaction) => (
-                    <button
-                      key={reaction.id}
-                      onClick={() => handleSelectReaction(reaction)}
-                      className={`w-8 h-8 rounded-full hover:scale-125 transition-transform flex items-center justify-center text-lg active:scale-95 ${
-                        isWhiteYellow ? 'hover:bg-zinc-100' : 'hover:bg-white/[0.1]'
-                      }`}
-                      title={reaction.label}
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.08] text-[10px] font-mono-numbers font-bold text-amber-400 uppercase tracking-wider">
+                    <span>CUSTODIAN RESPECT CRITERIA</span>
+                    <button 
+                      onClick={() => setShowRespectMenu(false)}
+                      className="text-zinc-500 hover:text-white p-0.5 cursor-pointer"
                     >
-                      {reaction.emoji}
+                      <X className="w-3 h-3" />
                     </button>
-                  ))}
+                  </div>
+                  <div className="space-y-1.5">
+                    {RESPECT_CRITERIA.map((criterion) => (
+                      <button
+                        key={criterion.id}
+                        onClick={() => handleAwardCriterion(criterion)}
+                        className={`w-full p-2 rounded-xl text-left transition-all flex items-center justify-between text-[11px] font-mono-numbers border cursor-pointer ${
+                          isWhiteYellow
+                            ? 'bg-zinc-50 hover:bg-yellow-50 border-zinc-200 text-zinc-800'
+                            : 'bg-white/[0.03] hover:bg-amber-400/[0.08] border-white/[0.06] hover:border-amber-400/40 text-zinc-300 hover:text-white'
+                        }`}
+                      >
+                        <span className="truncate pr-2">{criterion.label}</span>
+                        <span className="text-amber-400 font-bold shrink-0">+{criterion.points}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
 
+            {/* Chassis Logbook Trigger */}
             <button
               onClick={() => setIsCommentDrawerOpen(true)}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all focus:outline-none ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-mono-numbers transition-all cursor-pointer ${
                 isWhiteYellow
-                  ? 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.06]'
+                  ? 'bg-zinc-100 hover:bg-zinc-200/70 border-zinc-200 text-zinc-700'
+                  : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/15 text-zinc-300 hover:text-white'
               }`}
-              title="Driver notes & technical discussion"
+              title="Inspect Chassis Provenance Logbook"
             >
-              <MessageCircle className="w-5 h-5 transition-transform hover:scale-110" />
+              <MessageCircle className="w-3.5 h-3.5 text-zinc-400" />
+              <span>{repliesCount} NOTES</span>
             </button>
 
+            {/* Share / Export */}
             <button
               onClick={() => setIsOptionsOpen(true)}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all focus:outline-none ${
+              className={`p-2 rounded-full border transition-all cursor-pointer ${
                 isWhiteYellow
-                  ? 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.06]'
+                  ? 'border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
+                  : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/[0.06]'
               }`}
               title="Share post & export route"
             >
-              <Send className="w-4 h-4 transition-transform hover:scale-110 -rotate-12" />
+              <Send className="w-3.5 h-3.5 -rotate-12" />
             </button>
           </div>
 
+          {/* Bookmark / Route Pocket */}
           <button
             onClick={handleToggleSave}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all focus:outline-none ${
+            className={`p-2 rounded-full border transition-all cursor-pointer ${
               isWhiteYellow
-                ? 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
-                : 'text-zinc-400 hover:text-white hover:bg-white/[0.06]'
+                ? 'border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
+                : 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/[0.06]'
             }`}
             title={saved ? 'Remove from Route Pocket' : 'Save to Route Pocket'}
           >
             <Bookmark
-              className={`w-5 h-5 transition-all ${
+              className={`w-4 h-4 transition-all ${
                 saved
                   ? isWhiteYellow
                     ? 'fill-yellow-500 text-yellow-500 scale-110'
                     : 'fill-amber-400 text-amber-400 scale-110'
-                  : 'hover:scale-110'
+                  : ''
               }`}
             />
           </button>
         </div>
 
-        {/* Likes count & social proof with driver micro-avatars */}
+        {/* Respects count & social proof with driver micro-avatars */}
         <div className="flex items-center gap-2 pt-0.5">
           <div className="flex -space-x-1.5 overflow-hidden shrink-0">
             <img
@@ -1118,10 +1134,10 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
               className={`inline-block w-4 h-4 rounded-full object-cover ${isWhiteYellow ? 'ring-1 ring-white' : 'ring-1 ring-[#0D0D11]'}`}
             />
           </div>
-          <p className={`text-[12.5px] font-sans tracking-tight ${isWhiteYellow ? 'text-zinc-700' : 'text-zinc-300'}`}>
-            Respected by <span className={`font-semibold ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>kuro_gt3</span> and{' '}
+          <p className={`text-[12px] font-mono-numbers tracking-tight ${isWhiteYellow ? 'text-zinc-700' : 'text-zinc-400'}`}>
+            Ratified by <span className={`font-semibold ${isWhiteYellow ? 'text-zinc-950' : 'text-zinc-200'}`}>kuro_gt3</span> and{' '}
             <LikeCounter count={likesCount} bumped={likeCountBumped} isWhiteYellow={isWhiteYellow} />{' '}
-            <span className={isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}>drivers</span>
+            <span>custodians</span>
           </p>
         </div>
 

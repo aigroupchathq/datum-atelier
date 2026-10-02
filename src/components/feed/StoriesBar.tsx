@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { FC } from 'react';
 import { Plus } from 'lucide-react';
-import { mockMayaVehicle } from '../../data/mockData';
 import { StoryViewerModal } from './StoryViewerModal';
 import type { StoryItem } from './StoryViewerModal';
 import { useTheme } from '../../context/ThemeContext';
@@ -9,23 +8,6 @@ import { useTheme } from '../../context/ThemeContext';
 interface StoriesBarProps {
   onAddStory: () => void;
 }
-
-const RING_CLASS: Record<string, string> = {
-  'story-nova':          'ring-maya',
-  'story-messerschmitt': 'ring-community',
-  'story-splitty':       'ring-kuro',
-  'story-speedhunters':  'ring-maya',
-  'story-buggy':         'ring-community',
-  'story-cobra':         'ring-kuro',
-  'story-workshop':      'ring-community',
-  'story-collective':    'ring-maya',
-  'story-overland':      'ring-community',
-  'story-maya':          'ring-maya',
-  'story-kuro':          'ring-kuro',
-  'story-e30':           'ring-community',
-  'story-defender':      'ring-community',
-  'story-wash':          'ring-maya',
-};
 
 export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
   const { isWhiteYellow } = useTheme();
@@ -201,82 +183,99 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
       telemetry: 'Bilt-Hamber Alkaline Decon • pH Neutral'
     }
   ];
-
   return (
     <>
-      {/* Stories rail — sleek atelier salon gallery */}
-      <div className={`px-4 sm:px-5 py-4 overflow-hidden rounded-[26px] border transition-colors ${
+      {/* ── PADDOCK DISPATCHES: HAUTE-HORLOGERIE 16:9 CHRONOGRAPH RAIL ── */}
+      <div className={`p-3.5 sm:p-4 overflow-hidden rounded-[24px] border transition-all ${
         isWhiteYellow
-          ? 'bg-white border-zinc-200/90 shadow-xs'
-          : 'card-surface'
+          ? 'bg-white border-zinc-200/90 shadow-sm'
+          : 'bg-[#0B0C10] border-white/[0.08] shadow-md'
       }`}>
-        <div className="flex items-center gap-4 sm:gap-5 overflow-x-auto no-scrollbar">
+        
+        {/* Header row */}
+        <div className="flex items-center justify-between pb-2.5 px-1 border-b border-white/[0.05] mb-3 text-xs font-mono-numbers">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+            <span className="text-[10px] tracking-widest uppercase font-bold text-zinc-300">
+              PADDOCK TELEMETRY DISPATCHES
+            </span>
+          </div>
+          <span className="text-[10px] text-zinc-500 tracking-wider">
+            {storiesData.length} ACTIVE SHIFTS
+          </span>
+        </div>
 
-          {/* ── YOUR STORY ── */}
+        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-0.5">
+
+          {/* ── CARD 0: RECORD SHIFT DISPATCH (USER ACTION) ── */}
           <button
             onClick={onAddStory}
-            className="flex flex-col items-center gap-2 shrink-0 group focus:outline-none"
+            className={`w-[132px] sm:w-[144px] h-[92px] rounded-2xl shrink-0 p-2.5 flex flex-col justify-between border border-dashed transition-all duration-300 group cursor-pointer text-left relative overflow-hidden ${
+              isWhiteYellow
+                ? 'bg-yellow-50/50 hover:bg-yellow-100/60 border-yellow-300 text-zinc-900'
+                : 'bg-white/[0.02] hover:bg-amber-400/[0.06] border-white/15 hover:border-amber-400/50 text-white'
+            }`}
+            title="Log today's cold start or shakedown dispatch"
           >
-            <div className="relative">
-              {/* Dashed / subtle ring */}
-              <div className="w-[64px] h-[64px] rounded-full ring-unseen p-[2px] group-hover:scale-[1.04] transition-all duration-300">
-                <div className={`w-full h-full rounded-full p-[2px] ${isWhiteYellow ? 'bg-white' : 'bg-[#09090B]'}`}>
-                  <img
-                    src={mockMayaVehicle.heroImageUrl}
-                    alt="Your Car"
-                    className="w-full h-full rounded-full object-cover brightness-85 group-hover:brightness-100 transition-all duration-300"
-                  />
-                </div>
+            <div className="flex items-center justify-between">
+              <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110 ${
+                isWhiteYellow ? 'bg-yellow-400 text-zinc-950' : 'bg-amber-400 text-black shadow-[0_0_12px_rgba(251,191,36,0.5)]'
+              }`}>
+                <Plus className="w-3.5 h-3.5 stroke-[3]" />
               </div>
-              {/* Plus badge — Racing Yellow / amber medallion */}
-              <div
-                className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center border-2 shadow-md bg-gradient-to-tr from-yellow-500 to-amber-400 ${
-                  isWhiteYellow ? 'border-white' : 'border-[#09090B]'
-                }`}
-              >
-                <Plus className="w-3 h-3 text-zinc-950 stroke-[3]" />
-              </div>
+              <span className="text-[8.5px] font-mono-numbers tracking-widest uppercase text-amber-400">
+                DISPATCH
+              </span>
             </div>
-            <span className={`text-[11.5px] font-semibold transition-colors tracking-tight ${
-              isWhiteYellow ? 'text-zinc-600 group-hover:text-zinc-950' : 'text-zinc-400 group-hover:text-zinc-200'
-            }`}>
-              Your Story
-            </span>
+
+            <div>
+              <span className="text-[11px] font-bold block truncate leading-tight tracking-tight">
+                Record Shift
+              </span>
+              <span className={`text-[9px] font-mono-numbers block truncate mt-0.5 ${
+                isWhiteYellow ? 'text-zinc-500' : 'text-zinc-500'
+              }`}>
+                MAYA · S58 G80
+              </span>
+            </div>
           </button>
 
-          {/* Hairline divider */}
-          <div className={`w-px h-10 shrink-0 ${isWhiteYellow ? 'bg-zinc-200' : 'bg-white/[0.07]'}`} />
-
-          {/* ── CAR STORIES ── */}
+          {/* ── 16:9 PANORAMIC CAR DISPATCHES ── */}
           {storiesData.map((story, idx) => (
             <button
               key={story.id}
               onClick={() => setActiveStoryIndex(idx)}
-              className="flex flex-col items-center gap-2 shrink-0 group focus:outline-none"
+              className={`w-[132px] sm:w-[144px] h-[92px] rounded-2xl shrink-0 relative overflow-hidden group cursor-pointer border transition-all duration-300 text-left focus:outline-none ${
+                isWhiteYellow
+                  ? 'border-zinc-200/90 hover:border-yellow-400 shadow-sm'
+                  : 'border-white/[0.09] hover:border-amber-400/60 shadow-md hover:shadow-[0_0_16px_rgba(251,191,36,0.15)]'
+              }`}
             >
-              <div className="relative">
-                <div
-                  className={`w-[64px] h-[64px] rounded-full p-[2px] group-hover:scale-[1.04] transition-all duration-300 ${RING_CLASS[story.id] || 'ring-unseen'}`}
-                >
-                  <div className={`w-full h-full rounded-full p-[2px] ${isWhiteYellow ? 'bg-white' : 'bg-[#09090B]'}`}>
-                    <img
-                      src={story.avatarUrl}
-                      alt={story.authorName}
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  </div>
-                </div>
+              {/* Cinematic Backdrop Image */}
+              <img
+                src={story.storyMediaUrl || story.avatarUrl}
+                alt={story.authorName}
+                className="w-full h-full object-cover brightness-[0.65] group-hover:brightness-[0.85] group-hover:scale-105 transition-all duration-500"
+              />
+
+              {/* Protective Dark Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+
+              {/* Top Meta: TimeAgo & Active Strobe */}
+              <div className="absolute top-2 left-2 right-2 flex items-center justify-between text-[8px] font-mono-numbers z-10">
+                <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-zinc-300">
+                  {story.timeAgo}
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_6px_rgba(251,191,36,0.9)]" />
               </div>
-              <div className="text-center w-[64px]">
-                <span className={`text-[11.5px] font-semibold truncate block transition-colors tracking-tight ${
-                  isWhiteYellow ? 'text-zinc-900 group-hover:text-yellow-600' : 'text-zinc-300 group-hover:text-amber-200'
-                }`}>
+
+              {/* Bottom Inset: Vehicle Name & Live Telemetry Stamp */}
+              <div className="absolute bottom-2 left-2 right-2 z-10 space-y-0.5">
+                <span className="text-[11px] font-bold text-white block truncate tracking-tight leading-none drop-shadow-sm group-hover:text-amber-200 transition-colors">
                   {story.authorName}
                 </span>
-                <span className={`text-[9.5px] truncate block font-mono-numbers mt-0.5 ${
-                  isWhiteYellow ? 'text-zinc-500' : 'text-zinc-500'
-                }`}>
-                  {story.timeAgo}
+                <span className="text-[8px] font-mono-numbers text-amber-300/90 block truncate tracking-wider">
+                  {story.telemetry?.split('•')[0] || story.authorModel}
                 </span>
               </div>
             </button>
