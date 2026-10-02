@@ -1,11 +1,11 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import type { FC } from 'react';
 import { 
   Volume2, 
   VolumeX, 
-  ChevronRight, 
-  Power, 
-  Zap
+  ArrowRight,
+  ShieldCheck,
+  Disc3
 } from 'lucide-react';
 
 interface SplashScreenProps {
@@ -18,20 +18,18 @@ export type PersonaId = 'maya' | 'kuro' | 'sanctuary' | 'dan' | 'vault';
 
 interface VehiclePersona {
   id: PersonaId;
+  index: string;
   name: string;
-  badgeLabel: string;
-  make: string;
-  model: string;
+  subtitle: string;
   chassisCode: string;
   engine: string;
   power: string;
   torque: string;
   redlineRpm: number;
   idleRpm: number;
-  paintName: string;
   location: string;
+  coordinates: string;
   weather: string;
-  tempC: number;
   frictionMu: number;
   imageSrc: string;
 }
@@ -39,107 +37,96 @@ interface VehiclePersona {
 const VEHICLES: Record<PersonaId, VehiclePersona> = {
   maya: {
     id: 'maya',
+    index: '01',
     name: 'MAYA',
-    badgeLabel: 'M3 Competition',
-    make: 'BMW M Motorsport',
-    model: 'M3 Competition xDrive (G80)',
+    subtitle: 'BMW M3 Competition (G80)',
     chassisCode: 'CHASSIS // WBS-G80-COMP-UK',
     engine: '3.0L S58 Twin-Turbo Inline-6',
     power: '510 BHP',
     torque: '650 Nm',
     redlineRpm: 7200,
     idleRpm: 750,
-    paintName: 'Isle of Man Green Metallic',
-    location: 'Cotswolds Cotswold Stone Driveway',
+    location: 'Cotswolds Private Estate',
+    coordinates: '51.833° N, 1.842° W',
     weather: 'Damp Bitumen • Morning Mist',
-    tempC: 7.2,
     frictionMu: 0.78,
     imageSrc: '/real_uk_m3_cottage.jpg'
   },
   kuro: {
     id: 'kuro',
+    index: '02',
     name: 'KURO',
-    badgeLabel: 'GT3 Touring',
-    make: 'Porsche Motorsport',
-    model: '911 GT3 Touring (992.1)',
+    subtitle: 'Porsche 911 GT3 Touring (992.1)',
     chassisCode: 'CHASSIS // WP0-992-GT3-WEISSACH',
     engine: '4.0L Naturally Aspirated Boxer-6',
     power: '502 BHP',
     torque: '470 Nm',
     redlineRpm: 9000,
     idleRpm: 950,
-    paintName: 'Crayon / Chalk Non-Metallic',
     location: 'Hertfordshire Suburban Paddock',
+    coordinates: '51.752° N, 0.339° W',
     weather: 'Crisp Dry Bitumen • Track Optimal',
-    tempC: 6.4,
     frictionMu: 0.88,
     imageSrc: '/real_uk_gt3_suburb.jpg'
   },
   sanctuary: {
     id: 'sanctuary',
-    name: 'COBRA & FERRARI',
-    badgeLabel: 'Stone Sanctuary',
-    make: 'Shelby & Maranello',
-    model: '427 S/C & 488 Spider Duo',
+    index: '03',
+    name: 'SANCTUARY',
+    subtitle: 'Shelby 427 S/C & 488 Spider Duo',
     chassisCode: 'CHASSIS // SHELBY-427-DUO',
     engine: '7.0L Ford FE V8 & 3.9L Twin-Turbo V8',
-    power: '1,150+ Combined BHP',
+    power: '1,150+ BHP Combined',
     torque: '1,200+ Nm',
     redlineRpm: 8000,
     idleRpm: 850,
-    paintName: 'Guardsman Blue & Rosso Corsa',
-    location: 'Private Cotswolds Open Stone Bay',
+    location: 'Private Cotswolds Stone Gallery',
+    coordinates: '51.929° N, 1.734° W',
     weather: 'Sunny Dry • Zero Moisture Drift',
-    tempC: 18.5,
     frictionMu: 0.96,
-    imageSrc: '/feed/stone_garage_cobra_ferrari.jpg'
+    imageSrc: '/stone_garage_cobra_ferrari.jpg'
   },
   dan: {
     id: 'dan',
+    index: '04',
     name: 'RETRO MOD',
-    badgeLabel: 'E30 318is',
-    make: 'BMW Classic Heritage',
-    model: '318is Slicktop Coupé (E30)',
+    subtitle: 'BMW 318is Slicktop Coupé (E30)',
     chassisCode: 'CHASSIS // WBA-AF92-1989',
     engine: '1.8L 16V M42 Naturally Aspirated I4',
     power: '136 BHP',
     torque: '172 Nm',
     redlineRpm: 6800,
     idleRpm: 800,
-    paintName: 'Brilliant Red (Brilliantrot)',
     location: 'Bristol Victorian Curbside',
+    coordinates: '51.454° N, 2.587° W',
     weather: 'Coastal Overcast • Pure Analog',
-    tempC: 9.1,
     frictionMu: 0.82,
     imageSrc: '/real_uk_e30_terrace.jpg'
   },
   vault: {
     id: 'vault',
-    name: 'MAYFAIR VAULT',
-    badgeLabel: 'Empty Bay',
-    make: 'DATUM Atelier',
-    model: 'Mayfair Architectural Chamber 01',
+    index: '05',
+    name: 'THE VAULT',
+    subtitle: 'Mayfair Architectural Chamber 01',
     chassisCode: 'VAULT // BAY-01-LONDON',
-    engine: 'Acoustic Slatted Climate Studio',
+    engine: 'Climate-Controlled Slatted Wood Studio',
     power: 'Vault Ready',
     torque: '100% Induction',
     redlineRpm: 8000,
     idleRpm: 0,
-    paintName: 'Architectural Oak & Brushed Slate',
-    location: 'Central London Private Collector Vault',
-    weather: 'Climate Controlled 20.5°C',
-    tempC: 20.5,
+    location: 'Central London Private Vault',
+    coordinates: '51.507° N, 0.144° W',
+    weather: 'Controlled 20.5°C • 45% Relative Humidity',
     frictionMu: 0.99,
     imageSrc: '/splash_curated.jpg'
   }
 };
 
 export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
-  // State
   const [activePersona, setActivePersona] = useState<PersonaId>('maya');
   const [isStarting, setIsStarting] = useState<boolean>(false);
   const [isAdmitting, setIsAdmitting] = useState<boolean>(false);
-  const [currentRpm, setCurrentRpm] = useState<number>(0);
+  const [ignitionStage, setIgnitionStage] = useState<'idle' | 'solenoid' | 'combustion' | 'ready'>('idle');
   const [audioEnabled, setAudioEnabled] = useState<boolean>(() => {
     return localStorage.getItem('garage_splash_audio') !== 'false';
   });
@@ -149,7 +136,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
   const parallaxRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
 
-  // Parallax on mouse move
+  // Subtle Parallax on mouse movement
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (rafRef.current !== null) return;
     rafRef.current = requestAnimationFrame(() => {
@@ -157,9 +144,9 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       const rect = parallaxRef.current.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-      const dx = ((e.clientX - cx) / rect.width) * 8;
-      const dy = ((e.clientY - cy) / rect.height) * 8;
-      parallaxRef.current.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
+      const dx = ((e.clientX - cx) / rect.width) * 6;
+      const dy = ((e.clientY - cy) / rect.height) * 6;
+      parallaxRef.current.style.transform = `translate(${dx}px, ${dy}px) scale(1.03)`;
       rafRef.current = null;
     });
   }, []);
@@ -173,7 +160,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
   // Web Audio engine synthesis for smooth realistic ignition
   const getAudioContext = () => {
     if (!audioCtxRef.current) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) audioCtxRef.current = new AudioCtx();
     }
     if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
@@ -188,13 +175,13 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       const ctx = getAudioContext();
       if (!ctx) return;
 
-      // 1. Starter motor crank pulse (3 rhythmic starter teeth engagements)
-      [0, 0.11, 0.22].forEach((timeOffset) => {
+      // Starter solenoid engagement teeth
+      [0, 0.12, 0.24].forEach((timeOffset) => {
         const crank = ctx.createOscillator();
         const crankGain = ctx.createGain();
         crank.type = 'sawtooth';
-        crank.frequency.setValueAtTime(75, ctx.currentTime + timeOffset);
-        crankGain.gain.setValueAtTime(0.22, ctx.currentTime + timeOffset);
+        crank.frequency.setValueAtTime(68, ctx.currentTime + timeOffset);
+        crankGain.gain.setValueAtTime(0.18, ctx.currentTime + timeOffset);
         crankGain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + timeOffset + 0.08);
         crank.connect(crankGain);
         crankGain.connect(ctx.destination);
@@ -202,153 +189,155 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
         crank.stop(ctx.currentTime + timeOffset + 0.09);
       });
 
-      // 2. High-power ignition surge (combustion flare)
-      const fireTime = ctx.currentTime + 0.35;
+      // Combustion flare surge
+      const fireTime = ctx.currentTime + 0.38;
       const fireOsc = ctx.createOscillator();
       const fireFilter = ctx.createBiquadFilter();
       const fireGain = ctx.createGain();
 
-      fireOsc.type = 'sawtooth';
-      fireOsc.frequency.setValueAtTime(60, fireTime);
-      fireOsc.frequency.exponentialRampToValueAtTime(260, fireTime + 0.35); // Rev flare
-      fireOsc.frequency.exponentialRampToValueAtTime(Math.max(55, car.idleRpm / 14), fireTime + 0.95);
+      fireOsc.type = car.id === 'kuro' ? 'sawtooth' : 'triangle';
+      fireOsc.frequency.setValueAtTime(55, fireTime);
+      fireOsc.frequency.exponentialRampToValueAtTime(240, fireTime + 0.35);
+      fireOsc.frequency.exponentialRampToValueAtTime(Math.max(45, car.idleRpm / 15), fireTime + 0.95);
 
       fireFilter.type = 'lowpass';
-      fireFilter.frequency.setValueAtTime(220, fireTime);
-      fireFilter.frequency.exponentialRampToValueAtTime(950, fireTime + 0.35);
-      fireFilter.frequency.exponentialRampToValueAtTime(320, fireTime + 0.95);
+      fireFilter.frequency.setValueAtTime(200, fireTime);
+      fireFilter.frequency.exponentialRampToValueAtTime(850, fireTime + 0.35);
+      fireFilter.frequency.exponentialRampToValueAtTime(300, fireTime + 0.95);
 
       fireGain.gain.setValueAtTime(0.01, fireTime);
-      fireGain.gain.linearRampToValueAtTime(0.42, fireTime + 0.22);
-      fireGain.gain.exponentialRampToValueAtTime(0.02, fireTime + 1.25);
+      fireGain.gain.linearRampToValueAtTime(0.35, fireTime + 0.2);
+      fireGain.gain.exponentialRampToValueAtTime(0.01, fireTime + 1.2);
 
       fireOsc.connect(fireFilter);
       fireFilter.connect(fireGain);
       fireGain.connect(ctx.destination);
 
       fireOsc.start(fireTime);
-      fireOsc.stop(fireTime + 1.35);
+      fireOsc.stop(fireTime + 1.25);
     } catch {
       // Audio fallback
     }
   };
 
-  const handleStartEngine = () => {
+  const handleEngageMachine = () => {
     if (isStarting || isAdmitting) return;
     setIsStarting(true);
+    setIgnitionStage('solenoid');
+
     playEngineIgnitionSound();
 
-    // Animate RPM needle flare
-    setCurrentRpm(car.redlineRpm * 0.75);
     setTimeout(() => {
-      setCurrentRpm(car.idleRpm);
-    }, 700);
+      setIgnitionStage('combustion');
+    }, 400);
 
-    // After engine ignition flare, smoothly transition into the atelier
     setTimeout(() => {
+      setIgnitionStage('ready');
       setIsAdmitting(true);
       setTimeout(() => {
         onEnter();
       }, 500);
-    }, 1250);
+    }, 1100);
   };
 
   const handleSkip = () => {
     setIsAdmitting(true);
     setTimeout(() => {
       onEnter();
-    }, 300);
+    }, 280);
   };
 
   const toggleAudio = () => {
-    const nextState = !audioEnabled;
-    setAudioEnabled(nextState);
-    localStorage.setItem('garage_splash_audio', String(nextState));
+    const next = !audioEnabled;
+    setAudioEnabled(next);
+    localStorage.setItem('garage_splash_audio', String(next));
   };
 
-  // Calculate tachometer RPM percentage for arc fill
-  const rpmPercent = isStarting ? currentRpm / (car.redlineRpm || 8000) : 0;
+  // Keyboard engagement: Space or Enter triggers ignition
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        handleEngageMachine();
+      } else if (e.key === 'Escape') {
+        handleSkip();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isStarting, isAdmitting]);
 
   return (
     <div 
       className={`fixed inset-0 z-50 overflow-hidden select-none transition-all duration-700 ${
-        isAdmitting ? 'opacity-0 scale-[1.02] pointer-events-none' : 'opacity-100 scale-100'
-      } bg-[#09090B] text-zinc-100 flex flex-col justify-between`}
+        isAdmitting ? 'opacity-0 scale-[1.01] pointer-events-none' : 'opacity-100 scale-100'
+      } bg-[#060709] text-zinc-100 flex flex-col justify-between`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       
-      {/* ========================================================= */}
-      {/* 1. CINEMATIC AUTOMOTIVE PHOTOGRAPHIC CANVAS               */}
-      {/* ========================================================= */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* 1. CINEMATIC BACKGROUND CANVAS (Full-Bleed Photographic Soul) */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         
-        {/* Parallax Vehicle Image */}
+        {/* Parallax Vehicle Image with Smooth Breathing Depth */}
         <div
           ref={parallaxRef}
           className="absolute inset-0 will-change-transform"
           style={{ 
             transform: 'scale(1.02)',
-            transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+            transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
           <img
             src={car.imageSrc}
             alt={car.name}
-            className={`w-full h-full object-cover object-center transition-all duration-700 ${
-              isStarting ? 'brightness-110 scale-[1.01]' : 'brightness-95'
+            className={`w-full h-full object-cover object-center transition-all duration-1000 ${
+              isStarting ? 'brightness-110 saturate-[1.08] scale-[1.01]' : 'brightness-[0.88] saturate-[0.95]'
             }`}
           />
         </div>
 
-        {/* Ambient Darkened Spatial Overlays */}
-        <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-        <div className="absolute top-0 inset-x-0 h-48 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 inset-x-0 h-96 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
-
-        {/* Dynamic Headlight / Floor Reflection Surge on Ignition */}
+        {/* Refined Architectural Vignette Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060709] via-transparent to-[#060709]/80" />
+        <div className="absolute inset-0 bg-black/25" />
+        
+        {/* Subtle Ignition Flash */}
         <div 
-          className={`absolute -bottom-24 left-1/2 -translate-x-1/2 w-[900px] h-[400px] rounded-full blur-[110px] pointer-events-none transition-all duration-700 ${
-            isStarting ? 'opacity-100 scale-110' : 'opacity-20 scale-90'
-          }`} 
-          style={{ backgroundColor: 'var(--accent)' }}
+          className={`absolute inset-0 bg-amber-500/10 pointer-events-none transition-opacity duration-500 ${
+            ignitionStage === 'combustion' ? 'opacity-100' : 'opacity-0'
+          }`}
         />
       </div>
 
-      {/* ========================================================= */}
-      {/* 2. TOP HEADER: BRAND CREST + CHASSIS SELECTOR             */}
-      {/* ========================================================= */}
-      <header className="relative z-20 pt-6 px-6 sm:px-12 max-w-7xl mx-auto w-full flex flex-wrap items-center justify-between gap-4">
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* 2. TOP HOROLOGICAL HALLMARK (Minimalist Navigation & Audio)   */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      <header className="relative z-20 pt-7 px-6 sm:px-12 max-w-7xl mx-auto w-full flex items-center justify-between">
         
-        {/* Brand Crest */}
+        {/* Monogram Hallmark */}
         <div className="flex items-center gap-3">
-          <div 
-            className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs font-luxury-display shadow-md border"
-            style={{
-              backgroundColor: 'var(--accent)',
-              color: '#09090B',
-              borderColor: 'var(--border-default)'
-            }}
-          >
+          <div className="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-luxury-display font-bold text-xs text-white">
             D
           </div>
           <div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-luxury-display text-xs sm:text-sm font-bold tracking-[0.25em] uppercase text-white">
+            <div className="flex items-baseline gap-2">
+              <span className="font-luxury-display text-sm font-light tracking-[0.35em] uppercase text-white">
                 DATUM
               </span>
-              <span className="font-serif italic text-xs" style={{ color: 'var(--accent)' }}>
+              <span className="font-serif italic text-xs text-amber-400 font-light">
                 Atelier
               </span>
             </div>
-            <span className="text-[9px] font-mono-numbers tracking-widest uppercase block text-zinc-400">
-              Sovereign Vehicle Custody
+            <span className="text-[8px] font-mono-numbers tracking-[0.25em] uppercase text-zinc-400 block -mt-0.5">
+              Sovereign Machine Provenance
             </span>
           </div>
         </div>
 
-        {/* Quick Chassis Selector Strip */}
-        <div className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-black/50 backdrop-blur-xl border border-white/10 text-xs font-mono-numbers">
+        {/* Discreet Persona Index Pagination */}
+        <nav className="hidden md:flex items-center gap-6 text-xs font-mono-numbers">
           {(Object.keys(VEHICLES) as PersonaId[]).map((pId) => {
             const v = VEHICLES[pId];
             const isSelected = activePersona === pId;
@@ -356,205 +345,142 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
               <button
                 key={pId}
                 onClick={() => setActivePersona(pId)}
-                className={`px-3 py-1 rounded-full text-[11px] font-bold transition cursor-pointer ${
+                className={`transition-all duration-200 cursor-pointer flex items-center gap-1.5 py-1 ${
                   isSelected
-                    ? 'shadow-xs border'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent'
+                    ? 'text-white font-bold'
+                    : 'text-zinc-500 hover:text-zinc-300'
                 }`}
-                style={{
-                  backgroundColor: isSelected ? 'var(--accent)' : 'transparent',
-                  color: isSelected ? '#09090B' : undefined,
-                  borderColor: isSelected ? 'var(--border-default)' : 'transparent'
-                }}
               >
-                {v.badgeLabel}
+                <span className={`w-1.5 h-1.5 rounded-full transition-all ${
+                  isSelected ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]' : 'bg-transparent'
+                }`} />
+                <span className="text-[11px] tracking-wider">{v.index}</span>
+                <span className="text-[10px] tracking-widest uppercase opacity-80">{v.name}</span>
               </button>
             );
           })}
-        </div>
+        </nav>
 
-        {/* Audio & Skip Controls */}
-        <div className="flex items-center gap-3">
+        {/* Right Utility: Audio & Direct Entry */}
+        <div className="flex items-center gap-3 text-xs font-mono-numbers">
           <button
             onClick={toggleAudio}
-            className="p-2 rounded-full bg-black/40 hover:bg-black/60 border border-white/15 text-zinc-300 hover:text-white transition backdrop-blur-md cursor-pointer"
-            title={audioEnabled ? 'Sound On' : 'Sound Muted'}
+            className="p-2 rounded-full bg-black/40 hover:bg-black/70 border border-white/15 text-zinc-400 hover:text-white transition backdrop-blur-md cursor-pointer"
+            title={audioEnabled ? 'Exhaust Acoustic Audio: ON' : 'Audio Muted'}
           >
-            {audioEnabled ? <Volume2 className="w-4 h-4" style={{ color: 'var(--accent)' }} /> : <VolumeX className="w-4 h-4 text-zinc-400" />}
+            {audioEnabled ? <Volume2 className="w-3.5 h-3.5 text-amber-400" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
 
           <button
             onClick={handleSkip}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-black/40 hover:bg-black/60 border border-white/15 text-xs font-mono-numbers text-zinc-200 hover:text-white transition backdrop-blur-md cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.18] border border-white/15 text-[11px] text-zinc-300 hover:text-white transition backdrop-blur-md cursor-pointer"
           >
             <span>Enter</span>
-            <ChevronRight className="w-3.5 h-3.5" style={{ color: 'var(--accent)' }} />
+            <ArrowRight className="w-3 h-3 text-amber-400" />
           </button>
         </div>
 
       </header>
 
-      {/* ========================================================= */}
-      {/* 3. CENTER STAGE: CAR TELEMETRY HUD + TACHOMETER IGNITION  */}
-      {/* ========================================================= */}
-      <main className="relative z-20 flex-1 max-w-7xl mx-auto w-full px-6 sm:px-12 flex flex-col justify-between py-6">
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* 3. CENTER & LOWER FOCUS: SCULPTURAL IDENTITY & ENGAGEMENT     */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      <main className="relative z-20 max-w-7xl mx-auto w-full px-6 sm:px-12 flex flex-col justify-end pb-12 sm:pb-16 space-y-8">
         
-        {/* Upper HUD Rail: Car Dossier & Atmospheric Telemetry */}
-        <div className="flex flex-wrap items-start justify-between gap-6">
+        {/* Sculptural Vehicle Typography & Fine Telemetry Strip */}
+        <div className="space-y-4 max-w-3xl">
           
-          {/* Active Vehicle Badge */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/10 max-w-md space-y-1.5">
-            <div className="flex items-center gap-2 text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-400">
-              <span className="font-bold" style={{ color: 'var(--accent)' }}>{car.make}</span>
-              <span>•</span>
-              <span>{car.chassisCode}</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bold font-luxury-display uppercase text-white">
-              {car.model}
-            </h2>
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-mono-numbers text-zinc-300">
-              <span className="flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5" style={{ color: 'var(--accent)' }} />
-                <strong>{car.power}</strong>
-              </span>
-              <span>•</span>
-              <span>{car.torque}</span>
-              <span>•</span>
-              <span className="text-zinc-400">{car.engine}</span>
-            </div>
+          <div className="flex items-center gap-3 text-xs font-mono-numbers text-zinc-400">
+            <span className="text-amber-400 font-bold tracking-widest">{car.chassisCode}</span>
+            <span>•</span>
+            <span>{car.coordinates}</span>
+            <span>•</span>
+            <span className="text-emerald-400 font-bold">μ {car.frictionMu} ADHESION</span>
           </div>
 
-          {/* Environmental Conditions Readout */}
-          <div className="hidden sm:flex items-center gap-3 p-4 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/10 text-xs font-mono-numbers text-zinc-300">
-            <div className="text-right">
-              <span className="text-[10px] text-zinc-400 block uppercase">Adhesion μ</span>
-              <strong className="text-sm text-emerald-400 font-bold">μ {car.frictionMu}</strong>
-            </div>
-            <div className="w-px h-8 bg-white/15" />
-            <div>
-              <span className="text-[10px] text-zinc-400 block uppercase">Location</span>
-              <span className="text-xs text-white">{car.location}</span>
-            </div>
+          <div>
+            <h1 className="font-luxury-display text-5xl sm:text-7xl lg:text-8xl font-light tracking-[0.12em] uppercase text-white/95 leading-none">
+              {car.name}
+            </h1>
+            <p className="font-serif italic text-lg sm:text-2xl text-zinc-300 font-light mt-2 tracking-wide">
+              {car.subtitle}
+            </p>
+          </div>
+
+          {/* Minimalist Micro-Specifications Bar */}
+          <div className="flex flex-wrap items-center gap-4 text-xs font-mono-numbers text-zinc-400 pt-1">
+            <span className="text-zinc-200">{car.engine}</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-white font-bold">{car.power}</span>
+            <span className="text-zinc-600">/</span>
+            <span>{car.torque}</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-amber-300">REDLINE {car.redlineRpm.toLocaleString()} RPM</span>
           </div>
 
         </div>
 
-        {/* Center: Dynamic Tachometer & Engine Start Button */}
-        <div className="my-auto flex flex-col items-center justify-center text-center py-4">
+        {/* ── THE MINIMALIST IGNITION KEY (Horizontal Tactile Engagement Bar) ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-4 border-t border-white/10">
           
-          <div className="relative flex items-center justify-center">
+          <div className="flex items-center gap-4">
             
-            {/* Circular Tachometer Gauge Dial Ring */}
-            <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full border-2 border-white/15 flex items-center justify-center shadow-2xl bg-black/40 backdrop-blur-md">
+            {/* The Tactile Engage Key */}
+            <button
+              onClick={handleEngageMachine}
+              disabled={isStarting}
+              className={`group relative px-8 py-4 rounded-full font-mono-numbers text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 cursor-pointer flex items-center gap-3 border shadow-2xl ${
+                isStarting
+                  ? 'bg-amber-400 text-black border-amber-300 scale-[0.98]'
+                  : 'bg-white/10 hover:bg-white/20 text-white border-white/25 hover:border-amber-400/80 hover:shadow-[0_0_30px_rgba(251,191,36,0.25)] active:scale-95'
+              }`}
+            >
+              <Disc3 className={`w-4 h-4 transition-transform duration-700 ${
+                isStarting ? 'animate-spin text-black' : 'group-hover:rotate-90 text-amber-400'
+              }`} />
               
-              {/* Tachometer Tick Marks SVG */}
-              <svg className="absolute inset-0 w-full h-full p-2" viewBox="0 0 100 100">
-                {/* Gauge arc track */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.1)"
-                  strokeWidth="2"
-                  strokeDasharray="200"
-                  strokeDashoffset="40"
-                  transform="rotate(120 50 50)"
-                />
-                {/* Active RPM arc surge */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  fill="none"
-                  stroke="var(--accent)"
-                  strokeWidth="3"
-                  strokeDasharray="200"
-                  strokeDashoffset={200 - rpmPercent * 160}
-                  strokeLinecap="round"
-                  transform="rotate(120 50 50)"
-                  className="transition-all duration-300"
-                />
-              </svg>
+              <span>
+                {ignitionStage === 'solenoid' && 'Engaging Starter...'}
+                {ignitionStage === 'combustion' && 'Combustion Surge...'}
+                {ignitionStage === 'ready' && 'Systems Calibrated'}
+                {ignitionStage === 'idle' && 'Engage Machine'}
+              </span>
 
-              {/* Start Engine Mechanical Button */}
-              <button
-                onClick={handleStartEngine}
-                disabled={isStarting}
-                className={`relative w-28 h-28 sm:w-32 sm:h-32 rounded-full flex flex-col items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl ${
-                  isStarting
-                    ? 'scale-95 ring-4 ring-yellow-400/50 bg-zinc-900 border-2'
-                    : 'hover:scale-105 active:scale-95 bg-zinc-950 border-2 border-white/25 hover:border-white/60'
-                }`}
-                style={{
-                  borderColor: isStarting ? 'var(--accent)' : undefined
-                }}
-              >
-                <Power 
-                  className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors duration-300 ${
-                    isStarting ? 'animate-bounce' : 'text-zinc-400 group-hover:text-white'
-                  }`}
-                  style={{ color: isStarting ? 'var(--accent)' : undefined }}
-                />
-                <span 
-                  className="text-[10px] font-mono-numbers uppercase tracking-[0.2em] font-bold mt-1"
-                  style={{ color: isStarting ? 'var(--accent)' : '#FFFFFF' }}
-                >
-                  {isStarting ? 'CRANKING...' : 'START'}
-                </span>
-                <span className="text-[8px] font-mono-numbers tracking-widest text-zinc-400 uppercase">
-                  ENGINE
-                </span>
-              </button>
+              <ArrowRight className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                isStarting ? 'translate-x-1' : 'group-hover:translate-x-1'
+              }`} />
+            </button>
 
+            {/* Quiet Keyboard Hint */}
+            <span className="hidden sm:inline text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-500">
+              Press <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/40 text-zinc-300">Space</kbd> to Launch
+            </span>
+          </div>
+
+          {/* Environmental Micro-Status */}
+          <div className="flex items-center gap-4 text-[11px] font-mono-numbers text-zinc-400">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{car.location}</span>
             </div>
-
+            <span className="text-zinc-600">•</span>
+            <span>{car.weather}</span>
           </div>
 
-          {/* Subtitle Telemetry Status */}
-          <div className="mt-4 space-y-1">
-            <p className="text-xs font-mono-numbers uppercase tracking-[0.25em] text-zinc-300">
-              {isStarting ? `Igniting ${car.engine} • Redline ${car.redlineRpm} RPM` : 'Press Button to Start Engine & Enter'}
-            </p>
-            <p className="text-[11px] font-serif italic text-zinc-400">
-              {car.paintName} • {car.location}
-            </p>
-          </div>
-
-        </div>
-
-        {/* Bottom Mobile Chassis Switcher Pills */}
-        <div className="flex md:hidden items-center justify-center gap-1.5 overflow-x-auto no-scrollbar py-2">
-          {(Object.keys(VEHICLES) as PersonaId[]).map((pId) => {
-            const v = VEHICLES[pId];
-            const isSelected = activePersona === pId;
-            return (
-              <button
-                key={pId}
-                onClick={() => setActivePersona(pId)}
-                className={`px-3 py-1 rounded-full text-[10px] font-mono-numbers font-bold whitespace-nowrap transition ${
-                  isSelected ? 'bg-white text-zinc-950 shadow-xs' : 'bg-black/60 text-zinc-400 border border-white/10'
-                }`}
-                style={{
-                  backgroundColor: isSelected ? 'var(--accent)' : undefined,
-                  color: isSelected ? '#09090B' : undefined
-                }}
-              >
-                {v.badgeLabel}
-              </button>
-            );
-          })}
         </div>
 
       </main>
 
-      {/* ========================================================= */}
-      {/* 4. BOTTOM FOLIO FOOTER                                    */}
-      {/* ========================================================= */}
-      <footer className="relative z-20 pb-4 px-6 sm:px-12 max-w-7xl mx-auto w-full flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.25em] text-zinc-500 border-t border-white/10 pt-3">
-        <span>DATUM ATELIER // VOL. IV</span>
-        <span className="hidden sm:inline">100% PROPRIETARY CUSTODY</span>
-        <span>AUTHORED BY vD</span>
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* 4. FOOTER FOLIO (Quiet Provenance Hallmark)                   */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      <footer className="relative z-20 pb-5 px-6 sm:px-12 max-w-7xl mx-auto w-full flex items-center justify-between text-[9px] font-mono-numbers uppercase tracking-[0.3em] text-zinc-500">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-3 h-3 text-emerald-500" />
+          <span>DATUM ATELIER // ZERO-KNOWLEDGE CHASSIS PROVENANCE</span>
+        </div>
+        <span className="hidden sm:inline">ALL TELEMETRY CRYPTOGRAPHICALLY SECURED</span>
+        <span>EDITION 2026 // vD</span>
       </footer>
 
     </div>
