@@ -9,6 +9,7 @@
 - [ADR-0003: Client-Side SHA-256 & Pure JS ISO/IEC 18004 QR Generation](#adr-0003-client-side-sha-256--pure-js-isoiec-18004-qr-generation)
 - [ADR-0004: In-Memory HTML5 Canvas Plate Scrubbing](#adr-0004-in-memory-html5-canvas-plate-scrubbing)
 - [ADR-0005: Specialist Workshop Cryptographic Stamping Protocol](#adr-0005-specialist-workshop-cryptographic-stamping-protocol)
+- [ADR-0006: Event-Sourced Sovereign Ledger & Repository Pattern](#adr-0006-event-sourced-sovereign-ledger--repository-pattern)
 
 ---
 
@@ -65,4 +66,16 @@
   3. Immutable cryptographic hash-chaining linking each service stamp to the vehicle's previous stamp.
   4. Instant reflection in the car's Sovereign Logbook.
 - **Consequences:** Provides certified investment-grade provenance (Grade A+) verifiable in offline or disconnected environments with zero database tampering vulnerability.
+
+---
+
+### ADR-0006: Event-Sourced Sovereign Ledger & Repository Pattern
+- **Date:** 2026-10-02
+- **Status:** PROPOSED & ACCEPTED
+- **Context:** Transitioning DATUM Atelier from in-memory mock data to an institutional-grade financial-standard distributed backend without taking down the UI, breaking offline capability, or introducing frontend debt.
+- **Decision:** Adopt an Event-Sourced Sovereign Ledger (ES-SL) underpinned by the Repository Pattern (`IVehicleRepository`, `IFeedRepository`, `IWorkshopRepository`, `IAuthRepository`). Implement dual providers:
+  1. `LocalLedgerProvider`: In-memory / IndexedDB / LocalStorage store ensuring 0ms cold starts, offline resilience, and zero network dependency for studio review.
+  2. `CloudLedgerProvider`: Production PostgreSQL (Multi-AZ / Supabase) with Row-Level Security, append-only Merkle event streams, and cryptographic verification.
+- **Consequences:** UI components become 100% agnostic of backend storage. Ensures seamless transition to cloud persistence with zero UI rewrites and zero data loss.
+
 
