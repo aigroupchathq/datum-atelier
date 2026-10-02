@@ -16,10 +16,12 @@ import {
   Camera,
   Gauge,
   FileCheck2,
-  Lock,
   PoundSterling,
   CloudRain,
-  Zap
+  Zap,
+  ChevronDown,
+  ChevronUp,
+  Check
 } from 'lucide-react';
 import type { CommunityPost } from '../../types';
 import { useToast } from '../../context/ToastContext';
@@ -89,7 +91,7 @@ const DEMO_PRESETS = [
   },
   {
     id: 'driveway-wash',
-    label: 'Sunday 07:00 Snow Foam',
+    label: 'Sunday Snow Foam',
     plate: 'P054 CHE',
     plateBox: { top: 60, left: 43, width: 14, height: 5 },
     url: '/real_uk_driveway_wash.jpg',
@@ -118,6 +120,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
   const [postType, setPostType] = useState<CommunityPost['postType']>('CAR_STORY');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [showAdvancedDetails, setShowAdvancedDetails] = useState<boolean>(false);
   
   // Bespoke Build Ledger fields
   const [workshopName, setWorkshopName] = useState('Litchfield Motors, Gloucestershire');
@@ -141,17 +144,39 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
   
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [isVeilActive, setIsVeilActive] = useState<boolean>(true);
-  const [veilStyle, setVeilStyle] = useState<'frosted' | 'pixel' | 'blackout'>('frosted');
+  const [veilStyle, setVeilStyle] = useState<'frosted' | 'pixel' | 'blackout'>('blackout');
   
   // Cadence & Respects state
   const [cadenceResult, setCadenceResult] = useState<DriveCadenceResult | null>(null);
   const [selectedExpeditionId, setSelectedExpeditionId] = useState<string | null>(null);
-
-  const [blurPlateChecked, setBlurPlateChecked] = useState<boolean>(true);
-  const [protectEndpointsChecked, setProtectEndpointsChecked] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Restore draft if available
+  useEffect(() => {
+    try {
+      const savedDraft = sessionStorage.getItem('datum_create_post_draft');
+      if (savedDraft && !initialDriveData) {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed.title) setTitle(parsed.title);
+        if (parsed.content) setContent(parsed.content);
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [initialDriveData]);
+
+  // Save draft on change
+  useEffect(() => {
+    try {
+      if (title || content) {
+        sessionStorage.setItem('datum_create_post_draft', JSON.stringify({ title, content }));
+      }
+    } catch {
+      // Ignore
+    }
+  }, [title, content]);
 
   // Ingest initialDriveData if provided from ActiveDriveTrackerModal
   useEffect(() => {
@@ -159,6 +184,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
       if (initialDriveData.title) setTitle(initialDriveData.title);
       if (initialDriveData.caption) setContent(initialDriveData.caption);
       setPostType('DRIVE');
+      setShowAdvancedDetails(true);
       if (initialDriveData.cadenceResult) setCadenceResult(initialDriveData.cadenceResult);
       if (initialDriveData.carId) {
         const foundCarIdx = STABLE_CARS.findIndex(c => c.id === initialDriveData.carId);
@@ -216,11 +242,11 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
       setIsScanning(false);
       setIsVeilActive(true);
       showToast({
-        title: 'Optical Cloaking Engaged',
-        message: `DVSA plate index ${plateText} permanently sanitized on HTML5 canvas buffer.`,
+        title: 'Plate Protected',
+        message: `License plate ${plateText} permanently blurred on client canvas.`,
         type: 'privacy'
       });
-    }, 1100);
+    }, 900);
   };
 
   const handleCarSelect = (index: number) => {
@@ -231,10 +257,9 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
       triggerOpticalScan(preset.url, preset.plate, preset.plateBox);
     }
     showToast({
-      title: `Active Vehicle: ${targetCar.name}`,
-      message: `${targetCar.model} • Ready to notarize new artifact.`,
-      type: 'garage',
-      badge: 'ACTIVE_CHASSIS'
+      title: `Selected Car: ${targetCar.name}`,
+      message: `${targetCar.model} • Ready to share.`,
+      type: 'garage'
     });
   };
 
@@ -256,10 +281,9 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
     setCadenceResult(calculated);
 
     showToast({
-      title: `Expedition Vibe: ${expedition.label}`,
-      message: `${calculated.rankTitle} • ${calculated.hudTag}`,
-      type: 'drive',
-      badge: `${calculated.rank}-RANK`
+      title: `Drive Route Preset Applied`,
+      message: `${expedition.label} • ${calculated.rankTitle}`,
+      type: 'drive'
     });
   };
 
@@ -292,20 +316,18 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!content.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
     setTimeout(() => {
-      // Build tailored content with engineering metadata if build or drive
       let enrichedContent = content.trim();
       if (postType === 'BUILD_UPDATE') {
-        enrichedContent += `\n\n[PROVENANCE LEDGER: ${componentCategory} fitted by ${workshopName} • £${invoicedCost} • Delta: ${performanceDelta} • VAT receipt cryptographically notarized]`;
+        enrichedContent += `\n\n[WORKSHOP LEDGER: ${componentCategory} fitted by ${workshopName} • £${invoicedCost} • Delta: ${performanceDelta}]`;
       } else if (postType === 'DRIVE') {
         const cadenceTag = cadenceResult ? `\n\n${cadenceResult.hudTag}` : '';
-        enrichedContent += `\n\n[TELEMETRY: Surface ${surfaceCondition} • Fuel: ${fuelGrade} • Ambient: ${barometricPressure} • 800m residential perimeter protected]${cadenceTag}`;
+        enrichedContent += `\n\n[DRIVE TELEMETRY: ${surfaceCondition} • Fuel: ${fuelGrade} • 800m privacy sanctuary active]${cadenceTag}`;
       }
 
-      // Final media URL: Use sanitized canvas data URL if veil is active, ensuring true byte-level plate destruction
       const finalMediaUrl = (isVeilActive && sanitizedImage) ? sanitizedImage : selectedImage;
 
       onSubmitPost({
@@ -328,655 +350,595 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
         mediaUrls: [finalMediaUrl]
       });
 
+      // Clear draft upon successful publish
+      try {
+        sessionStorage.removeItem('datum_create_post_draft');
+      } catch {
+        // Ignore
+      }
+
       showToast({
-        title: mode === 'story' ? 'Paddock Reel Dispatched' : 'Automotive Artifact Notarized',
-        message: `Logged under ${currentCar.name} ledger • License plate physically sanitized on HTML5 canvas.`,
+        title: mode === 'story' ? 'Story Shared' : 'Published to Feed',
+        message: `Posted under ${currentCar.name} • License plate permanently protected.`,
         type: 'success',
-        badge: 'CANVAS_SANITIZED'
+        badge: 'PUBLISHED'
       });
 
       setIsSubmitting(false);
       onClose();
-    }, 600);
+    }, 500);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className={`border rounded-3xl max-w-2xl w-full p-5 sm:p-7 space-y-6 shadow-2xl relative my-auto animate-in fade-in duration-200 transition-colors ${
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-hidden">
+      <div className={`border rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col max-h-[92vh] shadow-2xl relative my-auto animate-in fade-in duration-200 transition-colors ${
         isWhiteYellow
           ? 'bg-white border-zinc-200 text-zinc-900 shadow-2xl'
           : 'bg-[#0B0C0E] border-amber-500/20 text-white shadow-2xl'
       }`}>
         
-        {/* Modal Top Header with Haute Horlogerie aesthetic */}
-        <div className={`flex justify-between items-center border-b pb-4 ${isWhiteYellow ? 'border-zinc-200' : 'border-zinc-800/80'}`}>
+        {/* ========================================================= */}
+        {/* FIXED HEADER                                              */}
+        {/* ========================================================= */}
+        <div className={`flex justify-between items-center px-5 sm:px-6 py-4 border-b shrink-0 ${
+          isWhiteYellow ? 'border-zinc-200 bg-white' : 'border-zinc-800/80 bg-[#0B0C0E]'
+        }`}>
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-inner border ${
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center border ${
               isWhiteYellow
                 ? 'bg-yellow-50 border-yellow-300 text-yellow-800'
-                : 'bg-zinc-950 border-amber-500/30 text-white'
+                : 'bg-zinc-900 border-amber-500/30 text-amber-400'
             }`}>
-              <Camera className={`w-5 h-5 ${isWhiteYellow ? 'text-yellow-600' : 'text-amber-400'}`} />
+              <Camera className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className={`text-base font-luxury-display uppercase tracking-widest font-bold ${
+                <h3 className={`text-sm sm:text-base font-bold ${
                   isWhiteYellow ? 'text-zinc-950' : 'text-zinc-100'
                 }`}>
-                  Atelier Log Entry
+                  Share a Drive or Story
                 </h3>
                 <span className={`text-[10px] font-mono-numbers px-2 py-0.5 rounded font-bold border tracking-wider ${
                   isWhiteYellow
                     ? 'bg-yellow-100 text-yellow-900 border-yellow-300'
                     : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
                 }`}>
-                  CHASSIS {currentCar.name}
+                  {currentCar.name}
                 </span>
               </div>
-              <p className={`text-xs font-sans ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                {currentCar.model} • Sovereign vehicle ledger notarization
+              <p className={`text-xs ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
+                {currentCar.model} • Privacy veil enabled
               </p>
             </div>
           </div>
           
           <button 
+            type="button"
             onClick={onClose} 
             className={`p-2 rounded-xl transition ${
               isWhiteYellow
                 ? 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
                 : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
             }`}
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Stable Chassis Selector */}
-        <div className={`flex items-center gap-1.5 p-1.5 rounded-2xl border text-xs font-mono-numbers overflow-x-auto no-scrollbar ${
-          isWhiteYellow
-            ? 'bg-zinc-100 border-zinc-200'
-            : 'bg-zinc-950 border-white/[0.08]'
-        }`}>
-          <span className={`text-[10px] uppercase px-2 font-bold shrink-0 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-500'}`}>
-            STABLE CHASSIS:
-          </span>
-          {STABLE_CARS.map((c, idx) => (
+        {/* ========================================================= */}
+        {/* SCROLLABLE FORM BODY                                      */}
+        {/* ========================================================= */}
+        <form id="create-post-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-4">
+          
+          {/* Car Selector Pills */}
+          <div className="flex items-center gap-1.5 p-1 rounded-xl border text-xs font-mono-numbers overflow-x-auto no-scrollbar">
+            <span className={`text-[10px] uppercase px-2 font-bold shrink-0 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              Car:
+            </span>
+            {STABLE_CARS.map((c, idx) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => handleCarSelect(idx)}
+                className={`px-3 py-1.5 rounded-lg transition shrink-0 text-xs ${
+                  selectedCarIndex === idx
+                    ? isWhiteYellow
+                      ? 'bg-yellow-400 text-zinc-950 font-bold shadow-xs'
+                      : 'bg-amber-400 text-black font-extrabold shadow-sm'
+                    : isWhiteYellow
+                      ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+                }`}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Mode Selector: Feed Post vs 24h Story */}
+          <div className={`grid grid-cols-2 p-1 rounded-xl border text-xs ${
+            isWhiteYellow ? 'bg-zinc-100 border-zinc-200' : 'bg-zinc-950 border-zinc-800/80'
+          }`}>
             <button
-              key={c.id}
               type="button"
-              onClick={() => handleCarSelect(idx)}
-              className={`px-3 py-1.5 rounded-xl transition-all shrink-0 text-xs ${
-                selectedCarIndex === idx
+              onClick={() => setMode('post')}
+              className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-2 ${
+                mode === 'post'
                   ? isWhiteYellow
-                    ? 'bg-yellow-400 text-zinc-950 font-bold border border-yellow-500 shadow-xs'
-                    : 'bg-amber-400 text-black font-extrabold shadow-sm'
+                    ? 'bg-white text-zinc-950 shadow-xs border border-zinc-300'
+                    : 'bg-zinc-800/90 text-white shadow-sm border border-amber-500/30'
                   : isWhiteYellow
-                    ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/60'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                    ? 'text-zinc-600 hover:text-zinc-950'
+                    : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
-              {c.name}
+              <Layers className="w-3.5 h-3.5" />
+              <span>Feed Post</span>
             </button>
-          ))}
-        </div>
-
-        {/* Mode Selector: Feed Post vs 24h Paddock Reel */}
-        <div className={`flex items-center p-1 rounded-xl border ${
-          isWhiteYellow ? 'bg-zinc-100 border-zinc-200' : 'bg-zinc-950 border-zinc-800/80'
-        }`}>
-          <button
-            type="button"
-            onClick={() => setMode('post')}
-            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-              mode === 'post'
-                ? isWhiteYellow
-                  ? 'bg-white text-zinc-950 shadow-xs border border-zinc-300 font-bold'
-                  : 'bg-zinc-800/90 text-white shadow-sm border border-amber-500/30'
-                : isWhiteYellow
-                  ? 'text-zinc-600 hover:text-zinc-950'
-                  : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span className="font-luxury-display tracking-wider text-[11px]">Sovereign Feed Record (Permanent)</span>
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => setMode('story')}
-            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-              mode === 'story'
-                ? isWhiteYellow
-                  ? 'bg-yellow-100 text-yellow-900 border border-yellow-400 shadow-xs font-bold'
-                  : 'bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-700/20 text-amber-300 border border-amber-500/40 shadow-sm'
-                : isWhiteYellow
-                  ? 'text-zinc-600 hover:text-zinc-950'
-                  : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            <Sparkles className={`w-3.5 h-3.5 ${isWhiteYellow ? 'text-yellow-600' : 'text-amber-400'}`} />
-            <span className="font-luxury-display tracking-wider text-[11px]">Paddock Dispatch (24h Reel)</span>
-          </button>
-        </div>
-
-        {/* ========================================================= */}
-        {/* INTERACTIVE MEDIA UPLOAD & OPTICAL PLATE DETECTION VIEW   */}
-        {/* ========================================================= */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-[11px] font-mono-numbers uppercase text-zinc-400 flex items-center gap-2 tracking-wider">
-              <Scan className="w-3.5 h-3.5 text-amber-400" />
-              <span>Optical Cloaking & Plate Redaction Studio</span>
-            </label>
-
-            {/* Hidden native file input */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileUpload}
-              accept="image/*"
-              className="hidden"
-            />
-
+            
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="text-xs font-mono-numbers text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition"
+              onClick={() => setMode('story')}
+              className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-2 ${
+                mode === 'story'
+                  ? isWhiteYellow
+                    ? 'bg-yellow-100 text-yellow-900 border border-yellow-400 shadow-xs'
+                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                  : isWhiteYellow
+                    ? 'text-zinc-600 hover:text-zinc-950'
+                    : 'text-zinc-400 hover:text-zinc-200'
+              }`}
             >
-              <Upload className="w-3 h-3" />
-              <span>Upload Candid Photo</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>24h Story</span>
             </button>
           </div>
 
-          {/* Main Photo Canvas Viewport */}
-          <div 
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-            className={`relative w-full rounded-2xl overflow-hidden bg-black border border-zinc-800 shadow-inner group ${
-              mode === 'story' ? 'aspect-[16/10] sm:aspect-[16/9]' : 'aspect-[16/10]'
-            }`}
-          >
-            {/* The Image: Renders the true canvas-sanitized pixel buffer when veil is active */}
-            <img
-              src={(isVeilActive && sanitizedImage && !inspectRawMode) ? sanitizedImage : selectedImage}
-              alt="Preview"
-              className="w-full h-full object-cover transition-all duration-300"
-            />
+          {/* ========================================================= */}
+          {/* PHOTO PREVIEW & CLIENT-SIDE PRIVACY GUARANTEE             */}
+          {/* ========================================================= */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className={`text-xs font-semibold ${isWhiteYellow ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                Photo & Privacy
+              </span>
 
-            {/* True Canvas Sanitized Verification Stamp */}
-            {isVeilActive && sanitizedImage && !inspectRawMode && (
-              <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-xl bg-zinc-950/85 border border-emerald-500/40 text-[10px] font-mono-numbers text-emerald-300 flex items-center gap-1.5 shadow-xl backdrop-blur-md">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>CANVAS PIXELS DESTROYED ({sanitizedPixelCount} PX OVERWRITTEN)</span>
-              </div>
-            )}
+              {/* Hidden file input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept="image/*"
+                className="hidden"
+              />
 
-            {inspectRawMode && (
-              <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-xl bg-red-950/85 border border-red-500/40 text-[10px] font-mono-numbers text-red-300 flex items-center gap-1.5 shadow-xl backdrop-blur-md">
-                <Eye className="w-3.5 h-3.5 text-red-400" />
-                <span>INSPECTING RAW SOURCE (UNPROTECTED)</span>
-              </div>
-            )}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className={`text-xs font-semibold flex items-center gap-1.5 transition ${
+                  isWhiteYellow ? 'text-yellow-700 hover:text-yellow-800' : 'text-amber-400 hover:text-amber-300'
+                }`}
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>Upload New Photo</span>
+              </button>
+            </div>
 
-            {/* Scanning Laser Sweep Animation */}
-            {isScanning && (
-              <div className="absolute inset-0 pointer-events-none flex flex-col justify-center items-center bg-black/50 backdrop-blur-[2px]">
-                <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_#f59e0b] animate-pulse top-1/2 -translate-y-1/2" />
-                <div className="px-4 py-2 rounded-xl bg-zinc-950/90 border border-amber-500/40 text-xs font-mono-numbers text-amber-300 flex items-center gap-2 shadow-2xl">
-                  <Scan className="w-4 h-4 animate-spin text-amber-400" />
-                  <span>ANALYZING REGISTRATION TELEMETRY & CLOAKING...</span>
+            {/* Photo Canvas Container */}
+            <div 
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+              className="relative w-full rounded-2xl overflow-hidden bg-black border border-zinc-800 aspect-[16/10]"
+            >
+              <img
+                src={(isVeilActive && sanitizedImage && !inspectRawMode) ? sanitizedImage : selectedImage}
+                alt="Preview"
+                className="w-full h-full object-cover transition duration-200"
+              />
+
+              {/* Scanning Laser Animation */}
+              {isScanning && (
+                <div className="absolute inset-0 pointer-events-none flex flex-col justify-center items-center bg-black/60 backdrop-blur-[2px]">
+                  <div className="px-3.5 py-1.5 rounded-xl bg-zinc-950/90 border border-amber-500/40 text-xs font-mono-numbers text-amber-300 flex items-center gap-2 shadow-2xl">
+                    <Scan className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                    <span>Blurring license plate...</span>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Bottom Floating Veil Toolbar */}
-            <div className="absolute bottom-3 inset-x-3 flex items-center justify-between p-2 rounded-xl bg-zinc-950/85 border border-zinc-800 backdrop-blur-md text-xs font-mono-numbers">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-zinc-300 font-semibold hidden sm:inline">
-                  {isScanning ? 'Scrubbing Pixels...' : `DVSA Reg: ${activePlateText} [UK]`}
-                </span>
-                <span className="text-zinc-400 sm:hidden">Privacy Guard</span>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-1.5">
-                {/* Compare / Inspect Toggle */}
-                {sanitizedImage && (
+              {/* Inspect / View Original Toggle */}
+              {sanitizedImage && (
+                <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => setInspectRawMode(!inspectRawMode)}
-                    className="px-2 py-1 rounded-lg text-[11px] font-mono-numbers border transition bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white"
-                    title="Compare raw image against physically scrubbed canvas"
+                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium border transition backdrop-blur-md bg-zinc-950/80 border-zinc-700 text-zinc-200 hover:text-white shadow-md flex items-center gap-1"
                   >
-                    {inspectRawMode ? 'View Scrubbed' : 'Inspect Raw'}
+                    {inspectRawMode ? <EyeOff className="w-3 h-3 text-amber-400" /> : <Eye className="w-3 h-3 text-zinc-400" />}
+                    <span>{inspectRawMode ? 'View Protected' : 'Inspect Original'}</span>
                   </button>
-                )}
+                </div>
+              )}
 
-                {/* Veil Toggle Button */}
-                <button
-                  type="button"
-                  onClick={() => setIsVeilActive(!isVeilActive)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
-                    isVeilActive
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                      : 'bg-red-500/20 text-red-300 border-red-500/40'
-                  }`}
-                >
-                  {isVeilActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                  <span>{isVeilActive ? 'Canvas Redactor: ON' : 'Raw Plate: EXPOSED'}</span>
-                </button>
+              {/* Bottom Subtle Indicator */}
+              <div className="absolute bottom-2 inset-x-2 flex items-center justify-between px-3 py-1.5 rounded-xl bg-zinc-950/85 border border-zinc-800 backdrop-blur-md text-[11px]">
+                <div className="flex items-center gap-2 text-zinc-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-medium">
+                    {isScanning ? 'Scrubbing...' : sanitizedPixelCount > 0 ? `Plate: ${activePlateText} (${sanitizedPixelCount} px masked)` : `Plate: ${activePlateText}`}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1 text-[11px]">
+                  {(['frosted', 'pixel', 'blackout'] as const).map((style) => (
+                    <button
+                      type="button"
+                      key={style}
+                      onClick={() => setVeilStyle(style)}
+                      className={`px-2 py-0.5 rounded capitalize transition ${
+                        veilStyle === style
+                          ? 'bg-zinc-800 text-amber-400 font-bold border border-zinc-700'
+                          : 'text-zinc-400 hover:text-zinc-200'
+                      }`}
+                    >
+                      {style}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Quick Real Domestic Presets & Blur Texture Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            {/* Quick Demo Car Selector */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-              <span className="text-[10px] font-mono-numbers text-zinc-500 uppercase mr-1">Candid UK Locales:</span>
+            {/* UNIFIED PRIVACY REASSURANCE BANNER (High Impact Fix #4) */}
+            <div className={`p-2.5 rounded-xl border flex items-center justify-between text-xs transition ${
+              isWhiteYellow
+                ? 'bg-emerald-50/90 border-emerald-200 text-emerald-900'
+                : 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300'
+            }`}>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="font-medium">
+                  Number plate blurred · Exact home location masked (800m sanctuary)
+                </span>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/30 text-emerald-400">
+                ACTIVE
+              </span>
+            </div>
+
+            {/* Quick Preset Location Samples (Clean Single Line) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+              <span className={`text-[10px] uppercase font-bold shrink-0 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                Presets:
+              </span>
               {DEMO_PRESETS.map((preset) => (
                 <button
                   type="button"
                   key={preset.id}
                   onClick={() => triggerOpticalScan(preset.url, preset.plate, preset.plateBox)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-mono-numbers transition border ${
+                  className={`px-2.5 py-1 rounded-lg text-[10px] shrink-0 transition border ${
                     selectedImage === preset.url
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                      : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                      ? isWhiteYellow
+                        ? 'bg-yellow-400 text-zinc-950 font-bold border-yellow-500 shadow-xs'
+                        : 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold'
+                      : isWhiteYellow
+                        ? 'bg-zinc-50 text-zinc-600 border-zinc-200 hover:bg-zinc-100'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                   }`}
                 >
                   {preset.label}
                 </button>
               ))}
             </div>
+          </div>
 
-            {/* Blur Style Switcher */}
-            <div className="flex items-center gap-1 text-[11px] font-mono-numbers">
-              <SlidersHorizontal className="w-3 h-3 text-zinc-500" />
-              {(['frosted', 'pixel', 'blackout'] as const).map((style) => (
-                <button
-                  type="button"
-                  key={style}
-                  onClick={() => setVeilStyle(style)}
-                  className={`px-2 py-0.5 rounded capitalize transition ${
-                    veilStyle === style
-                      ? 'bg-zinc-800 text-amber-300 font-semibold border border-zinc-700'
-                      : 'text-zinc-500 hover:text-zinc-300'
-                  }`}
-                >
-                  {style}
-                </button>
-              ))}
+          {/* ========================================================= */}
+          {/* PRIMARY INPUTS: TITLE & STORY (High Impact Fix #3)       */}
+          {/* ========================================================= */}
+          <div className="space-y-3">
+            <div>
+              <label className={`text-xs font-semibold block mb-1 ${isWhiteYellow ? 'text-zinc-800' : 'text-zinc-200'}`}>
+                Title <span className="text-zinc-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Morning drive through the Lake District"
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none transition ${
+                  isWhiteYellow
+                    ? 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-yellow-500 focus:bg-white'
+                    : 'bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-400/60'
+                }`}
+              />
+            </div>
+
+            <div>
+              <label className={`text-xs font-semibold block mb-1 ${isWhiteYellow ? 'text-zinc-800' : 'text-zinc-200'}`}>
+                Notes & Story <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                rows={3}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="What made this drive memorable? Road feel, conditions, favorite section..."
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm resize-none transition focus:outline-none ${
+                  isWhiteYellow
+                    ? 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-yellow-500 focus:bg-white'
+                    : 'bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-400/60'
+                }`}
+                required
+              />
             </div>
           </div>
 
-          {/* ── 1-TAP EXPEDITION CADENCE & RESPECTS BAR ── */}
-          <div className={`p-3.5 rounded-2xl border space-y-2.5 ${
-            isWhiteYellow ? 'bg-amber-50/60 border-amber-200' : 'bg-zinc-950 border-amber-500/20'
+          {/* ========================================================= */}
+          {/* COLLAPSIBLE ADVANCED DETAILS (High Impact Fix #1 & #5)    */}
+          {/* ========================================================= */}
+          <div className={`rounded-2xl border transition-colors ${
+            isWhiteYellow ? 'border-zinc-200 bg-zinc-50/50' : 'border-zinc-800/80 bg-zinc-950/40'
           }`}>
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-mono-numbers uppercase tracking-wider font-bold flex items-center gap-1.5 text-amber-400">
-                <Zap className="w-3.5 h-3.5 fill-current" />
-                <span>1-Tap Expedition Telemetry & Cadence Presets</span>
-              </span>
-              <span className="text-[10px] font-mono-numbers px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
-                +14-18 RESPECTS
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {EXPEDITION_PRESETS.map((exp) => (
-                <button
-                  key={exp.id}
-                  type="button"
-                  onClick={() => handleApplyExpeditionPreset(exp)}
-                  className={`p-2.5 rounded-xl border text-left transition-all ${
-                    selectedExpeditionId === exp.id
-                      ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/30 text-white font-bold'
-                      : isWhiteYellow
-                        ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50'
-                        : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:border-zinc-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 text-xs">
-                    <span>{exp.icon}</span>
-                    <span className="truncate font-bold">{exp.label}</span>
-                  </div>
-                  <div className="text-[10px] font-mono-numbers text-amber-400 truncate mt-0.5">
-                    {exp.frictionMu} µ Road Grip
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Gamer-Minimalist Cadence HUD Preview */}
-            {cadenceResult && (
-              <div className="p-3 rounded-xl bg-black border border-amber-500/40 flex items-center justify-between text-xs font-mono-numbers animate-in fade-in">
-                <div className="flex items-center gap-2.5">
-                  <span className="px-2 py-0.5 rounded bg-amber-400 text-black font-black text-xs">
-                    {cadenceResult.rank}
+            <button
+              type="button"
+              onClick={() => setShowAdvancedDetails(!showAdvancedDetails)}
+              className={`w-full px-4 py-3 flex items-center justify-between text-xs font-medium transition rounded-2xl ${
+                isWhiteYellow ? 'text-zinc-700 hover:text-zinc-950' : 'text-zinc-300 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
+                <span className="font-semibold">
+                  {showAdvancedDetails ? 'Hide Extra Details' : 'Add Extra Details (Route, Workshop, Weather)'}
+                </span>
+                {(postType !== 'CAR_STORY' || selectedExpeditionId) && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">
+                    Active
                   </span>
-                  <div>
-                    <span className="text-white font-bold block">{cadenceResult.rankTitle}</span>
-                    <span className="text-[10px] text-zinc-400">Score: {cadenceResult.totalScore}/100</span>
+                )}
+              </div>
+              {showAdvancedDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+
+            {showAdvancedDetails && (
+              <div className={`p-4 pt-1 space-y-4 border-t ${isWhiteYellow ? 'border-zinc-200' : 'border-zinc-800/60'}`}>
+                
+                {/* Post Category Picker */}
+                <div>
+                  <label className={`text-[11px] uppercase font-bold block mb-1.5 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                    Post Category
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {[
+                      { type: 'CAR_STORY', label: 'Car Story', icon: Camera },
+                      { type: 'DRIVE', label: 'Drive Route', icon: Compass },
+                      { type: 'BUILD_UPDATE', label: 'Workshop', icon: Wrench },
+                      { type: 'QUESTION', label: 'Question', icon: HelpCircle },
+                    ].map((opt) => {
+                      const Icon = opt.icon;
+                      return (
+                        <button
+                          type="button"
+                          key={opt.type}
+                          onClick={() => setPostType(opt.type as any)}
+                          className={`py-2 px-2.5 rounded-xl text-xs font-semibold transition border flex items-center justify-center gap-1.5 ${
+                            postType === opt.type
+                              ? isWhiteYellow
+                                ? 'bg-yellow-400 text-zinc-950 border-yellow-500 font-bold shadow-xs'
+                                : 'bg-amber-400 text-zinc-950 border-amber-400 shadow-md font-bold'
+                              : isWhiteYellow
+                                ? 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100'
+                                : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white'
+                          }`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          <span>{opt.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-emerald-400 font-bold block">+{cadenceResult.respectsEarned} RESPECTS</span>
-                  <span className="text-[10px] text-zinc-500">Awareness Accord</span>
-                </div>
+
+                {/* Conditional Workshop Inputs */}
+                {postType === 'BUILD_UPDATE' && (
+                  <div className="p-3.5 rounded-2xl bg-zinc-900 border border-amber-500/20 space-y-3">
+                    <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
+                      <Wrench className="w-4 h-4 text-amber-400" />
+                      <span className="text-xs font-bold text-amber-300">
+                        Workshop Details
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                      <div>
+                        <label className="text-[10px] text-zinc-400 block mb-1">Workshop or Specialist</label>
+                        <input
+                          type="text"
+                          value={workshopName}
+                          onChange={(e) => setWorkshopName(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          placeholder="e.g. Litchfield Motors"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-zinc-400 block mb-1">Work / Component</label>
+                        <input
+                          type="text"
+                          value={componentCategory}
+                          onChange={(e) => setComponentCategory(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          placeholder="e.g. Suspension, Exhaust"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
+                          <PoundSterling className="w-3 h-3 text-amber-400" />
+                          <span>Invoiced Cost (£)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={invoicedCost}
+                          onChange={(e) => setInvoicedCost(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          placeholder="2,850.00"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
+                          <Gauge className="w-3 h-3 text-amber-400" />
+                          <span>Performance / Weight Change</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={performanceDelta}
+                          onChange={(e) => setPerformanceDelta(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          placeholder="+18 BHP / -8 kg"
+                        />
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-2 cursor-pointer pt-1 text-xs text-zinc-300">
+                      <input
+                        type="checkbox"
+                        checked={vatInvoiceNotarized}
+                        onChange={(e) => setVatInvoiceNotarized(e.target.checked)}
+                        className="rounded border-zinc-700 text-amber-400 focus:ring-0"
+                      />
+                      <span className="flex items-center gap-1.5">
+                        <FileCheck2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Cryptographically verify itemised VAT receipt</span>
+                      </span>
+                    </label>
+                  </div>
+                )}
+
+                {/* Conditional Drive Presets & Environmental Inputs */}
+                {(postType === 'DRIVE' || showAdvancedDetails) && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <span className={`text-[11px] uppercase font-bold flex items-center gap-1.5 ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
+                        <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
+                        <span>Drive Route Presets (Optional)</span>
+                      </span>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {EXPEDITION_PRESETS.map((exp) => (
+                          <button
+                            key={exp.id}
+                            type="button"
+                            onClick={() => handleApplyExpeditionPreset(exp)}
+                            className={`p-2 rounded-xl border text-left transition ${
+                              selectedExpeditionId === exp.id
+                                ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/30 text-white font-bold'
+                                : isWhiteYellow
+                                  ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-100'
+                                  : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
+                            }`}
+                          >
+                            <div className="flex items-center gap-1 text-xs">
+                              <span>{exp.icon}</span>
+                              <span className="truncate font-semibold">{exp.label}</span>
+                            </div>
+                            <div className="text-[10px] text-zinc-400 truncate mt-0.5">
+                              {exp.frictionMu} µ Grip
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                      <div>
+                        <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
+                          <CloudRain className="w-3 h-3 text-cyan-400" />
+                          <span>Road Surface</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={surfaceCondition}
+                          onChange={(e) => setSurfaceCondition(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs outline-none"
+                          placeholder="Damp Bitumen"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-zinc-400 block mb-1">Atmospheric Pressure</label>
+                        <input
+                          type="text"
+                          value={barometricPressure}
+                          onChange={(e) => setBarometricPressure(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs outline-none"
+                          placeholder="1018 hPa"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-zinc-400 block mb-1">Fuel Grade</label>
+                        <input
+                          type="text"
+                          value={fuelGrade}
+                          onChange={(e) => setFuelGrade(e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs outline-none"
+                          placeholder="99 RON"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             )}
           </div>
-        </div>
+
+        </form>
 
         {/* ========================================================= */}
-        {/* POST DETAILS FORM                                         */}
+        {/* STICKY FOOTER WITH PROMINENT PUBLISH BUTTON (High Impact Fix #2) */}
         {/* ========================================================= */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          
-          {/* Post Object Type (If Feed Post Mode) */}
-          {mode === 'post' && (
-            <div>
-              <label className="text-[11px] font-mono-numbers uppercase text-zinc-400 block mb-1.5 tracking-wider">
-                Automotive Object Classification
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {[
-                  { type: 'CAR_STORY', label: 'Candid Artifact', icon: Camera },
-                  { type: 'DRIVE', label: 'Expedition Route', icon: Compass },
-                  { type: 'BUILD_UPDATE', label: 'Workshop Ledger', icon: Wrench },
-                  { type: 'QUESTION', label: 'Guild Inquiry', icon: HelpCircle },
-                ].map((opt) => {
-                  const Icon = opt.icon;
-                  return (
-                    <button
-                      type="button"
-                      key={opt.type}
-                      onClick={() => setPostType(opt.type as any)}
-                      className={`py-2 px-2.5 rounded-xl text-xs font-semibold transition border flex items-center justify-center gap-1.5 ${
-                        postType === opt.type
-                          ? 'bg-amber-400 text-zinc-950 border-amber-400 shadow-md font-bold'
-                          : 'bg-zinc-950 text-zinc-400 border-zinc-800/80 hover:text-white hover:border-zinc-700'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                      <span>{opt.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Conditional Atelier Workshop Ledger Inputs */}
-          {postType === 'BUILD_UPDATE' && mode === 'post' && (
-            <div className="p-3.5 rounded-2xl bg-zinc-950 border border-amber-500/20 space-y-3">
-              <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-                <div className="flex items-center gap-2">
-                  <Wrench className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-luxury-display uppercase tracking-wider text-amber-300 font-bold">
-                    Certified Hardware Ledger
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono-numbers text-zinc-400">
-                  PROOF OF WORK NOTARIZATION
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono-numbers">
-                <div>
-                  <label className="text-[10px] text-zinc-400 block mb-1">CERTIFIED WORKSHOP / FITTER</label>
-                  <input
-                    type="text"
-                    value={workshopName}
-                    onChange={(e) => setWorkshopName(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:border-amber-400 outline-none"
-                    placeholder="e.g. Litchfield Motors"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-zinc-400 block mb-1">COMPONENT CLASSIFICATION</label>
-                  <input
-                    type="text"
-                    value={componentCategory}
-                    onChange={(e) => setComponentCategory(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:border-amber-400 outline-none"
-                    placeholder="e.g. Dampers, Exhaust, Brakes"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
-                    <PoundSterling className="w-3 h-3 text-amber-400" />
-                    <span>INVOICED COST (£ GBP)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={invoicedCost}
-                    onChange={(e) => setInvoicedCost(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:border-amber-400 outline-none"
-                    placeholder="e.g. 2,850.00"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
-                    <Gauge className="w-3 h-3 text-amber-400" />
-                    <span>DYNO / WEIGHT DELTA</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={performanceDelta}
-                    onChange={(e) => setPerformanceDelta(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:border-amber-400 outline-none"
-                    placeholder="e.g. +18.5 BHP / -8.4 kg"
-                  />
-                </div>
-              </div>
-
-              <label className="flex items-center gap-2 cursor-pointer pt-1 text-xs text-zinc-300 font-mono-numbers">
-                <input
-                  type="checkbox"
-                  checked={vatInvoiceNotarized}
-                  onChange={(e) => setVatInvoiceNotarized(e.target.checked)}
-                  className="rounded bg-zinc-900 border-zinc-700 text-amber-400 focus:ring-0"
-                />
-                <span className="flex items-center gap-1.5">
-                  <FileCheck2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Attach cryptographic hash of itemised VAT invoice for DVSA V5C provenance</span>
-                </span>
-              </label>
-            </div>
-          )}
-
-          {/* Conditional Expedition Telemetry Inputs */}
-          {postType === 'DRIVE' && mode === 'post' && (
-            <div className="p-3.5 rounded-2xl bg-zinc-950 border border-cyan-500/20 space-y-3">
-              <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-                <div className="flex items-center gap-2">
-                  <Compass className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs font-luxury-display uppercase tracking-wider text-cyan-300 font-bold">
-                    Expedition Telemetry Ledger
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono-numbers text-cyan-400/80">
-                  800M RESIDENTIAL CLOAK ACTIVE
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-mono-numbers">
-                <div>
-                  <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
-                    <CloudRain className="w-3 h-3 text-cyan-400" />
-                    <span>SURFACE CONDITION</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={surfaceCondition}
-                    onChange={(e) => setSurfaceCondition(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:border-cyan-400 outline-none"
-                    placeholder="e.g. Damp Bitumen (12°C)"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-zinc-400 block mb-1">ATMOSPHERIC PRESSURE</label>
-                  <input
-                    type="text"
-                    value={barometricPressure}
-                    onChange={(e) => setBarometricPressure(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:border-cyan-400 outline-none"
-                    placeholder="e.g. 1018 hPa"
-                  />
-                </div>
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-[10px] text-zinc-400 block">FUEL GRADE CONSUMED</label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFuelGrade('Shell V-Power 99 RON (48.2L @ £1.729/L = £83.34)');
-                        showToast({
-                          title: '99 RON Fuel Receipt Notarized',
-                          message: 'Shell V-Power 99 RON • 48.20 Litres @ £1.729/L cryptographically attached.',
-                          type: 'success',
-                          badge: '99 RON'
-                        });
-                      }}
-                      className="text-[9px] font-mono-numbers text-amber-400 hover:text-amber-300 flex items-center gap-1 transition"
-                    >
-                      <Sparkles className="w-2.5 h-2.5" />
-                      <span>Scan 99 RON Receipt</span>
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    value={fuelGrade}
-                    onChange={(e) => setFuelGrade(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:border-cyan-400 outline-none"
-                    placeholder="e.g. Shell V-Power 99"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Title */}
-          <div>
-            <label className={`text-[11px] font-mono-numbers uppercase block mb-1 tracking-wider ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-              Title / Artifact Notation
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={mode === 'story' ? 'e.g. Early Morning Cotswolds Shakedown' : 'e.g. Akrapovič Evolution Line Titanium System Installed'}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none transition font-sans ${
-                isWhiteYellow
-                  ? 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-yellow-500 focus:bg-white'
-                  : 'bg-zinc-950 border-zinc-800 text-white placeholder-zinc-600 focus:border-amber-400/60'
-              }`}
-            />
+        <div className={`p-4 sm:px-6 border-t flex items-center justify-between gap-3 shrink-0 rounded-b-2xl sm:rounded-b-3xl ${
+          isWhiteYellow ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-950/90 border-zinc-800 backdrop-blur-md'
+        }`}>
+          {/* Subtle Privacy Status */}
+          <div className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium">
+            <Check className="w-4 h-4 text-emerald-500" />
+            <span className="hidden sm:inline">Plates & Location Protected</span>
+            <span className="sm:hidden">Protected</span>
           </div>
 
-          {/* Content */}
-          <div>
-            <label className={`text-[11px] font-mono-numbers uppercase block mb-1 tracking-wider ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-              Candid Mechanical Impressions & Driver Notes
-            </label>
-            <textarea
-              rows={3}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Record genuine cold-tyre feel, damping compliance on broken B-roads, fuel consumption, or maintenance insights..."
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm resize-none font-sans transition focus:outline-none ${
-                isWhiteYellow
-                  ? 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-yellow-500 focus:bg-white'
-                  : 'bg-zinc-950 border-zinc-800 text-white placeholder-zinc-600 focus:border-amber-400/60'
-              }`}
-              required
-            />
-          </div>
-
-          {/* Mandatory Pre-Publish Privacy Checklist */}
-          <div className={`p-3.5 rounded-2xl border space-y-2.5 ${
-            isWhiteYellow
-              ? 'bg-emerald-50/70 border-emerald-300'
-              : 'bg-zinc-950 border-zinc-800/80'
-          }`}>
-            <div className={`flex items-center justify-between text-xs font-bold ${isWhiteYellow ? 'text-emerald-950' : 'text-zinc-200'}`}>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span className="font-luxury-display uppercase tracking-wider text-[11px]">Residential Privacy Buffer (Active)</span>
-              </div>
-              <span className={`text-[10px] font-mono-numbers px-2 py-0.5 rounded border font-bold ${
-                isWhiteYellow
-                  ? 'text-emerald-800 bg-emerald-100 border-emerald-300'
-                  : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-              }`}>
-                ACTIVE
-              </span>
-            </div>
-
-            <div className={`space-y-1.5 text-xs font-mono-numbers ${isWhiteYellow ? 'text-zinc-700' : 'text-zinc-400'}`}>
-              <label className="flex items-center gap-2 cursor-pointer transition">
-                <input
-                  type="checkbox"
-                  checked={blurPlateChecked}
-                  onChange={(e) => setBlurPlateChecked(e.target.checked)}
-                  className="rounded border-zinc-300 text-emerald-600 focus:ring-0"
-                />
-                <span>Auto-blur registration plates on uploaded media [DVSA Privacy Rule]</span>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer transition">
-                <input
-                  type="checkbox"
-                  checked={protectEndpointsChecked}
-                  onChange={(e) => setProtectEndpointsChecked(e.target.checked)}
-                  className="rounded border-zinc-300 text-emerald-600 focus:ring-0"
-                />
-                <span>Clip 800m privacy perimeter around residential garaging GPS endpoints</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex items-center justify-end gap-3 pt-2">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={onClose}
-              className={`px-5 py-2.5 rounded-xl border text-xs font-mono-numbers transition ${
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${
                 isWhiteYellow
-                  ? 'border-zinc-300 text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100'
-                  : 'border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900'
+                  ? 'border border-zinc-300 text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100'
+                  : 'border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
             >
               Cancel
             </button>
+
             <button
+              form="create-post-form"
               type="submit"
               disabled={isSubmitting || !content.trim()}
-              className={`px-6 py-2.5 rounded-xl font-bold text-xs font-mono-numbers uppercase tracking-wider transition-all disabled:opacity-50 active:scale-95 shadow-md flex items-center gap-2 ${
+              className={`px-6 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 active:scale-95 shadow-md flex items-center gap-2 ${
                 isWhiteYellow
-                  ? 'bg-yellow-400 hover:bg-yellow-300 text-zinc-950 border border-yellow-500 shadow-yellow-500/20'
+                  ? 'bg-yellow-400 hover:bg-yellow-300 text-zinc-950 border border-yellow-500'
                   : 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-zinc-950'
               }`}
             >
               {isSubmitting ? (
                 <>
                   <div className="w-3.5 h-3.5 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-                  <span>Stamping...</span>
+                  <span>Publishing...</span>
                 </>
               ) : (
-                <>
-                  <Lock className="w-4 h-4 stroke-[2.5]" />
-                  <span>Notarize & Publish to Paddock</span>
-                </>
+                <span>Publish Post</span>
               )}
             </button>
           </div>
-
-        </form>
+        </div>
 
       </div>
     </div>
