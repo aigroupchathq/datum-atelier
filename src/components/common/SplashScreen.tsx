@@ -7,7 +7,6 @@ import {
   ShieldCheck, 
   Image as ImageIcon,
   Disc3,
-  Cpu,
   Flame,
   Gauge
 } from 'lucide-react';
@@ -170,7 +169,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
   const [liveAngle, setLiveAngle] = useState<number>(0);
   const [activeCylinder, setActiveCylinder] = useState<number>(1);
 
-  // Physics animation variables stored in ref to avoid re-rendering bottleneck
+  // Physics animation variables stored in ref
   const physicsRef = useRef({
     currentRpm: 0,
     targetRpm: 0,
@@ -316,12 +315,11 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       const degDelta = (p.currentRpm / 60) * 360 * dt;
       p.crankAngle = (p.crankAngle + degDelta) % 720; // 4-stroke cycle over 720 degrees
 
-      // Hardware-accelerated direct DOM SVG transforms (zero React re-render overhead)
+      // Hardware-accelerated direct DOM SVG transforms
       if (flywheelRef.current) {
         flywheelRef.current.style.transform = `rotate(${p.crankAngle}deg)`;
       }
       if (camGearRef.current) {
-        // Camshaft turns at exactly half crankshaft speed in opposite or geared orientation
         camGearRef.current.style.transform = `rotate(${-p.crankAngle * 0.5}deg)`;
       }
       if (crankWebRef.current) {
@@ -429,10 +427,10 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === ' ') {
         e.preventDefault();
-        handleInteractiveBlip('blip'); // Space = Play with RPM mechanics without opening site
+        handleInteractiveBlip('blip');
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        handleEngageMachine(); // Enter = Start engine and enter site
+        handleEngageMachine();
       } else if (e.key === 'Escape') {
         handleSkip();
       }
@@ -444,9 +442,9 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
   // Cylinder firing positions placed at equal intervals around the circular dial
   const cylinderNodes = car.firingOrder.map((cylNum, i) => {
     const angleRad = (i / car.firingOrder.length) * 2 * Math.PI - Math.PI / 2;
-    const radius = 108;
-    const x = 140 + radius * Math.cos(angleRad);
-    const y = 140 + radius * Math.sin(angleRad);
+    const radius = 118;
+    const x = 150 + radius * Math.cos(angleRad);
+    const y = 150 + radius * Math.sin(angleRad);
     const isCurrentlyFiring = (isStarting || isBlipping || liveRpm > 200) && activeCylinder === cylNum;
     return { cylNum, x, y, isCurrentlyFiring };
   });
@@ -463,29 +461,29 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       {/* ───────────────────────────────────────────────────────────── */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         
-        {/* Optional Wallpaper Overlay (Only if enabled by user) */}
+        {/* Optional Wallpaper Overlay */}
         {showWallpaper && (
           <div className="absolute inset-0 transition-opacity duration-700">
             <img
               src={car.imageSrc}
               alt={car.name}
-              className="w-full h-full object-cover object-center brightness-[0.45] saturate-[0.85] contrast-[1.1]"
+              className="w-full h-full object-cover object-center brightness-[0.38] saturate-[0.8] contrast-[1.15]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#060709] via-[#060709]/80 to-[#060709]/95" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#060709] via-[#060709]/85 to-[#060709]/95" />
           </div>
         )}
 
         {/* Haute-Horlogerie Satin Obsidian Fine Engineering Grids */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,_rgba(251,191,36,0.035)_0%,_transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,_rgba(251,191,36,0.04)_0%,_transparent_65%)]" />
 
         {/* Concentric Horological Calibration Rings */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[720px] rounded-full border border-white/[0.03] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full border border-white/[0.04] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full border border-white/[0.06] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] rounded-full border border-white/[0.025] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-white/[0.035] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-white/[0.05] pointer-events-none" />
 
         {/* Ambient Combustion Glow on Ignition or Interactive Blip */}
         <div 
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-amber-500/10 blur-[100px] pointer-events-none transition-opacity duration-300 ${
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[540px] h-[540px] rounded-full bg-amber-500/15 blur-[120px] pointer-events-none transition-opacity duration-300 ${
             ignitionStage === 'combustion' || isBlipping ? 'opacity-100 scale-110' : 'opacity-0 scale-90'
           }`}
         />
@@ -498,7 +496,7 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
         
         {/* Monogram Brand Hallmark */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-white/[0.07] backdrop-blur-md border border-white/15 flex items-center justify-center font-luxury-display font-bold text-xs text-amber-200">
+          <div className="w-8 h-8 rounded-lg bg-white/[0.06] backdrop-blur-md border border-white/15 flex items-center justify-center font-luxury-display font-bold text-xs text-amber-300 shadow-sm">
             D
           </div>
           <div>
@@ -548,7 +546,6 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
         {/* Right Utility: Wallpaper Toggle + Audio + Fast Skip */}
         <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono-numbers">
           
-          {/* Wallpaper Toggle Button (Classy Posh Void vs Photographic) */}
           <button
             onClick={toggleWallpaper}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-mono-numbers transition backdrop-blur-md cursor-pointer ${
@@ -562,7 +559,6 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
             <span className="hidden sm:inline">{showWallpaper ? 'Wallpaper: On' : 'Wallpaper: Off'}</span>
           </button>
 
-          {/* Audio Mute/Unmute */}
           <button
             onClick={toggleAudio}
             className="p-2 rounded-full bg-black/40 hover:bg-black/70 border border-white/15 text-zinc-400 hover:text-white transition backdrop-blur-md cursor-pointer"
@@ -571,10 +567,9 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
             {audioEnabled ? <Volume2 className="w-3.5 h-3.5 text-amber-400" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
 
-          {/* Instant Enter */}
           <button
             onClick={handleSkip}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.18] border border-white/15 text-[11px] text-zinc-300 hover:text-white transition backdrop-blur-md cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.15] border border-white/15 text-[11px] text-zinc-300 hover:text-white transition backdrop-blur-md cursor-pointer"
           >
             <span>Enter</span>
             <ArrowRight className="w-3 h-3 text-amber-400" />
@@ -584,347 +579,391 @@ export const SplashScreen: FC<SplashScreenProps> = ({ onEnter }) => {
       </header>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 3. CENTERPIECE: ROTATIONAL ENGINE & INTERACTIVE PLAYGROUND    */}
+      {/* 3. COCKPIT HORIZON: UNIFIED 3-COLUMN HAUTE-HORLOGERIE STANCE  */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <main className="relative z-20 max-w-7xl mx-auto w-full px-6 sm:px-12 flex-1 flex flex-col items-center justify-center my-auto py-2">
+      <main className="relative z-20 max-w-7xl mx-auto w-full px-6 sm:px-12 flex-1 flex flex-col justify-center my-auto py-4">
         
-        <div className="flex flex-col items-center justify-center space-y-4 max-w-2xl text-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
           
-          {/* THE ROTATIONAL ENGINE ESCAPEMENT DIAL (Precision SVG) */}
-          <div className="relative w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center">
+          {/* ── LEFT FLANK: MACHINE IDENTITY & SCULPTURAL TYPOGRAPHY (4 COLS) ── */}
+          <div className="lg:col-span-4 text-center lg:text-left space-y-4">
             
-            <svg 
-              className="w-full h-full overflow-visible" 
-              viewBox="0 0 280 280"
-            >
-              {/* Static Outer Degree Calibration Scale */}
-              <circle
-                cx="140"
-                cy="140"
-                r="134"
-                fill="none"
-                stroke="rgba(255, 255, 255, 0.08)"
-                strokeWidth="1"
-              />
-              <circle
-                cx="140"
-                cy="140"
-                r="130"
-                fill="none"
-                stroke="rgba(255, 255, 255, 0.04)"
-                strokeWidth="1"
-                strokeDasharray="2 6"
-              />
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-mono-numbers text-amber-300/90 tracking-widest uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              <span>{car.chassisCode}</span>
+            </div>
 
-              {/* 1. ROTATING FLYWHEEL RING GEAR (Outer Teeth) */}
-              <g 
-                ref={flywheelRef} 
-                className="origin-center will-change-transform"
-                style={{ transformOrigin: '140px 140px' }}
+            <div className="space-y-1">
+              <h1 className="font-luxury-display text-5xl sm:text-6xl xl:text-7xl font-light tracking-[0.15em] uppercase text-white leading-none">
+                {car.name}
+              </h1>
+              <p className="font-serif italic text-lg sm:text-xl text-zinc-300 font-light tracking-wide">
+                {car.subtitle}
+              </p>
+            </div>
+
+            {/* Precision Mechanical Specification Block */}
+            <div className="pt-2 space-y-1.5 text-xs font-mono-numbers text-zinc-400 max-w-sm mx-auto lg:mx-0">
+              <div className="flex justify-between py-1 border-b border-white/[0.06]">
+                <span className="text-zinc-500 uppercase text-[10px]">Induction Architecture</span>
+                <span className="text-zinc-200">{car.engine}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/[0.06]">
+                <span className="text-zinc-500 uppercase text-[10px]">Power & Torque</span>
+                <span className="text-white font-bold">{car.power} • {car.torque}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/[0.06]">
+                <span className="text-zinc-500 uppercase text-[10px]">Four-Stroke Firing</span>
+                <span className="text-amber-300 font-semibold">{car.firingOrder.join(' - ')}</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span className="text-zinc-500 uppercase text-[10px]">Mechanical Rev Limit</span>
+                <span className="text-rose-400 font-bold">{car.redlineRpm.toLocaleString()} RPM</span>
+              </div>
+            </div>
+
+          </div>
+
+          {/* ── CENTER JEWEL: ROTATIONAL ESCAPEMENT DIAL & PUSHERS (4 COLS) ── */}
+          <div className="lg:col-span-4 flex flex-col items-center justify-center space-y-5">
+            
+            {/* The Monumental 300px Escapement Gauge */}
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
+              
+              <svg 
+                className="w-full h-full overflow-visible drop-shadow-[0_15px_30px_rgba(0,0,0,0.9)]" 
+                viewBox="0 0 300 300"
               >
-                {/* Ring Gear Perimeter */}
+                {/* Precision Outer Stepped Bezel Ring */}
                 <circle
-                  cx="140"
-                  cy="140"
-                  r="124"
+                  cx="150"
+                  cy="150"
+                  r="144"
+                  fill="#08090D"
+                  stroke="rgba(255, 255, 255, 0.09)"
+                  strokeWidth="1.5"
+                />
+                <circle
+                  cx="150"
+                  cy="150"
+                  r="140"
                   fill="none"
-                  stroke="rgba(251, 191, 36, 0.35)"
-                  strokeWidth="2.5"
+                  stroke="rgba(251, 191, 36, 0.2)"
+                  strokeWidth="0.75"
+                  strokeDasharray="1 5"
                 />
 
-                {/* 36 Machined Flywheel Teeth Radial Ticks */}
-                {Array.from({ length: 36 }).map((_, i) => {
-                  const deg = (i / 36) * 360;
-                  return (
-                    <line
-                      key={i}
-                      x1="140"
-                      y1="12"
-                      x2="140"
-                      y2="19"
-                      stroke={i % 6 === 0 ? 'rgba(251, 191, 36, 0.8)' : 'rgba(255, 255, 255, 0.25)'}
-                      strokeWidth={i % 6 === 0 ? '2' : '1'}
-                      transform={`rotate(${deg} 140 140)`}
-                    />
-                  );
-                })}
-
-                {/* Flywheel Weight Cutout Windows */}
-                {[0, 90, 180, 270].map((deg) => (
+                {/* 1. ROTATING FLYWHEEL RING GEAR (Outer Teeth) */}
+                <g 
+                  ref={flywheelRef} 
+                  className="origin-center will-change-transform"
+                  style={{ transformOrigin: '150px 150px' }}
+                >
                   <circle
-                    key={deg}
-                    cx="140"
-                    cy="40"
-                    r="8"
+                    cx="150"
+                    cy="150"
+                    r="134"
                     fill="none"
-                    stroke="rgba(255, 255, 255, 0.12)"
-                    strokeWidth="1"
-                    transform={`rotate(${deg} 140 140)`}
+                    stroke="rgba(251, 191, 36, 0.45)"
+                    strokeWidth="2.5"
                   />
-                ))}
-              </g>
 
-              {/* 2. COUNTER-ROTATING CAMSHAFT TIMING GEAR (Half-Speed 1:2 DOHC) */}
-              <g 
-                ref={camGearRef} 
-                className="origin-center will-change-transform"
-                style={{ transformOrigin: '140px 140px' }}
-              >
-                <circle
-                  cx="140"
-                  cy="140"
-                  r="86"
-                  fill="none"
-                  stroke="rgba(255, 255, 255, 0.12)"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 8"
-                />
+                  {/* 36 Machined Flywheel Teeth Radial Ticks */}
+                  {Array.from({ length: 36 }).map((_, i) => {
+                    const deg = (i / 36) * 360;
+                    return (
+                      <line
+                        key={i}
+                        x1="150"
+                        y1="12"
+                        x2="150"
+                        y2="20"
+                        stroke={i % 6 === 0 ? '#FBBF24' : 'rgba(255, 255, 255, 0.25)'}
+                        strokeWidth={i % 6 === 0 ? '2' : '1'}
+                        transform={`rotate(${deg} 150 150)`}
+                      />
+                    );
+                  })}
 
-                {/* Vernier Cam Timing Marks */}
-                {[0, 120, 240].map((deg) => (
-                  <line
-                    key={deg}
-                    x1="140"
-                    y1="50"
-                    x2="140"
-                    y2="60"
-                    stroke="#F59E0B"
-                    strokeWidth="1.5"
-                    transform={`rotate(${deg} 140 140)`}
-                  />
-                ))}
-              </g>
+                  {/* Weight Cutout Windows */}
+                  {[0, 60, 120, 180, 240, 300].map((deg) => (
+                    <circle
+                      key={deg}
+                      cx="150"
+                      cy="44"
+                      r="6.5"
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.12)"
+                      strokeWidth="1"
+                      transform={`rotate(${deg} 150 150)`}
+                    />
+                  ))}
+                </g>
 
-              {/* 3. CENTRAL CRANKSHAFT COUNTERWEIGHT WEB & JOURNAL */}
-              <g 
-                ref={crankWebRef} 
-                className="origin-center will-change-transform"
-                style={{ transformOrigin: '140px 140px' }}
-              >
-                {/* Eccentric Crank Web Lobe */}
-                <path
-                  d="M 125 140 C 125 105, 155 105, 155 140 C 155 175, 125 175, 125 140 Z"
-                  fill="rgba(251, 191, 36, 0.1)"
-                  stroke="rgba(251, 191, 36, 0.5)"
-                  strokeWidth="1.5"
-                />
-
-                {/* Connecting Rod Journal Pin (Orbiting Throw) */}
-                <circle
-                  cx="140"
-                  cy="118"
-                  r="7"
-                  fill="#0B0C10"
-                  stroke="#F59E0B"
-                  strokeWidth="2"
-                />
-
-                {/* Crankshaft Center Axis */}
-                <circle
-                  cx="140"
-                  cy="140"
-                  r="4"
-                  fill="#F59E0B"
-                />
-              </g>
-
-              {/* 4. STATIC CYLINDER FIRING ORDER STROBE NODES */}
-              {cylinderNodes.map(({ cylNum, x, y, isCurrentlyFiring }) => (
-                <g key={cylNum} className="transition-all duration-150">
-                  {/* Subtle Node Circle */}
+                {/* 2. COUNTER-ROTATING CAMSHAFT TIMING GEAR (Half-Speed 1:2 DOHC) */}
+                <g 
+                  ref={camGearRef} 
+                  className="origin-center will-change-transform"
+                  style={{ transformOrigin: '150px 150px' }}
+                >
                   <circle
-                    cx={x}
-                    cy={y}
-                    r={isCurrentlyFiring ? 12 : 9}
-                    fill={isCurrentlyFiring ? 'rgba(251, 191, 36, 0.25)' : 'rgba(11, 12, 16, 0.85)'}
-                    stroke={isCurrentlyFiring ? '#F59E0B' : 'rgba(255, 255, 255, 0.2)'}
-                    strokeWidth={isCurrentlyFiring ? 2 : 1}
-                    className="transition-all duration-100"
+                    cx="150"
+                    cy="150"
+                    r="94"
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.15)"
+                    strokeWidth="1.5"
+                    strokeDasharray="4 8"
                   />
-                  {/* Cylinder Number Marker */}
-                  <text
-                    x={x}
-                    y={y + 3}
-                    textAnchor="middle"
-                    fontSize="8"
-                    fontFamily="monospace"
-                    fontWeight="bold"
-                    fill={isCurrentlyFiring ? '#FCD34D' : 'rgba(255, 255, 255, 0.5)'}
-                  >
-                    #{cylNum}
-                  </text>
-                  {/* Glow Ring on Combustion Strike */}
-                  {isCurrentlyFiring && (
+
+                  {/* Vernier Cam Timing Marks */}
+                  {[0, 120, 240].map((deg) => (
+                    <line
+                      key={deg}
+                      x1="150"
+                      y1="56"
+                      x2="150"
+                      y2="66"
+                      stroke="#F59E0B"
+                      strokeWidth="1.5"
+                      transform={`rotate(${deg} 150 150)`}
+                    />
+                  ))}
+                </g>
+
+                {/* 3. CENTRAL CRANKSHAFT COUNTERWEIGHT WEB & JOURNAL */}
+                <g 
+                  ref={crankWebRef} 
+                  className="origin-center will-change-transform"
+                  style={{ transformOrigin: '150px 150px' }}
+                >
+                  <path
+                    d="M 134 150 C 134 112, 166 112, 166 150 C 166 188, 134 188, 134 150 Z"
+                    fill="rgba(251, 191, 36, 0.12)"
+                    stroke="rgba(251, 191, 36, 0.6)"
+                    strokeWidth="1.5"
+                  />
+
+                  {/* Connecting Rod Journal Pin (Orbiting Throw) */}
+                  <circle
+                    cx="150"
+                    cy="126"
+                    r="8"
+                    fill="#08090D"
+                    stroke="#F59E0B"
+                    strokeWidth="2"
+                  />
+
+                  <circle
+                    cx="150"
+                    cy="150"
+                    r="4.5"
+                    fill="#F59E0B"
+                  />
+                </g>
+
+                {/* 4. STATIC CYLINDER FIRING ORDER STROBE NODES */}
+                {cylinderNodes.map(({ cylNum, x, y, isCurrentlyFiring }) => (
+                  <g key={cylNum} className="transition-all duration-100">
                     <circle
                       cx={x}
                       cy={y}
-                      r={16}
-                      fill="none"
-                      stroke="#F59E0B"
-                      strokeWidth="1"
-                      className="animate-ping opacity-75"
+                      r={isCurrentlyFiring ? 13 : 9.5}
+                      fill={isCurrentlyFiring ? 'rgba(251, 191, 36, 0.3)' : 'rgba(12, 14, 18, 0.95)'}
+                      stroke={isCurrentlyFiring ? '#FBBF24' : 'rgba(255, 255, 255, 0.22)'}
+                      strokeWidth={isCurrentlyFiring ? 2 : 1}
+                      className="transition-all duration-100"
                     />
-                  )}
-                </g>
-              ))}
+                    <text
+                      x={x}
+                      y={y + 3.5}
+                      textAnchor="middle"
+                      fontSize="8.5"
+                      fontFamily="monospace"
+                      fontWeight="bold"
+                      fill={isCurrentlyFiring ? '#FDE68A' : 'rgba(255, 255, 255, 0.55)'}
+                    >
+                      #{cylNum}
+                    </text>
+                    {isCurrentlyFiring && (
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r="18"
+                        fill="none"
+                        stroke="#FBBF24"
+                        strokeWidth="1"
+                        className="animate-ping opacity-80"
+                      />
+                    )}
+                  </g>
+                ))}
 
-            </svg>
+              </svg>
 
-            {/* Center Status Badge Overlay */}
-            <div className="absolute flex flex-col items-center justify-center pointer-events-none text-center">
-              <span className="text-[9px] font-mono-numbers text-zinc-500 uppercase tracking-widest block">
-                {liveRpm > 50 ? 'ROTATING' : 'STANDBY'}
-              </span>
-              <span className="text-xl sm:text-2xl font-black font-mono-numbers tracking-tight text-white mt-0.5">
-                {liveRpm} <span className="text-xs text-amber-400 font-normal">RPM</span>
-              </span>
-              <span className="text-[9px] font-mono-numbers text-zinc-400 tracking-wider uppercase mt-0.5">
-                {liveRpm > 50 ? `CYL #${activeCylinder} IGNITING` : 'TDC READY'}
-              </span>
+              {/* Center Gauge Telemetry Core */}
+              <div className="absolute flex flex-col items-center justify-center pointer-events-none text-center">
+                <span className="text-[9px] font-mono-numbers text-zinc-500 uppercase tracking-widest block">
+                  {liveRpm > 50 ? 'ROTATING' : 'STANDBY'}
+                </span>
+                <span className="text-2xl sm:text-3xl font-black font-mono-numbers tracking-tight text-white mt-0.5">
+                  {liveRpm} <span className="text-xs text-amber-400 font-normal">RPM</span>
+                </span>
+                <span className="text-[9px] font-mono-numbers text-zinc-400 tracking-wider uppercase mt-0.5">
+                  {liveRpm > 50 ? `CYL #${activeCylinder} IGNITING` : 'TDC READY'}
+                </span>
+              </div>
+
+            </div>
+
+            {/* ── INTEGRATED CHRONOGRAPH PUSHERS & SCRUBBER (No container box) ── */}
+            <div className="w-full max-w-xs space-y-2.5">
+              
+              {/* Dual Milled Aerospace Pushers */}
+              <div className="flex items-center gap-2 w-full">
+                <button
+                  type="button"
+                  onClick={() => handleInteractiveBlip('blip')}
+                  disabled={isStarting}
+                  className="flex-1 py-2 px-3 rounded-full bg-white/[0.05] hover:bg-amber-500/20 border border-white/15 hover:border-amber-400/50 text-zinc-200 hover:text-amber-300 font-mono-numbers text-[11px] font-bold tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-sm"
+                  title="Blip throttle to spin rotational meter without opening site"
+                >
+                  <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Blip (+3.6k)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleInteractiveBlip('redline')}
+                  disabled={isStarting}
+                  className="flex-1 py-2 px-3 rounded-full bg-white/[0.05] hover:bg-rose-500/20 border border-white/15 hover:border-rose-400/50 text-zinc-200 hover:text-rose-300 font-mono-numbers text-[11px] font-bold tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-sm"
+                  title="Test redline surge"
+                >
+                  <Gauge className="w-3.5 h-3.5 text-rose-400" />
+                  <span>Redline</span>
+                </button>
+              </div>
+
+              {/* Minimalist Hairline RPM Scrubber */}
+              <div className="space-y-1 px-1">
+                <input
+                  type="range"
+                  min={0}
+                  max={car.redlineRpm}
+                  step={50}
+                  value={sliderRpm}
+                  onChange={(e) => handleSliderChange(parseInt(e.target.value))}
+                  className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-400 focus:outline-none"
+                  title="Drag to scrub rotational velocity manually"
+                />
+                <div className="flex items-center justify-between text-[8px] font-mono-numbers text-zinc-500">
+                  <span>REST</span>
+                  <span className="text-amber-400 font-bold tracking-wider">
+                    {sliderRpm > 0 ? `${sliderRpm} RPM SCRUB` : 'DRAG TO SCRUB'}
+                  </span>
+                  <span>{car.redlineRpm} RPM</span>
+                </div>
+              </div>
+
             </div>
 
           </div>
 
-          {/* ───────────────────────────────────────────────────────── */}
-          {/* SEPARATE INTERACTIVE RPM PLAYGROUND (DOES NOT ENTER SITE) */}
-          {/* ───────────────────────────────────────────────────────── */}
-          <div className="flex flex-col items-center gap-2.5 p-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md w-full max-w-md shadow-lg">
-            <div className="flex items-center justify-between w-full text-[10px] font-mono-numbers px-1">
-              <span className="text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5 text-amber-400" />
-                <span>ROTATIONAL TEST BENCH</span>
-              </span>
-              <span className="text-amber-300 font-bold bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
-                PLAYGROUND • DOES NOT ENTER
-              </span>
+          {/* ── RIGHT FLANK: OROGRAPHIC & ENVIRONMENTAL TELEMETRY (4 COLS) ── */}
+          <div className="lg:col-span-4 text-center lg:text-right space-y-4">
+            
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-mono-numbers text-emerald-400/90 tracking-widest uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>OROGRAPHIC TELEMETRY</span>
             </div>
 
-            {/* Interactive Throttle Buttons */}
-            <div className="flex items-center gap-2 w-full">
-              <button
-                type="button"
-                onClick={() => handleInteractiveBlip('blip')}
-                disabled={isStarting}
-                className="flex-1 py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-xs"
-                title="Blip throttle to interact with rotational meter without entering site"
-              >
-                <Flame className="w-3.5 h-3.5" />
-                <span>⚡ Rev Throttle Blip</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleInteractiveBlip('redline')}
-                disabled={isStarting}
-                className="py-2 px-3.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-zinc-200 font-mono-numbers text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-xs"
-                title="Test high-RPM redline surge"
-              >
-                <Gauge className="w-3.5 h-3.5 text-rose-400" />
-                <span>Redline Surge</span>
-              </button>
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono-numbers text-zinc-500 uppercase tracking-widest block">
+                Active Ground Coordinates
+              </span>
+              <p className="font-mono-numbers text-sm text-zinc-200 font-semibold">
+                {car.location}
+              </p>
+              <p className="font-mono-numbers text-xs text-zinc-400">
+                {car.coordinates}
+              </p>
             </div>
 
-            {/* Interactive Continuous RPM Drag Slider */}
-            <div className="w-full space-y-1 pt-0.5">
-              <input
-                type="range"
-                min={0}
-                max={car.redlineRpm}
-                step={50}
-                value={sliderRpm}
-                onChange={(e) => handleSliderChange(parseInt(e.target.value))}
-                className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-400 focus:outline-none"
-                title="Drag to spin rotational meter manually"
-              />
-              <div className="flex items-center justify-between text-[9px] font-mono-numbers text-zinc-500">
-                <span>0 RPM (Rest)</span>
-                <span className="text-amber-400 font-bold">
-                  Drag to Spin: {sliderRpm.toLocaleString()} RPM
-                </span>
-                <span className="text-rose-400 font-bold">Redline {car.redlineRpm.toLocaleString()}</span>
+            {/* Dynamic Telemetry Metric Strip */}
+            <div className="pt-2 space-y-1.5 text-xs font-mono-numbers text-zinc-400 max-w-sm mx-auto lg:ml-auto lg:mr-0">
+              <div className="flex justify-between py-1 border-b border-white/[0.06]">
+                <span className="text-zinc-500 uppercase text-[10px]">Road Surface Condition</span>
+                <span className="text-zinc-200">{car.weather}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/[0.06]">
+                <span className="text-zinc-500 uppercase text-[10px]">Tarmac Friction Accord</span>
+                <span className="text-emerald-400 font-bold">μ {car.frictionMu} Adhesion</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/[0.06]">
+                <span className="text-zinc-500 uppercase text-[10px]">Instantaneous Crank</span>
+                <span className="text-amber-400 font-bold">{liveAngle}° BTDC</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span className="text-zinc-500 uppercase text-[10px]">Valvetrain Ratio</span>
+                <span className="text-zinc-300">1:2 DOHC Continuous</span>
               </div>
             </div>
+
           </div>
 
-          {/* Vehicle Identity & Engineering Specifications */}
-          <div className="space-y-1.5 pt-1">
-            <h1 className="font-luxury-display text-4xl sm:text-5xl font-light tracking-[0.2em] uppercase text-white/95 leading-none">
-              {car.name}
-            </h1>
-            <p className="font-serif italic text-sm sm:text-lg text-zinc-300 font-light tracking-wide">
-              {car.subtitle}
-            </p>
+        </div>
+
+        {/* ── LOWER ANCHOR: THE MILLED OBSIDIAN HALO IGNITION SWITCH ── */}
+        <div className="pt-8 flex flex-col items-center justify-center gap-2.5">
+          
+          <button
+            type="button"
+            onClick={handleEngageMachine}
+            disabled={isStarting}
+            className={`group relative px-10 py-3.5 rounded-full font-mono-numbers text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 cursor-pointer flex items-center gap-3.5 border backdrop-blur-xl shadow-[0_15px_35px_rgba(0,0,0,0.8)] ${
+              isStarting
+                ? 'bg-amber-400 text-black border-amber-300 scale-[0.98] shadow-[0_0_40px_rgba(251,191,36,0.45)]'
+                : 'bg-[#0E1015] hover:bg-[#151720] text-zinc-100 border-amber-500/40 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(251,191,36,0.25)] active:scale-95'
+            }`}
+          >
+            <Disc3 className={`w-4 h-4 transition-transform duration-700 ${
+              isStarting ? 'animate-spin text-black' : 'group-hover:rotate-90 text-amber-400'
+            }`} />
             
-            {/* Fine Monospace Engineering Specification Strip */}
-            <div className="flex flex-wrap items-center justify-center gap-2.5 text-[11px] font-mono-numbers text-zinc-400">
-              <span className="text-zinc-200">{car.engine}</span>
-              <span className="text-zinc-600">•</span>
-              <span className="text-white font-bold">{car.power}</span>
-              <span className="text-zinc-600">•</span>
-              <span>{car.torque}</span>
-              <span className="text-zinc-600">•</span>
-              <span className="text-amber-300">FIRING: {car.firingOrder.join('-')}</span>
-            </div>
-          </div>
-
-          {/* ───────────────────────────────────────────────────────────── */}
-          {/* THE PRIMARY START BUTTON (ONLY THIS ACTION ENTERS THE SITE)   */}
-          {/* ───────────────────────────────────────────────────────────── */}
-          <div className="pt-1 flex flex-col items-center gap-2">
-            <button
-              type="button"
-              onClick={handleEngageMachine}
-              disabled={isStarting}
-              className={`group relative px-9 py-3.5 rounded-full font-mono-numbers text-xs font-bold uppercase tracking-[0.22em] transition-all duration-300 cursor-pointer flex items-center gap-3 border shadow-2xl ${
-                isStarting
-                  ? 'bg-amber-400 text-black border-amber-300 scale-[0.98] shadow-[0_0_35px_rgba(251,191,36,0.35)]'
-                  : 'bg-white hover:bg-zinc-100 text-black border-white hover:shadow-[0_0_30px_rgba(255,255,255,0.25)] active:scale-95'
-              }`}
-            >
-              <Disc3 className={`w-4 h-4 transition-transform duration-700 ${
-                isStarting ? 'animate-spin text-black' : 'group-hover:rotate-90 text-amber-500'
-              }`} />
-              
-              <span>
-                {ignitionStage === 'solenoid' && 'Engaging Starter Motor...'}
-                {ignitionStage === 'combustion' && 'Combustion Surge...'}
-                {ignitionStage === 'ready' && 'Systems Harmonized'}
-                {ignitionStage === 'idle' && 'Start Engine & Enter Atelier'}
-              </span>
-
-              <ArrowRight className={`w-3.5 h-3.5 transition-transform duration-300 ${
-                isStarting ? 'translate-x-1' : 'group-hover:translate-x-1 text-black'
-              }`} />
-            </button>
-
-            {/* Keyboard Launch Tooltip */}
-            <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-500">
-              Press <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/50 text-zinc-300">Space</kbd> to Rev Blip • <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/50 text-zinc-300">Enter</kbd> to Launch
+            <span>
+              {ignitionStage === 'solenoid' && 'Engaging Starter Motor...'}
+              {ignitionStage === 'combustion' && 'Combustion Surge...'}
+              {ignitionStage === 'ready' && 'Systems Harmonized'}
+              {ignitionStage === 'idle' && 'Engage Chassis & Enter Atelier'}
             </span>
-          </div>
+
+            <ArrowRight className={`w-3.5 h-3.5 transition-transform duration-300 ${
+              isStarting ? 'translate-x-1' : 'group-hover:translate-x-1 text-amber-400'
+            }`} />
+          </button>
+
+          {/* Quiet Keyboard Guide */}
+          <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-zinc-500">
+            Press <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/60 text-zinc-300">Space</kbd> to Rev Blip • <kbd className="px-1.5 py-0.5 rounded border border-white/15 bg-black/60 text-zinc-300">Enter</kbd> to Launch
+          </span>
 
         </div>
 
       </main>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 4. FOOTER: ROTATIONAL TELEMETRY & PROVENANCE HALLMARK         */}
+      {/* 4. FOOTER: CHASSIS PROVENANCE HALLMARK                        */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <footer className="relative z-20 pb-4 px-6 sm:px-12 max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-2 text-[9px] font-mono-numbers uppercase tracking-[0.25em] text-zinc-500 border-t border-white/[0.06] pt-3">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-zinc-400">
-            <Cpu className="w-3 h-3 text-amber-400" />
-            <span>CRANK: {liveAngle}° BTDC</span>
-          </div>
-          <span>•</span>
-          <span>VALVETRAIN RATIO: 1:2 DOHC</span>
-          <span>•</span>
-          <span className="text-emerald-400 font-bold">μ {car.frictionMu} ADHESION</span>
-        </div>
-
+      <footer className="relative z-20 pb-4 px-6 sm:px-12 max-w-7xl mx-auto w-full flex items-center justify-between text-[9px] font-mono-numbers uppercase tracking-[0.25em] text-zinc-500 border-t border-white/[0.06] pt-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-3 h-3 text-emerald-500" />
           <span>DATUM ATELIER // ZERO-KNOWLEDGE CHASSIS PROVENANCE</span>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-4">
+          <span>HAUTE-HORLOGERIE INSTRUMENTATION</span>
+          <span>•</span>
+          <span>EDITION 2026 // vD</span>
         </div>
       </footer>
 
