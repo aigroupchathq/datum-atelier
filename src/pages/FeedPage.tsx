@@ -5,6 +5,7 @@ import { mockMayaVehicle, mockOtherVehicles } from '../data/mockData';
 import type { CommunityPost } from '../types';
 import { FeedCard } from '../components/feed/FeedCard';
 import { StoriesBar } from '../components/feed/StoriesBar';
+import { FeedEmptyState } from '../components/feed/FeedEmptyState';
 import { GripMetricCard } from '../components/telemetry/GripMetricCard';
 import { fetchPassLiveWeather, type PassLiveWeatherData } from '../utils/openMeteoWeather';
 import { useTheme } from '../context/ThemeContext';
@@ -58,8 +59,12 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<'maya' | 'kuro'>('maya');
-  const [followedCars, setFollowedCars] = useState<Record<string, boolean>>({
-    'kuro_gt3': true, 'yuki_gr_yaris': false, 'apex_720s': false, 'e30_heritage': false
+  const [followedCars, setFollowedCars] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('datum_followed_handles');
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return { 'kuro_gt3': true, 'yuki_gr_yaris': false, 'apex_720s': false, 'e30_heritage': false };
   });
   const [liveSnakePassWeather, setLiveSnakePassWeather] = useState<PassLiveWeatherData | null>(null);
 
@@ -78,8 +83,13 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
     return () => clearTimeout(t);
   }, []);
 
-  const toggleFollow = (handle: string) =>
-    setFollowedCars(prev => ({ ...prev, [handle]: !prev[handle] }));
+  const toggleFollow = (handle: string) => {
+    setFollowedCars(prev => {
+      const next = { ...prev, [handle]: !prev[handle] };
+      try { localStorage.setItem('datum_followed_handles', JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  };
 
   const handleLoadMore = () => {
     setIsLoadingMore(true);
@@ -334,7 +344,9 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
                       All verified sovereign journals up to date
                     </p>
                   </div>
-                ) : null}
+                ) : (
+                  <FeedEmptyState filterId={selectedFilter} onOpenCreatePost={onOpenCreatePost} />
+                )}
               </>
             )}
           </div>

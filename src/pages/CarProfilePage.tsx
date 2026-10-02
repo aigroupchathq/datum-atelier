@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { PlateBlurImage } from '../components/common/PlateBlurImage';
 import { ProvenanceBadge } from '../components/common/ProvenanceBadge';
 import { VehiclePassportModal } from '../components/common/VehiclePassportModal';
+import { ProvenanceBreakdownModal } from '../components/common/ProvenanceBreakdownModal';
 import { AcousticStudioModal } from '../components/common/AcousticStudioModal';
 import { CommissioningAtelierModal } from '../components/atelier/CommissioningAtelierModal';
 import { TransitCarnetModal } from '../components/logistics/TransitCarnetModal';
@@ -601,6 +602,7 @@ export const CarProfilePage: FC = () => {
   const [isCommissioningOpen, setIsCommissioningOpen] = useState<boolean>(false);
   const [isTransitCarnetOpen, setIsTransitCarnetOpen] = useState<boolean>(false);
   const [isTyrePyrometerOpen, setIsTyrePyrometerOpen] = useState<boolean>(false);
+  const [isProvenanceBreakdownOpen, setIsProvenanceBreakdownOpen] = useState<boolean>(false);
   const { showToast } = useToast();
 
   const car = ATELIER_VEHICLES[selectedVehicleId] || ATELIER_VEHICLES['car-maya-m3'];
@@ -873,10 +875,15 @@ export const CarProfilePage: FC = () => {
                 <span className="text-xs font-mono-numbers text-zinc-400 px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.1]">
                   COMMISSION NO. 04
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-mono-numbers font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setIsProvenanceBreakdownOpen(true)}
+                  className="px-3 py-1 rounded-full text-xs font-mono-numbers font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 flex items-center gap-1 cursor-pointer transition"
+                  title="Inspect Provenance Score Breakdown"
+                >
                   <Award className="w-3.5 h-3.5" />
                   {car.provenanceScore}/100 PROVENANCE
-                </span>
+                </button>
                 <span className="px-3 py-1 rounded-full text-xs font-mono-numbers text-zinc-400 bg-white/[0.04] border border-white/[0.08] flex items-center gap-1">
                   <Lock className="w-3 h-3 text-zinc-500" />
                   REG: [PROTECTED]
@@ -1046,14 +1053,19 @@ export const CarProfilePage: FC = () => {
                 <span className="text-xl font-bold text-white mt-0.5 block">{car.mileage.toLocaleString()} mi</span>
                 <span className="text-[10px] text-emerald-400">DVSA Authenticated</span>
               </div>
-              <div className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06]">
+              <button
+                type="button"
+                onClick={() => setIsProvenanceBreakdownOpen(true)}
+                className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] hover:border-amber-400/40 text-left cursor-pointer transition group"
+                title="Inspect Provenance Score Breakdown"
+              >
                 <span className="text-zinc-500 text-[10px] block uppercase tracking-wider">Provenance Index</span>
-                <span className="text-xl font-bold text-amber-400 mt-0.5 block flex items-center gap-1">
+                <span className="text-xl font-bold text-amber-400 mt-0.5 block flex items-center gap-1 group-hover:text-amber-300">
                   <Award className="w-4 h-4 text-amber-400" />
                   {car.provenanceScore} / 100
                 </span>
-                <span className="text-[10px] text-zinc-500">Heritage Grade A+</span>
-              </div>
+                <span className="text-[10px] text-zinc-500 group-hover:text-zinc-400">Heritage Grade A+ · Inspect →</span>
+              </button>
             </div>
 
             {/* Curated Atelier Dossier Bio */}
@@ -1457,6 +1469,17 @@ export const CarProfilePage: FC = () => {
         onClose={() => setIsTyrePyrometerOpen(false)}
         carName={car.name}
         carModel={car.fullName}
+      />
+
+      {/* Provenance Audit Matrix Breakdown */}
+      <ProvenanceBreakdownModal
+        isOpen={isProvenanceBreakdownOpen}
+        onClose={() => setIsProvenanceBreakdownOpen(false)}
+        carName={car.name}
+        fullName={car.fullName}
+        chassisCode={car.chassisCode}
+        vin={car.vin}
+        provenanceScore={car.provenanceScore}
       />
 
     </div>

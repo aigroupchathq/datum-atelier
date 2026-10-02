@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import type { FC } from 'react';
+import { Link } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
+
+const getCarProfileId = (handle: string): string => {
+  if (handle.includes('m3') || handle.includes('maya')) return 'car-maya-m3';
+  if (handle.includes('gt3') || handle.includes('kuro')) return 'car-kuro-gt3';
+  if (handle.includes('e30') || handle.includes('classic') || handle.includes('heritage')) return 'car-e30-retromod';
+  if (handle.includes('110') || handle.includes('overland') || handle.includes('defender')) return 'car-expedition-110';
+  return 'car-maya-m3';
+};
 import {
   Search,
   Heart,
@@ -433,17 +442,24 @@ export const ExplorePage: FC = () => {
                 
                 {/* Top Author Tag & Quick Bookmark */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 min-w-0">
+                  <Link
+                    to={`/car/${getCarProfileId(item.authorHandle)}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-2 min-w-0 group/author hover:opacity-90"
+                    title={`View ${item.authorName}'s Atelier Dossier`}
+                  >
                     <img
                       src={item.authorAvatar}
                       alt={item.authorName}
-                      className="w-7 h-7 rounded-full object-cover border border-white/[0.2]"
+                      className="w-7 h-7 rounded-full object-cover border border-white/[0.2] shrink-0"
                     />
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-white leading-none truncate">{item.authorHandle}</p>
+                      <p className="text-xs font-bold text-white leading-none truncate group-hover/author:text-amber-400 transition-colors">
+                        {item.authorHandle}
+                      </p>
                       <p className="text-[10px] text-zinc-400 font-mono-numbers truncate mt-0.5">{item.authorCar}</p>
                     </div>
-                  </div>
+                  </Link>
 
                   <button
                     onClick={(e) => handleToggleSave(item.id, e)}
@@ -552,27 +568,47 @@ export const ExplorePage: FC = () => {
               {/* Header */}
               <div className={`p-4 border-b flex items-center justify-between ${isWhiteYellow ? 'border-zinc-200' : 'border-white/[0.08]'}`}>
                 <div className="flex items-center gap-3">
-                  <img
-                    src={activeModalItem.authorAvatar}
-                    alt={activeModalItem.authorName}
-                    className={`w-10 h-10 rounded-full object-cover border ${isWhiteYellow ? 'border-zinc-200' : 'border-white/10'}`}
-                  />
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className={`text-sm font-bold leading-none ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>{activeModalItem.authorHandle}</p>
-                      {activeModalItem.isPro && (
-                        <span className="text-[9px] font-mono-numbers px-1.5 py-0.2 rounded bg-yellow-400 text-zinc-950 font-bold border border-yellow-500">
-                          PRO
-                        </span>
-                      )}
+                  <Link
+                    to={`/car/${getCarProfileId(activeModalItem.authorHandle)}`}
+                    className="flex items-center gap-3 group"
+                    title={`Inspect ${activeModalItem.authorName}'s Atelier Dossier`}
+                  >
+                    <img
+                      src={activeModalItem.authorAvatar}
+                      alt={activeModalItem.authorName}
+                      className={`w-10 h-10 rounded-full object-cover border transition-transform group-hover:scale-105 ${isWhiteYellow ? 'border-zinc-200' : 'border-white/10'}`}
+                    />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className={`text-sm font-bold leading-none group-hover:text-amber-400 transition-colors ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>
+                          {activeModalItem.authorHandle}
+                        </p>
+                        {activeModalItem.isPro && (
+                          <span className="text-[9px] font-mono-numbers px-1.5 py-0.2 rounded bg-yellow-400 text-zinc-950 font-bold border border-yellow-500">
+                            PRO
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-[11px] font-mono-numbers mt-0.5 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>{activeModalItem.authorCar}</p>
                     </div>
-                    <p className={`text-[11px] font-mono-numbers mt-0.5 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>{activeModalItem.authorCar}</p>
-                  </div>
+                  </Link>
                 </div>
 
-                <button className={`text-xs font-bold transition font-mono-numbers ${isWhiteYellow ? 'text-yellow-600 hover:text-yellow-700' : 'text-yellow-400 hover:text-yellow-300'}`}>
-                  Follow
-                </button>
+                <div className="flex items-center gap-2">
+                  <Link
+                    to={`/car/${getCarProfileId(activeModalItem.authorHandle)}`}
+                    className={`text-[11px] px-2.5 py-1 rounded-lg border font-mono-numbers font-semibold transition ${
+                      isWhiteYellow
+                        ? 'border-zinc-300 bg-zinc-100 text-zinc-800 hover:bg-zinc-200'
+                        : 'border-white/15 bg-white/[0.04] text-zinc-300 hover:text-white hover:bg-white/[0.08]'
+                    }`}
+                  >
+                    Dossier →
+                  </Link>
+                  <button className={`text-xs font-bold transition font-mono-numbers ${isWhiteYellow ? 'text-yellow-600 hover:text-yellow-700' : 'text-yellow-400 hover:text-yellow-300'}`}>
+                    Follow
+                  </button>
+                </div>
               </div>
 
               {/* Scrollable Caption & Discussion */}
