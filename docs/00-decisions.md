@@ -11,6 +11,7 @@
 - [ADR-0005: Specialist Workshop Cryptographic Stamping Protocol](#adr-0005-specialist-workshop-cryptographic-stamping-protocol)
 - [ADR-0006: Event-Sourced Sovereign Ledger & Repository Pattern](#adr-0006-event-sourced-sovereign-ledger--repository-pattern)
 - [ADR-0007: Simplified High-Conversion Publishing UX & Progressive Disclosure](#adr-0007-simplified-high-conversion-publishing-ux--progressive-disclosure)
+- [ADR-0008: Fluid Interfaces & Anti-Gravity Spring Physics Motion Engine](#adr-0008-fluid-interfaces--anti-gravity-spring-physics-motion-engine)
 
 ---
 
@@ -93,5 +94,22 @@
   4. **Single Reassuring Privacy Anchor:** Consolidate redundant privacy checkboxes into a single prominent confirmation badge (`✓ Plate Blurred · Home Geofenced`) directly beside the media preview.
   5. **Sticky Footer & Mobile Viewport Guard:** Pin the Cancel and Publish buttons to the modal footer with double-tap protection and full mobile responsiveness.
 - **Consequences:** Reduces decision time from >60s to <15s, preserves 100% of underlying telemetry and canvas-scrubbing capabilities for power users without penalizing everyday enthusiasts.
+
+---
+
+### ADR-0008: Fluid Interfaces & Anti-Gravity Spring Physics Motion Engine
+- **Date:** 2026-10-02
+- **Status:** ACCEPTED
+- **Classification:** UX, UI, Frontend Architecture
+- **Context:** Standard CSS time-based easing (`transition: all 0.3s ease-out`) creates robotic, rigid, and uninterruptible movement that clashes with Haute Horlogerie luxury and Apple's "Designing Fluid Interfaces" principles. Components snapping or abruptly stopping break physical realism.
+- **Decision:** Build a zero-dependency, GPU-accelerated Physics & Fluid Motion Engine (`src/core/motion/fluidPhysics.ts`):
+  1. **Two-Parameter Spring Model:** Natural frequency $\omega_n = \frac{2\pi}{T}$ ($T \approx 0.45\text{s}$) and underdamped ratio ($\zeta \approx 0.75$) with sub-stepped Semi-Implicit Euler integration for airy, weightless overshoot and organic settle.
+  2. **Complete Mid-Flight Interruptibility:** Interactive gesture catching samples live $(x, y, v_x, v_y)$ directly from GPU transforms without state jumps.
+  3. **Continuous Ambient Levitation:** Multi-harmonic harmonic oscillation ($\le 2.5\text{px}$) gives modals, floating HUDs, and toasts an authentic anti-gravity, weightless float.
+  4. **Velocity Handoff & Friction Decay:** Pointer release captures exact exit vectors and hands off to low-coefficient friction glide before gentle spring settle.
+  5. **Magnetic Rubber-Banding:** Inverse-square deceleration at boundary limits prevents mechanical wall stops.
+  6. **Absolute GPU Optimization:** Exclusively animates `transform: translate3d(...) scale(...)` on `requestAnimationFrame` with `will-change: transform`, completely eliminating layout reflows and thread blocking.
+- **Consequences:** Unmatched tactile fluid responsiveness at 60/120 FPS across mobile and desktop, zero external dependencies, and 100% testable physics math.
+
 
 

@@ -34,6 +34,8 @@ import {
   type DriveCadenceResult, 
   type ExpeditionPreset 
 } from '../../utils/respectRatingEngine';
+import { FluidLevitation } from '../../core/motion/FluidLevitation';
+import { FLUID_PRESETS } from '../../core/motion/fluidPhysics';
 
 export interface InitialDriveData {
   title?: string;
@@ -372,11 +374,18 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-2 sm:p-4 overflow-hidden">
-      <div className={`border rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col max-h-[92vh] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.95)] relative my-auto animate-in fade-in duration-200 transition-colors ${
-        isWhiteYellow
-          ? 'bg-[#FAF9F6] border-stone-200 text-zinc-900 shadow-2xl'
-          : 'bg-[#101115] border-white/[0.09] text-white shadow-2xl'
-      }`}>
+      <FluidLevitation
+        config={FLUID_PRESETS.weightlessModal}
+        initialY={36}
+        initialScale={0.96}
+        ambientLevitation={true}
+        ambientIntensity={0.65}
+        className={`border rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col max-h-[92vh] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.95)] relative my-auto transition-colors ${
+          isWhiteYellow
+            ? 'bg-[#FAF9F6] border-stone-200 text-zinc-900 shadow-2xl'
+            : 'bg-[#101115] border-white/[0.09] text-white shadow-2xl'
+        }`}
+      >
         
         {/* ========================================================= */}
         {/* HAUTE HORLOGERIE PRECISION HEADER                         */}
@@ -968,7 +977,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
           </div>
         </div>
 
-      </div>
+      </FluidLevitation>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import type { FC, ReactNode } from 'react';
-import { ShieldCheck, Compass, CheckCircle2, Heart, Copy, Sparkles, X } from 'lucide-react';
+import { ShieldCheck, Compass, CheckCircle2, Heart, Copy, Sparkles } from 'lucide-react';
+import { FluidToastItem } from '../components/common/FluidToastItem';
 
 export type ToastType = 'privacy' | 'drive' | 'kudos' | 'clipboard' | 'garage' | 'success';
 
@@ -66,42 +67,12 @@ export const ToastProvider: FC<{ children: ReactNode }> = ({ children }) => {
         className="fixed top-18 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-2"
       >
         {toasts.map((toast) => (
-          <div
+          <FluidToastItem
             key={toast.id}
-            className="pointer-events-auto flex items-start gap-3 p-3.5 rounded-xl bg-[#141418]/95 backdrop-blur-xl border border-white/[0.12] shadow-2xl text-left animate-in slide-in-from-top-3 fade-in duration-200 transition-all hover:border-white/[0.2]"
-            style={{
-              boxShadow: '0 12px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06)'
-            }}
-          >
-            <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07] shrink-0 mt-0.5">
-              {TOAST_ICONS[toast.type || 'success']}
-            </div>
-
-            <div className="flex-1 min-w-0 pr-1">
-              <div className="flex items-center gap-2 justify-between">
-                <p className="text-xs font-bold text-[#F4F4F5] tracking-tight truncate">
-                  {toast.title}
-                </p>
-                {toast.badge && (
-                  <span className="text-[9px] font-mono-numbers px-1.5 py-0.2 rounded bg-white/[0.08] text-zinc-400 border border-white/[0.06] shrink-0 uppercase">
-                    {toast.badge}
-                  </span>
-                )}
-              </div>
-              {toast.message && (
-                <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
-                  {toast.message}
-                </p>
-              )}
-            </div>
-
-            <button
-              onClick={() => removeToast(toast.id)}
-              className="text-zinc-500 hover:text-zinc-200 p-0.5 rounded transition shrink-0"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
+            toast={toast}
+            icon={TOAST_ICONS[toast.type || 'success']}
+            onRemove={removeToast}
+          />
         ))}
       </div>
     </ToastContext.Provider>
