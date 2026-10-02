@@ -27,7 +27,13 @@ import type { CommunityPost } from './types';
 function AppContent() {
   const { showToast } = useToast();
   const { isWhiteYellow } = useTheme();
-  const [posts, setPosts] = useState<CommunityPost[]>(mockFeedPosts);
+  const [posts, setPosts] = useState<CommunityPost[]>(() => {
+    try {
+      const saved = localStorage.getItem('datum_ledger_posts');
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return mockFeedPosts;
+  });
   const [isCreatePostOpen, setIsCreatePostOpen] = useState<boolean>(false);
   const [createPostMode, setCreatePostMode] = useState<'post' | 'story'>('post');
   const [isDriveTrackerOpen, setIsDriveTrackerOpen] = useState<boolean>(false);
@@ -73,35 +79,51 @@ function AppContent() {
   };
 
   const handleNewPost = (newPostData: Partial<CommunityPost>) => {
+    const vehicleName = newPostData.authorVehicleName || 'MAYA';
+    const vehicleModel = newPostData.authorVehicleModel || 'BMW M3 Competition';
+    const vehicleId = newPostData.authorVehicleId || 'car-maya-m3';
+    const vehicleYear = newPostData.authorVehicleYear || 2023;
+
     const createdPost: CommunityPost = {
       id: `post-${Date.now()}`,
       authorType: 'car',
-      authorVehicleId: 'car-maya-m3',
-      authorVehicleName: 'MAYA',
-      authorVehicleModel: 'BMW M3 Competition',
-      authorVehicleYear: 2023,
+      authorVehicleId: vehicleId,
+      authorVehicleName: vehicleName,
+      authorVehicleModel: vehicleModel,
+      authorVehicleYear: vehicleYear,
       postType: newPostData.postType || 'CAR_STORY',
-      title: newPostData.title || (newPostData.postType === 'DRIVE' ? 'Snake Pass Morning Shakedown' : 'S58 Setup Notes'),
+      title: newPostData.title || (newPostData.postType === 'DRIVE' ? 'Mountain Pass Shakedown' : `${vehicleModel} Journal`),
       content: newPostData.content || 'Tested tire pressures and damping rebound over damp tarmac. Zero drop in pace.',
       mediaUrls: newPostData.mediaUrls && newPostData.mediaUrls.length > 0 
         ? newPostData.mediaUrls 
         : ['https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=90'],
-      provenanceTag: 'owner_experience',
+      provenanceTag: newPostData.provenanceTag || 'owner_experience',
       createdAt: 'Just now',
       likesCount: 1,
       repliesCount: 0,
+      cadenceRank: newPostData.cadenceRank,
+      cadenceScore: newPostData.cadenceScore,
+      respectsEarned: newPostData.respectsEarned,
+      routePassName: newPostData.routePassName,
       linkedDriveId: newPostData.postType === 'DRIVE' ? 'drive-184' : undefined,
       linkedBuildVersion: newPostData.postType === 'BUILD_UPDATE' ? 'BUILD 04' : undefined,
     };
 
-    setPosts((prev) => [createdPost, ...prev]);
+    setPosts((prev) => {
+      const updated = [createdPost, ...prev];
+      try {
+        localStorage.setItem('datum_ledger_posts', JSON.stringify(updated));
+      } catch { /* ignore */ }
+      return updated;
+    });
+
     setIsCreatePostOpen(false);
 
     showToast({
-      title: 'Recorded to MAYA\'s Digital Ledger',
-      message: 'Published with Privacy Veil active • Plates protected & 800m geofenced',
+      title: `Recorded to ${vehicleName}'s Digital Ledger`,
+      message: 'Published to the live feed with Privacy Veil active • Plates protected',
       type: 'privacy',
-      badge: 'LIVE'
+      badge: 'LIVE ON FEED'
     });
   };
 

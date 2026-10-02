@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import type { FC } from 'react';
 import type { CommunityPost } from '../../types';
-import { useToast } from '../../context/ToastContext';
 import {
   calculateGearAndRpm,
   calculateTachometerAngle,
@@ -29,8 +28,6 @@ export const ObsidianDashboardBinnacle: FC<ObsidianDashboardBinnacleProps> = ({
   post,
   onOpenTelemetryModal
 }) => {
-  const { showToast } = useToast();
-
   // Cockpit Switchgear State
   const [driveMode, setDriveMode] = useState<DriveMode>('SPORT');
   const [speedUnit, setSpeedUnit] = useState<'MPH' | 'KPH'>('MPH');
@@ -47,19 +44,11 @@ export const ObsidianDashboardBinnacle: FC<ObsidianDashboardBinnacleProps> = ({
     return 45;
   }, [post.postType]);
 
-  // Handle interactive throttle blip
+  // Handle interactive throttle blip (instant rev without popup toast)
   const handleThrottleBlip = () => {
     if (isRevving) return;
     setIsRevving(true);
     setRevBoost(3200);
-
-    const vehicleTitle = post.authorVehicleModel || post.authorVehicleName || 'Sovereign GT';
-
-    showToast({
-      title: `${vehicleTitle} // Throttle Blip`,
-      message: `8,400 RPM Flat-Six Overrun Crackle · ${isExhaustOpen ? 'Exhaust Valves Open' : 'Valves Muffled'}`,
-      type: 'drive'
-    });
 
     const timer1 = setTimeout(() => setRevBoost(1400), 400);
     const timer2 = setTimeout(() => {
@@ -410,11 +399,6 @@ export const ObsidianDashboardBinnacle: FC<ObsidianDashboardBinnacleProps> = ({
               const nextIdx = (modes.indexOf(driveMode) + 1) % modes.length;
               const nextMode = modes[nextIdx];
               setDriveMode(nextMode);
-              showToast({
-                title: `Drive Mode // ${nextMode}`,
-                message: `Rotary calibration shifted to ${nextMode} powerband maps.`,
-                type: 'drive'
-              });
             }}
             className="w-14 h-14 rounded-full gold-dial-ring p-1 relative flex flex-col items-center justify-center knurled-dial cursor-pointer active:scale-95 transition-transform group shadow-md"
             title="Click to rotate Drive Program"
@@ -442,11 +426,6 @@ export const ObsidianDashboardBinnacle: FC<ObsidianDashboardBinnacleProps> = ({
           <button
             onClick={() => {
               setIsPasmFirm(!isPasmFirm);
-              showToast({
-                title: isPasmFirm ? 'Damper // PASM Soft (Touring)' : 'Damper // PASM Firm (Apex Attack)',
-                message: isPasmFirm ? 'Valving opened for compliant alpine road surface' : 'Stiffened compression & rebound for high-G stability',
-                type: 'drive'
-              });
             }}
             className={`w-14 h-14 rounded-full p-1 relative flex flex-col items-center justify-center knurled-dial cursor-pointer active:scale-95 transition-transform shadow-md ${
               isPasmFirm ? 'gold-dial-ring' : 'bg-black/60 border border-white/10'
@@ -469,11 +448,6 @@ export const ObsidianDashboardBinnacle: FC<ObsidianDashboardBinnacleProps> = ({
           <button
             onClick={() => {
               setIsExhaustOpen(!isExhaustOpen);
-              showToast({
-                title: isExhaustOpen ? 'Exhaust // Quiet Flap Closed' : 'Exhaust // Sport Valves Open',
-                message: isExhaustOpen ? 'Secondary bypass closed for civil neighborhood transit' : 'Full acoustic straight-pipe resonance armed',
-                type: 'drive'
-              });
             }}
             className={`w-14 h-14 rounded-full p-1 relative flex flex-col items-center justify-center knurled-dial cursor-pointer active:scale-95 transition-transform shadow-md ${
               isExhaustOpen ? 'gold-dial-ring' : 'bg-black/60 border border-white/10'
