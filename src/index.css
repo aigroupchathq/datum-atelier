@@ -302,6 +302,30 @@
   box-shadow: 0 0 0 1px var(--border-active), 0 0 18px var(--accent-glow);
 }
 
+/* 7. Obsidian Pure Gold Machined Binnacle Dial Ring */
+.gold-dial-ring {
+  background: radial-gradient(circle at center, #0B0B0F 40%, #13131A 75%, #1F1C18 100%);
+  border: 1.5px solid rgba(197, 160, 89, 0.40);
+  box-shadow: 
+    inset 0 3px 8px rgba(0, 0, 0, 0.90),
+    inset 0 0 0 1px rgba(212, 175, 55, 0.18),
+    0 6px 20px rgba(0, 0, 0, 0.70);
+}
+
+/* 8. Horological Anti-Reflective Sapphire Crystal Highlight */
+.cluster-glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 45%, transparent 60%);
+  pointer-events: none;
+}
+
+/* 9. Pure Gold Switchgear Backlit Active State */
+.gold-switch-active {
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.25) 0%, rgba(197, 160, 89, 0.10) 100%);
+  border-color: #D4AF37;
+  color: #FFF8E7;
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
 /* ================================================================
    STORY AVATAR RINGS
    ================================================================ */

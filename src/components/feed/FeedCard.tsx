@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import type { CommunityPost } from '../../types';
 import { ProvenanceBadge } from '../common/ProvenanceBadge';
 import { PlateBlurImage } from '../common/PlateBlurImage';
+import { ObsidianDashboardBinnacle } from './ObsidianDashboardBinnacle';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
@@ -401,6 +402,18 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
           <span className="text-[#C2A676] font-semibold">ATA CARNET VERIFIED</span>
         </div>
       )}
+      {layoutMode === 'chronograph' && (
+        <div className="px-4 sm:px-6 py-1.5 bg-[#101015] border-b border-[#C5A059]/30 flex items-center justify-between text-[9.5px] font-mono-numbers text-[#E6C687]">
+          <span className="font-bold tracking-widest uppercase flex items-center gap-1.5">
+            <span className="text-[#D4AF37]">✦</span>
+            OBSIDIAN PURE GOLD COCKPIT // CALIBRE 992 BINNACLE
+          </span>
+          <span className="text-[#C5A059] font-semibold flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
+            INSTRUMENTS LIVE · 10 Hz
+          </span>
+        </div>
+      )}
 
       {/* ── HEADER ── */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 flex items-center justify-between gap-3">
@@ -685,6 +698,11 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
             ATA CARNET PASSED
           </span>
         </div>
+      )}
+
+      {/* ── OBSIDIAN PURE GOLD CAR DASHBOARD INSTRUMENT BINNACLE ── */}
+      {layoutMode === 'chronograph' && (
+        <ObsidianDashboardBinnacle post={post} />
       )}
 
       {/* ── INTERACTIVE DRIVE TELEMETRY & ELEVATION SCRUB BAR ── */}

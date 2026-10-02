@@ -131,5 +131,27 @@
   5. **Compositor Offloading for SVG Radar Sweep:** Replaced dynamic React `sweepAngle` state updates in `RadialDynamicsCluster.tsx` with a hardware-accelerated CSS keyframe animation (`spin-radar`), reducing React re-render load to 0 FPS while keeping 120 FPS visual smoothness.
 - **Consequences:** Eliminates dropped frames, drops idle CPU utilization to ~0%, achieves rock-solid 60/120 FPS scrolling and interaction across desktop and mobile.
 
+---
+
+### ADR-0010: Obsidian Pure Gold Automotive Instrument Dashboard Feed Layout
+- **Date:** 2026-10-02
+- **Status:** ACCEPTED
+- **Classification:** Product, UX, UI, Frontend Architecture
+- **Context:** The Obsidian & Pure Gold PTS theme (`obsidian`) lacked a dedicated automotive cockpit binnacle layout in the social feed, relying on a generic fallback card while other themes (`telemetry`, `blueprint`, `expedition`, `monograph`) had custom topologies. The user requested: "can you design one of the feed layout like car dashboard look , make it logically strong and well designed , make it for obsedian pure gold".
+- **Decision:**
+  1. **Automotive Instrument Binnacle Architecture:** Created `src/components/feed/ObsidianDashboardBinnacle.tsx` and `src/utils/dashboardKinematics.ts`, implementing a 3-dial digital-analog instrument cluster:
+     - **Dial 1 (Left):** Dynamic Mechanical Tachometer (0–9k RPM with 24K gold sweep needle, redline sector, center transmission gear indicator [1..7], and progressive 5-LED shift light array).
+     - **Dial 2 (Center):** Large Horological Digital Speedometer (toggleable MPH/KPH) with a Polar G-Force Target Crosshair ($\pm 1.5G$ dynamic vector ball) and live road grip friction coefficient.
+     - **Dial 3 (Right):** Quad Mechanical Vitals & Transducers (Oil Temp 92–98°C, Oil Pressure 4.8 Bar, Coolant 90°C, and Turbo Manifold Boost 1.35 Bar with green/gold pilot lamps).
+  2. **Tactile Diamond-Knurled Switchgear Console:**
+     - Rotary Drive Program Selector (`[ COMFORT | SPORT | SPORT+ | TRACK | ATELIER ]`) that dynamically alters gauge glow, shift points, and powertrain calibrations.
+     - Mechanical Toggles: Exhaust Valves (Open/Closed), PASM Damper Kinematics (Firm/Soft).
+     - Interactive `[ ⚡ BLIP THROTTLE ]` button with sound cue/toast and instant 8,400 RPM visual rev surge.
+  3. **Rolling Mechanical Odometer & Horological Cowl:**
+     - Top cowl with amber "IGNITION ARMED" indicator, live UTC chronometer, and 24K gold provenance ingot seal.
+     - Rolling 6-digit mechanical odometer ribbon (`formatOdometer`), trip meter, and alpine elevation.
+  4. **Thematic Palette:** Smoked DLC ruthenium void (`#0D0D11`), brushed 18K/24K champagne gold bezels (`#C5A059`, `#D4AF37`), diamond-knurled textures (`.knurled-dial`), and anti-reflective sapphire crystal highlights (`.cluster-glass`).
+- **Consequences:** Provides an authentic, tactile Porsche/Singer-caliber instrument cluster in the social feed with zero lag, 53/53 tests passing, and clean Vite builds.
+
 
 

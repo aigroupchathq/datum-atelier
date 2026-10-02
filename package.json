@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "test": "tsx --test tests/gripCalculation.test.mjs tests/openMeteoWeather.test.mjs tests/respectRatingEngine.test.mjs tests/plateRedaction.test.mjs tests/acousticFingerprint.test.mjs tests/transitCarnet.test.mjs tests/workshopStamping.test.mjs tests/repositoryLedger.test.mjs tests/fluidPhysics.test.mjs",
+    "test": "tsx --test tests/gripCalculation.test.mjs tests/openMeteoWeather.test.mjs tests/respectRatingEngine.test.mjs tests/plateRedaction.test.mjs tests/acousticFingerprint.test.mjs tests/transitCarnet.test.mjs tests/workshopStamping.test.mjs tests/repositoryLedger.test.mjs tests/fluidPhysics.test.mjs tests/dashboardKinematics.test.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
