@@ -128,16 +128,26 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
         <main className={`w-full ${themeMeta.feedWidthClass} mx-auto lg:mx-0 space-y-6 shrink-0 transition-all duration-300`}>
 
           {/* Active Cockpit Mode Indicator & Quick Ergonomic Selector */}
-          <div className="flex items-center justify-between px-2 py-1 text-[10px] font-mono-numbers text-zinc-400 border-b border-white/[0.05]">
+          <div className={`flex items-center justify-between px-3 py-1.5 rounded-xl border text-[10px] font-mono-numbers transition-all ${
+            isWhiteYellow
+              ? 'bg-[#FFFFFF] border-stone-200/80 bevel-porcelain text-stone-700'
+              : 'bg-[#141418] border-white/10 bevel-machined text-zinc-300'
+          }`}>
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              <span className="uppercase tracking-widest text-zinc-300 font-bold">
+              <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                isWhiteYellow ? 'bg-[#D4AF37]' : 'bg-[#C5A059]'
+              }`} />
+              <span className="uppercase tracking-widest font-bold">
                 TOPOLOGY // {themeMeta.layoutTitle.toUpperCase()}
               </span>
             </div>
             <button
               onClick={cycleTheme}
-              className="text-[9.5px] uppercase tracking-wider text-amber-400/90 hover:text-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
+              className={`text-[9.5px] uppercase tracking-wider font-bold transition-colors flex items-center gap-1.5 px-2 py-0.5 rounded-lg cursor-pointer ${
+                isWhiteYellow
+                  ? 'text-[#B8860B] hover:text-black bg-stone-100 hover:bg-stone-200/60'
+                  : 'text-[#C5A059] hover:text-white bg-white/[0.04] hover:bg-white/[0.08]'
+              }`}
               title="Cycle through the 5 cockpit ergonomic layouts"
             >
               <span>Shift Mode ({themeMeta.name.split('&')[0].trim()})</span>

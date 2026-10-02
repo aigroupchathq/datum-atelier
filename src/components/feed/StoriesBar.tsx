@@ -212,18 +212,18 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
             onClick={onAddStory}
             className={`w-[132px] sm:w-[144px] h-[92px] rounded-2xl shrink-0 p-2.5 flex flex-col justify-between border border-dashed transition-all duration-300 group cursor-pointer text-left relative overflow-hidden ${
               isWhiteYellow
-                ? 'bg-yellow-50/50 hover:bg-yellow-100/60 border-yellow-300 text-zinc-900'
-                : 'bg-white/[0.02] hover:bg-amber-400/[0.06] border-white/15 hover:border-amber-400/50 text-white'
+                ? 'bg-[#FAF9F6] hover:bg-yellow-50/70 border-[#D4AF37]/50 text-stone-900 bevel-porcelain'
+                : 'bg-white/[0.02] hover:bg-[#C5A059]/[0.08] border-white/15 hover:border-[#C5A059]/50 text-white bevel-machined'
             }`}
             title="Log today's cold start or shakedown dispatch"
           >
             <div className="flex items-center justify-between">
               <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110 ${
-                isWhiteYellow ? 'bg-yellow-400 text-zinc-950' : 'bg-amber-400 text-black shadow-[0_0_12px_rgba(251,191,36,0.5)]'
+                isWhiteYellow ? 'bg-[#D4AF37] text-black shadow-xs' : 'bg-[#C5A059] text-black shadow-[0_0_12px_rgba(197,160,89,0.4)]'
               }`}>
                 <Plus className="w-3.5 h-3.5 stroke-[3]" />
               </div>
-              <span className="text-[8.5px] font-mono-numbers tracking-widest uppercase text-amber-400">
+              <span className="text-[8.5px] font-mono-numbers tracking-widest uppercase text-[#C5A059] font-bold">
                 DISPATCH
               </span>
             </div>
@@ -233,7 +233,7 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
                 Record Shift
               </span>
               <span className={`text-[9px] font-mono-numbers block truncate mt-0.5 ${
-                isWhiteYellow ? 'text-zinc-500' : 'text-zinc-500'
+                isWhiteYellow ? 'text-stone-500' : 'text-zinc-500'
               }`}>
                 MAYA · S58 G80
               </span>
@@ -247,8 +247,8 @@ export const StoriesBar: FC<StoriesBarProps> = ({ onAddStory }) => {
               onClick={() => setActiveStoryIndex(idx)}
               className={`w-[132px] sm:w-[144px] h-[92px] rounded-2xl shrink-0 relative overflow-hidden group cursor-pointer border transition-all duration-300 text-left focus:outline-none ${
                 isWhiteYellow
-                  ? 'border-zinc-200/90 hover:border-yellow-400 shadow-sm'
-                  : 'border-white/[0.09] hover:border-amber-400/60 shadow-md hover:shadow-[0_0_16px_rgba(251,191,36,0.15)]'
+                  ? 'border-stone-200/90 hover:border-[#D4AF37]/80 bevel-porcelain'
+                  : 'border-white/[0.09] hover:border-[#C5A059]/60 bevel-machined hover:shadow-[0_0_16px_rgba(197,160,89,0.20)]'
               }`}
             >
               {/* Cinematic Backdrop Image */}

@@ -136,7 +136,7 @@ const LikeCounter: FC<{ count: number; bumped: boolean; isWhiteYellow?: boolean 
   <span
     key={bumped ? 'b' : 'n'}
     className={`font-bold tabular-nums transition-all duration-200 ${
-      isWhiteYellow ? 'text-yellow-600' : 'text-amber-400'
+      isWhiteYellow ? 'text-[#B8860B]' : 'text-[#C5A059]'
     } ${bumped ? 'animate-in slide-in-from-bottom-2 fade-in' : ''}`}
   >
     {count.toLocaleString()}
@@ -351,39 +351,54 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const categoryBadge = getCategoryBadge(post.postType, isWhiteYellow);
 
   return (
-    // Polymorphic Cockpit Topology Plinth
+    // Polymorphic Cockpit Topology Plinth with Haute-Luxe Detailing
     <article className={`group relative transition-all duration-300 ${
       layoutMode === 'monograph'
-        ? 'bg-white border border-zinc-200/90 shadow-sm hover:border-yellow-400/60 rounded-[24px]'
+        ? 'bg-white border border-[#1C1917]/[0.08] bevel-porcelain hover:border-[#D4AF37]/50 rounded-[24px]'
         : layoutMode === 'telemetry'
-        ? 'bg-[#150C13] border border-[#0677A1]/40 hover:border-[#0677A1] shadow-[0_0_30px_rgba(6,119,161,0.18)] rounded-[20px]'
+        ? 'bg-gradient-to-b from-[#240D1D] to-[#160812] border border-[#9E677B]/35 hover:border-[#00A3C4]/70 shadow-[0_14px_40px_rgba(22,8,18,0.85)] rounded-[20px]'
         : layoutMode === 'blueprint'
-        ? 'bg-[#101115] border border-[#273DB4]/45 hover:border-[#273DB4] shadow-md rounded-[16px]'
+        ? 'bg-gradient-to-b from-[#161A24] to-[#0E1118] border border-[#2E5BFF]/35 hover:border-[#F06543]/70 shadow-2xl rounded-[16px]'
         : layoutMode === 'expedition'
-        ? 'bg-[#09110E] border border-emerald-500/30 hover:border-emerald-400/50 shadow-lg rounded-[22px]'
-        : 'bg-[#0B0C10] border border-white/[0.08] hover:border-amber-400/30 shadow-xl rounded-[24px]'
+        ? 'bg-gradient-to-b from-[#10211B] to-[#091310] border border-[#C2A676]/30 hover:border-[#198754]/60 saddle-stitch shadow-xl rounded-[22px]'
+        : 'bg-gradient-to-b from-[#17171C] to-[#0D0D11] border border-[#C5A059]/20 hover:border-[#C5A059]/45 bevel-machined shadow-2xl rounded-[24px]'
     } overflow-hidden`}>
 
       {/* ── SPECIALIZED TOPOLOGY HEADER STRIP ── */}
+      {layoutMode === 'monograph' && (
+        <div className="px-4 sm:px-6 py-1.5 bg-[#FAF9F6] border-b border-stone-200/60 flex items-center justify-between text-[9.5px] font-mono-numbers text-stone-600">
+          <span className="font-bold tracking-[0.2em] uppercase text-stone-800 flex items-center gap-1.5">
+            <span className="text-[#D4AF37]">✦</span>
+            CONCOURS MONOGRAPH FOLIO // ARCHIVE ED.
+          </span>
+          <span className="text-stone-500 italic font-serif">Provenance Notarized</span>
+        </div>
+      )}
       {layoutMode === 'blueprint' && (
-        <div className="px-4 sm:px-6 py-1.5 bg-[#171922] border-b border-[#273DB4]/30 flex items-center justify-between text-[9.5px] font-mono-numbers text-blue-300">
-          <span className="font-bold tracking-widest uppercase">CAD DRAFTING BLUEPRINT // ECO-048</span>
-          <span className="text-zinc-400">TOLERANCE: ±0.05mm</span>
+        <div className="px-4 sm:px-6 py-1.5 bg-[#121620] border-b border-[#2E5BFF]/25 flex items-center justify-between text-[9.5px] font-mono-numbers text-blue-300">
+          <span className="font-bold tracking-widest uppercase flex items-center gap-1.5">
+            <span className="text-[#F06543]">⌖</span>
+            ISO-10204 DRAFTING BLUEPRINT // ECO-048
+          </span>
+          <span className="text-zinc-400">TOLERANCE: ±0.005mm • DIN-EN-ISO</span>
         </div>
       )}
       {layoutMode === 'telemetry' && (
-        <div className="px-4 sm:px-6 py-1.5 bg-[#21111E] border-b border-[#0677A1]/30 flex items-center justify-between text-[9.5px] font-mono-numbers text-cyan-300">
+        <div className="px-4 sm:px-6 py-1.5 bg-[#1F0B19] border-b border-[#00A3C4]/25 flex items-center justify-between text-[9.5px] font-mono-numbers text-cyan-300">
           <span className="font-bold tracking-widest uppercase flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-            LIVE TELEMETRY STREAM // S58-CANBUS
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00A3C4] animate-ping" />
+            LIVE F1 PIT-WALL TELEMETRY // S58-CANBUS
           </span>
-          <span className="text-zinc-400">10 Hz TELEM ACTIVE</span>
+          <span className="text-[#DEC4D0]/70">10 Hz REAL-TIME STREAM</span>
         </div>
       )}
       {layoutMode === 'expedition' && (
-        <div className="px-4 sm:px-6 py-1.5 bg-[#0D1813] border-b border-emerald-500/25 flex items-center justify-between text-[9.5px] font-mono-numbers text-emerald-300">
-          <span className="font-bold tracking-widest uppercase">ALPINE TRANSIT EXPEDITION // SECTOR UK-01</span>
-          <span className="text-zinc-400">CARNET NOTARIZED</span>
+        <div className="px-4 sm:px-6 py-1.5 bg-[#0C1A14] border-b border-[#C2A676]/25 flex items-center justify-between text-[9.5px] font-mono-numbers text-[#A3C7B6]">
+          <span className="font-bold tracking-widest uppercase flex items-center gap-1.5">
+            <span className="text-[#C2A676]">◈</span>
+            TRANSCONTINENTAL EXPEDITION SPINE // SECTOR CH/IT-01
+          </span>
+          <span className="text-[#C2A676] font-semibold">ATA CARNET VERIFIED</span>
         </div>
       )}
 
@@ -1124,14 +1139,16 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
                 onClick={handleToggleRespect}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-mono-numbers font-bold transition-all duration-200 cursor-pointer shadow-sm ${
                   respected
-                    ? 'bg-amber-400 text-black border-amber-300 shadow-[0_0_16px_rgba(251,191,36,0.45)]'
+                    ? isWhiteYellow
+                      ? 'bg-[#D4AF37] text-black border-[#C5A059] shadow-[0_0_16px_rgba(212,175,55,0.40)]'
+                      : 'bg-[#C5A059] text-black border-[#D4AF37] shadow-[0_0_16px_rgba(197,160,89,0.45)]'
                     : isWhiteYellow
-                    ? 'bg-zinc-100 hover:bg-yellow-100 border-zinc-200 text-zinc-900'
-                    : 'bg-white/[0.04] hover:bg-white/[0.09] border-white/15 text-zinc-200 hover:text-amber-300'
+                    ? 'bg-stone-50 hover:bg-[#FAF9F6] border-stone-200/80 text-stone-900 bevel-porcelain'
+                    : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 text-zinc-200 hover:text-[#C5A059] bevel-machined'
                 }`}
                 title="Ratify Custodian Respect for this machine"
               >
-                <ShieldCheck className={`w-3.5 h-3.5 ${respected ? 'text-black' : 'text-amber-400'}`} />
+                <ShieldCheck className={`w-3.5 h-3.5 ${respected ? 'text-black' : isWhiteYellow ? 'text-[#B8860B]' : 'text-[#C5A059]'}`} />
                 <span>{respected ? 'RESPECTED' : 'RESPECT'}</span>
                 <span className="opacity-40">|</span>
                 <LikeCounter count={likesCount} bumped={likeCountBumped} isWhiteYellow={isWhiteYellow} />

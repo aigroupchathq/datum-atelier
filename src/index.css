@@ -11,100 +11,112 @@
      ================================================================ */
   :root,
   .theme-white-yellow {
-    /* Background depth staircase — warm porcelain & gallery white */
-    --bg-void:       #F8F9FA;   /* Page root — Gallery Alabaster White */
-    --bg-surface:    #FFFFFF;   /* Cards, panels */
-    --bg-elevated:   #F4F4F5;   /* Hover, dropdowns, inputs */
-    --bg-overlay:    #E4E4E7;   /* Tooltips, skeletons */
+    /* Background depth staircase — Royal Alabaster Porcelain */
+    --bg-void:       #FAF9F6;   /* Royal Alabaster Bone-China Void */
+    --bg-surface:    #FFFFFF;   /* Gallery Mount Plinth */
+    --bg-elevated:   #F5F3EF;   /* Warm Ivory Elevate */
+    --bg-overlay:    #EAE6DF;   /* Tooltips, debossed recesses */
 
-    /* Text — deep obsidian & crisp ink readability */
-    --text-primary:   #09090B;  /* Ink black — headlines */
-    --text-secondary: #52525B;  /* Zinc-600 — captions */
-    --text-muted:     #71717A;  /* Zinc-500 — disabled */
+    /* Text — deep warm ink */
+    --text-primary:   #18181B;  /* Deep Warm Obsidian Ink */
+    --text-secondary: #52525B;  /* Charcoal Zinc-600 */
+    --text-muted:     #78716C;  /* Warm Stone-500 */
 
-    /* Borders — delicate hairline */
-    --border-subtle:  rgba(0, 0, 0, 0.06);
-    --border-default: rgba(0, 0, 0, 0.09);
-    --border-active:  rgba(234, 179, 8, 0.45);
+    /* Borders — 0.5px delicate hairlines */
+    --border-subtle:  rgba(28, 25, 23, 0.06);
+    --border-default: rgba(28, 25, 23, 0.10);
+    --border-active:  rgba(212, 175, 55, 0.55);
 
-    /* Accent — Racing Speed Yellow */
-    --accent:         #EAB308;  /* Vibrant Racing Yellow */
-    --accent-glow:    rgba(234, 179, 8, 0.25);
+    /* Accent — 24K Gilt Leaf & Bespoke Porsche Speed Yellow */
+    --accent:         #D4AF37;  /* 24K Gilt Leaf / Speed Yellow */
+    --accent-glow:    rgba(212, 175, 55, 0.20);
+    --trim-stitch:    #C2A676;  /* Parchment Stitching */
   }
 
   .theme-obsidian {
-    --bg-void:       #09090B;   /* Zinc-950 */
-    --bg-surface:    #111113;
-    --bg-elevated:   #1C1C1F;
-    --bg-overlay:    #28282D;
+    /* Background depth staircase — DLC Smoked Ruthenium */
+    --bg-void:       #0D0D11;   /* Smoked DLC Carbon Void */
+    --bg-surface:    #141418;   /* Horological Matte Slate */
+    --bg-elevated:   #1C1C22;   /* Machined Plinth */
+    --bg-overlay:    #26262E;   /* Bevel Rim */
 
-    --text-primary:   #F4F4F5;
-    --text-secondary: #A1A1AA;
-    --text-muted:     #52525B;
+    /* Text — 88% contrast platinum (Anti-harshness) */
+    --text-primary:   #F2F2F0;  /* Brushed Platinum */
+    --text-secondary: #A1A1AA;  /* Milled Titanium Zinc */
+    --text-muted:     #52525B;  /* Ruthenium Muted */
 
+    /* Borders — Laser chapter ring engraving */
     --border-subtle:  rgba(255, 255, 255, 0.06);
-    --border-default: rgba(255, 255, 255, 0.09);
-    --border-active:  rgba(245, 158, 11, 0.30);
+    --border-default: rgba(197, 160, 89, 0.16); /* 18K Gold hairline */
+    --border-active:  rgba(197, 160, 89, 0.50);
 
-    --accent:         #F59E0B;
-    --accent-glow:    rgba(245, 158, 11, 0.18);
+    /* Accent — Brushed 18K Champagne Gold */
+    --accent:         #C5A059;  /* Brushed 18K Champagne Gold */
+    --accent-glow:    rgba(197, 160, 89, 0.18);
+    --trim-stitch:    #A38343;  /* Gilt Thread */
   }
 
-  /* Bordeaux & Aero Cyan (Roscosmos & PTS Ruby Star Velvet) */
+  /* Bordeaux & Aero Cyan (Italian Amarone & Aerospace Glaucus) */
   .theme-bordeaux-cyan {
-    --bg-void:       #180B13;   /* Deep Plum Canvas #59253A */
-    --bg-surface:    #2A121F;   /* Velvet Bordeaux Card #78244C */
-    --bg-elevated:   #3A182B;   /* Hover Plinth */
-    --bg-overlay:    #501F3B;
+    --bg-void:       #160812;   /* Deep Italian Amarone Canvas */
+    --bg-surface:    #240D1D;   /* Crushed Barolo Plum Plinth */
+    --bg-elevated:   #331229;   /* Lacquer Elevate */
+    --bg-overlay:    #451837;
 
-    --text-primary:   #FFFFFF;
-    --text-secondary: #E6D0D8;
-    --text-muted:     #A87585;  /* Muted Mauve #895061 */
+    --text-primary:   #FDFCFD;
+    --text-secondary: #DEC4D0;  /* Soft Cashmere Rose */
+    --text-muted:     #9E677B;  /* Muted Mauve */
 
-    --border-subtle:  rgba(137, 80, 97, 0.35);
-    --border-default: rgba(137, 80, 97, 0.55);
-    --border-active:  rgba(6, 119, 161, 0.90);
+    --border-subtle:  rgba(158, 103, 123, 0.25);
+    --border-default: rgba(158, 103, 123, 0.45);
+    --border-active:  rgba(0, 163, 196, 0.85);
 
-    --accent:         #0677A1;  /* Electric Aerospace Cyan */
-    --accent-glow:    rgba(6, 119, 161, 0.40);
+    /* Accent — Aerospace Glaucus & Anodized Cyan */
+    --accent:         #00A3C4;  /* Aerospace Glaucus Cyan */
+    --accent-glow:    rgba(0, 163, 196, 0.32);
+    --trim-stitch:    #895061;  /* Plum Stitching */
   }
 
-  /* C2MTL Avant-Garde (Electric Cobalt & Tangerine Noir) */
+  /* C2MTL Avant-Garde (Prussian Cyanotype & ISO Cobalt Noir) */
   .theme-c2mtl-avantgarde {
-    --bg-void:       #121214;   /* Graphic C2MTL Noir */
-    --bg-surface:    #1A1A1E;   /* Graphite Slate */
-    --bg-elevated:   #25252A;
-    --bg-overlay:    #32323A;
+    --bg-void:       #0E1118;   /* Prussian Cyanotype Noir */
+    --bg-surface:    #161A24;   /* Technical Vellum Plinth */
+    --bg-elevated:   #1E2330;   /* Machined Slate */
+    --bg-overlay:    #282F40;
 
     --text-primary:   #FFFFFF;
-    --text-secondary: #D4D4D8;
-    --text-muted:     #8E8E93;
+    --text-secondary: #CBD5E1;  /* Draftsman Slate */
+    --text-muted:     #7E8B9B;
 
-    --border-subtle:  rgba(255, 255, 255, 0.12);
-    --border-default: rgba(39, 61, 180, 0.45); /* Cobalt #273DB4 */
-    --border-active:  rgba(237, 120, 69, 0.90); /* Tangerine #ED7845 */
+    --border-subtle:  rgba(46, 91, 255, 0.18);
+    --border-default: rgba(46, 91, 255, 0.38); /* ISO Cobalt */
+    --border-active:  rgba(240, 101, 67, 0.90); /* Safety-Wire Tangerine */
 
-    --accent:         #273DB4;  /* Electric Cobalt */
-    --accent-glow:    rgba(39, 61, 180, 0.40);
+    /* Accent — ISO Technical Cobalt & Tangerine */
+    --accent:         #2E5BFF;  /* ISO Cobalt */
+    --accent-glow:    rgba(46, 91, 255, 0.32);
+    --trim-stitch:    #F06543;  /* Safety-Wire Orange */
   }
 
-  /* Alpine British Racing Green & Sterling Platinum */
+  /* Alpine British Racing Green & Connolly Saddle Tan */
   .theme-alpine-emerald {
-    --bg-void:       #09120F;   /* Deep Petroleum Forest */
-    --bg-surface:    #101F1A;   /* British Racing Green Plinth */
-    --bg-elevated:   #182D26;
-    --bg-overlay:    #223E34;
+    --bg-void:       #091310;   /* 1929 Brooklands Petroleum Green */
+    --bg-surface:    #10211B;   /* Historic Forest Plinth */
+    --bg-elevated:   #162D25;
+    --bg-overlay:    #1E3D32;
 
-    --text-primary:   #F4FBF7;
-    --text-secondary: #A8CEBD;
-    --text-muted:     #638D7A;
+    --text-primary:   #F5FAF7;
+    --text-secondary: #A3C7B6;  /* Muted Sage */
+    --text-muted:     #5B8673;
 
-    --border-subtle:  rgba(16, 185, 129, 0.20);
-    --border-default: rgba(16, 185, 129, 0.40);
-    --border-active:  rgba(52, 211, 153, 0.80);
+    --border-subtle:  rgba(25, 135, 84, 0.20);
+    --border-default: rgba(194, 166, 118, 0.32); /* Connolly Tan hairline */
+    --border-active:  rgba(52, 211, 153, 0.75);
 
-    --accent:         #10B981;  /* Emerald Speed */
-    --accent-glow:    rgba(16, 185, 129, 0.32);
+    /* Accent — Brooklands Evergreen & Connolly Tan */
+    --accent:         #198754;  /* Brooklands Evergreen */
+    --accent-glow:    rgba(25, 135, 84, 0.25);
+    --trim-stitch:    #C2A676;  /* Connolly Saddle Tan */
   }
 
   body {
@@ -220,22 +232,79 @@
 }
 
 /* Theme specific card enhancements */
+.theme-white-yellow .card-surface {
+  background: #FFFFFF;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.95), 0 4px 20px -2px rgba(28, 25, 23, 0.04);
+}
+
+.theme-obsidian .card-surface {
+  background: linear-gradient(180deg, #17171C 0%, #111114 100%);
+  border: 1px solid rgba(197, 160, 89, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.45), 0 12px 35px rgba(0, 0, 0, 0.75);
+}
+
 .theme-bordeaux-cyan .card-surface {
-  background: linear-gradient(180deg, #2D1422 0%, #200E19 100%);
-  border: 1px solid rgba(137, 80, 97, 0.40);
-  box-shadow: 0 12px 35px rgba(24, 11, 19, 0.7);
+  background: linear-gradient(180deg, #270D1F 0%, #1A0915 100%);
+  border: 1px solid rgba(158, 103, 123, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 40px rgba(22, 8, 18, 0.85);
 }
 
 .theme-c2mtl-avantgarde .card-surface {
-  background: linear-gradient(180deg, #1C1C20 0%, #141416 100%);
-  border: 1px solid rgba(39, 61, 180, 0.35);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85);
+  background: linear-gradient(180deg, #181C26 0%, #10131B 100%);
+  border: 1px solid rgba(46, 91, 255, 0.30);
+  box-shadow: inset 0 1px 0 rgba(46, 91, 255, 0.15), 0 14px 40px rgba(14, 17, 24, 0.9);
 }
 
 .theme-alpine-emerald .card-surface {
-  background: linear-gradient(180deg, #12211C 0%, #0B1612 100%);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 0 12px 35px rgba(9, 18, 15, 0.8);
+  background: linear-gradient(180deg, #12241E 0%, #0A1612 100%);
+  border: 1px solid rgba(194, 166, 118, 0.25);
+  box-shadow: inset 0 1px 0 rgba(25, 135, 84, 0.15), 0 14px 40px rgba(9, 19, 16, 0.85);
+}
+
+/* ================================================================
+   HAUTE-LUXE POSH DETAILING PRIMITIVES
+   ================================================================ */
+
+/* 1. Dual-Light Chamfered Bevel (Machined Titanium / Ruthenium edge) */
+.bevel-machined {
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+    0 10px 28px -4px rgba(0, 0, 0, 0.40);
+}
+
+/* 2. Royal Alabaster Porcelain Inset Shadow */
+.bevel-porcelain {
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    0 1px 3px rgba(28, 25, 23, 0.04),
+    0 12px 32px -4px rgba(28, 25, 23, 0.06);
+}
+
+/* 3. Connolly Leather Saddle-Stitching (Beeswax Tan) */
+.saddle-stitch {
+  border: 1px dashed rgba(194, 166, 118, 0.40);
+  background-clip: padding-box;
+}
+
+/* 4. Diamond-Knurled Switchgear Texture */
+.knurled-dial {
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 4px);
+}
+
+/* 5. Concentric Guilloche Chapter Track */
+.guilloche-track {
+  background-image: radial-gradient(circle at center, transparent 35%, rgba(197, 160, 89, 0.06) 36%, transparent 38%, rgba(197, 160, 89, 0.06) 60%, transparent 62%);
+}
+
+/* 6. Blind-Embossed Inset Impression */
+.blind-emboss {
+  box-shadow: 
+    inset 1px 1px 2px rgba(0, 0, 0, 0.20),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.08);
 }
 
 /* Accent glow */
