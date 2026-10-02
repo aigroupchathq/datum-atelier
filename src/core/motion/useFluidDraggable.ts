@@ -69,15 +69,19 @@ export function useFluidDraggable<T extends HTMLElement = HTMLDivElement>({
 
         writeTransform(springX.current.current, springY.current.current, ambient);
 
-        if (!settledX || !settledY || ambientLevitation) {
+        if (!settledX || !settledY) {
           rafId.current = requestAnimationFrame(loop);
           return;
+        } else {
+          writeTransform(0, 0);
+          if (elementRef.current) elementRef.current.style.willChange = 'auto';
+          rafId.current = null;
         }
       }
     };
 
     rafId.current = requestAnimationFrame(loop);
-  }, [config, ambientLevitation, writeTransform]);
+  }, [config, writeTransform]);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     // Catch mid-flight!
@@ -154,13 +158,12 @@ export function useFluidDraggable<T extends HTMLElement = HTMLDivElement>({
     startPhysicsLoop();
   }, [dismissThreshold, dismissVelocity, onDismiss, startPhysicsLoop]);
 
-  // Clean-up
+  // Clean-up on unmount
   useEffect(() => {
-    startPhysicsLoop();
     return () => {
       if (rafId.current !== null) cancelAnimationFrame(rafId.current);
     };
-  }, [startPhysicsLoop]);
+  }, []);
 
   return {
     ref: elementRef,

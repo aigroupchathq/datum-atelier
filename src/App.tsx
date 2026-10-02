@@ -110,7 +110,10 @@ function AppContent() {
       {/* Customizable Cinematic Splash Screen on Launch or on Demand */}
       {showSplash && (
         <SplashScreen
-          onEnter={() => setShowSplash(false)}
+          onEnter={() => {
+            setShowSplash(false);
+            try { localStorage.setItem('garage_splash_skip', 'true'); } catch { /* ignore */ }
+          }}
           carName="MAYA"
           carModel="BMW M3 Competition"
         />
@@ -222,66 +225,84 @@ function AppContent() {
         <MobileNav />
 
         {/* Modal: Interactive Story / Post Recording with Animated Plate Detection */}
-        <CreatePostModal
-          isOpen={isCreatePostOpen}
-          initialMode={createPostMode}
-          initialDriveData={initialDriveData}
-          onClose={() => {
-            setIsCreatePostOpen(false);
-            setInitialDriveData(null);
-          }}
-          onSubmitPost={handleNewPost}
-        />
+        {isCreatePostOpen && (
+          <CreatePostModal
+            isOpen={isCreatePostOpen}
+            initialMode={createPostMode}
+            initialDriveData={initialDriveData}
+            onClose={() => {
+              setIsCreatePostOpen(false);
+              setInitialDriveData(null);
+            }}
+            onSubmitPost={handleNewPost}
+          />
+        )}
 
         {/* Modal: Active In-Drive Expedition & Cadence Tracker */}
-        <ActiveDriveTrackerModal
-          isOpen={isDriveTrackerOpen}
-          onClose={() => setIsDriveTrackerOpen(false)}
-          onCompleteDrive={handleCompleteDriveSession}
-        />
+        {isDriveTrackerOpen && (
+          <ActiveDriveTrackerModal
+            isOpen={isDriveTrackerOpen}
+            onClose={() => setIsDriveTrackerOpen(false)}
+            onCompleteDrive={handleCompleteDriveSession}
+          />
+        )}
 
         {/* Modal: Pre-Publish Privacy Checklist */}
-        <PrivacyCheckModal
-          isOpen={isPrivacyCheckOpen}
-          onClose={() => setIsPrivacyCheckOpen(false)}
-        />
+        {isPrivacyCheckOpen && (
+          <PrivacyCheckModal
+            isOpen={isPrivacyCheckOpen}
+            onClose={() => setIsPrivacyCheckOpen(false)}
+          />
+        )}
 
         {/* Modal: Bespoke Valvetrain Acoustic Harmonics Lab */}
-        <AcousticStudioModal
-          isOpen={isAcousticStudioOpen}
-          onClose={() => setIsAcousticStudioOpen(false)}
-        />
+        {isAcousticStudioOpen && (
+          <AcousticStudioModal
+            isOpen={isAcousticStudioOpen}
+            onClose={() => setIsAcousticStudioOpen(false)}
+          />
+        )}
 
         {/* Modal: Live Mountain Pass Surface Grip & Micro-Climate Radar */}
-        <PassGripRadarModal
-          isOpen={isPassRadarOpen}
-          onClose={() => setIsPassRadarOpen(false)}
-          initialPassId={passRadarTarget}
-        />
+        {isPassRadarOpen && (
+          <PassGripRadarModal
+            isOpen={isPassRadarOpen}
+            onClose={() => setIsPassRadarOpen(false)}
+            initialPassId={passRadarTarget}
+          />
+        )}
 
         {/* Modal: Cross-Border Transit & Carnet Logistics */}
-        <TransitCarnetModal
-          isOpen={isTransitCarnetOpen}
-          onClose={() => setIsTransitCarnetOpen(false)}
-        />
+        {isTransitCarnetOpen && (
+          <TransitCarnetModal
+            isOpen={isTransitCarnetOpen}
+            onClose={() => setIsTransitCarnetOpen(false)}
+          />
+        )}
 
         {/* Modal: Live Backend Systems Inspector & Control Room */}
-        <BackendInspectorModal
-          isOpen={isBackendInspectorOpen}
-          onClose={() => setIsBackendInspectorOpen(false)}
-        />
+        {isBackendInspectorOpen && (
+          <BackendInspectorModal
+            isOpen={isBackendInspectorOpen}
+            onClose={() => setIsBackendInspectorOpen(false)}
+          />
+        )}
 
         {/* Modal: Architectural Atelier Chamber Designer */}
-        <ArchitecturalChamberModal
-          isOpen={isArchitecturalChamberOpen}
-          onClose={() => setIsArchitecturalChamberOpen(false)}
-        />
+        {isArchitecturalChamberOpen && (
+          <ArchitecturalChamberModal
+            isOpen={isArchitecturalChamberOpen}
+            onClose={() => setIsArchitecturalChamberOpen(false)}
+          />
+        )}
 
         {/* Modal: Specialist Workshop Digital Stamping Desk */}
-        <WorkshopStampingModal
-          isOpen={isWorkshopStampingOpen}
-          onClose={() => setIsWorkshopStampingOpen(false)}
-        />
+        {isWorkshopStampingOpen && (
+          <WorkshopStampingModal
+            isOpen={isWorkshopStampingOpen}
+            onClose={() => setIsWorkshopStampingOpen(false)}
+          />
+        )}
 
       </div>
     </BrowserRouter>

@@ -87,12 +87,15 @@ export const FluidLevitation: FC<FluidLevitationProps> = ({
 
       if (settledY && settledScale && settledOpacity) {
         isSettledRef.current = true;
+        if (containerRef.current) {
+          containerRef.current.style.transform = 'translate3d(0, 0, 0) scale(1)';
+          containerRef.current.style.opacity = '1';
+          containerRef.current.style.willChange = 'auto';
+        }
+        return;
       }
 
-      // Keep running smoothly if ambient levitation is active or still settling
-      if (ambientLevitation || !isSettledRef.current) {
-        rafId.current = requestAnimationFrame(loop);
-      }
+      rafId.current = requestAnimationFrame(loop);
     };
 
     rafId.current = requestAnimationFrame(loop);

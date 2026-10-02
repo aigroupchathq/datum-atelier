@@ -67,7 +67,6 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
   const [selectedSector, setSelectedSector] = useState<DynamicsSectorId>('friction');
   const [activeTransducerId, setActiveTransducerId] = useState<string>('mu_friction');
   const [isSweepActive, setIsSweepActive] = useState<boolean>(true);
-  const [sweepAngle, setSweepAngle] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [telemetryHistory, setTelemetryHistory] = useState<number[]>([]);
   
@@ -95,18 +94,6 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
       unsubscribe();
     };
   }, []);
-
-  // Smooth continuous radar sweep arm animation (subtle analog scan line)
-  useEffect(() => {
-    if (!isSweepActive) return;
-    let animId: number;
-    const animate = () => {
-      setSweepAngle((prev) => (prev + 0.45) % 360);
-      animId = requestAnimationFrame(animate);
-    };
-    animId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animId);
-  }, [isSweepActive]);
 
   // Dynamic 8-Sector Taxonomy modeled after the UX Reference
   const sectors: Record<DynamicsSectorId, DynamicsSector> = useMemo(() => {
@@ -596,18 +583,20 @@ export const RadialDynamicsCluster: FC<RadialDynamicsClusterProps> = ({
                 );
               })}
 
-              {/* 4. Dynamic Sweep Arm Scanner */}
+              {/* 4. Dynamic Sweep Arm Scanner (GPU Composited — Zero CPU layout reflows) */}
               {isSweepActive && (
-                <line
-                  x1={cx}
-                  y1={cy}
-                  x2={cx + rOuter * Math.cos((sweepAngle * Math.PI) / 180)}
-                  y2={cy + rOuter * Math.sin((sweepAngle * Math.PI) / 180)}
-                  stroke="var(--accent)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  opacity="0.8"
-                />
+                <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: 'spin-radar 8s linear infinite' }}>
+                  <line
+                    x1={cx}
+                    y1={cy}
+                    x2={cx + rOuter}
+                    y2={cy}
+                    stroke="var(--accent)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    opacity="0.8"
+                  />
+                </g>
               )}
 
               {/* 5. Center Dial Core */}
