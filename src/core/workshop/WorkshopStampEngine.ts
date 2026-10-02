@@ -97,6 +97,25 @@ export const VERIFIED_WORKSHOPS: CertifiedWorkshop[] = [
   }
 ];
 
+/**
+ * Calculates a cryptographic signature hash for a service stamp
+ */
+export function calculateStampSignature(
+  stampId: string,
+  vehicleId: string,
+  mileage: number,
+  category: ServiceCategory,
+  invoiceHash: string,
+  previousStampHash: string,
+  workshopPublicKey: string
+): string {
+  const seedString = `${stampId}:${vehicleId}:${mileage}:${category}:${invoiceHash}:${previousStampHash}:${workshopPublicKey}`;
+  return sha256(seedString);
+}
+
+const INV_HASH_MAYA = sha256('INV-LM-2024-8842:40150:1480.00:WBA-31AY-0084-M3');
+const INV_HASH_KURO = sha256('MR-UK-2024-1092:16200:1650.00:WP0-ZZZ-99Z-NS-1092');
+
 export const INITIAL_STAMP_CHAIN: CertifiedServiceStamp[] = [
   {
     stampId: 'stamp-init-01',
@@ -115,9 +134,17 @@ export const INITIAL_STAMP_CHAIN: CertifiedServiceStamp[] = [
     ],
     totalCostGbp: 1480.00,
     invoiceNumber: 'INV-LM-2024-8842',
-    invoiceHash: sha256('INV-LM-2024-8842:40150:1480.00:WBA-31AY-0084-M3'),
+    invoiceHash: INV_HASH_MAYA,
     previousStampHash: '0000000000000000000000000000000000000000000000000000000000000000',
-    stampSignatureHash: sha256('stamp-init-01:car-maya-m3:40150:MAJOR_INSPECTION:INV-LM-2024-8842'),
+    stampSignatureHash: calculateStampSignature(
+      'stamp-init-01',
+      'car-maya-m3',
+      40150,
+      'MAJOR_INSPECTION',
+      INV_HASH_MAYA,
+      '0000000000000000000000000000000000000000000000000000000000000000',
+      VERIFIED_WORKSHOPS[0].publicKey
+    ),
     createdAt: '2024-09-14T14:30:00Z',
     status: 'VERIFIED_PROFESSIONAL'
   },
@@ -138,9 +165,17 @@ export const INITIAL_STAMP_CHAIN: CertifiedServiceStamp[] = [
     ],
     totalCostGbp: 1650.00,
     invoiceNumber: 'MR-UK-2024-1092',
-    invoiceHash: sha256('MR-UK-2024-1092:16200:1650.00:WP0-ZZZ-99Z-NS-1092'),
+    invoiceHash: INV_HASH_KURO,
     previousStampHash: '0000000000000000000000000000000000000000000000000000000000000000',
-    stampSignatureHash: sha256('stamp-init-02:car-kuro-gt3:16200:CORNER_WEIGHTING:MR-UK-2024-1092'),
+    stampSignatureHash: calculateStampSignature(
+      'stamp-init-02',
+      'car-kuro-gt3',
+      16200,
+      'CORNER_WEIGHTING',
+      INV_HASH_KURO,
+      '0000000000000000000000000000000000000000000000000000000000000000',
+      VERIFIED_WORKSHOPS[1].publicKey
+    ),
     createdAt: '2024-06-22T16:45:00Z',
     status: 'VERIFIED_PROFESSIONAL'
   }
@@ -159,22 +194,6 @@ export interface CreateStampParams {
   components: InstalledComponent[];
   totalCostGbp: number;
   invoiceNumber: string;
-}
-
-/**
- * Calculates a cryptographic signature hash for a service stamp
- */
-export function calculateStampSignature(
-  stampId: string,
-  vehicleId: string,
-  mileage: number,
-  category: ServiceCategory,
-  invoiceHash: string,
-  previousStampHash: string,
-  workshopPublicKey: string
-): string {
-  const seedString = `${stampId}:${vehicleId}:${mileage}:${category}:${invoiceHash}:${previousStampHash}:${workshopPublicKey}`;
-  return sha256(seedString);
 }
 
 /**
