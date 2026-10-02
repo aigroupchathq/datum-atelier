@@ -1125,6 +1125,58 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
           </p>
         </div>
 
+        {/* ── GAMER-MINIMALIST CADENCE HUD BANNER ── */}
+        {post.cadenceRank && (
+          <div className={`p-2.5 rounded-xl border flex items-center justify-between text-xs font-mono-numbers transition-all ${
+            isWhiteYellow
+              ? 'bg-amber-50/80 border-amber-300/80 text-zinc-950'
+              : 'bg-black/90 border-amber-500/35 text-white shadow-inner'
+          }`}>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-amber-400 text-black font-black text-[11px] shadow">
+                [ {post.cadenceRank} ]
+              </span>
+              <div>
+                <span className="font-bold tracking-tight">
+                  {post.cadenceRank === 'EX'
+                    ? 'TRANSCENDENT'
+                    : post.cadenceRank === 'S'
+                    ? 'APEX HARMONY'
+                    : post.cadenceRank === 'A+'
+                    ? 'IN THE GROOVE'
+                    : 'FLOW STATE'}
+                </span>
+                {post.cadenceScore && (
+                  <span className="opacity-60 text-[10px] ml-2">Score: {post.cadenceScore}/100</span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+              <span>+{post.respectsEarned || 14} RESPECTS</span>
+            </div>
+          </div>
+        )}
+
+        {/* ── SCENIC MID-WAY WAYPOINTS CAROUSEL ── */}
+        {post.waypoints && post.waypoints.length > 0 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+            {post.waypoints.map((wp) => (
+              <div
+                key={wp.id}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10.5px] font-mono-numbers shrink-0 ${
+                  isWhiteYellow
+                    ? 'bg-white border-zinc-200 text-zinc-800'
+                    : 'bg-zinc-900/80 border-zinc-800 text-zinc-300'
+                }`}
+              >
+                <Compass className="w-3 h-3 text-amber-400" />
+                <span className="font-bold truncate max-w-[130px]">{wp.title}</span>
+                <span className="text-zinc-500">{wp.time}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Caption with clean toggle */}
         <div className={`text-[13.5px] leading-relaxed space-y-1 ${isWhiteYellow ? 'text-zinc-800' : 'text-zinc-300'}`}>
           {post.title && (

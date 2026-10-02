@@ -9,7 +9,8 @@ import { ExplorePage } from './pages/ExplorePage';
 import { CommunitiesPage } from './pages/CommunitiesPage';
 import { GarageProPage } from './pages/GarageProPage';
 import { AboutCaseStudyPage } from './pages/AboutCaseStudyPage';
-import { CreatePostModal } from './components/feed/CreatePostModal';
+import { CreatePostModal, type InitialDriveData } from './components/feed/CreatePostModal';
+import { ActiveDriveTrackerModal } from './components/telemetry/ActiveDriveTrackerModal';
 import { PrivacyCheckModal } from './components/common/PrivacyCheckModal';
 import { AcousticStudioModal } from './components/common/AcousticStudioModal';
 import { PassGripRadarModal } from './components/telemetry/PassGripRadarModal';
@@ -28,6 +29,8 @@ function AppContent() {
   const [posts, setPosts] = useState<CommunityPost[]>(mockFeedPosts);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState<boolean>(false);
   const [createPostMode, setCreatePostMode] = useState<'post' | 'story'>('post');
+  const [isDriveTrackerOpen, setIsDriveTrackerOpen] = useState<boolean>(false);
+  const [initialDriveData, setInitialDriveData] = useState<InitialDriveData | null>(null);
   const [isPrivacyCheckOpen, setIsPrivacyCheckOpen] = useState<boolean>(false);
   const [isAcousticStudioOpen, setIsAcousticStudioOpen] = useState<boolean>(false);
   const [isPassRadarOpen, setIsPassRadarOpen] = useState<boolean>(false);
@@ -43,6 +46,27 @@ function AppContent() {
 
   const handleOpenCreatePost = (mode: 'post' | 'story' = 'post') => {
     setCreatePostMode(mode);
+    setIsCreatePostOpen(true);
+  };
+
+  const handleOpenDriveTracker = () => {
+    setIsDriveTrackerOpen(true);
+  };
+
+  const handleCompleteDriveSession = (driveData: any) => {
+    setInitialDriveData({
+      title: driveData.title,
+      caption: driveData.caption,
+      passName: driveData.passName,
+      durationMinutes: driveData.durationMinutes,
+      cadenceResult: driveData.cadenceResult,
+      waypoints: driveData.waypoints,
+      carId: driveData.carId,
+      carName: driveData.carName,
+      carModel: driveData.carModel,
+      frictionMu: driveData.frictionMu
+    });
+    setCreatePostMode('post');
     setIsCreatePostOpen(true);
   };
 
@@ -116,6 +140,7 @@ function AppContent() {
               element={
                 <FeedPage 
                   onOpenCreatePost={handleOpenCreatePost} 
+                  onOpenDriveTracker={handleOpenDriveTracker}
                   posts={posts} 
                   onOpenPassRadar={(id) => { if (id) setPassRadarTarget(id); setIsPassRadarOpen(true); }}
                 />
@@ -197,8 +222,19 @@ function AppContent() {
         <CreatePostModal
           isOpen={isCreatePostOpen}
           initialMode={createPostMode}
-          onClose={() => setIsCreatePostOpen(false)}
+          initialDriveData={initialDriveData}
+          onClose={() => {
+            setIsCreatePostOpen(false);
+            setInitialDriveData(null);
+          }}
           onSubmitPost={handleNewPost}
+        />
+
+        {/* Modal: Active In-Drive Expedition & Cadence Tracker */}
+        <ActiveDriveTrackerModal
+          isOpen={isDriveTrackerOpen}
+          onClose={() => setIsDriveTrackerOpen(false)}
+          onCompleteDrive={handleCompleteDriveSession}
         />
 
         {/* Modal: Pre-Publish Privacy Checklist */}

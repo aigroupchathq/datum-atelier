@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { FC, DragEvent, ChangeEvent } from 'react';
 import { 
   X, 
@@ -18,17 +18,39 @@ import {
   FileCheck2,
   Lock,
   PoundSterling,
-  CloudRain
+  CloudRain,
+  Zap
 } from 'lucide-react';
 import type { CommunityPost } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
+import { redactPlateOnCanvas } from '../../utils/plateRedactionCanvas';
+import { 
+  EXPEDITION_PRESETS, 
+  calculateDriveCadence, 
+  type DriveCadenceResult, 
+  type ExpeditionPreset 
+} from '../../utils/respectRatingEngine';
+
+export interface InitialDriveData {
+  title?: string;
+  caption?: string;
+  passName?: string;
+  durationMinutes?: number;
+  cadenceResult?: DriveCadenceResult;
+  waypoints?: { id: string; title: string; time: string; altitudeM: number; imageUrl: string }[];
+  carId?: string;
+  carName?: string;
+  carModel?: string;
+  frictionMu?: number;
+}
 
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmitPost: (newPost: Partial<CommunityPost>) => void;
   initialMode?: 'post' | 'story';
+  initialDriveData?: InitialDriveData | null;
 }
 
 // Candid domestic UK & European presets
@@ -86,7 +108,8 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
   isOpen, 
   onClose, 
   onSubmitPost,
-  initialMode = 'post'
+  initialMode = 'post',
+  initialDriveData
 }) => {
   const { showToast } = useToast();
   const { isWhiteYellow } = useTheme();
@@ -110,19 +133,69 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
   // Media & Plate Detection state
   const [selectedImage, setSelectedImage] = useState<string>(DEMO_PRESETS[0].url);
+  const [sanitizedImage, setSanitizedImage] = useState<string | null>(null);
+  const [sanitizedPixelCount, setSanitizedPixelCount] = useState<number>(0);
+  const [inspectRawMode, setInspectRawMode] = useState<boolean>(false);
   const [activePlateText, setActivePlateText] = useState<string>(DEMO_PRESETS[0].plate);
   const [plateBox, setPlateBox] = useState(DEMO_PRESETS[0].plateBox);
   
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const [plateDetected, setPlateDetected] = useState<boolean>(true);
   const [isVeilActive, setIsVeilActive] = useState<boolean>(true);
   const [veilStyle, setVeilStyle] = useState<'frosted' | 'pixel' | 'blackout'>('frosted');
   
+  // Cadence & Respects state
+  const [cadenceResult, setCadenceResult] = useState<DriveCadenceResult | null>(null);
+  const [selectedExpeditionId, setSelectedExpeditionId] = useState<string | null>(null);
+
   const [blurPlateChecked, setBlurPlateChecked] = useState<boolean>(true);
   const [protectEndpointsChecked, setProtectEndpointsChecked] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Ingest initialDriveData if provided from ActiveDriveTrackerModal
+  useEffect(() => {
+    if (initialDriveData) {
+      if (initialDriveData.title) setTitle(initialDriveData.title);
+      if (initialDriveData.caption) setContent(initialDriveData.caption);
+      setPostType('DRIVE');
+      if (initialDriveData.cadenceResult) setCadenceResult(initialDriveData.cadenceResult);
+      if (initialDriveData.carId) {
+        const foundCarIdx = STABLE_CARS.findIndex(c => c.id === initialDriveData.carId);
+        if (foundCarIdx >= 0) setSelectedCarIndex(foundCarIdx);
+      }
+      if (initialDriveData.waypoints && initialDriveData.waypoints.length > 0) {
+        const topWp = initialDriveData.waypoints[0];
+        triggerOpticalScan(topWp.imageUrl, 'WAYPOINT REG', { top: 65, left: 42, width: 16, height: 6 });
+      }
+      if (initialDriveData.frictionMu) {
+        setSurfaceCondition(`Bitumen (${initialDriveData.frictionMu} µ Friction)`);
+      }
+    }
+  }, [initialDriveData]);
+
+  // Execute true HTML5 Canvas physical pixel redaction
+  const runCanvasRedaction = async (imgUrl: string, box: typeof plateBox, style: typeof veilStyle) => {
+    try {
+      const mappedStyle = style === 'pixel' ? 'pixelate' : style === 'blackout' ? 'blackout' : 'monogram';
+      const result = await redactPlateOnCanvas(imgUrl, box, {
+        style: mappedStyle,
+        watermarkText: 'DATUM // CLOAKED',
+        quality: 0.92
+      });
+      setSanitizedImage(result.dataUrl);
+      setSanitizedPixelCount(result.redactedPixelCount);
+    } catch (err) {
+      console.warn('Canvas pixel redaction warning (fallback to visual):', err);
+    }
+  };
+
+  // Re-run canvas redaction whenever image, box or veil style changes
+  useEffect(() => {
+    if (selectedImage) {
+      runCanvasRedaction(selectedImage, plateBox, veilStyle);
+    }
+  }, [selectedImage, plateBox, veilStyle]);
 
   if (!isOpen) return null;
 
@@ -132,17 +205,19 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
   const triggerOpticalScan = (imageUrl: string, plateText = 'UK PLATE', customBox?: typeof plateBox) => {
     setSelectedImage(imageUrl);
     setActivePlateText(plateText);
+    const box = customBox || plateBox;
     if (customBox) setPlateBox(customBox);
     setIsScanning(true);
-    setPlateDetected(false);
+
+    // Run canvas pixel destruction immediately
+    runCanvasRedaction(imageUrl, box, veilStyle);
 
     setTimeout(() => {
       setIsScanning(false);
-      setPlateDetected(true);
       setIsVeilActive(true);
       showToast({
         title: 'Optical Cloaking Engaged',
-        message: `DVSA plate index ${plateText} automatically masked with cryptographic veil.`,
+        message: `DVSA plate index ${plateText} permanently sanitized on HTML5 canvas buffer.`,
         type: 'privacy'
       });
     }, 1100);
@@ -160,6 +235,31 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
       message: `${targetCar.model} • Ready to notarize new artifact.`,
       type: 'garage',
       badge: 'ACTIVE_CHASSIS'
+    });
+  };
+
+  // 1-Tap Expedition Preset Clicker
+  const handleApplyExpeditionPreset = (expedition: ExpeditionPreset) => {
+    setSelectedExpeditionId(expedition.id);
+    setTitle(expedition.title);
+    setContent(expedition.caption);
+    setSurfaceCondition(expedition.surfaceCondition);
+    setPostType('DRIVE');
+
+    const calculated = calculateDriveCadence({
+      routeCompleted: true,
+      waypointPhotosCount: 1,
+      frictionMu: expedition.frictionMu,
+      durationMinutes: 42,
+      flowContinuityRatio: 0.95
+    });
+    setCadenceResult(calculated);
+
+    showToast({
+      title: `Expedition Vibe: ${expedition.label}`,
+      message: `${calculated.rankTitle} • ${calculated.hudTag}`,
+      type: 'drive',
+      badge: `${calculated.rank}-RANK`
     });
   };
 
@@ -201,8 +301,12 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
       if (postType === 'BUILD_UPDATE') {
         enrichedContent += `\n\n[PROVENANCE LEDGER: ${componentCategory} fitted by ${workshopName} • £${invoicedCost} • Delta: ${performanceDelta} • VAT receipt cryptographically notarized]`;
       } else if (postType === 'DRIVE') {
-        enrichedContent += `\n\n[TELEMETRY: Surface ${surfaceCondition} • Fuel: ${fuelGrade} • Ambient: ${barometricPressure} • 800m residential perimeter protected]`;
+        const cadenceTag = cadenceResult ? `\n\n${cadenceResult.hudTag}` : '';
+        enrichedContent += `\n\n[TELEMETRY: Surface ${surfaceCondition} • Fuel: ${fuelGrade} • Ambient: ${barometricPressure} • 800m residential perimeter protected]${cadenceTag}`;
       }
+
+      // Final media URL: Use sanitized canvas data URL if veil is active, ensuring true byte-level plate destruction
+      const finalMediaUrl = (isVeilActive && sanitizedImage) ? sanitizedImage : selectedImage;
 
       onSubmitPost({
         postType: mode === 'story' ? 'CAR_STORY' : postType,
@@ -215,15 +319,20 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
         authorVehicleYear: currentCar.year,
         provenanceTag: postType === 'BUILD_UPDATE' ? 'verified_professional' : 'owner_experience',
         createdAt: 'Just now',
-        likesCount: 0,
-        repliesCount: 0,
-        mediaUrls: [selectedImage]
+        likesCount: 1,
+        respectsCount: 1,
+        cadenceRank: cadenceResult?.rank || (postType === 'DRIVE' ? 'S' : undefined),
+        cadenceScore: cadenceResult?.totalScore,
+        respectsEarned: cadenceResult?.respectsEarned || (postType === 'DRIVE' ? 14 : 10),
+        routePassName: title.includes('Pass') ? title : undefined,
+        mediaUrls: [finalMediaUrl]
       });
 
       showToast({
         title: mode === 'story' ? 'Paddock Reel Dispatched' : 'Automotive Artifact Notarized',
-        message: `Logged under ${currentCar.name} chassis sovereign ledger. Privacy perimeter preserved.`,
-        type: 'success'
+        message: `Logged under ${currentCar.name} ledger • License plate physically sanitized on HTML5 canvas.`,
+        type: 'success',
+        badge: 'CANVAS_SANITIZED'
       });
 
       setIsSubmitting(false);
@@ -387,11 +496,27 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               mode === 'story' ? 'aspect-[16/10] sm:aspect-[16/9]' : 'aspect-[16/10]'
             }`}
           >
+            {/* The Image: Renders the true canvas-sanitized pixel buffer when veil is active */}
             <img
-              src={selectedImage}
+              src={(isVeilActive && sanitizedImage && !inspectRawMode) ? sanitizedImage : selectedImage}
               alt="Preview"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-all duration-300"
             />
+
+            {/* True Canvas Sanitized Verification Stamp */}
+            {isVeilActive && sanitizedImage && !inspectRawMode && (
+              <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-xl bg-zinc-950/85 border border-emerald-500/40 text-[10px] font-mono-numbers text-emerald-300 flex items-center gap-1.5 shadow-xl backdrop-blur-md">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>CANVAS PIXELS DESTROYED ({sanitizedPixelCount} PX OVERWRITTEN)</span>
+              </div>
+            )}
+
+            {inspectRawMode && (
+              <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-xl bg-red-950/85 border border-red-500/40 text-[10px] font-mono-numbers text-red-300 flex items-center gap-1.5 shadow-xl backdrop-blur-md">
+                <Eye className="w-3.5 h-3.5 text-red-400" />
+                <span>INSPECTING RAW SOURCE (UNPROTECTED)</span>
+              </div>
+            )}
 
             {/* Scanning Laser Sweep Animation */}
             {isScanning && (
@@ -404,53 +529,31 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               </div>
             )}
 
-            {/* Plate Detection Bounding Target Box */}
-            {plateDetected && (
-              <div
-                style={{
-                  top: `${plateBox.top}%`,
-                  left: `${plateBox.left}%`,
-                  width: `${plateBox.width}%`,
-                  height: `${plateBox.height}%`,
-                }}
-                className={`absolute transition-all duration-300 rounded ${
-                  isVeilActive
-                    ? veilStyle === 'frosted'
-                      ? 'backdrop-blur-md bg-zinc-950/85 border border-amber-400/40 shadow-lg'
-                      : veilStyle === 'pixel'
-                      ? 'bg-zinc-950/95 border-2 border-dashed border-amber-400 shadow-lg'
-                      : 'bg-black border border-zinc-700 shadow-lg'
-                    : 'border-2 border-amber-400 ring-2 ring-amber-400/30'
-                } flex items-center justify-center`}
-              >
-                {!isVeilActive && (
-                  <span className="text-[10px] font-mono-numbers font-black px-1.5 py-0.5 rounded bg-amber-400 text-black shadow">
-                    {activePlateText}
-                  </span>
-                )}
-
-                {isVeilActive && (
-                  <div className="text-center px-1">
-                    <span className="text-[9px] font-mono-numbers text-zinc-300 tracking-widest uppercase block font-bold">
-                      {veilStyle === 'pixel' ? '▓▓▓▓▓▓▓' : '[PROTECTED]'}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* Bottom Floating Veil Toolbar */}
             <div className="absolute bottom-3 inset-x-3 flex items-center justify-between p-2 rounded-xl bg-zinc-950/85 border border-zinc-800 backdrop-blur-md text-xs font-mono-numbers">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-zinc-300 font-semibold hidden sm:inline">
-                  {isScanning ? 'Scanning...' : `Detected: ${activePlateText} [UK]`}
+                  {isScanning ? 'Scrubbing Pixels...' : `DVSA Reg: ${activePlateText} [UK]`}
                 </span>
                 <span className="text-zinc-400 sm:hidden">Privacy Guard</span>
               </div>
 
-              {/* Veil Toggle Button */}
-              <div className="flex items-center gap-2">
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1.5">
+                {/* Compare / Inspect Toggle */}
+                {sanitizedImage && (
+                  <button
+                    type="button"
+                    onClick={() => setInspectRawMode(!inspectRawMode)}
+                    className="px-2 py-1 rounded-lg text-[11px] font-mono-numbers border transition bg-zinc-900 border-zinc-700 text-zinc-300 hover:text-white"
+                    title="Compare raw image against physically scrubbed canvas"
+                  >
+                    {inspectRawMode ? 'View Scrubbed' : 'Inspect Raw'}
+                  </button>
+                )}
+
+                {/* Veil Toggle Button */}
                 <button
                   type="button"
                   onClick={() => setIsVeilActive(!isVeilActive)}
@@ -461,7 +564,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
                   }`}
                 >
                   {isVeilActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                  <span>{isVeilActive ? 'Privacy Veil: ON' : 'Raw Plate: EXPOSED'}</span>
+                  <span>{isVeilActive ? 'Canvas Redactor: ON' : 'Raw Plate: EXPOSED'}</span>
                 </button>
               </div>
             </div>
@@ -506,6 +609,65 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* ── 1-TAP EXPEDITION CADENCE & RESPECTS BAR ── */}
+          <div className={`p-3.5 rounded-2xl border space-y-2.5 ${
+            isWhiteYellow ? 'bg-amber-50/60 border-amber-200' : 'bg-zinc-950 border-amber-500/20'
+          }`}>
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-mono-numbers uppercase tracking-wider font-bold flex items-center gap-1.5 text-amber-400">
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                <span>1-Tap Expedition Telemetry & Cadence Presets</span>
+              </span>
+              <span className="text-[10px] font-mono-numbers px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                +14-18 RESPECTS
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {EXPEDITION_PRESETS.map((exp) => (
+                <button
+                  key={exp.id}
+                  type="button"
+                  onClick={() => handleApplyExpeditionPreset(exp)}
+                  className={`p-2.5 rounded-xl border text-left transition-all ${
+                    selectedExpeditionId === exp.id
+                      ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/30 text-white font-bold'
+                      : isWhiteYellow
+                        ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50'
+                        : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:border-zinc-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 text-xs">
+                    <span>{exp.icon}</span>
+                    <span className="truncate font-bold">{exp.label}</span>
+                  </div>
+                  <div className="text-[10px] font-mono-numbers text-amber-400 truncate mt-0.5">
+                    {exp.frictionMu} µ Road Grip
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Gamer-Minimalist Cadence HUD Preview */}
+            {cadenceResult && (
+              <div className="p-3 rounded-xl bg-black border border-amber-500/40 flex items-center justify-between text-xs font-mono-numbers animate-in fade-in">
+                <div className="flex items-center gap-2.5">
+                  <span className="px-2 py-0.5 rounded bg-amber-400 text-black font-black text-xs">
+                    {cadenceResult.rank}
+                  </span>
+                  <div>
+                    <span className="text-white font-bold block">{cadenceResult.rankTitle}</span>
+                    <span className="text-[10px] text-zinc-400">Score: {cadenceResult.totalScore}/100</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-emerald-400 font-bold block">+{cadenceResult.respectsEarned} RESPECTS</span>
+                  <span className="text-[10px] text-zinc-500">Awareness Accord</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

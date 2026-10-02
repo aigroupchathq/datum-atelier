@@ -1069,6 +1069,14 @@ export const mockFeedPosts: CommunityPost[] = [
     provenanceTag: 'owner_experience',
     createdAt: '2 days ago',
     likesCount: 812,
+    respectsCount: 812,
+    cadenceRank: 'EX',
+    cadenceScore: 98,
+    respectsEarned: 22,
+    waypoints: [
+      { id: 'wp-108-1', title: 'Buttertubs Pass Summit', time: '07:20', altitudeM: 526 },
+      { id: 'wp-108-2', title: 'Swaledale Parish Ford', time: '08:05', altitudeM: 310 }
+    ],
     repliesCount: 74,
     linkedDriveId: 'drive-184'
   },
@@ -1088,6 +1096,14 @@ export const mockFeedPosts: CommunityPost[] = [
     provenanceTag: 'owner_experience',
     createdAt: '3 days ago',
     likesCount: 678,
+    respectsCount: 678,
+    cadenceRank: 'S',
+    cadenceScore: 94,
+    respectsEarned: 16,
+    waypoints: [
+      { id: 'wp-109-1', title: 'Burford Bakery Turnout', time: '06:15', altitudeM: 142 },
+      { id: 'wp-109-2', title: 'Bibury River Crest', time: '06:48', altitudeM: 188 }
+    ],
     repliesCount: 58,
     linkedDriveId: 'drive-184'
   },

@@ -201,6 +201,19 @@ export interface CommunityPost {
   provenanceTag: ProvenanceType;
   createdAt: string;
   likesCount: number;
+  respectsCount?: number;
+  cadenceRank?: 'EX' | 'S' | 'A+' | 'A' | 'ZEN';
+  cadenceScore?: number;
+  respectsEarned?: number;
+  waypoints?: {
+    id: string;
+    title: string;
+    time: string;
+    altitudeM?: number;
+    imageUrl?: string;
+  }[];
+  routePassName?: string;
+  frictionMu?: number;
   repliesCount: number;
   linkedDriveId?: string;
   linkedBuildVersion?: string;

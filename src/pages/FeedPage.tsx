@@ -24,6 +24,7 @@ interface FeedPageProps {
   onOpenCreatePost: (initialMode?: 'post' | 'story') => void;
   posts: CommunityPost[];
   onOpenPassRadar?: (passId?: string) => void;
+  onOpenDriveTracker?: () => void;
 }
 
 // Shimmer skeleton — uses .skeleton CSS class from index.css
@@ -50,7 +51,7 @@ const SkeletonCard: FC = () => (
 
 const POSTS_PER_PAGE = 8;
 
-export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPassRadar }) => {
+export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPassRadar, onOpenDriveTracker }) => {
   const { isWhiteYellow } = useTheme();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
@@ -168,14 +169,14 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
             {/* Post type shortcuts */}
             <div className={`grid grid-cols-4 gap-1.5 pt-2.5 border-t ${isWhiteYellow ? 'border-zinc-200' : 'border-white/[0.05]'}`}>
               {[
-                { label: 'Story', icon: <Camera className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-amber-300'}`} />, mode: 'story' as const },
-                { label: 'Expedition', icon: <Compass className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-amber-300'}`} />, mode: 'post' as const },
-                { label: 'Spec Build', icon: <GitCommit className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-sky-300'}`} />, mode: 'post' as const },
-                { label: 'Inquiry', icon: <HelpCircle className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-emerald-300'}`} />, mode: 'post' as const },
-              ].map(({ label, icon, mode }) => (
+                { label: 'Story', icon: <Camera className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-amber-300'}`} />, action: () => onOpenCreatePost('story') },
+                { label: 'Expedition', icon: <Compass className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-amber-300'}`} />, action: () => onOpenDriveTracker ? onOpenDriveTracker() : onOpenCreatePost('post') },
+                { label: 'Spec Build', icon: <GitCommit className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-sky-300'}`} />, action: () => onOpenCreatePost('post') },
+                { label: 'Inquiry', icon: <HelpCircle className={`w-3.5 h-3.5 transition ${isWhiteYellow ? 'text-zinc-500 group-hover:text-yellow-600' : 'text-zinc-400 group-hover:text-emerald-300'}`} />, action: () => onOpenCreatePost('post') },
+              ].map(({ label, icon, action }) => (
                 <button
                   key={label}
-                  onClick={() => onOpenCreatePost(mode)}
+                  onClick={action}
                   className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-xl text-[11.5px] font-medium transition group ${
                     isWhiteYellow
                       ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100'
@@ -186,6 +187,45 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
                   <span>{label}</span>
                 </button>
               ))}
+            </div>
+
+            {/* Active Expedition & Waypoint HUD Banner */}
+            <div className={`p-3.5 rounded-2xl border flex items-center justify-between text-xs font-mono-numbers transition-all ${
+              isWhiteYellow
+                ? 'bg-amber-50/70 border-amber-300 text-zinc-950 shadow-xs'
+                : 'bg-gradient-to-r from-amber-500/10 via-yellow-500/5 to-transparent border-amber-500/25 text-white'
+            }`}>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold shrink-0 ${
+                  isWhiteYellow ? 'bg-yellow-400 text-zinc-950' : 'bg-amber-400 text-black'
+                }`}>
+                  <Compass className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-bold flex items-center gap-2 truncate">
+                    <span>Active Mountain Pass Tracker</span>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-bold">
+                      AWARE MOTORING
+                    </span>
+                  </div>
+                  <div className={`text-[11px] truncate mt-0.5 ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
+                    Log scenic turnout waypoints, harmonize with road grip & earn Respects
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => onOpenDriveTracker?.()}
+                className={`px-3.5 py-2 rounded-xl font-bold shrink-0 text-xs transition shadow-md flex items-center gap-1.5 active:scale-95 ${
+                  isWhiteYellow
+                    ? 'bg-yellow-400 hover:bg-yellow-300 text-zinc-950'
+                    : 'bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black'
+                }`}
+              >
+                <span>Track Drive</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
 
