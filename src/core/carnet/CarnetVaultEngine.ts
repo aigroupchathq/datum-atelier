@@ -40,9 +40,63 @@ export interface TransferCertificate {
   transferHash: string;
 }
 
+export interface CustomsClearanceStamp {
+  stampId: string;
+  tokenId: string;
+  stationName: string;
+  countryCode: 'GB' | 'FR' | 'CH' | 'IT' | 'AT' | 'DE';
+  checkpointType: 'EXPORT' | 'IMPORT' | 'TRANSIT' | 'RE_IMPORT';
+  officerBadge: string;
+  customsSealCode: string;
+  clearanceTimestamp: string;
+  latitude: number;
+  longitude: number;
+  merkleStampHash: string;
+  previousStampHash: string;
+}
+
+export interface CarnetManifest {
+  carnetNumber: string;
+  issuingChamber: string;
+  guaranteeAssociation: string;
+  holderName: string;
+  holderAddress: string;
+  vehicle: {
+    callSign: string;
+    makeModel: string;
+    vin: string;
+    registrationPlate: string;
+    engineNumber: string;
+    color: string;
+    kerbWeightKg: number;
+    cubicCapacityCc: number;
+  };
+  valuation: {
+    currency: 'GBP' | 'EUR' | 'CHF';
+    agreedValue: number;
+    vatBondIndemnityRate: number;
+    vatBondAmount: number;
+    underwriter: string;
+  };
+  validity: {
+    issuedAt: string;
+    expiresAt: string;
+    daysRemaining: number;
+  };
+  transitCorridor: {
+    departure: string;
+    destination: string;
+    customsBorders: string[];
+  };
+  clearanceStamps: CustomsClearanceStamp[];
+  offlineEnclaveHash: string;
+  councilSignatures: CouncilSignature[];
+}
+
 export class CarnetVaultEngine {
   private tokens: Map<string, CarnetToken> = new Map();
   private certificates: TransferCertificate[] = [];
+  private stamps: Map<string, CustomsClearanceStamp[]> = new Map();
 
   /**
    * Generates and registers a time-locked, cryptographically hashed CarnetToken.
@@ -317,11 +371,218 @@ export class CarnetVaultEngine {
   }
 
   /**
+   * Records an official customs clearance stamp into the immutable transit ledger.
+   * Chained cryptographically to previous stamp or carnet token hash.
+   */
+  public recordClearanceStamp(
+    tokenId: string,
+    params: {
+      stationName: string;
+      countryCode: CustomsClearanceStamp['countryCode'];
+      checkpointType: CustomsClearanceStamp['checkpointType'];
+      officerBadge: string;
+      customsSealCode: string;
+      latitude?: number;
+      longitude?: number;
+    }
+  ): CustomsClearanceStamp {
+    const token = this.tokens.get(tokenId);
+    if (!token) {
+      throw new Error(`Cannot record customs clearance: Carnet token '${tokenId}' not found.`);
+    }
+
+    const existingStamps = this.stamps.get(tokenId) || [];
+    const prevHash = existingStamps.length > 0
+      ? existingStamps[existingStamps.length - 1].merkleStampHash
+      : token.tokenHash;
+
+    const clearanceTimestamp = new Date().toISOString();
+    const nonce = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const stampId = `STAMP-${params.countryCode}-${Date.now().toString(36).toUpperCase()}-${nonce}`;
+
+    const payload = [
+      'CUSTOMS_STAMP_V1',
+      stampId,
+      tokenId,
+      params.stationName,
+      params.countryCode,
+      params.checkpointType,
+      params.officerBadge,
+      params.customsSealCode,
+      clearanceTimestamp,
+      prevHash,
+    ].join(':');
+
+    const merkleStampHash = sha256(payload);
+
+    const stamp: CustomsClearanceStamp = {
+      stampId,
+      tokenId,
+      stationName: params.stationName,
+      countryCode: params.countryCode,
+      checkpointType: params.checkpointType,
+      officerBadge: params.officerBadge,
+      customsSealCode: params.customsSealCode,
+      clearanceTimestamp,
+      latitude: params.latitude ?? 0,
+      longitude: params.longitude ?? 0,
+      merkleStampHash,
+      previousStampHash: prevHash,
+    };
+
+    existingStamps.push(stamp);
+    this.stamps.set(tokenId, existingStamps);
+    this.saveToOfflineStorage();
+    return stamp;
+  }
+
+  /**
+   * Retrieves all customs stamps recorded for a given carnet token in chronological sequence.
+   */
+  public getClearanceStamps(tokenId: string): CustomsClearanceStamp[] {
+    return [...(this.stamps.get(tokenId) || [])];
+  }
+
+  /**
+   * Generates a full tamper-evident Carnet Manifest suitable for export, printing, and offline QR encoding.
+   */
+  public generateManifest(
+    vin: string,
+    options?: {
+      carnetNumber?: string;
+      holderName?: string;
+      holderAddress?: string;
+      callSign?: string;
+      makeModel?: string;
+      agreedValueGbp?: number;
+      currency?: 'GBP' | 'EUR' | 'CHF';
+    }
+  ): CarnetManifest {
+    const sanitizedVin = vin.trim().toUpperCase();
+    const activeToken = this.getAllTokens().find(
+      (t) => t.vin === sanitizedVin && (t.status === 'ACTIVE' || t.status === 'TRANSFERRED')
+    ) || this.issueToken(sanitizedVin, '0x7E3F...9A1B', ['GB', 'FR', 'CH', 'IT', 'AT'], 'ATA_CARNET', 365);
+
+    const stamps = this.getClearanceStamps(activeToken.id);
+    const carnetNumber = options?.carnetNumber || `GB/LON/2026/8841-K`;
+    const currency = options?.currency || 'GBP';
+    const agreedValue = options?.agreedValueGbp || 89500;
+    const vatRate = 0.40; // 40% EU VAT exemption bond indemnity
+    const vatBondAmount = Math.round(agreedValue * vatRate);
+
+    // Council signatures
+    const sig1 = this.signCouncilApproval('Lord Alistair Vance', 'OWNER', '0xOWNER-7E3F', 'Certified Vehicle Provenance');
+    const sig2 = this.signCouncilApproval('Apex Workshop (Bicester)', 'CUSTODIAN', '0xWORKSHOP-99A1', 'Mechanical Inspection Signed');
+    const sig3 = this.signCouncilApproval('Chubb Private Collector', 'INSURER', '0xINSURER-CC41', 'Agreed Valuation Bond Active');
+    const sig4 = this.signCouncilApproval('London Chamber Customs Desk', 'AUTHORITY', '0xLCCI-DESK-2026', 'ATA Carnet Issued Under Geneva Convention');
+
+    const manifestPayload = [
+      'CARNET_MANIFEST_V1',
+      carnetNumber,
+      sanitizedVin,
+      activeToken.id,
+      agreedValue,
+      currency,
+      stamps.map((s) => s.merkleStampHash).join(','),
+    ].join(':');
+
+    const offlineEnclaveHash = sha256(manifestPayload);
+
+    const now = Date.now();
+    const expiryTime = new Date(activeToken.expiresAt).getTime();
+    const daysRemaining = Math.max(0, Math.ceil((expiryTime - now) / (1000 * 60 * 60 * 24)));
+
+    return {
+      carnetNumber,
+      issuingChamber: 'London Chamber of Commerce & Industry (LCCI)',
+      guaranteeAssociation: "Fédération Internationale de l'Automobile (FIA)",
+      holderName: options?.holderName || 'Lord Alistair Vance / Apex Motoring Guild',
+      holderAddress: options?.holderAddress || 'The Mews, 14 Curzon Street, Mayfair, London W1J 5HN',
+      vehicle: {
+        callSign: options?.callSign || 'MAYA',
+        makeModel: options?.makeModel || 'BMW M3 Competition (G80)',
+        vin: sanitizedVin,
+        registrationPlate: 'LJ23 WXY',
+        engineNumber: 'S58-B30A-994182',
+        color: 'Isle of Man Green (C4G)',
+        kerbWeightKg: 1730,
+        cubicCapacityCc: 2993,
+      },
+      valuation: {
+        currency,
+        agreedValue,
+        vatBondIndemnityRate: vatRate,
+        vatBondAmount,
+        underwriter: 'Chubb European Group SE • Policy #CP-9921-ATELIER',
+      },
+      validity: {
+        issuedAt: activeToken.issuedAt,
+        expiresAt: activeToken.expiresAt,
+        daysRemaining,
+      },
+      transitCorridor: {
+        departure: 'Eurotunnel Folkestone Shuttle Terminal (GB)',
+        destination: 'Passo dello Stelvio & Swiss Alpine Corridors (CH/IT)',
+        customsBorders: ['Dover / Folkestone (GB)', 'Calais Coquelles (FR)', 'Basel St. Louis (CH)', 'Passo dello Stelvio / Chiasso (IT)'],
+      },
+      clearanceStamps: stamps,
+      offlineEnclaveHash,
+      councilSignatures: [sig1, sig2, sig3, sig4],
+    };
+  }
+
+  /**
+   * Persists the token and stamp state to localStorage when running in browser.
+   */
+  public saveToOfflineStorage(): void {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const payload = {
+          tokens: Array.from(this.tokens.entries()),
+          stamps: Array.from(this.stamps.entries()),
+          certificates: this.certificates,
+          savedAt: new Date().toISOString(),
+        };
+        window.localStorage.setItem('datum_carnet_vault_v1', JSON.stringify(payload));
+      } catch {
+        // Safe catch for storage quota or sandboxed environments
+      }
+    }
+  }
+
+  /**
+   * Restores previously cached offline carnet tokens and stamps from localStorage.
+   */
+  public loadFromOfflineStorage(): boolean {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const raw = window.localStorage.getItem('datum_carnet_vault_v1');
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.tokens)) {
+          this.tokens = new Map(data.tokens);
+        }
+        if (Array.isArray(data.stamps)) {
+          this.stamps = new Map(data.stamps);
+        }
+        if (Array.isArray(data.certificates)) {
+          this.certificates = data.certificates;
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Clears internal state. Primarily useful for unit testing and demo re-seeding.
    */
   public reset(): void {
     this.tokens.clear();
     this.certificates = [];
+    this.stamps.clear();
   }
 }
 
