@@ -21,7 +21,8 @@ import {
   Zap,
   ChevronDown,
   ChevronUp,
-  Check
+  Check,
+  Lock
 } from 'lucide-react';
 import type { CommunityPost } from '../../types';
 import { useToast } from '../../context/ToastContext';
@@ -55,7 +56,7 @@ interface CreatePostModalProps {
   initialDriveData?: InitialDriveData | null;
 }
 
-// Candid domestic UK & European presets
+// Curated domestic UK & European presets
 const DEMO_PRESETS = [
   {
     id: 'm3-cottage',
@@ -358,7 +359,7 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
       }
 
       showToast({
-        title: mode === 'story' ? 'Story Shared' : 'Published to Feed',
+        title: mode === 'story' ? 'Dispatch Shared' : 'Published to Feed',
         message: `Posted under ${currentCar.name} • License plate permanently protected.`,
         type: 'success',
         badge: 'PUBLISHED'
@@ -370,59 +371,61 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-hidden">
-      <div className={`border rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col max-h-[92vh] shadow-2xl relative my-auto animate-in fade-in duration-200 transition-colors ${
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-2 sm:p-4 overflow-hidden">
+      <div className={`border rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col max-h-[92vh] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.95)] relative my-auto animate-in fade-in duration-200 transition-colors ${
         isWhiteYellow
-          ? 'bg-white border-zinc-200 text-zinc-900 shadow-2xl'
-          : 'bg-[#0B0C0E] border-amber-500/20 text-white shadow-2xl'
+          ? 'bg-[#FAF9F6] border-stone-200 text-zinc-900 shadow-2xl'
+          : 'bg-[#101115] border-white/[0.09] text-white shadow-2xl'
       }`}>
         
         {/* ========================================================= */}
-        {/* FIXED HEADER                                              */}
+        {/* HAUTE HORLOGERIE PRECISION HEADER                         */}
         {/* ========================================================= */}
         <div className={`flex justify-between items-center px-5 sm:px-6 py-4 border-b shrink-0 ${
-          isWhiteYellow ? 'border-zinc-200 bg-white' : 'border-zinc-800/80 bg-[#0B0C0E]'
+          isWhiteYellow 
+            ? 'border-stone-200/80 bg-white/70 backdrop-blur-md' 
+            : 'border-white/[0.07] bg-[#121318]/90 backdrop-blur-md'
         }`}>
           <div className="flex items-center gap-3">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center border ${
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center border shadow-xs ${
               isWhiteYellow
-                ? 'bg-yellow-50 border-yellow-300 text-yellow-800'
-                : 'bg-zinc-900 border-amber-500/30 text-amber-400'
+                ? 'bg-amber-50/80 border-amber-200/80 text-amber-900'
+                : 'bg-zinc-900/90 border-[#C5A059]/30 text-[#E6C687] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
             }`}>
               <Camera className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className={`text-sm sm:text-base font-bold ${
-                  isWhiteYellow ? 'text-zinc-950' : 'text-zinc-100'
-                }`}>
-                  Share a Drive or Story
-                </h3>
-                <span className={`text-[10px] font-mono-numbers px-2 py-0.5 rounded font-bold border tracking-wider ${
+                <span className="text-[10px] font-mono-numbers uppercase tracking-[0.22em] text-[#C5A059] font-semibold">
+                  COMMISSION LOG //
+                </span>
+                <span className={`text-[10px] font-mono-numbers px-2 py-0.5 rounded font-semibold border tracking-wider ${
                   isWhiteYellow
-                    ? 'bg-yellow-100 text-yellow-900 border-yellow-300'
-                    : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                    ? 'bg-stone-100 text-stone-800 border-stone-300'
+                    : 'bg-white/[0.04] text-zinc-200 border-white/[0.08]'
                 }`}>
-                  {currentCar.name}
+                  CHASSIS {currentCar.name}
                 </span>
               </div>
-              <p className={`text-xs ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                {currentCar.model} • Privacy veil enabled
-              </p>
+              <h3 className={`text-sm sm:text-base font-bold font-luxury-display uppercase tracking-wider ${
+                isWhiteYellow ? 'text-zinc-950' : 'text-zinc-100'
+              }`}>
+                Record Atelier Dispatch
+              </h3>
             </div>
           </div>
           
           <button 
             type="button"
             onClick={onClose} 
-            className={`p-2 rounded-xl transition ${
+            className={`p-2 rounded-xl transition border ${
               isWhiteYellow
-                ? 'text-zinc-500 hover:text-zinc-950 hover:bg-zinc-100'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
+                ? 'border-transparent text-zinc-500 hover:text-zinc-950 hover:bg-stone-200/60'
+                : 'border-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.06]'
             }`}
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -431,24 +434,24 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
         {/* ========================================================= */}
         <form id="create-post-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-4">
           
-          {/* Car Selector Pills */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl border text-xs font-mono-numbers overflow-x-auto no-scrollbar">
-            <span className={`text-[10px] uppercase px-2 font-bold shrink-0 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
-              Car:
+          {/* Chassis Selector Plinth (Milled Horological Switch) */}
+          <div className="flex items-center gap-1.5 p-1 rounded-xl border text-xs font-mono-numbers overflow-x-auto no-scrollbar bg-black/40 border-white/[0.06] shadow-inner">
+            <span className={`text-[9px] uppercase tracking-[0.2em] px-2.5 font-bold shrink-0 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              CHASSIS:
             </span>
             {STABLE_CARS.map((c, idx) => (
               <button
                 key={c.id}
                 type="button"
                 onClick={() => handleCarSelect(idx)}
-                className={`px-3 py-1.5 rounded-lg transition shrink-0 text-xs ${
+                className={`px-3 py-1.5 rounded-lg transition-all shrink-0 text-[11px] font-semibold tracking-wider ${
                   selectedCarIndex === idx
                     ? isWhiteYellow
-                      ? 'bg-yellow-400 text-zinc-950 font-bold shadow-xs'
-                      : 'bg-amber-400 text-black font-extrabold shadow-sm'
+                      ? 'bg-zinc-900 text-white shadow-xs'
+                      : 'bg-gradient-to-b from-[#E6C687] to-[#B89047] text-zinc-950 font-bold shadow-[0_2px_8px_rgba(197,160,89,0.3)]'
                     : isWhiteYellow
-                      ? 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
+                      ? 'text-zinc-600 hover:text-zinc-950 hover:bg-stone-200/50'
+                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
                 }`}
               >
                 {c.name}
@@ -456,9 +459,9 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
             ))}
           </div>
 
-          {/* Mode Selector: Feed Post vs 24h Story */}
+          {/* Mode Selector: Permanent Ledger vs 24h Chrono */}
           <div className={`grid grid-cols-2 p-1 rounded-xl border text-xs ${
-            isWhiteYellow ? 'bg-zinc-100 border-zinc-200' : 'bg-zinc-950 border-zinc-800/80'
+            isWhiteYellow ? 'bg-stone-100/80 border-stone-200' : 'bg-black/40 border-white/[0.06]'
           }`}>
             <button
               type="button"
@@ -466,15 +469,15 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-2 ${
                 mode === 'post'
                   ? isWhiteYellow
-                    ? 'bg-white text-zinc-950 shadow-xs border border-zinc-300'
-                    : 'bg-zinc-800/90 text-white shadow-sm border border-amber-500/30'
+                    ? 'bg-white text-zinc-950 shadow-xs border border-stone-300'
+                    : 'bg-zinc-800 text-white shadow-sm border border-white/[0.08]'
                   : isWhiteYellow
                     ? 'text-zinc-600 hover:text-zinc-950'
                     : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Feed Post</span>
+              <Layers className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span className="font-luxury-display uppercase tracking-widest text-[11px]">Permanent Record</span>
             </button>
             
             <button
@@ -483,25 +486,27 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-2 ${
                 mode === 'story'
                   ? isWhiteYellow
-                    ? 'bg-yellow-100 text-yellow-900 border border-yellow-400 shadow-xs'
-                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                    ? 'bg-amber-100 text-amber-950 border border-amber-300 shadow-xs'
+                    : 'bg-white/[0.08] text-[#E6C687] border border-[#C5A059]/40 shadow-sm'
                   : isWhiteYellow
                     ? 'text-zinc-600 hover:text-zinc-950'
                     : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>24h Story</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span className="font-luxury-display uppercase tracking-widest text-[11px]">24h Chrono Reel</span>
             </button>
           </div>
 
           {/* ========================================================= */}
-          {/* PHOTO PREVIEW & CLIENT-SIDE PRIVACY GUARANTEE             */}
+          {/* EXHIBITION MOUNT: PHOTO & CLIENT-SIDE PRIVACY CANVAS      */}
           {/* ========================================================= */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-semibold ${isWhiteYellow ? 'text-zinc-700' : 'text-zinc-300'}`}>
-                Photo & Privacy
+              <span className={`text-[10px] font-mono-numbers uppercase tracking-[0.2em] font-semibold ${
+                isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'
+              }`}>
+                EXHIBITION PLATE // OPTICAL VEIL
               </span>
 
               {/* Hidden file input */}
@@ -516,69 +521,79 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className={`text-xs font-semibold flex items-center gap-1.5 transition ${
-                  isWhiteYellow ? 'text-yellow-700 hover:text-yellow-800' : 'text-amber-400 hover:text-amber-300'
+                className={`text-[11px] font-mono-numbers tracking-wider font-semibold flex items-center gap-1.5 transition ${
+                  isWhiteYellow ? 'text-amber-800 hover:text-amber-950' : 'text-[#E6C687] hover:text-[#FFF0C8]'
                 }`}
               >
                 <Upload className="w-3.5 h-3.5" />
-                <span>Upload New Photo</span>
+                <span>Upload Custom Media</span>
               </button>
             </div>
 
-            {/* Photo Canvas Container */}
+            {/* Photo Canvas Container (with Precision Horological Viewfinder Brackets) */}
             <div 
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
-              className="relative w-full rounded-2xl overflow-hidden bg-black border border-zinc-800 aspect-[16/10]"
+              className="relative w-full rounded-2xl overflow-hidden bg-black border border-white/[0.1] shadow-2xl aspect-[16/10]"
             >
+              {/* Corner Viewfinder Crosshairs */}
+              <div className="absolute top-2.5 left-2.5 w-3 h-3 border-t border-l border-white/40 pointer-events-none z-10" />
+              <div className="absolute top-2.5 right-2.5 w-3 h-3 border-t border-r border-white/40 pointer-events-none z-10" />
+              <div className="absolute bottom-2.5 left-2.5 w-3 h-3 border-b border-l border-white/40 pointer-events-none z-10" />
+              <div className="absolute bottom-2.5 right-2.5 w-3 h-3 border-b border-r border-white/40 pointer-events-none z-10" />
+
               <img
                 src={(isVeilActive && sanitizedImage && !inspectRawMode) ? sanitizedImage : selectedImage}
                 alt="Preview"
-                className="w-full h-full object-cover transition duration-200"
+                className="w-full h-full object-cover transition duration-300"
               />
 
               {/* Scanning Laser Animation */}
               {isScanning && (
-                <div className="absolute inset-0 pointer-events-none flex flex-col justify-center items-center bg-black/60 backdrop-blur-[2px]">
-                  <div className="px-3.5 py-1.5 rounded-xl bg-zinc-950/90 border border-amber-500/40 text-xs font-mono-numbers text-amber-300 flex items-center gap-2 shadow-2xl">
-                    <Scan className="w-3.5 h-3.5 animate-spin text-amber-400" />
-                    <span>Blurring license plate...</span>
+                <div className="absolute inset-0 pointer-events-none flex flex-col justify-center items-center bg-black/65 backdrop-blur-[2px] z-20">
+                  <div className="px-4 py-2 rounded-xl bg-zinc-950/90 border border-[#C5A059]/40 text-xs font-mono-numbers text-[#E6C687] flex items-center gap-2.5 shadow-2xl">
+                    <Scan className="w-3.5 h-3.5 animate-spin text-[#C5A059]" />
+                    <span className="tracking-wider uppercase text-[10px]">Overwriting Raw Plate Bytes on Canvas...</span>
                   </div>
                 </div>
               )}
 
-              {/* Inspect / View Original Toggle */}
+              {/* Inspect Original / View Protected Toggle */}
               {sanitizedImage && (
-                <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => setInspectRawMode(!inspectRawMode)}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-medium border transition backdrop-blur-md bg-zinc-950/80 border-zinc-700 text-zinc-200 hover:text-white shadow-md flex items-center gap-1"
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-mono-numbers uppercase tracking-wider border transition backdrop-blur-md bg-zinc-950/80 border-white/[0.15] text-zinc-300 hover:text-white shadow-lg flex items-center gap-1.5"
                   >
                     {inspectRawMode ? <EyeOff className="w-3 h-3 text-amber-400" /> : <Eye className="w-3 h-3 text-zinc-400" />}
-                    <span>{inspectRawMode ? 'View Protected' : 'Inspect Original'}</span>
+                    <span>{inspectRawMode ? 'View Cloaked' : 'Inspect Raw'}</span>
                   </button>
                 </div>
               )}
 
-              {/* Bottom Subtle Indicator */}
-              <div className="absolute bottom-2 inset-x-2 flex items-center justify-between px-3 py-1.5 rounded-xl bg-zinc-950/85 border border-zinc-800 backdrop-blur-md text-[11px]">
+              {/* Bottom Precision Telemetry Bar */}
+              <div className="absolute bottom-2.5 inset-x-2.5 flex items-center justify-between px-3 py-1.5 rounded-xl bg-zinc-950/85 border border-white/[0.08] backdrop-blur-md text-[10px] font-mono-numbers z-10">
                 <div className="flex items-center gap-2 text-zinc-300">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="font-medium">
-                    {isScanning ? 'Scrubbing...' : sanitizedPixelCount > 0 ? `Plate: ${activePlateText} (${sanitizedPixelCount} px masked)` : `Plate: ${activePlateText}`}
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+                  <span className="tracking-wider">
+                    {isScanning 
+                      ? 'SCRUBBING PIXELS...' 
+                      : sanitizedPixelCount > 0 
+                        ? `PLATE: ${activePlateText} // ${sanitizedPixelCount} PX DESTROYED` 
+                        : `PLATE: ${activePlateText}`}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1 text-[11px]">
+                <div className="flex items-center gap-1">
                   {(['frosted', 'pixel', 'blackout'] as const).map((style) => (
                     <button
                       type="button"
                       key={style}
                       onClick={() => setVeilStyle(style)}
-                      className={`px-2 py-0.5 rounded capitalize transition ${
+                      className={`px-2 py-0.5 rounded capitalize transition text-[10px] ${
                         veilStyle === style
-                          ? 'bg-zinc-800 text-amber-400 font-bold border border-zinc-700'
+                          ? 'bg-[#C5A059] text-zinc-950 font-bold shadow-xs'
                           : 'text-zinc-400 hover:text-zinc-200'
                       }`}
                     >
@@ -589,41 +604,41 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               </div>
             </div>
 
-            {/* UNIFIED PRIVACY REASSURANCE BANNER (High Impact Fix #4) */}
+            {/* HIGH-SOCIETY SOVEREIGN PRIVACY PLAQUE (High Impact Fix #4) */}
             <div className={`p-2.5 rounded-xl border flex items-center justify-between text-xs transition ${
               isWhiteYellow
-                ? 'bg-emerald-50/90 border-emerald-200 text-emerald-900'
-                : 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300'
+                ? 'bg-stone-100/90 border-stone-200 text-stone-800'
+                : 'bg-zinc-950/70 border-white/[0.06] text-zinc-300'
             }`}>
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="font-medium">
-                  Number plate blurred · Exact home location masked (800m sanctuary)
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-[11px] font-mono-numbers tracking-wide">
+                  Number plate scrubbed · 800m residential sanctuary active
                 </span>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/30 text-emerald-400">
-                ACTIVE
+              <span className="text-[9px] font-mono-numbers uppercase tracking-[0.2em] font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                SECURED
               </span>
             </div>
 
-            {/* Quick Preset Location Samples (Clean Single Line) */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-              <span className={`text-[10px] uppercase font-bold shrink-0 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                Presets:
+            {/* Quick Presets (Clean Single Line) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+              <span className={`text-[9px] uppercase font-mono-numbers tracking-[0.2em] font-bold shrink-0 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                LOCALES:
               </span>
               {DEMO_PRESETS.map((preset) => (
                 <button
                   type="button"
                   key={preset.id}
                   onClick={() => triggerOpticalScan(preset.url, preset.plate, preset.plateBox)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] shrink-0 transition border ${
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-mono-numbers shrink-0 transition border ${
                     selectedImage === preset.url
                       ? isWhiteYellow
-                        ? 'bg-yellow-400 text-zinc-950 font-bold border-yellow-500 shadow-xs'
-                        : 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold'
+                        ? 'bg-amber-100 text-amber-950 border-amber-300 font-bold'
+                        : 'bg-[#C5A059]/20 text-[#E6C687] border-[#C5A059]/40 font-bold shadow-xs'
                       : isWhiteYellow
-                        ? 'bg-zinc-50 text-zinc-600 border-zinc-200 hover:bg-zinc-100'
-                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                        ? 'bg-stone-50 text-zinc-600 border-stone-200 hover:bg-stone-100'
+                        : 'bg-zinc-950/60 text-zinc-400 border-white/[0.05] hover:text-zinc-200'
                   }`}
                 >
                   {preset.label}
@@ -633,39 +648,43 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
           </div>
 
           {/* ========================================================= */}
-          {/* PRIMARY INPUTS: TITLE & STORY (High Impact Fix #3)       */}
+          {/* BESPOKE VELLUM INPUTS: TITLE & DRIVER IMPRESSIONS         */}
           {/* ========================================================= */}
           <div className="space-y-3">
             <div>
-              <label className={`text-xs font-semibold block mb-1 ${isWhiteYellow ? 'text-zinc-800' : 'text-zinc-200'}`}>
-                Title <span className="text-zinc-400 font-normal">(optional)</span>
+              <label className={`text-[10px] font-mono-numbers uppercase tracking-[0.2em] font-semibold block mb-1 ${
+                isWhiteYellow ? 'text-zinc-700' : 'text-zinc-400'
+              }`}>
+                Title / Dispatch Notation <span className="text-zinc-500 font-normal lowercase">(optional)</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Morning drive through the Lake District"
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none transition ${
+                placeholder="e.g. Dawn shakedown through the Lake District"
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none transition shadow-inner font-sans ${
                   isWhiteYellow
-                    ? 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-yellow-500 focus:bg-white'
-                    : 'bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-400/60'
+                    ? 'bg-white border-stone-300 text-zinc-900 placeholder-stone-400 focus:border-amber-500'
+                    : 'bg-[#0B0C0E] border-white/[0.08] text-white placeholder-zinc-600 focus:border-[#C5A059]/60'
                 }`}
               />
             </div>
 
             <div>
-              <label className={`text-xs font-semibold block mb-1 ${isWhiteYellow ? 'text-zinc-800' : 'text-zinc-200'}`}>
-                Notes & Story <span className="text-red-400">*</span>
+              <label className={`text-[10px] font-mono-numbers uppercase tracking-[0.2em] font-semibold block mb-1 ${
+                isWhiteYellow ? 'text-zinc-700' : 'text-zinc-400'
+              }`}>
+                Driver Story & Mechanical Notes <span className="text-[#C5A059]">*</span>
               </label>
               <textarea
                 rows={3}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="What made this drive memorable? Road feel, conditions, favorite section..."
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm resize-none transition focus:outline-none ${
+                placeholder="What made this drive memorable? Road feel, damping composure, conditions, sound..."
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm resize-none transition focus:outline-none shadow-inner font-sans ${
                   isWhiteYellow
-                    ? 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder-zinc-400 focus:border-yellow-500 focus:bg-white'
-                    : 'bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-400/60'
+                    ? 'bg-white border-stone-300 text-zinc-900 placeholder-stone-400 focus:border-amber-500'
+                    : 'bg-[#0B0C0E] border-white/[0.08] text-white placeholder-zinc-600 focus:border-[#C5A059]/60'
                 }`}
                 required
               />
@@ -673,10 +692,10 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
           </div>
 
           {/* ========================================================= */}
-          {/* COLLAPSIBLE ADVANCED DETAILS (High Impact Fix #1 & #5)    */}
+          {/* COLLAPSIBLE ADVANCED INSTRUMENTATION PANEL                */}
           {/* ========================================================= */}
           <div className={`rounded-2xl border transition-colors ${
-            isWhiteYellow ? 'border-zinc-200 bg-zinc-50/50' : 'border-zinc-800/80 bg-zinc-950/40'
+            isWhiteYellow ? 'border-stone-200 bg-stone-50/50' : 'border-white/[0.06] bg-zinc-950/30'
           }`}>
             <button
               type="button"
@@ -686,33 +705,35 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               }`}
             >
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
-                <span className="font-semibold">
-                  {showAdvancedDetails ? 'Hide Extra Details' : 'Add Extra Details (Route, Workshop, Weather)'}
+                <SlidersHorizontal className="w-3.5 h-3.5 text-[#C5A059]" />
+                <span className="font-mono-numbers text-[11px] tracking-wider uppercase">
+                  {showAdvancedDetails ? 'Collapse Technical Ledger' : 'Add Technical Ledger (Route, Workshop, Weather)'}
                 </span>
                 {(postType !== 'CAR_STORY' || selectedExpeditionId) && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">
+                  <span className="text-[9px] font-mono-numbers uppercase tracking-wider px-2 py-0.5 rounded bg-[#C5A059]/20 text-[#E6C687] font-bold border border-[#C5A059]/30">
                     Active
                   </span>
                 )}
               </div>
-              {showAdvancedDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              {showAdvancedDetails ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
             </button>
 
             {showAdvancedDetails && (
-              <div className={`p-4 pt-1 space-y-4 border-t ${isWhiteYellow ? 'border-zinc-200' : 'border-zinc-800/60'}`}>
+              <div className={`p-4 pt-1 space-y-4 border-t ${isWhiteYellow ? 'border-stone-200' : 'border-white/[0.06]'}`}>
                 
                 {/* Post Category Picker */}
                 <div>
-                  <label className={`text-[11px] uppercase font-bold block mb-1.5 ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                    Post Category
+                  <label className={`text-[10px] font-mono-numbers uppercase tracking-[0.2em] font-bold block mb-1.5 ${
+                    isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'
+                  }`}>
+                    Classification
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono-numbers text-xs">
                     {[
                       { type: 'CAR_STORY', label: 'Car Story', icon: Camera },
-                      { type: 'DRIVE', label: 'Drive Route', icon: Compass },
+                      { type: 'DRIVE', label: 'Expedition', icon: Compass },
                       { type: 'BUILD_UPDATE', label: 'Workshop', icon: Wrench },
-                      { type: 'QUESTION', label: 'Question', icon: HelpCircle },
+                      { type: 'QUESTION', label: 'Inquiry', icon: HelpCircle },
                     ].map((opt) => {
                       const Icon = opt.icon;
                       return (
@@ -720,14 +741,14 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
                           type="button"
                           key={opt.type}
                           onClick={() => setPostType(opt.type as any)}
-                          className={`py-2 px-2.5 rounded-xl text-xs font-semibold transition border flex items-center justify-center gap-1.5 ${
+                          className={`py-2 px-2.5 rounded-xl text-[11px] font-semibold transition border flex items-center justify-center gap-1.5 ${
                             postType === opt.type
                               ? isWhiteYellow
-                                ? 'bg-yellow-400 text-zinc-950 border-yellow-500 font-bold shadow-xs'
-                                : 'bg-amber-400 text-zinc-950 border-amber-400 shadow-md font-bold'
+                                ? 'bg-zinc-900 text-white border-zinc-900 font-bold shadow-xs'
+                                : 'bg-[#C5A059] text-zinc-950 border-[#C5A059] font-bold shadow-md'
                               : isWhiteYellow
-                                ? 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100'
-                                : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white'
+                                ? 'bg-white text-zinc-600 border-stone-200 hover:bg-stone-100'
+                                : 'bg-black/40 text-zinc-400 border-white/[0.06] hover:text-white'
                           }`}
                         >
                           <Icon className="w-3.5 h-3.5" />
@@ -740,73 +761,73 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
                 {/* Conditional Workshop Inputs */}
                 {postType === 'BUILD_UPDATE' && (
-                  <div className="p-3.5 rounded-2xl bg-zinc-900 border border-amber-500/20 space-y-3">
-                    <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-                      <Wrench className="w-4 h-4 text-amber-400" />
-                      <span className="text-xs font-bold text-amber-300">
-                        Workshop Details
+                  <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-3 font-mono-numbers">
+                    <div className="flex items-center gap-2 border-b border-white/[0.06] pb-2">
+                      <Wrench className="w-4 h-4 text-[#C5A059]" />
+                      <span className="text-xs uppercase tracking-wider font-bold text-[#E6C687]">
+                        Certified Workshop Ledger
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                       <div>
-                        <label className="text-[10px] text-zinc-400 block mb-1">Workshop or Specialist</label>
+                        <label className="text-[9px] uppercase tracking-wider text-zinc-400 block mb-1">Workshop or Specialist</label>
                         <input
                           type="text"
                           value={workshopName}
                           onChange={(e) => setWorkshopName(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-white/[0.08] text-white text-xs outline-none focus:border-[#C5A059]"
                           placeholder="e.g. Litchfield Motors"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-zinc-400 block mb-1">Work / Component</label>
+                        <label className="text-[9px] uppercase tracking-wider text-zinc-400 block mb-1">Work / Component Category</label>
                         <input
                           type="text"
                           value={componentCategory}
                           onChange={(e) => setComponentCategory(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-white/[0.08] text-white text-xs outline-none focus:border-[#C5A059]"
                           placeholder="e.g. Suspension, Exhaust"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
-                          <PoundSterling className="w-3 h-3 text-amber-400" />
-                          <span>Invoiced Cost (£)</span>
+                        <label className="text-[9px] uppercase tracking-wider text-zinc-400 block mb-1 flex items-center gap-1">
+                          <PoundSterling className="w-3 h-3 text-[#C5A059]" />
+                          <span>Invoiced Amount (£ GBP)</span>
                         </label>
                         <input
                           type="text"
                           value={invoicedCost}
                           onChange={(e) => setInvoicedCost(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-white/[0.08] text-white text-xs outline-none focus:border-[#C5A059]"
                           placeholder="2,850.00"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
-                          <Gauge className="w-3 h-3 text-amber-400" />
-                          <span>Performance / Weight Change</span>
+                        <label className="text-[9px] uppercase tracking-wider text-zinc-400 block mb-1 flex items-center gap-1">
+                          <Gauge className="w-3 h-3 text-[#C5A059]" />
+                          <span>Performance / Weight Delta</span>
                         </label>
                         <input
                           type="text"
                           value={performanceDelta}
                           onChange={(e) => setPerformanceDelta(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-white text-xs outline-none focus:border-amber-400"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-white/[0.08] text-white text-xs outline-none focus:border-[#C5A059]"
                           placeholder="+18 BHP / -8 kg"
                         />
                       </div>
                     </div>
 
-                    <label className="flex items-center gap-2 cursor-pointer pt-1 text-xs text-zinc-300">
+                    <label className="flex items-center gap-2 cursor-pointer pt-1 text-[11px] text-zinc-300">
                       <input
                         type="checkbox"
                         checked={vatInvoiceNotarized}
                         onChange={(e) => setVatInvoiceNotarized(e.target.checked)}
-                        className="rounded border-zinc-700 text-amber-400 focus:ring-0"
+                        className="rounded border-zinc-700 text-[#C5A059] focus:ring-0"
                       />
                       <span className="flex items-center gap-1.5">
                         <FileCheck2 className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Cryptographically verify itemised VAT receipt</span>
+                        <span>Cryptographically bind itemised VAT invoice for V5C provenance</span>
                       </span>
                     </label>
                   </div>
@@ -814,11 +835,13 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
                 {/* Conditional Drive Presets & Environmental Inputs */}
                 {(postType === 'DRIVE' || showAdvancedDetails) && (
-                  <div className="space-y-3">
+                  <div className="space-y-3 font-mono-numbers">
                     <div className="space-y-2">
-                      <span className={`text-[11px] uppercase font-bold flex items-center gap-1.5 ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                        <Zap className="w-3.5 h-3.5 text-amber-400 fill-current" />
-                        <span>Drive Route Presets (Optional)</span>
+                      <span className={`text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-1.5 ${
+                        isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'
+                      }`}>
+                        <Zap className="w-3.5 h-3.5 text-[#C5A059] fill-current" />
+                        <span>Cadence & Route Presets</span>
                       </span>
 
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -827,20 +850,20 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
                             key={exp.id}
                             type="button"
                             onClick={() => handleApplyExpeditionPreset(exp)}
-                            className={`p-2 rounded-xl border text-left transition ${
+                            className={`p-2.5 rounded-xl border text-left transition ${
                               selectedExpeditionId === exp.id
-                                ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/30 text-white font-bold'
+                                ? 'bg-[#C5A059]/20 border-[#C5A059] ring-1 ring-[#C5A059]/40 text-white font-bold'
                                 : isWhiteYellow
-                                  ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-100'
-                                  : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
+                                  ? 'bg-white border-stone-200 text-zinc-700 hover:bg-stone-100'
+                                  : 'bg-black/40 border-white/[0.06] text-zinc-300 hover:border-white/[0.15]'
                             }`}
                           >
                             <div className="flex items-center gap-1 text-xs">
                               <span>{exp.icon}</span>
                               <span className="truncate font-semibold">{exp.label}</span>
                             </div>
-                            <div className="text-[10px] text-zinc-400 truncate mt-0.5">
-                              {exp.frictionMu} µ Grip
+                            <div className="text-[9px] text-[#C5A059] truncate mt-0.5">
+                              {exp.frictionMu} µ Friction
                             </div>
                           </button>
                         ))}
@@ -849,35 +872,35 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
                       <div>
-                        <label className="text-[10px] text-zinc-400 block mb-1 flex items-center gap-1">
+                        <label className="text-[9px] uppercase tracking-wider text-zinc-400 block mb-1 flex items-center gap-1">
                           <CloudRain className="w-3 h-3 text-cyan-400" />
-                          <span>Road Surface</span>
+                          <span>Surface State</span>
                         </label>
                         <input
                           type="text"
                           value={surfaceCondition}
                           onChange={(e) => setSurfaceCondition(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs outline-none"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-white/[0.08] text-white text-xs outline-none"
                           placeholder="Damp Bitumen"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-zinc-400 block mb-1">Atmospheric Pressure</label>
+                        <label className="text-[9px] uppercase tracking-wider text-zinc-400 block mb-1">Atmospheric</label>
                         <input
                           type="text"
                           value={barometricPressure}
                           onChange={(e) => setBarometricPressure(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs outline-none"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-white/[0.08] text-white text-xs outline-none"
                           placeholder="1018 hPa"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-zinc-400 block mb-1">Fuel Grade</label>
+                        <label className="text-[9px] uppercase tracking-wider text-zinc-400 block mb-1">Fuel RON</label>
                         <input
                           type="text"
                           value={fuelGrade}
                           onChange={(e) => setFuelGrade(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs outline-none"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-white/[0.08] text-white text-xs outline-none"
                           placeholder="99 RON"
                         />
                       </div>
@@ -892,16 +915,18 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
         </form>
 
         {/* ========================================================= */}
-        {/* STICKY FOOTER WITH PROMINENT PUBLISH BUTTON (High Impact Fix #2) */}
+        {/* HAUTE HORLOGERIE STICKY FOOTER & BRUSHED GOLD PUBLISH CTA */}
         {/* ========================================================= */}
         <div className={`p-4 sm:px-6 border-t flex items-center justify-between gap-3 shrink-0 rounded-b-2xl sm:rounded-b-3xl ${
-          isWhiteYellow ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-950/90 border-zinc-800 backdrop-blur-md'
+          isWhiteYellow 
+            ? 'bg-stone-50 border-stone-200' 
+            : 'bg-[#0E0F13]/95 border-white/[0.08] backdrop-blur-xl shadow-[0_-10px_25px_rgba(0,0,0,0.5)]'
         }`}>
-          {/* Subtle Privacy Status */}
-          <div className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium">
-            <Check className="w-4 h-4 text-emerald-500" />
-            <span className="hidden sm:inline">Plates & Location Protected</span>
-            <span className="sm:hidden">Protected</span>
+          {/* Subtle Sanctuary Status */}
+          <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-mono-numbers">
+            <Check className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden sm:inline text-[11px] tracking-wide">Shielded by Design • 800m Sanctuary</span>
+            <span className="sm:hidden text-[10px]">Shielded</span>
           </div>
 
           {/* Action Buttons */}
@@ -909,10 +934,10 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${
+              className={`px-4 py-2 rounded-xl text-[11px] font-mono-numbers uppercase tracking-wider transition ${
                 isWhiteYellow
-                  ? 'border border-zinc-300 text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100'
-                  : 'border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900'
+                  ? 'border border-stone-300 text-zinc-600 hover:text-zinc-950 hover:bg-stone-100'
+                  : 'border border-white/[0.1] text-zinc-400 hover:text-white hover:bg-white/[0.05]'
               }`}
             >
               Cancel
@@ -922,19 +947,22 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
               form="create-post-form"
               type="submit"
               disabled={isSubmitting || !content.trim()}
-              className={`px-6 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 active:scale-95 shadow-md flex items-center gap-2 ${
+              className={`px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-[0.16em] transition-all disabled:opacity-40 active:scale-[0.98] flex items-center gap-2 ${
                 isWhiteYellow
-                  ? 'bg-yellow-400 hover:bg-yellow-300 text-zinc-950 border border-yellow-500'
-                  : 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-zinc-950'
+                  ? 'bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-zinc-950 border border-yellow-500/80 shadow-[0_4px_16px_rgba(234,179,8,0.25)] hover:brightness-105'
+                  : 'bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#C5A059] text-zinc-950 shadow-[0_4px_20px_rgba(212,175,55,0.35),inset_0_1px_0_rgba(255,255,255,0.6)] hover:brightness-105'
               }`}
             >
               {isSubmitting ? (
                 <>
                   <div className="w-3.5 h-3.5 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
-                  <span>Publishing...</span>
+                  <span>Notarizing...</span>
                 </>
               ) : (
-                <span>Publish Post</span>
+                <>
+                  <Lock className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span>Publish Dispatch</span>
+                </>
               )}
             </button>
           </div>
