@@ -168,6 +168,18 @@ export const Navbar: FC<NavbarProps> = ({
                   <span>{label}</span>
                 </NavLink>
               ))}
+
+              {/* Custodian Journey & Sitemap External Link */}
+              <a
+                href="/datum_sitemap.html?journey=true"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border border-amber-500/30 text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 hover:border-amber-400 shadow-xs ml-1"
+                title="Interactive Software Architecture & Custodian Journey Sequence"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                <span>Journey & Sitemap</span>
+              </a>
             </nav>
           </div>
 

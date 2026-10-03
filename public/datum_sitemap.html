@@ -3,42 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DATUM // Sovereign Automotive Atelier — System Design & Interactive Sitemap</title>
+  <title>DATUM // Sovereign Automotive Atelier — System Design & Custodian Journey</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       /* Theme: Obsidian Atelier (Default Luxury Dark) */
-      --bg-primary: #070B12;
-      --bg-surface: #0E1524;
-      --bg-card: rgba(17, 24, 39, 0.85);
-      --bg-glass: rgba(14, 21, 36, 0.75);
+      --bg-primary: #070A10;
+      --bg-surface: #0E1422;
+      --bg-card: rgba(15, 22, 36, 0.88);
+      --bg-glass: rgba(14, 20, 34, 0.82);
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(217, 119, 6, 0.4);
+      --border-accent: rgba(229, 169, 60, 0.35);
       --text-primary: #F8FAFC;
       --text-secondary: #94A3B8;
       --text-muted: #64748B;
       --grid-dot: rgba(255, 255, 255, 0.09);
       --grid-line: rgba(255, 255, 255, 0.03);
 
-      /* Accent & Brand Colors */
-      --amber-gold: #F59E0B;
-      --amber-glow: rgba(245, 158, 11, 0.25);
-      --amber-dark: #B45309;
-      --titanium: #E2E8F0;
+      /* Bespoke Metallics & Heritage Tones */
+      --amber-gold: #E5A93C;
+      --amber-rich: #D49020;
+      --amber-glow: rgba(229, 169, 60, 0.28);
+      --amber-dark: #875A14;
+      --cognac: #B45309;
+      --racing-green: #10B981;
+      --racing-glow: rgba(16, 185, 129, 0.35);
       --blue-accent: #38BDF8;
       --blue-glow: rgba(56, 189, 248, 0.25);
-      --emerald-live: #10B981;
-      --emerald-glow: rgba(16, 185, 129, 0.35);
 
       /* Sitemap Visual Hierarchy Tiers */
-      --orange-bg: rgba(245, 158, 11, 0.16);
-      --orange-border: #F59E0B;
+      --orange-bg: rgba(229, 169, 60, 0.16);
+      --orange-border: #E5A93C;
       --orange-text: #FDE68A;
-      --orange-glow: 0 0 20px -2px rgba(245, 158, 11, 0.3);
+      --orange-glow: 0 0 20px -2px rgba(229, 169, 60, 0.3);
 
-      --grey-bg: rgba(30, 41, 59, 0.7);
+      --grey-bg: rgba(24, 33, 49, 0.72);
       --grey-border: rgba(255, 255, 255, 0.12);
       --grey-text: #E2E8F0;
 
@@ -51,14 +52,14 @@
       --dashed-text: #94A3B8;
 
       --link-line: rgba(148, 163, 184, 0.25);
-      --link-active: #F59E0B;
+      --link-active: #E5A93C;
     }
 
     [data-theme="light"] {
       --bg-primary: #F8FAFC;
       --bg-surface: #FFFFFF;
       --bg-card: rgba(255, 255, 255, 0.95);
-      --bg-glass: rgba(255, 255, 255, 0.85);
+      --bg-glass: rgba(255, 255, 255, 0.88);
       --border-subtle: rgba(15, 23, 42, 0.08);
       --border-accent: rgba(217, 119, 6, 0.35);
       --text-primary: #0F172A;
@@ -139,12 +140,12 @@
     .brand-cluster {
       pointer-events: auto;
       background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border-subtle);
-      padding: 10px 20px;
+      padding: 9px 18px;
       border-radius: 14px;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
       display: flex;
       align-items: center;
       gap: 14px;
@@ -154,8 +155,8 @@
       font-family: 'Cinzel', serif;
       font-size: 20px;
       font-weight: 900;
-      letter-spacing: 0.16em;
-      background: linear-gradient(135deg, #FFF 0%, #D97706 60%, #F59E0B 100%);
+      letter-spacing: 0.18em;
+      background: linear-gradient(135deg, #FFF 0%, #D49020 60%, #E5A93C 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -172,7 +173,7 @@
       font-weight: 700;
       padding: 4px 9px;
       border-radius: 6px;
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(229, 169, 60, 0.15);
       color: var(--amber-gold);
       border: 1px solid var(--border-accent);
       text-transform: uppercase;
@@ -186,8 +187,8 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--emerald-live);
-      box-shadow: 0 0 8px var(--emerald-glow);
+      background: var(--racing-green);
+      box-shadow: 0 0 8px var(--racing-glow);
       animation: pulse-ring 2s infinite ease-in-out;
     }
 
@@ -208,7 +209,7 @@
       padding-left: 14px;
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1280px) {
       .telemetry-ticker { display: flex; }
     }
 
@@ -230,12 +231,70 @@
       align-items: center;
       gap: 8px;
       background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border-subtle);
       padding: 6px 12px;
       border-radius: 14px;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Guided Journey Highlight Button */
+    .journey-cta-btn {
+      background: linear-gradient(135deg, #D49020 0%, #E5A93C 100%);
+      border: 1px solid #FCD34D;
+      color: #000;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(229, 169, 60, 0.4);
+      letter-spacing: 0.02em;
+    }
+
+    .journey-cta-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(229, 169, 60, 0.6);
+    }
+
+    .journey-cta-btn:active {
+      transform: scale(0.97);
+    }
+
+    .journey-pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #000;
+      animation: pulse-ring 1.5s infinite ease-in-out;
+    }
+
+    .share-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .share-btn:hover {
+      border-color: var(--amber-gold);
+      color: var(--amber-gold);
+      background: rgba(229, 169, 60, 0.1);
     }
 
     .posh-search {
@@ -264,7 +323,7 @@
       outline: none;
       font-size: 11.5px;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      width: 160px;
+      width: 140px;
       color: var(--text-primary);
     }
 
@@ -308,7 +367,7 @@
       background: var(--amber-gold);
       color: #000;
       font-weight: 700;
-      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+      box-shadow: 0 2px 10px rgba(229, 169, 60, 0.35);
     }
 
     .hud-btn {
@@ -329,7 +388,7 @@
 
     .hud-btn:hover {
       border-color: var(--amber-gold);
-      background: rgba(245, 158, 11, 0.1);
+      background: rgba(229, 169, 60, 0.1);
       color: var(--amber-gold);
     }
 
@@ -337,14 +396,13 @@
       transform: scale(0.97);
     }
 
-    /* Zoom Indicator Pill */
     .zoom-pill {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       font-weight: 600;
       color: var(--text-muted);
-      padding: 4px 8px;
-      min-width: 48px;
+      padding: 4px 6px;
+      min-width: 44px;
       text-align: center;
     }
 
@@ -367,7 +425,7 @@
     #scene {
       position: absolute;
       transform-origin: 0 0;
-      transition: transform 0.04s cubic-bezier(0.1, 0.9, 0.2, 1);
+      transition: transform 0.05s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform;
     }
 
@@ -385,7 +443,7 @@
       stroke: var(--link-line);
       stroke-width: 1.5px;
       stroke-dasharray: 4 3;
-      transition: stroke 0.25s ease, stroke-width 0.25s ease;
+      transition: stroke 0.25s ease, stroke-width 0.25s ease, opacity 0.3s ease;
     }
 
     .tree-link.active-branch {
@@ -393,6 +451,10 @@
       stroke-width: 2.2px;
       stroke-dasharray: none;
       filter: drop-shadow(0 0 6px var(--amber-glow));
+    }
+
+    .tree-link.dimmed-branch {
+      opacity: 0.15;
     }
 
     .tree-link.topology-link {
@@ -414,7 +476,7 @@
       z-index: 2;
     }
 
-    /* Node Card Base (Luxury Automotive Spec Sheet Aesthetic) */
+    /* Node Card Base */
     .node-card {
       position: absolute;
       border-radius: 10px;
@@ -426,7 +488,7 @@
       justify-content: space-between;
       gap: 10px;
       cursor: pointer;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.3s ease;
       white-space: nowrap;
       border: 1px solid var(--border-subtle);
       box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.25);
@@ -444,21 +506,39 @@
       box-shadow: 0 0 25px var(--amber-glow);
     }
 
+    .node-card.journey-active {
+      outline: 2px solid var(--amber-gold) !important;
+      outline-offset: 4px;
+      box-shadow: 0 0 35px var(--amber-glow) !important;
+      animation: journey-beacon 2s infinite ease-in-out;
+      z-index: 80 !important;
+    }
+
+    @keyframes journey-beacon {
+      0%, 100% { transform: scale(1.03); }
+      50% { transform: scale(1.08); box-shadow: 0 0 45px rgba(229, 169, 60, 0.6); }
+    }
+
+    .node-card.journey-dimmed {
+      opacity: 0.18;
+      filter: grayscale(0.6);
+    }
+
     .node-card.highlighted {
       animation: pulse-border 1.2s infinite;
     }
 
     @keyframes pulse-border {
-      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.8); }
-      70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(229, 169, 60, 0.8); }
+      70% { box-shadow: 0 0 0 10px rgba(229, 169, 60, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(229, 169, 60, 0); }
     }
 
     /* Level 0: Root Brand Node */
     .node-root {
-      background: linear-gradient(145deg, #131B2E 0%, #080C14 100%);
+      background: linear-gradient(145deg, #131B2E 0%, #070A10 100%);
       border: 2px solid var(--amber-gold);
-      box-shadow: 0 15px 40px -5px rgba(245, 158, 11, 0.25);
+      box-shadow: 0 15px 40px -5px rgba(229, 169, 60, 0.25);
       padding: 16px 26px;
       border-radius: 16px;
       display: flex;
@@ -514,7 +594,7 @@
     }
 
     .node-orange:hover {
-      background: rgba(245, 158, 11, 0.28);
+      background: rgba(229, 169, 60, 0.28);
       border-color: #FBBF24;
     }
 
@@ -636,12 +716,12 @@
       left: 20px;
       z-index: 100;
       background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border-subtle);
       border-radius: 14px;
       padding: 14px 18px;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
       font-size: 11px;
       display: flex;
       flex-direction: column;
@@ -692,8 +772,8 @@
       width: 180px;
       height: 120px;
       background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border-subtle);
       border-radius: 12px;
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
@@ -729,7 +809,7 @@
     .radar-viewport-box {
       position: absolute;
       border: 1.5px solid var(--amber-gold);
-      background: rgba(245, 158, 11, 0.1);
+      background: rgba(229, 169, 60, 0.1);
       pointer-events: none;
       border-radius: 2px;
     }
@@ -866,7 +946,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+      background: linear-gradient(135deg, #D49020 0%, #E5A93C 100%);
       color: #000;
       text-decoration: none;
       font-weight: 700;
@@ -874,12 +954,12 @@
       padding: 10px 16px;
       border-radius: 8px;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+      box-shadow: 0 4px 15px rgba(229, 169, 60, 0.35);
     }
 
     .insp-launch-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+      box-shadow: 0 6px 20px rgba(229, 169, 60, 0.5);
     }
 
     /* Filter pills */
@@ -914,9 +994,409 @@
     }
 
     .filter-pill.active {
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(229, 169, 60, 0.15);
       color: var(--amber-gold);
       border-color: var(--amber-gold);
+    }
+
+    /* ───────────────────────────────────────────────────────────── */
+    /* 🌟 THE CUSTODIAN ONBOARDING JOURNEY DOCK (CLASSY MASTER HCI) */
+    /* ───────────────────────────────────────────────────────────── */
+    .journey-dock {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      z-index: 120;
+      width: 92%;
+      max-width: 780px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1.5px solid var(--border-accent);
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.65), 0 0 30px rgba(229, 169, 60, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .journey-dock.active {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .dock-act-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--amber-gold);
+      text-transform: uppercase;
+      background: rgba(229, 169, 60, 0.12);
+      padding: 3px 8px;
+      border-radius: 5px;
+      border: 1px solid rgba(229, 169, 60, 0.3);
+    }
+
+    .dock-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dock-act-title {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: 0.06em;
+    }
+
+    .dock-close-btn {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 15px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .dock-close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text-primary);
+    }
+
+    /* Chapter Progress Bar */
+    .dock-progress-track {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .dock-progress-step {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dock-progress-step.completed {
+      background: var(--amber-rich);
+    }
+
+    .dock-progress-step.active {
+      background: var(--amber-gold);
+      box-shadow: 0 0 10px var(--amber-glow);
+    }
+
+    /* Narrative & Interactive Sandbox */
+    .dock-body {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .dock-body {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
+
+    .dock-narrative {
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .dock-narrative strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .dock-narrative em {
+      color: var(--amber-gold);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* Interactive Mini Sandbox Console */
+    .interactive-sandbox {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+
+    .sandbox-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Sandbox Interactive Widgets */
+    .persona-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .persona-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 6px;
+      font-size: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-secondary);
+    }
+
+    .persona-chip.active {
+      border-color: var(--amber-gold);
+      background: rgba(229, 169, 60, 0.15);
+      color: var(--amber-gold);
+      font-weight: 700;
+    }
+
+    .ignition-btn {
+      background: radial-gradient(circle, #EF4444 0%, #991B1B 100%);
+      border: 2px solid #FCA5A5;
+      color: #FFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .ignition-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+    }
+
+    .ignition-btn.ignited {
+      background: radial-gradient(circle, #10B981 0%, #065F46 100%);
+      border-color: #6EE7B7;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Slider styling for telemetry & grip */
+    .sandbox-slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sandbox-slider-row label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sandbox-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .sandbox-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--amber-gold);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--amber-glow);
+    }
+
+    .telemetry-output-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      text-align: center;
+    }
+
+    .telemetry-stat {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 8px;
+    }
+
+    .stat-val {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Hash stamp visualizer */
+    .hash-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--racing-green);
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 6px;
+      border-radius: 6px;
+      word-break: break-all;
+    }
+
+    /* Dock Controls Bar */
+    .dock-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 12px;
+      gap: 12px;
+    }
+
+    .dock-nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dock-nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .dock-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--amber-gold);
+      color: var(--amber-gold);
+    }
+
+    .dock-nav-btn.primary {
+      background: linear-gradient(135deg, #D49020 0%, #E5A93C 100%);
+      color: #000;
+      border-color: #FCD34D;
+      box-shadow: 0 2px 10px rgba(229, 169, 60, 0.3);
+    }
+
+    .dock-nav-btn.primary:hover {
+      box-shadow: 0 4px 15px rgba(229, 169, 60, 0.5);
+    }
+
+    .dock-meta-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dock-icon-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 11px;
+      padding: 5px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.15s ease;
+    }
+
+    .dock-icon-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--amber-gold);
+    }
+
+    /* Toast Notification for Link Copying */
+    .posh-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      z-index: 200;
+      background: var(--bg-surface);
+      border: 1px solid var(--amber-gold);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--amber-glow);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .posh-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .toast-icon {
+      color: var(--amber-gold);
+      font-size: 16px;
     }
   </style>
 </head>
@@ -935,7 +1415,7 @@
       </span>
       <div class="telemetry-ticker">
         <div class="ticker-metric">
-          <span style="color: var(--emerald-live);">●</span>
+          <span style="color: var(--racing-green);">●</span>
           <span>SUITES:</span> <strong>76/76 PASS</strong>
         </div>
         <div class="ticker-metric">
@@ -954,20 +1434,31 @@
     </div>
 
     <div class="controls-cluster">
+      <!-- Custodian Onboarding Journey CTA -->
+      <button class="journey-cta-btn" onclick="startJourney()" id="journeyBtn" title="Launch guided interactive story tour">
+        <span class="journey-pulse-dot"></span>
+        <span>Guided Driver Journey</span>
+      </button>
+
+      <!-- Share Framework Button -->
+      <button class="share-btn" onclick="shareFramework()" title="Copy shareable link for friends">
+        <span>📋</span> Share Framework
+      </button>
+
       <!-- View Mode Switcher -->
       <div class="view-toggle-group">
         <button class="toggle-tab active" id="tabSitemap" onclick="switchView('sitemap')">
-          <span>🗺️</span> Visual Sitemap
+          <span>🗺️</span> Sitemap
         </button>
         <button class="toggle-tab" id="tabTopology" onclick="switchView('topology')">
-          <span>⚡</span> System Topology
+          <span>⚡</span> Topology
         </button>
       </div>
 
       <!-- Quick Search -->
       <div class="posh-search">
         <span style="color: var(--text-muted); font-size: 11px;">🔍</span>
-        <input type="text" id="searchInput" placeholder="Find module, action, route…" />
+        <input type="text" id="searchInput" placeholder="Find module, route…" />
         <span class="kbd-shortcut">/</span>
       </div>
 
@@ -976,7 +1467,7 @@
       <button class="hud-btn" onclick="zoomOut()" title="Zoom Out">−</button>
       <span class="zoom-pill" id="zoomDisplay">85%</span>
       <button class="hud-btn" onclick="resetView()" title="Fit / Reset View">Reset</button>
-      <button class="hud-btn" onclick="toggleExpandAll()" id="expandBtn">Collapse All</button>
+      <button class="hud-btn" onclick="toggleExpandAll()" id="expandBtn">Collapse</button>
 
       <!-- Theme Switcher -->
       <button class="hud-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Theme">🌙</button>
@@ -1004,7 +1495,7 @@
   <aside class="legend-card" id="legendBox">
     <div class="legend-title">
       <span>Architectural Key</span>
-      <span style="font-size: 8px; color: var(--emerald-live);">● VERIFIED</span>
+      <span style="font-size: 8px; color: var(--racing-green);">● VERIFIED</span>
     </div>
     <div class="legend-item">
       <div class="legend-swatch swatch-orange"></div>
@@ -1081,7 +1572,7 @@
       </div>
       <div class="insp-row">
         <span class="insp-label">Statutory Verification:</span>
-        <span class="insp-val" style="color: var(--emerald-live);" id="inspVerify">100% Codebase Verified</span>
+        <span class="insp-val" style="color: var(--racing-green);" id="inspVerify">100% Codebase Verified</span>
       </div>
       <div class="insp-row">
         <span class="insp-label">Interactive Actions:</span>
@@ -1094,11 +1585,152 @@
     </a>
   </div>
 
+  <!-- 🌟 THE CUSTODIAN ONBOARDING JOURNEY DOCK 🌟 -->
+  <div class="journey-dock" id="journeyDock">
+    <div class="dock-header">
+      <div class="dock-title-group">
+        <span class="dock-act-badge" id="actBadge">ACT I // IGNITION</span>
+        <h3 class="dock-act-title" id="actTitle">The Sovereign Custodian Ignition</h3>
+      </div>
+      <div class="dock-close-btn" onclick="exitJourney()" title="Exit journey mode (Esc)">✕</div>
+    </div>
+
+    <!-- Chapter Progress Segments -->
+    <div class="dock-progress-track">
+      <div class="dock-progress-step active" onclick="jumpToAct(0)" title="Act I: Ignition"></div>
+      <div class="dock-progress-step" onclick="jumpToAct(1)" title="Act II: Feed & Telemetry"></div>
+      <div class="dock-progress-step" onclick="jumpToAct(2)" title="Act III: Atelier & DAG"></div>
+      <div class="dock-progress-step" onclick="jumpToAct(3)" title="Act IV: Mountain Pass Grip"></div>
+      <div class="dock-progress-step" onclick="jumpToAct(4)" title="Act V: Custody & Carnet"></div>
+    </div>
+
+    <!-- Narrative & Interactive Sandbox Grid -->
+    <div class="dock-body">
+      <div class="dock-narrative" id="actNarrative">
+        <!-- Dynamic narrative content injected here -->
+      </div>
+
+      <div class="interactive-sandbox" id="actSandbox">
+        <!-- Interactive widget for current act -->
+      </div>
+    </div>
+
+    <!-- Dock Controls Navigation -->
+    <div class="dock-controls-bar">
+      <div class="dock-nav-btns">
+        <button class="dock-nav-btn" onclick="prevAct()" id="prevActBtn">◄ Previous</button>
+        <button class="dock-nav-btn primary" onclick="nextAct()" id="nextActBtn">Next Act ►</button>
+      </div>
+
+      <div class="dock-meta-controls">
+        <button class="dock-icon-btn" onclick="toggleAutoPlay()" id="autoPlayBtn">▶ Auto-Tour</button>
+        <button class="dock-icon-btn" onclick="toggleAudio()" id="audioBtn">🔊 Audio: ON</button>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted);" id="actCounter">1 / 5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Toast Feedback -->
+  <div class="posh-toast" id="shareToast">
+    <span class="toast-icon">✨</span>
+    <span id="toastMessage">Shareable link copied to clipboard!</span>
+  </div>
+
   <!-- Application Architecture & Sitemap Engine -->
   <script>
-    // Current Active View: "sitemap" or "topology"
+    // State management
     let currentView = "sitemap";
     let activeFilter = "all";
+    let audioEnabled = true;
+    let autoPlayTimer = null;
+    let currentActIndex = 0;
+    let isJourneyActive = false;
+
+    // ── WEB AUDIO SYNTHESIS ENGINE (CLASSY PHYSICALITY) ──
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playRelayClick() {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(280, ctx.currentTime + 0.035);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.035);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function playStarterIgnition() {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        // Starter cranks (3 rhythmic pulses)
+        for (let i = 0; i < 3; i++) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(65, now + i * 0.14);
+          osc.frequency.exponentialRampToValueAtTime(85, now + i * 0.14 + 0.08);
+          gain.gain.setValueAtTime(0.15, now + i * 0.14);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.14 + 0.1);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + i * 0.14);
+          osc.stop(now + i * 0.14 + 0.11);
+        }
+        // Engine fire flare roar
+        const fireOsc = ctx.createOscillator();
+        const fireGain = ctx.createGain();
+        fireOsc.type = 'triangle';
+        fireOsc.frequency.setValueAtTime(90, now + 0.45);
+        fireOsc.frequency.exponentialRampToValueAtTime(320, now + 0.65);
+        fireOsc.frequency.exponentialRampToValueAtTime(110, now + 1.1);
+        fireGain.gain.setValueAtTime(0.25, now + 0.45);
+        fireGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        fireOsc.connect(fireGain);
+        fireGain.connect(ctx.destination);
+        fireOsc.start(now + 0.45);
+        fireOsc.stop(now + 1.25);
+      } catch (e) {}
+    }
+
+    function playSealChime() {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        [880, 1320, 1760].forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+          gain.gain.setValueAtTime(0.1, now + idx * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.06);
+          osc.stop(now + idx * 0.06 + 0.26);
+        });
+      } catch (e) {}
+    }
 
     // ── DATASET 1: COMPREHENSIVE SITEMAP HIERARCHY (100% CODEBASE VERIFIED) ──
     const SITEMAP_DATA = {
@@ -1475,7 +2107,7 @@
       ]
     };
 
-    // ── DATASET 2: POSH SYSTEM DESIGN TOPOLOGY (END-TO-END ARCHITECTURE) ──
+    // ── DATASET 2: POSH SYSTEM DESIGN TOPOLOGY ──
     const TOPOLOGY_DATA = {
       tiers: [
         {
@@ -1536,7 +2168,154 @@
       ]
     };
 
-    // ── GEOMETRY & STATE ENGINE ──
+    // ── DATASET 3: 5-ACT CUSTODIAN ONBOARDING JOURNEY NARRATIVE ──
+    const JOURNEY_ACTS = [
+      {
+        badge: "ACT I // IGNITION",
+        title: "The Sovereign Custodian Ignition",
+        narrative: `You enter DATUM not as a passive consumer, but as an <em>accredited machine custodian</em>. Before turning a single mile, you calibrate your persona and bind your machine to the sovereign ledger. Notice how the system architecture flows directly from the <strong>Root Brand Core</strong> into <strong>Driver Persona Calibration</strong>.`,
+        focusNodes: ["root", "entry", "splash", "persona-switch", "ps-stable"],
+        camera: { panX: 200, panY: -20, scale: 0.95 },
+        renderSandbox: (container) => {
+          container.innerHTML = `
+            <div class="sandbox-tag">
+              <span>MACHINE CALIBRATION CONSOLE</span>
+              <span id="ignState" style="color: var(--amber-gold);">STANDBY</span>
+            </div>
+            <div class="persona-trio">
+              <div class="persona-chip active" onclick="selectPersona(this, 'KURO // 992 GT3')">KURO<br><span style="font-size: 8px; opacity: 0.7;">GT3 Weissach</span></div>
+              <div class="persona-chip" onclick="selectPersona(this, 'MAYA // M3 CSL')">MAYA<br><span style="font-size: 8px; opacity: 0.7;">E46 CSL</span></div>
+              <div class="persona-chip" onclick="selectPersona(this, 'HAMISH // COBRA')">HAMISH<br><span style="font-size: 8px; opacity: 0.7;">427 V8</span></div>
+            </div>
+            <button class="ignition-btn" id="ignBtn" onclick="fireIgnition()">
+              <span>⚡</span> PUSH TO START / IGNITE
+            </button>
+          `;
+        }
+      },
+      {
+        badge: "ACT II // THE OPEN GARAGE",
+        title: "The Anti-Gatekeeping Chronicle",
+        narrative: `Step into the live community stream. Influencer vanity and gatekeeping are replaced by <em>mechanical empathy</em>: shared torque specs, suspension geometry, and real-time pass telemetry. Scrub the <strong>Snake Pass Sector</strong> below to preview authentic lateral G-force and cadence rankings.`,
+        focusNodes: ["feed", "stories", "feed-actions", "feed-cards", "fc-respect", "fc-scrub"],
+        camera: { panX: -140, panY: -80, scale: 0.9 },
+        renderSandbox: (container) => {
+          container.innerHTML = `
+            <div class="sandbox-tag">
+              <span>SNAKE PASS // SECTOR 4 SCRUBBER</span>
+              <span id="scrubPercent" style="color: var(--blue-accent);">35% PACE</span>
+            </div>
+            <div class="sandbox-slider-row">
+              <input type="range" class="sandbox-slider" min="0" max="100" value="35" oninput="updateScrubber(this.value)">
+            </div>
+            <div class="telemetry-output-grid">
+              <div class="telemetry-stat">
+                <div class="stat-label">ELEVATION</div>
+                <div class="stat-val" id="teleElev">492m</div>
+              </div>
+              <div class="telemetry-stat">
+                <div class="stat-label">LATERAL G</div>
+                <div class="stat-val" id="teleG">0.82 G</div>
+              </div>
+              <div class="telemetry-stat">
+                <div class="stat-label">CADENCE</div>
+                <div class="stat-val" id="teleRank" style="color: var(--amber-gold);">S-RANK</div>
+              </div>
+            </div>
+            <button class="dock-nav-btn primary" style="width: 100%; justify-content: center;" onclick="awardRespect()">
+              <span>❤️</span> Award Flow Respect (+1)
+            </button>
+          `;
+        }
+      },
+      {
+        badge: "ACT III // THE SOVEREIGN ATELIER",
+        title: "Cryptographic Provenance DAG",
+        narrative: `A sports car is living mechanical history. Fraudulent paper stamps and opaque dealer logs are obsolete. Every rebuild, torque specification, and oil flush is permanently anchored in a <em>tamper-evident SHA-256 Directed Acyclic Graph</em>.`,
+        focusNodes: ["atelier", "car-identity", "car-tabs", "ct-bom", "ct-dyno", "car-modals", "cm-passport"],
+        camera: { panX: -180, panY: -220, scale: 0.88 },
+        renderSandbox: (container) => {
+          container.innerHTML = `
+            <div class="sandbox-tag">
+              <span>WORKSHOP STAMPING VAULT</span>
+              <span style="color: var(--racing-green);">SHA-256 DAG SEAL</span>
+            </div>
+            <div class="sandbox-slider-row">
+              <label>Service Operation:</label>
+              <select id="serviceSelect" style="background: rgba(0,0,0,0.5); color: #FFF; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 5px; font-family: 'Plus Jakarta Sans'; font-size: 11px;">
+                <option>Brembo 6-Pot Caliper Overhaul</option>
+                <option>Millers CFS 10W-60 NT+ Flush</option>
+                <option>Ohlins R&T Damper Corner Weighting</option>
+              </select>
+            </div>
+            <div class="hash-display" id="hashDisplay">
+              GENESIS_BLOCK: 8f4a19c6...e47b
+            </div>
+            <button class="dock-nav-btn primary" style="width: 100%; justify-content: center;" onclick="sealDagBlock()">
+              <span>🔐</span> Issue Cryptographic Stamp
+            </button>
+          `;
+        }
+      },
+      {
+        badge: "ACT IV // MOUNTAIN PASS KINEMATICS",
+        title: "Live Open-Meteo Grip Engine (μ)",
+        narrative: `Before tackling Hardknott or the Horseshoe Pass, blind guesswork is replaced by atmospheric physics. DATUM combines <em>Open-Meteo satellite weather</em> with road surface temperatures to compute the <strong>true dynamic friction coefficient ($\mu$)</strong>. Adjust moisture and temperature below:`,
+        focusNodes: ["labs", "lab-radar", "top-alg-grip", "top-ext-meteo"],
+        camera: { panX: -260, panY: -420, scale: 0.85 },
+        renderSandbox: (container) => {
+          container.innerHTML = `
+            <div class="sandbox-tag">
+              <span>DYNAMIC FRICTION SIMULATOR</span>
+              <span id="gripStatus" style="color: var(--racing-green);">OPTIMAL ADHESION</span>
+            </div>
+            <div class="sandbox-slider-row">
+              <label><span>Asphalt Moisture:</span> <span id="moistVal">15% (Dry)</span></label>
+              <input type="range" class="sandbox-slider" id="moistSlider" min="0" max="100" value="15" oninput="calcDynamicGrip()">
+            </div>
+            <div class="sandbox-slider-row">
+              <label><span>Surface Temperature:</span> <span id="tempVal">14°C</span></label>
+              <input type="range" class="sandbox-slider" id="tempSlider" min="-5" max="35" value="14" oninput="calcDynamicGrip()">
+            </div>
+            <div class="telemetry-output-grid">
+              <div class="telemetry-stat" style="grid-column: span 3;">
+                <div class="stat-label">CALCULATED FRICTION COEFFICIENT (μ)</div>
+                <div class="stat-val" id="muVal" style="font-size: 14px; color: var(--amber-gold);">μ = 0.92 [TRACK GRADE]</div>
+              </div>
+            </div>
+          `;
+        }
+      },
+      {
+        badge: "ACT V // SOVEREIGN CUSTODY & CARNET",
+        title: "Border Sovereignty & Escrow Handover",
+        narrative: `Taking your machine on an Alpine Grand Tour or passing the keys to the next caretaker? Traditional borders and paperwork are fraught with friction. DATUM generates <em>LCCI & FIA compliant ATA Carnet transit tokens</em> and cryptographic title escrow transfers. Your journey framework is ready for sharing.`,
+        focusNodes: ["car-modals", "cm-carnet", "cm-handover", "top-crypto-carnet", "top-crypto-title"],
+        camera: { panX: -220, panY: -300, scale: 0.9 },
+        renderSandbox: (container) => {
+          container.innerHTML = `
+            <div class="sandbox-tag">
+              <span>ATA CARNET TRANSIT VAULT</span>
+              <span style="color: var(--amber-gold);">LCCI BOND: 40%</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px;">
+              <div style="width: 48px; height: 48px; background: #FFF; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 900; font-family: 'JetBrains Mono'; font-size: 10px;">
+                QR [FIA]
+              </div>
+              <div style="font-size: 10.5px; line-height: 1.4; color: var(--text-secondary);">
+                <div><strong>TOKEN:</strong> <span style="font-family: 'JetBrains Mono'; color: var(--blue-accent);">GB-CH-2026-992</span></div>
+                <div><strong>CUSTOMS STATUS:</strong> CLEARED (CALAIS)</div>
+              </div>
+            </div>
+            <a href="http://localhost:5173" target="_blank" class="dock-nav-btn primary" style="text-decoration: none; justify-content: center;">
+              <span>🚀</span> Launch Full Live Application
+            </a>
+          `;
+        }
+      }
+    ];
+
+    // ── GEOMETRY & LAYOUT ENGINE ──
     const NODE_WIDTH = 200;
     const NODE_HEIGHT = 40;
     const HORIZONTAL_GAP = 60;
@@ -1565,7 +2344,7 @@
     const radarCtx = radarCanvas.getContext("2d");
     const radarViewport = document.getElementById("radarViewport");
 
-    // Initialize Layout based on active view mode
+    // Initialize Layout
     function calculateLayout() {
       nodePositions.clear();
 
@@ -1582,7 +2361,6 @@
       connectorCanvas.setAttribute("width", maxX);
       connectorCanvas.setAttribute("height", maxY);
 
-      // Render radar
       drawRadar(maxX, maxY);
     }
 
@@ -1601,7 +2379,6 @@
       const L1_X = rootX + ROOT_WIDTH + 140;
 
       SITEMAP_DATA.children.forEach(l1 => {
-        // Filter check
         if (!nodeMatchesFilter(l1)) return;
 
         const isCollapsed = collapsedNodes.has(l1.id);
@@ -1662,7 +2439,6 @@
       });
     }
 
-    // Topology View Layout (5 horizontal architectural tiers)
     function calculateTopologyLayout() {
       const TIER_X_GAP = 320;
       const START_X = 60;
@@ -1672,7 +2448,6 @@
         const tierX = START_X + (tIdx * TIER_X_GAP);
         let curY = START_Y + 70;
 
-        // Header node
         nodePositions.set(tier.id, {
           x: tierX,
           y: START_Y,
@@ -1688,7 +2463,6 @@
           }
         });
 
-        // Child nodes inside tier
         tier.nodes.forEach(node => {
           nodePositions.set(node.id, {
             x: tierX + 10,
@@ -1707,7 +2481,7 @@
       return node.type === activeFilter;
     }
 
-    // ── RENDER ENGINE ──
+    // ── RENDER MAP & CONNECTORS ──
     function renderMap() {
       calculateLayout();
       nodesLayer.innerHTML = "";
@@ -1719,6 +2493,8 @@
         renderTopologyConnectors();
       }
 
+      const activeAct = isJourneyActive ? JOURNEY_ACTS[currentActIndex] : null;
+
       // Render Nodes
       nodePositions.forEach((pos, id) => {
         const nodeEl = document.createElement("div");
@@ -1726,8 +2502,17 @@
         const hasKids = d.children && d.children.length > 0;
         const isCollapsed = collapsedNodes.has(id);
 
+        let journeyClass = "";
+        if (isJourneyActive && activeAct) {
+          if (activeAct.focusNodes.includes(id)) {
+            journeyClass = "journey-active";
+          } else {
+            journeyClass = "journey-dimmed";
+          }
+        }
+
         if (d.type === "root") {
-          nodeEl.className = "node-card node-root";
+          nodeEl.className = `node-card node-root ${journeyClass}`;
           nodeEl.innerHTML = `
             <div class="root-logo">${d.label}</div>
             <div class="root-sub">${d.sub}</div>
@@ -1740,7 +2525,7 @@
             <div class="tier-sub">${d.sub}</div>
           `;
         } else {
-          nodeEl.className = `node-card node-${d.type} ${selectedNodeId === id ? 'selected' : ''}`;
+          nodeEl.className = `node-card node-${d.type} ${selectedNodeId === id ? 'selected' : ''} ${journeyClass}`;
           
           let collapseHtml = "";
           if (hasKids) {
@@ -1767,6 +2552,7 @@
 
         nodeEl.addEventListener("click", (e) => {
           e.stopPropagation();
+          playRelayClick();
           selectNode(id);
           if (hasKids && d.type !== "root") {
             toggleNodeCollapse(id);
@@ -1797,13 +2583,21 @@
         const cLeftX = cPos.x;
         const cCenterY = cPos.y + (cPos.height / 2);
 
-        // Cubic bezier spline
         const midX = pRightX + (cLeftX - pRightX) * 0.5;
         const pathData = `M ${pRightX} ${pCenterY} C ${midX} ${pCenterY}, ${midX} ${cCenterY}, ${cLeftX} ${cCenterY}`;
 
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", pathData);
-        path.setAttribute("class", `tree-link ${parent.type === 'orange' ? 'active-branch' : ''}`);
+        
+        let linkClass = `tree-link ${parent.type === 'orange' ? 'active-branch' : ''}`;
+        if (isJourneyActive) {
+          const activeAct = JOURNEY_ACTS[currentActIndex];
+          if (!activeAct.focusNodes.includes(parent.id) && !activeAct.focusNodes.includes(child.id)) {
+            linkClass += ' dimmed-branch';
+          }
+        }
+
+        path.setAttribute("class", linkClass);
         connectorCanvas.appendChild(path);
 
         renderSitemapConnectors(child);
@@ -1811,7 +2605,6 @@
     }
 
     function renderTopologyConnectors() {
-      // Connect tier header to each tier node, and connect adjacent tiers
       for (let t = 0; t < TOPOLOGY_DATA.tiers.length - 1; t++) {
         const curTier = TOPOLOGY_DATA.tiers[t];
         const nextTier = TOPOLOGY_DATA.tiers[t + 1];
@@ -1839,7 +2632,7 @@
       }
     }
 
-    // ── INTERACTIVE ACTIONS & INSPECTOR ──
+    // ── INSPECTOR ACTIONS ──
     function selectNode(id) {
       selectedNodeId = id;
       const pos = nodePositions.get(id);
@@ -1864,7 +2657,6 @@
       document.getElementById("inspStore").textContent = d.store || "ActiveVehicleContext / DAG";
       document.getElementById("inspDesc").textContent = d.desc || "Verified component in the DATUM automotive codebase.";
       
-      // Update Launch Button
       const launchBtn = document.getElementById("inspLaunchBtn");
       let appUrl = "http://localhost:5173";
       if (d.route && d.route.startsWith("/")) {
@@ -1895,10 +2687,10 @@
       const btn = document.getElementById("expandBtn");
       if (collapsedNodes.size === 0) {
         SITEMAP_DATA.children.forEach(c => collapsedNodes.add(c.id));
-        btn.textContent = "Expand All";
+        btn.textContent = "Expand";
       } else {
         collapsedNodes.clear();
-        btn.textContent = "Collapse All";
+        btn.textContent = "Collapse";
       }
       renderMap();
     }
@@ -1909,6 +2701,10 @@
       document.getElementById("tabTopology").classList.toggle("active", mode === "topology");
       document.getElementById("legendBox").style.display = mode === "sitemap" ? "flex" : "none";
       document.getElementById("filterBar").style.display = mode === "sitemap" ? "flex" : "none";
+
+      if (isJourneyActive && mode === "topology") {
+        exitJourney();
+      }
 
       resetView();
     }
@@ -1927,6 +2723,242 @@
       body.setAttribute("data-theme", next);
       document.getElementById("themeBtn").textContent = next === "dark" ? "🌙" : "☀️";
       renderMap();
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById("audioBtn").textContent = audioEnabled ? "🔊 Audio: ON" : "🔇 Audio: OFF";
+      playRelayClick();
+    }
+
+    // ── CUSTODIAN JOURNEY ENGINE (CHOREOGRAPHY & TACTILITY) ──
+    function startJourney(actIdx = 0) {
+      isJourneyActive = true;
+      currentActIndex = actIdx;
+      if (currentView !== "sitemap") {
+        switchView("sitemap");
+      }
+
+      document.getElementById("journeyDock").classList.add("active");
+      document.getElementById("journeyBtn").style.borderColor = "var(--racing-green)";
+      
+      closeInspector();
+      renderAct();
+    }
+
+    function exitJourney() {
+      isJourneyActive = false;
+      if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+        document.getElementById("autoPlayBtn").textContent = "▶ Auto-Tour";
+      }
+
+      document.getElementById("journeyDock").classList.remove("active");
+      document.getElementById("journeyBtn").style.borderColor = "#FCD34D";
+      renderMap();
+      resetView();
+    }
+
+    function renderAct() {
+      const act = JOURNEY_ACTS[currentActIndex];
+      document.getElementById("actBadge").textContent = act.badge;
+      document.getElementById("actTitle").textContent = act.title;
+      document.getElementById("actNarrative").innerHTML = act.narrative;
+      document.getElementById("actCounter").textContent = `${currentActIndex + 1} / ${JOURNEY_ACTS.length}`;
+
+      // Update progress bar
+      const steps = document.querySelectorAll(".dock-progress-step");
+      steps.forEach((s, idx) => {
+        s.classList.toggle("completed", idx < currentActIndex);
+        s.classList.toggle("active", idx === currentActIndex);
+      });
+
+      // Update Prev / Next buttons
+      document.getElementById("prevActBtn").disabled = currentActIndex === 0;
+      document.getElementById("prevActBtn").style.opacity = currentActIndex === 0 ? "0.4" : "1";
+      document.getElementById("nextActBtn").textContent = currentActIndex === JOURNEY_ACTS.length - 1 ? "Finish Journey 🏁" : "Next Act ►";
+
+      // Render interactive sandbox
+      const sandbox = document.getElementById("actSandbox");
+      act.renderSandbox(sandbox);
+
+      // Smooth camera glide
+      if (act.camera) {
+        glideCamera(act.camera.panX, act.camera.panY, act.camera.scale);
+      }
+
+      renderMap();
+    }
+
+    function jumpToAct(idx) {
+      currentActIndex = idx;
+      playRelayClick();
+      renderAct();
+    }
+
+    function nextAct() {
+      if (currentActIndex < JOURNEY_ACTS.length - 1) {
+        currentActIndex++;
+        playRelayClick();
+        renderAct();
+      } else {
+        exitJourney();
+      }
+    }
+
+    function prevAct() {
+      if (currentActIndex > 0) {
+        currentActIndex--;
+        playRelayClick();
+        renderAct();
+      }
+    }
+
+    function toggleAutoPlay() {
+      const btn = document.getElementById("autoPlayBtn");
+      if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+        btn.textContent = "▶ Auto-Tour";
+      } else {
+        btn.textContent = "❚❚ Pause";
+        autoPlayTimer = setInterval(() => {
+          if (currentActIndex < JOURNEY_ACTS.length - 1) {
+            nextAct();
+          } else {
+            jumpToAct(0);
+          }
+        }, 8500);
+      }
+    }
+
+    // Camera glide interpolation
+    function glideCamera(targetX, targetY, targetScale) {
+      const startX = panX;
+      const startY = panY;
+      const startScale = scale;
+      const duration = 600;
+      const startTime = performance.now();
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const p = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - p, 3); // cubic ease out
+
+        panX = startX + (targetX - startX) * ease;
+        panY = startY + (targetY - startY) * ease;
+        scale = startScale + (targetScale - startScale) * ease;
+
+        updateTransform();
+
+        if (p < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    // ── INTERACTIVE SANDBOX SCRIPTS ──
+    function selectPersona(el, name) {
+      document.querySelectorAll(".persona-chip").forEach(c => c.classList.remove("active"));
+      el.classList.add("active");
+      playRelayClick();
+      document.getElementById("ignState").textContent = name;
+    }
+
+    function fireIgnition() {
+      playStarterIgnition();
+      const btn = document.getElementById("ignBtn");
+      btn.classList.add("ignited");
+      btn.innerHTML = "<span>🔥</span> MACHINE FIRED // 850 RPM";
+      document.getElementById("ignState").textContent = "RUNNING";
+      document.getElementById("ignState").style.color = "var(--racing-green)";
+    }
+
+    function updateScrubber(val) {
+      const percent = parseInt(val);
+      document.getElementById("scrubPercent").textContent = `${percent}% PACE`;
+      
+      const elev = 460 + Math.round((percent / 100) * 54);
+      const g = (0.2 + (Math.sin(percent / 15) * 0.75) + (percent / 200)).toFixed(2);
+      
+      document.getElementById("teleElev").textContent = `${elev}m`;
+      document.getElementById("teleG").textContent = `${g} G`;
+      document.getElementById("teleRank").textContent = percent > 75 ? "EX-RANK" : (percent > 40 ? "S-RANK" : "CADENCE");
+    }
+
+    function awardRespect() {
+      playRelayClick();
+      showToast("Respect awarded to custodian! +1 Thermal Patience flow score.");
+    }
+
+    function sealDagBlock() {
+      playSealChime();
+      const service = document.getElementById("serviceSelect").value;
+      const randomHex = Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+      document.getElementById("hashDisplay").innerHTML = `
+        <strong>BLOCK SEALED:</strong> ${service}<br>
+        SHA-256: ${randomHex.substring(0, 32)}...
+      `;
+      showToast("Service event sealed with SHA-256 DAG hash chain!");
+    }
+
+    function calcDynamicGrip() {
+      const moist = parseInt(document.getElementById("moistSlider").value);
+      const temp = parseInt(document.getElementById("tempSlider").value);
+
+      document.getElementById("moistVal").textContent = `${moist}% (${moist > 60 ? 'Torrents' : moist > 25 ? 'Damp' : 'Dry'})`;
+      document.getElementById("tempVal").textContent = `${temp}°C`;
+
+      let mu = 0.95 - (moist * 0.004);
+      if (temp < 2) mu -= 0.35; // Ice/frost risk
+
+      mu = Math.max(0.18, Math.min(0.98, mu)).toFixed(2);
+
+      const muEl = document.getElementById("muVal");
+      const statusEl = document.getElementById("gripStatus");
+
+      if (mu > 0.82) {
+        muEl.style.color = "var(--racing-green)";
+        muEl.textContent = `μ = ${mu} [OPTIMAL ADHESION]`;
+        statusEl.textContent = "OPTIMAL ADHESION";
+        statusEl.style.color = "var(--racing-green)";
+      } else if (mu > 0.5) {
+        muEl.style.color = "var(--amber-gold)";
+        muEl.textContent = `μ = ${mu} [DAMP BITUMEN // CAUTION]`;
+        statusEl.textContent = "REDUCED HEADROOM";
+        statusEl.style.color = "var(--amber-gold)";
+      } else {
+        muEl.style.color = "#EF4444";
+        muEl.textContent = `μ = ${mu} [FROST / BLACK ICE ALERT!]`;
+        statusEl.textContent = "CRITICAL HAZARD";
+        statusEl.style.color = "#EF4444";
+      }
+    }
+
+    // ── SHARE FRAMEWORK ENGINE ──
+    function shareFramework() {
+      playRelayClick();
+      const url = new URL(window.location.href);
+      url.searchParams.set("journey", "true");
+      url.searchParams.set("act", (currentActIndex + 1).toString());
+
+      const shareUrl = url.toString();
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast(`✨ Shareable framework link copied to clipboard!\n${shareUrl}`);
+      }).catch(() => {
+        showToast(`Shareable framework link: ${shareUrl}`);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("shareToast");
+      document.getElementById("toastMessage").textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 4000);
     }
 
     // ── PAN & ZOOM ENGINE ──
@@ -2025,7 +3057,7 @@
       }
     });
 
-    // Keyboard shortcut '/' to search
+    // Keyboard Shortcuts
     window.addEventListener("keydown", (e) => {
       if (e.key === "/" && document.activeElement !== searchInput) {
         e.preventDefault();
@@ -2033,8 +3065,20 @@
         searchInput.select();
       }
       if (e.key === "Escape") {
-        searchInput.blur();
-        closeInspector();
+        if (isJourneyActive) {
+          exitJourney();
+        } else {
+          searchInput.blur();
+          closeInspector();
+        }
+      }
+      if (isJourneyActive) {
+        if (e.key === "ArrowRight") nextAct();
+        if (e.key === "ArrowLeft") prevAct();
+        if (e.key === " ") {
+          e.preventDefault();
+          toggleAutoPlay();
+        }
       }
     });
 
@@ -2051,13 +3095,12 @@
       radarCtx.clearRect(0, 0, 180, 100);
       const isDark = document.body.getAttribute("data-theme") === "dark";
 
-      // Draw dots for each node
       nodePositions.forEach((pos, id) => {
         const rx = (pos.x / totalWidth) * 180;
         const ry = (pos.y / totalHeight) * 100;
 
         if (pos.data.type === "orange" || pos.data.type === "root") {
-          radarCtx.fillStyle = "#F59E0B";
+          radarCtx.fillStyle = "#E5A93C";
         } else if (pos.data.type === "blue") {
           radarCtx.fillStyle = "#38BDF8";
         } else {
@@ -2087,9 +3130,19 @@
       radarViewport.style.top = `${Math.max(0, Math.min(ry, 100 - rh))}px`;
     }
 
-    // Initial boot sequence
-    renderMap();
-    resetView();
+    // ── URL QUERY PARAMETER AUTOPLAY DETECTION ──
+    window.addEventListener("DOMContentLoaded", () => {
+      renderMap();
+      resetView();
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("journey") === "true") {
+        const actParam = parseInt(params.get("act") || "1") - 1;
+        setTimeout(() => {
+          startJourney(Math.max(0, Math.min(4, actParam)));
+        }, 500);
+      }
+    });
   </script>
 </body>
 </html>
