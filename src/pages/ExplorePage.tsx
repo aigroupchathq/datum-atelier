@@ -13,6 +13,7 @@ import {
 import {
   AUTOMOTIVE_UNIVERSE,
   ARCHETYPE_META,
+  getMotorsportHeritage,
   type AutomotiveModel,
   type CarArchetype
 } from '../data/ukAutomotiveUniverse';
@@ -40,10 +41,12 @@ import {
   Zap,
   Mountain,
   Gauge,
-  BookOpen,
   Volume2,
   AlertTriangle,
-  ArrowRight
+  ArrowRight,
+  Trophy,
+  MapPin,
+  Flag
 } from 'lucide-react';
 
 const getCarProfileId = (handle: string): string => {
@@ -459,9 +462,10 @@ export const ExplorePage: FC = () => {
   const [modalCommentInput, setModalCommentInput] = useState('');
   const [modalComments, setModalComments] = useState<Record<string, string[]>>({});
 
-  // Automotive Universe Blueprint Modal State
+  // Motorsport Universe Dossier Modal State
   const [activeModelModal, setActiveModelModal] = useState<AutomotiveModel | null>(null);
-  const [modelModalTab, setModelModalTab] = useState<'blueprint' | 'lore' | 'watchpoints' | 'matchup'>('blueprint');
+  const [modelModalTab, setModelModalTab] = useState<'heritage' | 'blueprint' | 'watchpoints' | 'matchup'>('heritage');
+  const [motorsportViewMode, setMotorsportViewMode] = useState<'story' | 'telemetry'>('story');
 
   // Real-time Synaptic Deconstruction
   const parsedQuery = useMemo(() => {
@@ -626,15 +630,15 @@ export const ExplorePage: FC = () => {
           <div>
             <div className="flex items-center gap-2.5">
               <h1 className="font-luxury-display text-lg sm:text-2xl font-bold tracking-wider text-zinc-100 uppercase">
-                DATUM Automotive Universe
+                DATUM Motorsport Universe
               </h1>
               <span className="text-[10px] font-mono-numbers px-2.5 py-0.5 rounded-full bg-zinc-900 border border-white/10 text-amber-400 flex items-center gap-1.5 font-bold">
-                <Sparkles className="w-3 h-3 text-amber-400" />
-                A–Z Chassis Intelligence
+                <Trophy className="w-3 h-3 text-amber-400" />
+                Motorsport &amp; Chassis Intelligence
               </span>
             </div>
             <p className="text-xs text-zinc-400 mt-1 max-w-2xl font-sans">
-              The ultimate automotive taxonomy. Search across UK benchmarks, homologation specials, WRC icons, and B-road legends with real mechanical blueprints.
+              The ultimate motorsport &amp; performance car taxonomy. Explore racing heritage, legendary homologations, WRC champions, and B-road icons designed for driver immersion.
             </p>
           </div>
 
@@ -729,8 +733,8 @@ export const ExplorePage: FC = () => {
                   : 'border-transparent text-zinc-400 hover:text-zinc-200'
               }`}
             >
-              <BookOpen className="w-4 h-4" />
-              <span>Automotive Universe A–Z ({filteredModels.length})</span>
+              <Trophy className="w-4 h-4" />
+              <span>Motorsport Universe A–Z ({filteredModels.length})</span>
             </button>
 
             <button
@@ -975,13 +979,64 @@ export const ExplorePage: FC = () => {
       )}
 
       {/* ========================================================= */}
-      {/* ── TAB 1: AUTOMOTIVE UNIVERSE (A TO Z BLUEPRINTS) ──     */}
+      {/* ── TAB 1: MOTORSPORT UNIVERSE (LEGENDS & BLUEPRINTS) ──  */}
       {/* ========================================================= */}
       {activeTab === 'universe' && (
         <div className="space-y-6">
+          {/* Display Lens Switcher: Progressive Disclosure (HCI Ergonomics) */}
+          <div className={`p-4 rounded-3xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition ${
+            isWhiteYellow ? 'bg-zinc-50 border-zinc-200' : 'bg-white/[0.02] border-white/10'
+          }`}>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center shrink-0">
+                <Flag className="w-4 h-4 text-amber-400" />
+              </div>
+              <div>
+                <span className="text-xs font-mono-numbers uppercase tracking-wider text-zinc-300 font-bold block">
+                  Discovery Lens Mode
+                </span>
+                <p className="text-[11px] font-sans text-zinc-400">
+                  {motorsportViewMode === 'story'
+                    ? 'Motorsport legend & emotional feel: easy to read for any car enthusiast.'
+                    : 'Engineering telemetry & chassis blueprint: deep mechanical data & engine codes.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Toggle Segmented Pill */}
+            <div className="inline-flex p-1 rounded-2xl bg-black/40 border border-white/10 text-xs font-mono-numbers shrink-0 self-start md:self-auto">
+              <button
+                onClick={() => setMotorsportViewMode('story')}
+                className={`min-h-[44px] px-4 rounded-xl font-bold transition flex items-center gap-2 cursor-pointer ${
+                  motorsportViewMode === 'story'
+                    ? 'bg-amber-400 text-zinc-950 shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+                aria-label="Motorsport and Legend Story View"
+              >
+                <Trophy className="w-4 h-4" />
+                <span>🏎️ Motorsport &amp; Legend</span>
+              </button>
+
+              <button
+                onClick={() => setMotorsportViewMode('telemetry')}
+                className={`min-h-[44px] px-4 rounded-xl font-bold transition flex items-center gap-2 cursor-pointer ${
+                  motorsportViewMode === 'telemetry'
+                    ? 'bg-amber-400 text-zinc-950 shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+                aria-label="Telemetry Blueprint View"
+              >
+                <Gauge className="w-4 h-4" />
+                <span>⚙️ Telemetry Blueprint</span>
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredModels.map((car) => {
               const meta = ARCHETYPE_META[car.archetype];
+              const heritage = getMotorsportHeritage(car);
               const isGaragePeer = activeVehicle.fullName.toLowerCase().includes(car.make.toLowerCase()) || 
                                    activeVehicle.fullName.toLowerCase().includes(car.model.toLowerCase());
 
@@ -990,7 +1045,7 @@ export const ExplorePage: FC = () => {
                   key={car.id}
                   onClick={() => {
                     setActiveModelModal(car);
-                    setModelModalTab('blueprint');
+                    setModelModalTab(motorsportViewMode === 'story' ? 'heritage' : 'blueprint');
                   }}
                   className={`group rounded-3xl border overflow-hidden flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-md ${
                     isWhiteYellow
@@ -1008,10 +1063,18 @@ export const ExplorePage: FC = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0E0F13] via-black/25 to-transparent" />
                     
-                    {/* Top Archetype Badge */}
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-mono-numbers text-white font-bold shadow-lg">
-                      <span>{meta.icon}</span>
-                      <span>{meta.label}</span>
+                    {/* Top Badges */}
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-mono-numbers text-white font-bold shadow-lg">
+                        <span>{meta.icon}</span>
+                        <span>{meta.label}</span>
+                      </div>
+                      {motorsportViewMode === 'story' && (
+                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/90 text-zinc-950 text-[10px] font-mono-numbers font-extrabold shadow-lg">
+                          <Trophy className="w-3 h-3 text-zinc-950" />
+                          <span className="truncate max-w-[120px]">{heritage.racingBadge.split(' ')[0]} {heritage.racingBadge.split(' ')[1]}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Chassis Code & Years */}
@@ -1037,68 +1100,154 @@ export const ExplorePage: FC = () => {
                     </div>
                   </div>
 
-                  {/* Mechanical Telemetry Blueprint Card Body */}
-                  <div className="p-4 space-y-4 flex-1 flex flex-col justify-between">
-                    
-                    {/* Quick Specs Grid */}
-                    <div className="grid grid-cols-2 gap-2 text-xs font-mono-numbers">
-                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
-                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Powertrain</span>
-                        <span className="font-bold text-zinc-100 block truncate">{car.specs.engineCode}</span>
-                        <span className="text-[10px] text-amber-400 block font-semibold">{car.specs.powerBhp} BHP · {car.specs.torqueNm} Nm</span>
+                  {/* Progressive Card Body: Story Mode (Motorsport & Legend) vs Telemetry Mode */}
+                  {motorsportViewMode === 'story' ? (
+                    <div className="p-4 space-y-4 flex-1 flex flex-col justify-between">
+                      {/* Motorsport Pedigree Badge */}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-mono-numbers px-2.5 py-1 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 font-bold inline-flex items-center gap-1.5">
+                          <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                          <span>{heritage.racingBadge}</span>
+                        </span>
+                        <span className="text-[10px] font-mono-numbers text-zinc-400 flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-sky-400 shrink-0" />
+                          <span className="truncate max-w-[120px]">{heritage.iconicCircuit}</span>
+                        </span>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
-                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Curb Weight / P:W</span>
-                        <span className="font-bold text-zinc-100 block">{car.specs.curbWeightKg.toLocaleString()} kg</span>
-                        <span className="text-[10px] text-emerald-400 block font-semibold">{car.specs.powerToWeightBhpPerTonne} BHP/T</span>
+                      {/* Plain English "Why it's Legendary" */}
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-mono-numbers uppercase tracking-wider text-zinc-500 font-bold block">
+                          Why Drivers Love It
+                        </span>
+                        <p className="text-xs text-zinc-200 font-sans leading-relaxed line-clamp-2">
+                          {heritage.legendaryWhy}
+                        </p>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
-                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">0–60 MPH</span>
-                        <span className="font-bold text-zinc-100 block">{car.specs.zeroToSixtyMph}s</span>
-                        <span className="text-[10px] text-zinc-400 block">{car.specs.topSpeedMph} MPH Top</span>
+                      {/* Driver Sensory Feeling */}
+                      <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+                        <span className="text-[9px] font-mono-numbers uppercase tracking-wider text-amber-400/90 font-bold flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-amber-400" />
+                          <span>Driver Feeling</span>
+                        </span>
+                        <p className="text-xs text-zinc-300 font-sans italic line-clamp-2">
+                          "{heritage.driverVibe}"
+                        </p>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
-                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Peak Grip</span>
-                        <span className="font-bold text-sky-400 block">{car.specs.peakLateralG}G</span>
-                        <span className="text-[10px] text-zinc-400 block uppercase">μ: {car.specs.surfaceAffinity}</span>
+                      {/* Visual Progress Meters (HCI - Intuitive & Non-Intimidating) */}
+                      <div className="space-y-2.5 pt-1">
+                        {/* Agility Meter */}
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-[11px] font-mono-numbers">
+                            <span className="text-zinc-400">Cornering Agility</span>
+                            <span className="text-amber-400 font-bold">{heritage.agilityScore}/100</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full transition-all duration-500" 
+                              style={{ width: `${heritage.agilityScore}%` }} 
+                            />
+                          </div>
+                        </div>
+
+                        {/* Driver Thrill Meter */}
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-[11px] font-mono-numbers">
+                            <span className="text-zinc-400">Driver Immersion &amp; Thrill</span>
+                            <span className="text-emerald-400 font-bold">{heritage.driverThrillScore}/100</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-emerald-500 to-teal-300 rounded-full transition-all duration-500" 
+                              style={{ width: `${heritage.driverThrillScore}%` }} 
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Touch-Friendly Action Footer (44px target) */}
+                      <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between gap-2">
+                        <span className="font-mono-numbers font-bold text-zinc-400 text-xs">
+                          {car.marketIntelligence.estimatedPriceGbp}
+                        </span>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveModelModal(car);
+                            setModelModalTab('heritage');
+                          }}
+                          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold text-xs font-mono-numbers flex items-center gap-1.5 cursor-pointer transition shadow-sm"
+                        >
+                          <span>Explore Story</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
+                  ) : (
+                    /* Mechanical Telemetry Blueprint Card Body */
+                    <div className="p-4 space-y-4 flex-1 flex flex-col justify-between">
+                      {/* Quick Specs Grid */}
+                      <div className="grid grid-cols-2 gap-2 text-xs font-mono-numbers">
+                        <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                          <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Powertrain</span>
+                          <span className="font-bold text-zinc-100 block truncate">{car.specs.engineCode}</span>
+                          <span className="text-[10px] text-amber-400 block font-semibold">{car.specs.powerBhp} BHP · {car.specs.torqueNm} Nm</span>
+                        </div>
 
-                    {/* Acoustic & Cultural Excerpt */}
-                    <div className="space-y-1.5">
-                      <p className="text-[11px] text-zinc-300 font-sans line-clamp-2 leading-relaxed">
-                        {car.marketIntelligence.ukEnthusiastStatus}
-                      </p>
-                      
-                      <div className="flex items-center gap-1.5 text-[10px] font-mono-numbers text-amber-300/80 truncate">
-                        <Volume2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                        <span className="truncate">{car.marketIntelligence.soundtrackSignature}</span>
+                        <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                          <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Curb Weight / P:W</span>
+                          <span className="font-bold text-zinc-100 block">{car.specs.curbWeightKg.toLocaleString()} kg</span>
+                          <span className="text-[10px] text-emerald-400 block font-semibold">{car.specs.powerToWeightBhpPerTonne} BHP/T</span>
+                        </div>
+
+                        <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                          <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">0–60 MPH</span>
+                          <span className="font-bold text-zinc-100 block">{car.specs.zeroToSixtyMph}s</span>
+                          <span className="text-[10px] text-zinc-400 block">{car.specs.topSpeedMph} MPH Top</span>
+                        </div>
+
+                        <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                          <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Peak Grip</span>
+                          <span className="font-bold text-sky-400 block">{car.specs.peakLateralG}G</span>
+                          <span className="text-[10px] text-zinc-400 block uppercase">μ: {car.specs.surfaceAffinity}</span>
+                        </div>
+                      </div>
+
+                      {/* Acoustic & Cultural Excerpt */}
+                      <div className="space-y-1.5">
+                        <p className="text-[11px] text-zinc-300 font-sans line-clamp-2 leading-relaxed">
+                          {car.marketIntelligence.ukEnthusiastStatus}
+                        </p>
+                        
+                        <div className="flex items-center gap-1.5 text-[10px] font-mono-numbers text-amber-300/80 truncate">
+                          <Volume2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span className="truncate">{car.marketIntelligence.soundtrackSignature}</span>
+                        </div>
+                      </div>
+
+                      {/* Footer Strip */}
+                      <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                        <span className="font-mono-numbers font-bold text-zinc-400 text-[11px]">
+                          {car.marketIntelligence.estimatedPriceGbp}
+                        </span>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveModelModal(car);
+                            setModelModalTab('blueprint');
+                          }}
+                          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-xs font-mono-numbers font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer transition"
+                        >
+                          <span>Inspect Dossier</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
-
-                    {/* Footer Strip */}
-                    <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                      <span className="font-mono-numbers font-bold text-zinc-400 text-[11px]">
-                        {car.marketIntelligence.estimatedPriceGbp}
-                      </span>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveModelModal(car);
-                          setModelModalTab('blueprint');
-                        }}
-                        className="flex items-center gap-1 text-xs font-mono-numbers font-bold text-amber-400 hover:text-amber-300 group-hover:translate-x-0.5 transition-transform"
-                      >
-                        <span>Inspect Dossier</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -1346,41 +1495,145 @@ export const ExplorePage: FC = () => {
             {/* Modal Nav Tabs */}
             <div className="flex items-center gap-2 px-5 pt-3 border-b border-white/[0.06] text-xs font-mono-numbers overflow-x-auto no-scrollbar">
               <button
+                onClick={() => setModelModalTab('heritage')}
+                className={`pb-2.5 px-3 border-b-2 font-bold cursor-pointer transition whitespace-nowrap flex items-center gap-1.5 ${
+                  modelModalTab === 'heritage' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Trophy className="w-3.5 h-3.5" />
+                <span>Motorsport Lore &amp; Heritage</span>
+              </button>
+              <button
                 onClick={() => setModelModalTab('blueprint')}
-                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
+                className={`pb-2.5 px-3 border-b-2 font-bold cursor-pointer transition whitespace-nowrap flex items-center gap-1.5 ${
                   modelModalTab === 'blueprint' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
                 }`}
               >
-                Engineering Blueprint
-              </button>
-              <button
-                onClick={() => setModelModalTab('lore')}
-                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
-                  modelModalTab === 'lore' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                UK Enthusiast Lore
+                <Gauge className="w-3.5 h-3.5" />
+                <span>Engineering Blueprint</span>
               </button>
               <button
                 onClick={() => setModelModalTab('watchpoints')}
-                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
+                className={`pb-2.5 px-3 border-b-2 font-bold cursor-pointer transition whitespace-nowrap flex items-center gap-1.5 ${
                   modelModalTab === 'watchpoints' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
                 }`}
               >
-                Inspection Watchpoints
+                <Wrench className="w-3.5 h-3.5" />
+                <span>Inspection Watchpoints</span>
               </button>
               <button
                 onClick={() => setModelModalTab('matchup')}
-                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
+                className={`pb-2.5 px-3 border-b-2 font-bold cursor-pointer transition whitespace-nowrap flex items-center gap-1.5 ${
                   modelModalTab === 'matchup' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
                 }`}
               >
-                Matchup vs {activeVehicle.name}
+                <Activity className="w-3.5 h-3.5" />
+                <span>Matchup vs {activeVehicle.name}</span>
               </button>
             </div>
 
             {/* Modal Body */}
             <div className="p-5 flex-1 overflow-y-auto space-y-5 text-xs font-mono-numbers">
+              {modelModalTab === 'heritage' && (() => {
+                const heritage = getMotorsportHeritage(activeModelModal);
+                return (
+                  <div className="space-y-4">
+                    {/* Motorsport Category & Pedigree */}
+                    <div className="p-4 rounded-2xl bg-amber-400/10 border border-amber-400/20 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono-numbers px-2.5 py-1 rounded-full bg-amber-400 text-zinc-950 font-bold uppercase tracking-wider inline-flex items-center gap-1">
+                          <Trophy className="w-3 h-3 text-zinc-950" />
+                          {heritage.racingBadge}
+                        </span>
+                        <span className="text-xs font-mono-numbers text-amber-400 font-bold">
+                          Motorsport Classification
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-bold text-white font-luxury-display">
+                          Why Drivers Revere This Platform
+                        </h4>
+                        <p className="text-zinc-200 font-sans leading-relaxed text-xs">
+                          {heritage.legendaryWhy}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Driver Immersion Feeling & Sensory */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
+                        <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Sensory Driver Feeling &amp; Feedback</span>
+                        </span>
+                        <p className="text-zinc-300 font-sans leading-relaxed text-xs italic">
+                          "{heritage.driverVibe}"
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
+                        <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
+                          <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Acoustic Soundtrack Signature</span>
+                        </span>
+                        <p className="text-zinc-300 font-sans leading-relaxed text-xs italic">
+                          "{activeModelModal.marketIntelligence.soundtrackSignature}"
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Racing Achievements / Homologation Lore */}
+                    <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2.5">
+                      <span className="text-[10px] text-amber-400 uppercase font-bold flex items-center gap-1.5">
+                        <Flag className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Championship &amp; Racing Lineage</span>
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {heritage.racingAchievements.map((item, idx) => (
+                          <div key={idx} className="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] flex items-center gap-2 text-xs text-zinc-200">
+                            <span className="text-amber-400 font-bold font-mono-numbers">0{idx + 1}.</span>
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Benchmark Road & Iconic Proving Ground */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                        <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-sky-400" />
+                          <span>Iconic Proving Circuit</span>
+                        </span>
+                        <p className="text-zinc-100 font-bold text-xs">{heritage.iconicCircuit}</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                        <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
+                          <Compass className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Benchmark UK Sector</span>
+                        </span>
+                        <p className="text-zinc-100 font-bold text-xs">{activeModelModal.marketIntelligence.benchmarkRoadSector}</p>
+                      </div>
+                    </div>
+
+                    {/* Direct Quick-Switch to Blueprint */}
+                    <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+                      <span className="text-xs text-zinc-400 font-sans">
+                        Curious about cylinder count, engine codes, and lateral G?
+                      </span>
+                      <button
+                        onClick={() => setModelModalTab('blueprint')}
+                        className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-amber-400 font-bold text-xs font-mono-numbers flex items-center gap-1 cursor-pointer transition"
+                      >
+                        <span>View Mechanical Blueprint</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {modelModalTab === 'blueprint' && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -1423,37 +1676,6 @@ export const ExplorePage: FC = () => {
                     <span className="text-[10px] text-zinc-500 uppercase">Factory Chassis & Tyre Spec</span>
                     <p className="text-zinc-200">{activeModelModal.specs.factoryTireSpec}</p>
                     <p className="text-zinc-400 text-[11px]">Peak Lateral Acceleration: <span className="text-sky-400 font-bold">{activeModelModal.specs.peakLateralG}G</span> · Optimal Surface: <span className="uppercase text-amber-400">{activeModelModal.specs.surfaceAffinity}</span></p>
-                  </div>
-                </div>
-              )}
-
-              {modelModalTab === 'lore' && (
-                <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-amber-400/10 border border-amber-400/20 space-y-2">
-                    <span className="text-[10px] text-amber-400 uppercase font-bold">Why Drivers Revere This Platform</span>
-                    <p className="text-zinc-200 font-sans leading-relaxed text-xs">
-                      {activeModelModal.marketIntelligence.ukEnthusiastStatus}
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
-                    <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
-                      <Volume2 className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Exhaust & Valvetrain Acoustic Signature</span>
-                    </span>
-                    <p className="text-zinc-300 font-sans leading-relaxed text-xs italic">
-                      "{activeModelModal.marketIntelligence.soundtrackSignature}"
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
-                    <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
-                      <Compass className="w-3.5 h-3.5 text-sky-400" />
-                      <span>Benchmark UK Road / Sector</span>
-                    </span>
-                    <p className="text-zinc-200 font-bold text-sm">
-                      {activeModelModal.marketIntelligence.benchmarkRoadSector}
-                    </p>
                   </div>
                 </div>
               )}

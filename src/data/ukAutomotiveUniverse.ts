@@ -858,3 +858,240 @@ export const ARCHETYPE_META: Record<CarArchetype, { label: string; icon: string;
     description: 'Period-correct coachwork, individual throttle bodies, and historic concours d’elegance provenance.'
   }
 };
+
+export interface MotorsportHeritage {
+  racingCategory: string;
+  badge: string;
+  racingBadge?: string;
+  legendaryWhy: string;
+  driverVibe: string;
+  agilityRating: number;
+  agilityScore?: number;
+  thrillRating: number;
+  driverThrillScore?: number;
+  iconicCircuit: string;
+  racingAchievements?: string[];
+}
+
+export type MotorsportModel = AutomotiveModel;
+
+export const MOTORSPORT_HERITAGE_MAP: Record<string, MotorsportHeritage> = {
+  'car-aston-vantage-v8': {
+    racingCategory: 'GT4 & Le Mans Endurance',
+    badge: '🏆 GT4 Endurance',
+    legendaryWhy: 'The last great analog Aston Martin. A bespoke bonded-aluminum chassis with a dry-sump 4.7L V8 developed for Nürburgring 24-hour endurance competition.',
+    driverVibe: 'Pure British V8 Symphony',
+    agilityRating: 88,
+    thrillRating: 93,
+    iconicCircuit: 'Nürburgring Nordschleife'
+  },
+  'car-audi-b7-rs4': {
+    racingCategory: 'DTM & Super Touring Lineage',
+    badge: '⚡ DTM Heritage',
+    legendaryWhy: 'The high-revving 8,250 RPM naturally aspirated V8 estate with rear-biased Quattro that redefined all-weather performance on British country roads.',
+    driverVibe: '8,250 RPM V8 Roar',
+    agilityRating: 88,
+    thrillRating: 94,
+    iconicCircuit: 'Spa-Francorchamps'
+  },
+  'car-bmw-m3-g80': {
+    racingCategory: 'M4 GT3 Endurance Platform',
+    badge: '🏆 DTM & GT3 DNA',
+    legendaryWhy: 'The twin-turbo inline-6 powerhouse that forms the direct engineering foundation for BMW\'s championship-winning M4 GT3 endurance race cars.',
+    driverVibe: 'Relentless Boost Surge',
+    agilityRating: 92,
+    thrillRating: 91,
+    iconicCircuit: 'Nürburgring 24h & Silverstone'
+  },
+  'car-bmw-m3-e46-csl': {
+    racingCategory: 'Touring Car & Nürburgring Icon',
+    badge: '🏁 Nürburgring Cult Icon',
+    legendaryWhy: 'Widely considered the ultimate analog M car. Carbon-fiber roof, no sound deadening, and an induction roar from the carbon airbox that echoes for miles.',
+    driverVibe: 'Unfiltered S54 Induction',
+    agilityRating: 96,
+    thrillRating: 99,
+    iconicCircuit: 'Nürburgring Nordschleife'
+  },
+  'car-bmw-e30-318is': {
+    racingCategory: 'Group A Touring Car Ancestry',
+    badge: '⚡ Group A Lineage',
+    legendaryWhy: 'Known as the "Baby M3", the lightweight 318is possesses pure 50:50 chassis balance and rev-happy 16V twin-cam agility that teaches drivers the art of momentum.',
+    driverVibe: 'Pure Momentum Flow',
+    agilityRating: 91,
+    thrillRating: 92,
+    iconicCircuit: 'Brands Hatch Indy'
+  },
+  'car-caterham-620r': {
+    racingCategory: 'Single-Seater Track Weapon',
+    badge: '⏱️ Sub-1,000kg Pure Tracker',
+    legendaryWhy: 'Weighs only 610kg with a 310 BHP supercharged engine and sequential dog-ring gearbox. The closest experience to a Formula racing car with number plates.',
+    driverVibe: 'Go-Kart G-Forces',
+    agilityRating: 100,
+    thrillRating: 100,
+    iconicCircuit: 'Cadwell Park Circuit'
+  },
+  'car-ford-fiesta-st-mk8': {
+    racingCategory: 'WRC Junior & B-Road Benchmark',
+    badge: '🏁 B-Road Giant Killer',
+    legendaryWhy: 'Fitted with a Quaife mechanical limited-slip differential, this pocket rocket lifts its inside rear wheel in corners and outhandles supercars on narrow twisty roads.',
+    driverVibe: 'Playful Lift-Off Oversteer',
+    agilityRating: 95,
+    thrillRating: 93,
+    iconicCircuit: 'Anglesey Coastal'
+  },
+  'car-ford-escort-cosworth': {
+    racingCategory: 'WRC Group A Homologation',
+    badge: '🏁 WRC Homologation',
+    legendaryWhy: 'Homologated to win the World Rally Championship with legendary Cosworth turbo power and a high-downforce whale-tail rear wing that made motorsport history.',
+    driverVibe: 'Raw Group A Turbo Boost',
+    agilityRating: 91,
+    thrillRating: 97,
+    iconicCircuit: 'Rally Monte Carlo & Oulton Park'
+  },
+  'car-honda-type-r-fl5': {
+    racingCategory: 'TCR World Tour & Nürburgring FWD Record',
+    badge: '🏆 TCR Champion',
+    legendaryWhy: 'Holds the Nürburgring front-wheel-drive production lap record. Features dual-axis front suspension that completely eliminates torque steer under full acceleration.',
+    driverVibe: 'Surgical Front-End Grip',
+    agilityRating: 97,
+    thrillRating: 94,
+    iconicCircuit: 'Suzuka & Nürburgring'
+  },
+  'car-defender-110-v8': {
+    racingCategory: 'Dakar & Overland Raid',
+    badge: '🏜️ Overland Raid Special',
+    legendaryWhy: 'A supercharged 518 BHP V8 overland conquering machine with 900mm river wading depth and active electronic locking differentials.',
+    driverVibe: 'Unstoppable Mountain Torque',
+    agilityRating: 78,
+    thrillRating: 89,
+    iconicCircuit: 'Strata Florida & Sahara Dunes'
+  },
+  'car-lotus-emira-v6': {
+    racingCategory: 'GT4 European Series Ancestry',
+    badge: '🏆 GT4 Purist',
+    legendaryWhy: 'The last gas-powered analog Lotus with genuine hydraulic power steering, an exposed manual gear linkage, and supercharged mid-engine balance.',
+    driverVibe: 'Telepathic Steering Feel',
+    agilityRating: 96,
+    thrillRating: 95,
+    iconicCircuit: 'Hethel Test Track & Donington'
+  },
+  'car-mclaren-720s': {
+    racingCategory: 'GT3 Le Mans & Supercar Apex',
+    badge: '🏆 GT3 Aerodynamic Apex',
+    legendaryWhy: 'Carbon-fiber Monocage II chassis with active aerodynamic airbrake. Capable of 212 MPH while providing astonishing daily ride compliance via interconnected hydraulic dampers.',
+    driverVibe: 'Hypersonic Acceleration',
+    agilityRating: 98,
+    thrillRating: 96,
+    iconicCircuit: 'Silverstone GP & Monza'
+  },
+  'car-mgb-roadster': {
+    racingCategory: 'Sebring & Goodwood Revival Classic',
+    badge: '🏛️ Historic Sebring Racer',
+    legendaryWhy: 'Classic British roadster converted into a Sebring track special with Rover V8 power, flared arches, and pure wind-in-the-hair period racing romance.',
+    driverVibe: 'Classic V8 Rumble',
+    agilityRating: 82,
+    thrillRating: 90,
+    iconicCircuit: 'Goodwood Motor Circuit'
+  },
+  'car-mitsubishi-evo-6-tme': {
+    racingCategory: 'WRC 4-Time Championship Special',
+    badge: '🏁 WRC Championship Icon',
+    legendaryWhy: 'Commemorates Tommi Mäkinen\'s historic 4th consecutive WRC title with titanium turbine wheel for instantaneous boost and Active Yaw Control that defies physics on wet tarmac.',
+    driverVibe: 'Instant Turbo Reflexes',
+    agilityRating: 98,
+    thrillRating: 99,
+    iconicCircuit: 'Rally Finland & Col de Turini'
+  },
+  'car-nissan-skyline-r34': {
+    racingCategory: 'JGTC GT500 & Bathurst "Godzilla"',
+    badge: '🏆 JGTC "Godzilla" Legend',
+    legendaryWhy: 'Dominator of Japanese and Australian touring car championships. Equipped with the legendary RB26 twin-turbo engine and computer-guided ATTESA all-wheel drive.',
+    driverVibe: 'Twin-Turbo RB26 Roar',
+    agilityRating: 94,
+    thrillRating: 98,
+    iconicCircuit: 'Fuji Speedway & Mount Panorama'
+  },
+  'car-porsche-911-gt3-992': {
+    racingCategory: 'Porsche Supercup & 24h Nürburgring',
+    badge: '🏆 GT3 Endurance Pedigree',
+    legendaryWhy: 'The motorsport crown jewel. An atmospheric 4.0-litre flat-six screaming to 9,000 RPM, double-wishbone front suspension from the 911 RSR, and a 6-speed manual gearbox.',
+    driverVibe: '9,000 RPM Analog Euphoria',
+    agilityRating: 99,
+    thrillRating: 100,
+    iconicCircuit: 'Nürburgring Nordschleife'
+  },
+  'car-toyota-gr-yaris': {
+    racingCategory: 'WRC Rally Homologation',
+    badge: '🏁 WRC Rally Homologation',
+    legendaryWhy: 'Built from a clean sheet for the World Rally Championship. Features a bespoke 3-door body, carbon roof, and GR-FOUR all-wheel drive developed with Tommi Mäkinen.',
+    driverVibe: 'B-Road Mountain Weapon',
+    agilityRating: 97,
+    thrillRating: 96,
+    iconicCircuit: 'Rally Sweden & Snake Pass'
+  },
+  'car-toyota-supra-a80': {
+    racingCategory: 'JGTC GT500 & Le Mans GT1',
+    badge: '🏆 JGTC GT500 Heritage',
+    legendaryWhy: 'Powered by the indestructible iron-block 2JZ-GTE twin-turbo inline-6. A GT500 touring car legend famous for immense tuning potential and timeless shape.',
+    driverVibe: 'Sequential Turbo Surge',
+    agilityRating: 88,
+    thrillRating: 95,
+    iconicCircuit: 'Fuji Speedway & Tsukuba'
+  },
+  'car-vauxhall-zafira-vxr': {
+    racingCategory: 'Nürburgring Nordschleife Record',
+    badge: '🏁 Nürburgring 7-Seat Record',
+    legendaryWhy: 'Set the official 7-seater Nürburgring Nordschleife lap record (8:54.38) with Manuel Reuter at the wheel. Recaro racing buckets and a forged turbo engine in a family MPV.',
+    driverVibe: 'Wild Turbo Torque Steer',
+    agilityRating: 82,
+    thrillRating: 88,
+    iconicCircuit: 'Cadwell Park & Nürburgring'
+  },
+  'car-vw-golf-r-mk7': {
+    racingCategory: 'TCR Touring Car Engineering',
+    badge: '⚡ All-Weather Benchmark',
+    legendaryWhy: 'The benchmark all-weather weapon. Haldex all-wheel drive, dual-clutch lightning shifts, and an EA888 turbo engine tuned for effortless high-speed cross-country pace.',
+    driverVibe: 'Effortless Point-and-Shoot',
+    agilityRating: 90,
+    thrillRating: 89,
+    iconicCircuit: 'Anglesey Coastal Circuit'
+  }
+};
+
+export function getMotorsportHeritage(car: AutomotiveModel): Required<MotorsportHeritage> {
+  const base = MOTORSPORT_HERITAGE_MAP[car.id];
+  const racingAchievements = [
+    `${car.specs.powerBhp} BHP / ${car.specs.curbWeightKg.toLocaleString()} kg race homologation engineering`,
+    `Calibrated for ${car.specs.peakLateralG}G lateral grip with ${car.specs.drivetrain}`,
+    `Iconic proving ground benchmark at ${base?.iconicCircuit || car.marketIntelligence?.benchmarkRoadSector || 'Silverstone Circuit'}`
+  ];
+
+  if (base) {
+    return {
+      ...base,
+      racingBadge: base.badge,
+      agilityScore: base.agilityRating,
+      driverThrillScore: base.thrillRating,
+      racingAchievements: base.racingAchievements || racingAchievements
+    };
+  }
+
+  const badge = `${ARCHETYPE_META[car.archetype]?.icon || '🏁'} ${ARCHETYPE_META[car.archetype]?.label || 'Icon'}`;
+  const agilityScore = Math.min(100, Math.round(car.specs.peakLateralG * 75));
+  const driverThrillScore = Math.min(100, Math.round((car.specs.powerToWeightBhpPerTonne / 400) * 100));
+
+  return {
+    racingCategory: ARCHETYPE_META[car.archetype]?.label || 'Enthusiast Special',
+    badge,
+    racingBadge: badge,
+    legendaryWhy: car.marketIntelligence?.ukEnthusiastStatus || 'An extraordinary automotive platform celebrated across British motoring lore.',
+    driverVibe: car.specs.induction === 'Naturally Aspirated' ? 'High-RPM Precision' : 'Punchy Turbo Thrust',
+    agilityRating: agilityScore,
+    agilityScore,
+    thrillRating: driverThrillScore,
+    driverThrillScore,
+    iconicCircuit: car.marketIntelligence?.benchmarkRoadSector || 'British B-Road Benchmark',
+    racingAchievements
+  };
+}
+
