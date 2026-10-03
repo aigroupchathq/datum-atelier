@@ -11,6 +11,12 @@ import {
   type AlgorithmWeights
 } from '../core/algorithm/semanticKinematicEngine';
 import {
+  AUTOMOTIVE_UNIVERSE,
+  ARCHETYPE_META,
+  type AutomotiveModel,
+  type CarArchetype
+} from '../data/ukAutomotiveUniverse';
+import {
   Search,
   Heart,
   MessageCircle,
@@ -31,7 +37,11 @@ import {
   Activity,
   Zap,
   Mountain,
-  Gauge
+  Gauge,
+  BookOpen,
+  Volume2,
+  AlertTriangle,
+  ArrowRight
 } from 'lucide-react';
 
 const getCarProfileId = (handle: string): string => {
@@ -412,6 +422,8 @@ const CATEGORIES = [
   { id: 'stance', label: 'Stance & Fitment' }
 ];
 
+const ALPHABET = ['ALL', 'A', 'B', 'C', 'F', 'H', 'L', 'M', 'N', 'P', 'T', 'V'];
+
 const DEFAULT_ALGORITHM_WEIGHTS: AlgorithmWeights = {
   mechanicalPurism: 80,
   surfaceGripTarget: 'all',
@@ -424,19 +436,30 @@ export const ExplorePage: FC = () => {
   const { isWhiteYellow } = useTheme();
   const { activeVehicle } = useActiveVehicle();
 
+  // Active Explore Mode: 'universe' (A-Z Car Universe) vs 'community' (Photo Journals)
+  const [activeTab, setActiveTab] = useState<'universe' | 'community'>('universe');
+
   // Search & Pasting State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isAlgorithmTuningOpen, setIsAlgorithmTuningOpen] = useState(false);
   const [algorithmWeights, setAlgorithmWeights] = useState<AlgorithmWeights>(DEFAULT_ALGORITHM_WEIGHTS);
 
-  // Modal State
+  // Universe Directory Filters
+  const [selectedLetter, setSelectedLetter] = useState<string>('ALL');
+  const [selectedArchetype, setSelectedArchetype] = useState<string>('all');
+
+  // Community Modal State
   const [activeModalItem, setActiveModalItem] = useState<ExploreItem | null>(null);
   const [modalImageIndex, setModalImageIndex] = useState(0);
   const [modalLiked, setModalLiked] = useState<Record<string, boolean>>({});
   const [modalSaved, setModalSaved] = useState<Record<string, boolean>>({});
   const [modalCommentInput, setModalCommentInput] = useState('');
   const [modalComments, setModalComments] = useState<Record<string, string[]>>({});
+
+  // Automotive Universe Blueprint Modal State
+  const [activeModelModal, setActiveModelModal] = useState<AutomotiveModel | null>(null);
+  const [modelModalTab, setModelModalTab] = useState<'blueprint' | 'lore' | 'watchpoints' | 'matchup'>('blueprint');
 
   // Real-time Synaptic Deconstruction
   const parsedQuery = useMemo(() => {
@@ -463,7 +486,6 @@ export const ExplorePage: FC = () => {
       // Fallback: cycle a curated snippet
     }
 
-    // Fallback cycle through curated automotive snippets
     const randomSnippet = CURATED_SNIPPETS[Math.floor(Math.random() * CURATED_SNIPPETS.length)];
     setSearchQuery(randomSnippet.snippet);
     showToast({
@@ -474,12 +496,49 @@ export const ExplorePage: FC = () => {
     });
   };
 
-  // Scored and Ranked Items based on Synaptic Kinematic Algorithm
+  // Filtered and Ranked Automotive Models (A to Z Universe)
+  const filteredModels = useMemo(() => {
+    return AUTOMOTIVE_UNIVERSE.filter((car) => {
+      // 1. Archetype filter
+      if (selectedArchetype !== 'all' && car.archetype !== selectedArchetype) {
+        return false;
+      }
+      // 2. Alphabet filter
+      if (selectedLetter !== 'ALL' && !car.make.toUpperCase().startsWith(selectedLetter)) {
+        return false;
+      }
+      // 3. Search query filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchesName = car.make.toLowerCase().includes(q) || 
+                            car.model.toLowerCase().includes(q) || 
+                            (car.variant && car.variant.toLowerCase().includes(q));
+        const matchesChassis = car.chassisCode.toLowerCase().includes(q);
+        const matchesEngine = car.specs.engineCode.toLowerCase().includes(q) || car.specs.cylinderConfig.toLowerCase().includes(q);
+        const matchesDrivetrain = car.specs.drivetrain.toLowerCase().includes(q);
+        const matchesMod = car.marketIntelligence.commonEnthusiastMods.some(m => m.toLowerCase().includes(q));
+        
+        // Also check if any detected vector matches
+        const matchesVector = parsedQuery.detectedVectors.some(v => 
+          car.chassisCode.toLowerCase().includes(v.token) ||
+          car.make.toLowerCase().includes(v.token) ||
+          car.model.toLowerCase().includes(v.token) ||
+          car.specs.engineCode.toLowerCase().includes(v.token)
+        );
+
+        if (!matchesName && !matchesChassis && !matchesEngine && !matchesDrivetrain && !matchesMod && !matchesVector) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [selectedArchetype, selectedLetter, searchQuery, parsedQuery]);
+
+  // Scored and Ranked Community Items
   const scoredItems = useMemo(() => {
     return EXPLORE_ITEMS.map((item) => {
       const match = calculateKinematicMatch(item, parsedQuery, algorithmWeights);
       
-      // Determine if this item relates to the user's current active car
       const isActiveVehicleMatch = 
         item.authorCar.toLowerCase().includes(activeVehicle.name.toLowerCase()) ||
         item.caption.toLowerCase().includes(activeVehicle.chassisCode.split('-')[0].toLowerCase()) ||
@@ -495,23 +554,19 @@ export const ExplorePage: FC = () => {
     });
   }, [parsedQuery, algorithmWeights, activeVehicle]);
 
-  // Filter and Sort by Kinematic Score
+  // Filter and Sort Community Items
   const filteredAndRankedItems = useMemo(() => {
     return scoredItems
       .filter((item) => {
         const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
         if (!matchesCategory) return false;
         
-        // If there's an active query, require at least a modest match
         if (parsedQuery.detectedVectors.length > 0 && item.matchScore < 45) {
           return false;
         }
         return true;
       })
-      .sort((a, b) => {
-        // Prioritize strong kinematic match score
-        return b.matchScore - a.matchScore;
-      });
+      .sort((a, b) => b.matchScore - a.matchScore);
   }, [scoredItems, selectedCategory, parsedQuery]);
 
   const handleOpenItem = (item: ExploreItem) => {
@@ -559,25 +614,25 @@ export const ExplorePage: FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 lg:px-8 py-6 space-y-6 animate-in fade-in duration-200">
+    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6 animate-in fade-in duration-200">
       
-      {/* ── REFINED KINEMATIC DISCOVERY COMMAND BAR (Calm, Smart, Effortless) ── */}
+      {/* ── TOP EDITORIAL HORIZON & DUAL UNIVERSE NAV ── */}
       <div className="space-y-4">
         
-        {/* Understated Header Strip */}
+        {/* Header Strip */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-white/[0.06]">
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="font-luxury-display text-lg sm:text-xl font-bold tracking-wider text-zinc-100 uppercase">
-                Atelier Discovery
+              <h1 className="font-luxury-display text-lg sm:text-2xl font-bold tracking-wider text-zinc-100 uppercase">
+                DATUM Automotive Universe
               </h1>
-              <span className="text-[10px] font-mono-numbers px-2.5 py-0.5 rounded-full bg-zinc-900 border border-white/10 text-zinc-300 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Kinematic Search Engine
+              <span className="text-[10px] font-mono-numbers px-2.5 py-0.5 rounded-full bg-zinc-900 border border-white/10 text-amber-400 flex items-center gap-1.5 font-bold">
+                <Sparkles className="w-3 h-3 text-amber-400" />
+                A–Z Chassis Intelligence
               </span>
             </div>
-            <p className="text-xs text-zinc-400 mt-1 max-w-xl font-sans">
-              Discover verified chassis builds, technical mountain passes, and hardware setups across the collective stable.
+            <p className="text-xs text-zinc-400 mt-1 max-w-2xl font-sans">
+              The ultimate automotive taxonomy. Search across UK benchmarks, homologation specials, WRC icons, and B-road legends with real mechanical blueprints.
             </p>
           </div>
 
@@ -614,7 +669,7 @@ export const ExplorePage: FC = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search chassis (G80, 992, E30, L663), mechanical specs, parts, or paste tuning notes…"
+            placeholder="Search make, model, chassis (G80, 992, FL5, E46, L663), engine code (S58, 2JZ, K20C1), or paste forum notes…"
             className={`w-full pl-11 pr-24 py-3 rounded-2xl border text-xs sm:text-sm transition font-sans shadow-inner ${
               isWhiteYellow
                 ? 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400'
@@ -632,7 +687,7 @@ export const ExplorePage: FC = () => {
           )}
         </div>
 
-        {/* Real-time Detected Vectors Strip (Refined & Non-Intrusive) */}
+        {/* Real-time Detected Vectors Strip */}
         {parsedQuery.detectedVectors.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 pt-1 animate-in fade-in duration-200">
             <span className="text-[11px] font-mono-numbers text-zinc-400 flex items-center gap-1.5">
@@ -661,328 +716,816 @@ export const ExplorePage: FC = () => {
           </div>
         )}
 
-        {/* Curated Sample Snippet Seed Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 text-xs">
-          <span className="text-[11px] font-mono-numbers text-zinc-500 shrink-0 font-medium">
-            Inspiration:
-          </span>
-          {CURATED_SNIPPETS.map((sample, i) => (
+        {/* ── UNIVERSE VS COMMUNITY PRIMARY SWITCHER ── */}
+        <div className="flex items-center justify-between border-b border-white/[0.08] pt-2">
+          <div className="flex items-center gap-2">
             <button
-              key={i}
-              onClick={() => setSearchQuery(sample.snippet)}
-              className={`px-3 py-1 rounded-full text-xs font-mono-numbers transition-all whitespace-nowrap shrink-0 border cursor-pointer ${
-                searchQuery === sample.snippet
-                  ? 'bg-amber-400/20 text-amber-300 border-amber-400/40 font-semibold'
-                  : isWhiteYellow
-                  ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-200'
-                  : 'bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-zinc-200 border-white/[0.06]'
+              onClick={() => setActiveTab('universe')}
+              className={`pb-2.5 px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+                activeTab === 'universe'
+                  ? 'border-amber-400 text-amber-400'
+                  : 'border-transparent text-zinc-400 hover:text-zinc-200'
               }`}
             >
-              {sample.title}
+              <BookOpen className="w-4 h-4" />
+              <span>Automotive Universe A–Z ({filteredModels.length})</span>
             </button>
-          ))}
+
+            <button
+              onClick={() => setActiveTab('community')}
+              className={`pb-2.5 px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+                activeTab === 'community'
+                  ? 'border-amber-400 text-amber-400'
+                  : 'border-transparent text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>Community Journals & Feeds ({filteredAndRankedItems.length})</span>
+            </button>
+          </div>
+
+          <span className="text-[11px] font-mono-numbers text-zinc-500 hidden sm:inline">
+            Active: {activeVehicle.name} ({activeVehicle.fullName})
+          </span>
         </div>
 
-        {/* ── DRIVER-TUNED ALGORITHM SWITCHGEAR CONSOLE (Expandable) ── */}
-        {isAlgorithmTuningOpen && (
-          <div className={`p-5 rounded-3xl border space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 ${
-            isWhiteYellow ? 'bg-zinc-50 border-zinc-300 shadow-md' : 'bg-zinc-950/95 border-white/10 backdrop-blur-xl shadow-2xl'
-          }`}>
-            <div className="flex items-center justify-between border-b pb-3 border-white/[0.08]">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-mono-numbers uppercase tracking-wider font-bold text-zinc-100">
-                  Driver Algorithmic Weights (Zero Black-Box Bias)
-                </span>
-              </div>
-              <button
-                onClick={() => setAlgorithmWeights(DEFAULT_ALGORITHM_WEIGHTS)}
-                className="text-[11px] font-mono-numbers text-zinc-400 hover:text-white flex items-center gap-1 cursor-pointer transition"
-              >
-                <RotateCcw className="w-3 h-3" />
-                <span>Reset Defaults</span>
-              </button>
+        {/* ── SUB-FILTERS FOR AUTOMOTIVE UNIVERSE (A-Z & Archetypes) ── */}
+        {activeTab === 'universe' && (
+          <div className="space-y-3 animate-in fade-in duration-200">
+            {/* A to Z Fast Alphabet Index Bar */}
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+              <span className="text-[10px] font-mono-numbers text-zinc-500 uppercase tracking-widest mr-1.5 shrink-0 font-bold">
+                Marques:
+              </span>
+              {ALPHABET.map((letter) => {
+                const isSelected = selectedLetter === letter;
+                return (
+                  <button
+                    key={letter}
+                    onClick={() => setSelectedLetter(letter)}
+                    className={`w-7 h-7 rounded-lg text-xs font-mono-numbers font-bold flex items-center justify-center transition shrink-0 cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-400 text-zinc-950 shadow-sm'
+                        : isWhiteYellow
+                        ? 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                        : 'bg-zinc-900/90 text-zinc-400 hover:text-white hover:bg-zinc-800'
+                    }`}
+                  >
+                    {letter}
+                  </button>
+                );
+              })}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono-numbers">
-              {/* Dial 1: Mechanical Purism */}
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
-                <div className="flex justify-between items-center text-zinc-300">
-                  <span className="font-bold flex items-center gap-1">
-                    <Activity className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Mechanical Purism</span>
-                  </span>
-                  <span className="text-amber-400 font-bold">{algorithmWeights.mechanicalPurism}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={algorithmWeights.mechanicalPurism}
-                  onChange={(e) => setAlgorithmWeights(w => ({ ...w, mechanicalPurism: Number(e.target.value) }))}
-                  className="w-full accent-amber-400 cursor-pointer"
-                />
-                <div className="flex justify-between text-[9px] text-zinc-500">
-                  <span>Modern AWD Turbo</span>
-                  <span>Analog NA Manual</span>
-                </div>
-              </div>
-
-              {/* Dial 2: Surface Grip Target */}
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
-                <div className="flex justify-between items-center text-zinc-300">
-                  <span className="font-bold flex items-center gap-1">
-                    <Mountain className="w-3.5 h-3.5 text-sky-400" />
-                    <span>Tarmac Adhesion (μ)</span>
-                  </span>
-                  <span className="text-sky-400 font-bold uppercase">{algorithmWeights.surfaceGripTarget}</span>
-                </div>
-                <div className="grid grid-cols-4 gap-1 text-[10px]">
-                  {(['all', 'dry', 'damp', 'frost'] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => setAlgorithmWeights(w => ({ ...w, surfaceGripTarget: mode }))}
-                      className={`py-1 rounded-lg font-bold uppercase transition cursor-pointer ${
-                        algorithmWeights.surfaceGripTarget === mode
-                          ? 'bg-sky-400 text-black shadow-xs'
-                          : 'bg-white/5 text-zinc-400 hover:text-white'
-                      }`}
-                    >
-                      {mode}
-                    </button>
-                  ))}
-                </div>
-                <div className="text-[9px] text-zinc-500 truncate">
-                  {algorithmWeights.surfaceGripTarget === 'all' ? 'All road conditions' :
-                   algorithmWeights.surfaceGripTarget === 'dry' ? 'Optimum Asphalt (μ > 0.85)' :
-                   algorithmWeights.surfaceGripTarget === 'damp' ? 'Damp Bitumen (μ 0.55–0.75)' : 'Cryospheric Hazard (μ < 0.35)'}
-                </div>
-              </div>
-
-              {/* Dial 3: Kinematic Load Intensity */}
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
-                <div className="flex justify-between items-center text-zinc-300">
-                  <span className="font-bold flex items-center gap-1">
-                    <Gauge className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Kinematic Load (G)</span>
-                  </span>
-                  <span className="text-emerald-400 font-bold">{algorithmWeights.kinematicIntensity}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={algorithmWeights.kinematicIntensity}
-                  onChange={(e) => setAlgorithmWeights(w => ({ ...w, kinematicIntensity: Number(e.target.value) }))}
-                  className="w-full accent-emerald-400 cursor-pointer"
-                />
-                <div className="flex justify-between text-[9px] text-zinc-500">
-                  <span>Scenic Touring</span>
-                  <span>Apex Attack (&gt;1.1G)</span>
-                </div>
-              </div>
-
-              {/* Dial 4: Provenance Strictness */}
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
-                <div className="flex justify-between items-center text-zinc-300">
-                  <span className="font-bold flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Provenance Strictness</span>
-                  </span>
-                  <span className="text-amber-400 font-bold">{algorithmWeights.provenanceStrictness}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={algorithmWeights.provenanceStrictness}
-                  onChange={(e) => setAlgorithmWeights(w => ({ ...w, provenanceStrictness: Number(e.target.value) }))}
-                  className="w-full accent-amber-400 cursor-pointer"
-                />
-                <div className="flex justify-between text-[9px] text-zinc-500">
-                  <span>All Entries</span>
-                  <span>Workshop Stamped DAG</span>
-                </div>
-              </div>
+            {/* Archetype Filter Strip */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 text-xs">
+              <button
+                onClick={() => setSelectedArchetype('all')}
+                className={`px-3 py-1.5 rounded-xl font-mono-numbers transition whitespace-nowrap shrink-0 border cursor-pointer ${
+                  selectedArchetype === 'all'
+                    ? 'bg-yellow-400 text-zinc-950 font-bold border-yellow-500'
+                    : 'bg-white/[0.03] text-zinc-400 hover:text-white border-white/[0.06]'
+                }`}
+              >
+                All Archetypes ({AUTOMOTIVE_UNIVERSE.length})
+              </button>
+              {(Object.keys(ARCHETYPE_META) as CarArchetype[]).map((key) => {
+                const meta = ARCHETYPE_META[key];
+                const isSelected = selectedArchetype === key;
+                const count = AUTOMOTIVE_UNIVERSE.filter(c => c.archetype === key).length;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedArchetype(key)}
+                    className={`px-3 py-1.5 rounded-xl font-mono-numbers transition whitespace-nowrap shrink-0 border flex items-center gap-1.5 cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-400 text-zinc-950 font-bold border-amber-300'
+                        : 'bg-white/[0.03] text-zinc-400 hover:text-white border-white/[0.06]'
+                    }`}
+                  >
+                    <span>{meta.icon}</span>
+                    <span>{meta.label}</span>
+                    <span className="text-[10px] opacity-70">({count})</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* Category Filters (Horizontal Scrollable) */}
-        <div className="flex items-center justify-start md:justify-center gap-2 overflow-x-auto no-scrollbar py-1">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition shrink-0 cursor-pointer ${
-                selectedCategory === cat.id
-                  ? 'bg-yellow-400 text-zinc-950 font-bold border border-yellow-500 shadow-sm'
-                  : isWhiteYellow
-                  ? 'bg-white border border-zinc-200 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-50'
-                  : 'bg-[#141418] border border-white/[0.07] text-zinc-400 hover:text-white hover:bg-white/[0.05]'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+        {/* ── SUB-FILTERS FOR COMMUNITY FEEDS ── */}
+        {activeTab === 'community' && (
+          <div className="flex items-center justify-start md:justify-center gap-2 overflow-x-auto no-scrollbar py-1">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition shrink-0 cursor-pointer ${
+                  selectedCategory === cat.id
+                    ? 'bg-yellow-400 text-zinc-950 font-bold border border-yellow-500 shadow-sm'
+                    : isWhiteYellow
+                    ? 'bg-white border border-zinc-200 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-50'
+                    : 'bg-[#141418] border border-white/[0.07] text-zinc-400 hover:text-white hover:bg-white/[0.05]'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        )}
 
       </div>
 
-      {/* ── INNOVATIVE EXPLORE GRID WITH RICH VISUAL EFFECTS ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 auto-rows-[250px] md:auto-rows-[290px]">
-        {filteredAndRankedItems.map(item => {
-          const isItemLiked = modalLiked[item.id];
-          const isItemSaved = modalSaved[item.id];
-
-          return (
-            <div
-              key={item.id}
-              onClick={() => handleOpenItem(item)}
-              className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 shadow-md ${
-                isWhiteYellow
-                  ? 'bg-white border border-zinc-200/90 hover:border-yellow-400/80 hover:shadow-xl'
-                  : 'bg-[#111113] border border-white/[0.08] hover:border-amber-400/50 hover:shadow-2xl'
-              } ${item.spanClass || 'col-span-1 row-span-1'}`}
+      {/* ── ALGORITHM SWITCHGEAR CONSOLE (Expandable) ── */}
+      {isAlgorithmTuningOpen && (
+        <div className={`p-5 rounded-3xl border space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 ${
+          isWhiteYellow ? 'bg-zinc-50 border-zinc-300 shadow-md' : 'bg-zinc-950/95 border-white/10 backdrop-blur-xl shadow-2xl'
+        }`}>
+          <div className="flex items-center justify-between border-b pb-3 border-white/[0.08]">
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-mono-numbers uppercase tracking-wider font-bold text-zinc-100">
+                Driver Algorithmic Weights (Zero Black-Box Bias)
+              </span>
+            </div>
+            <button
+              onClick={() => setAlgorithmWeights(DEFAULT_ALGORITHM_WEIGHTS)}
+              className="text-[11px] font-mono-numbers text-zinc-400 hover:text-white flex items-center gap-1 cursor-pointer transition"
             >
-              {/* Photo Media with Smooth Zoom */}
-              <img
-                src={item.images[0]}
-                alt={item.caption}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                loading="lazy"
-              />
+              <RotateCcw className="w-3 h-3" />
+              <span>Reset Defaults</span>
+            </button>
+          </div>
 
-              {/* Top Left: Kinematic Match Score Badge */}
-              <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1">
-                <span className={`px-2.5 py-1 rounded-full backdrop-blur-md text-[10px] font-mono-numbers font-bold shadow-lg border flex items-center gap-1 ${
-                  item.matchScore >= 80
-                    ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
-                    : item.matchScore >= 65
-                    ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
-                    : 'bg-black/70 border-white/15 text-zinc-300'
-                }`}>
-                  <Zap className="w-3 h-3" />
-                  <span>{item.matchScore}% Match</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono-numbers">
+            {/* Dial 1 */}
+            <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
+              <div className="flex justify-between items-center text-zinc-300">
+                <span className="font-bold flex items-center gap-1">
+                  <Activity className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Mechanical Purism</span>
                 </span>
-
-                {item.isActiveVehicleMatch && (
-                  <span className="px-2 py-0.5 rounded-full bg-amber-400 text-black text-[9px] font-mono-numbers font-extrabold shadow-md flex items-center gap-1">
-                    ★ {activeVehicle.name} Fitment
-                  </span>
-                )}
+                <span className="text-amber-400 font-bold">{algorithmWeights.mechanicalPurism}%</span>
               </div>
-
-              {/* Corner Badges (Multi-Image / Video Reel / Pro) */}
-              <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 pointer-events-none">
-                {item.isMultiImage && (
-                  <div className="px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white text-[10px] font-mono-numbers flex items-center gap-1">
-                    <Layers className="w-3 h-3" />
-                    <span>{item.images.length}</span>
-                  </div>
-                )}
-                {item.isVideoReel && (
-                  <div className="p-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white">
-                    <Play className="w-3 h-3 fill-white" />
-                  </div>
-                )}
-                {item.isPro && (
-                  <div className="p-1.5 rounded-full bg-amber-500/20 backdrop-blur-md border border-amber-500/40 text-amber-300">
-                    <Wrench className="w-3 h-3" />
-                  </div>
-                )}
-              </div>
-
-              {/* Always-Visible Soft Bottom Vignette for Rich Context */}
-              <div className="absolute inset-x-0 bottom-0 pt-12 pb-3.5 px-3.5 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end justify-between z-10 pointer-events-none group-hover:opacity-0 transition-opacity duration-200">
-                <div className="min-w-0 pr-2">
-                  <p className="text-xs font-bold text-white truncate drop-shadow-md">
-                    {item.authorCar}
-                  </p>
-                  <p className="text-[10px] text-zinc-300 font-mono-numbers truncate">
-                    @{item.authorHandle}
-                  </p>
-                </div>
-                {item.telemetryTag && (
-                  <span className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono-numbers text-amber-300 shrink-0">
-                    {item.telemetryTag}
-                  </span>
-                )}
-              </div>
-
-              {/* Subtle Tactile Hover Overlay */}
-              <div className="absolute inset-0 bg-[#09090B]/85 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 z-20">
-                
-                {/* Top Author Tag & Quick Bookmark */}
-                <div className="flex items-center justify-between">
-                  <Link
-                    to={`/car/${getCarProfileId(item.authorHandle)}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-2 min-w-0 group/author hover:opacity-90"
-                    title={`View ${item.authorName}'s Atelier Dossier`}
-                  >
-                    <div className="w-7 h-7 rounded-full overflow-hidden border border-white/20 shrink-0 bg-zinc-800">
-                      <img
-                        src={item.images[0]}
-                        alt={item.authorName}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-white leading-none truncate group-hover/author:text-amber-400 transition-colors">
-                        {item.authorHandle}
-                      </p>
-                      <p className="text-[10px] text-zinc-400 font-mono-numbers truncate mt-0.5">{item.authorCar}</p>
-                    </div>
-                  </Link>
-
-                  <button
-                    onClick={(e) => handleToggleSave(item.id, e)}
-                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition shrink-0 cursor-pointer"
-                    title={isItemSaved ? 'Saved' : 'Save to Pocket'}
-                  >
-                    <Bookmark className={`w-3.5 h-3.5 ${isItemSaved ? 'fill-yellow-400 text-yellow-400' : ''}`} />
-                  </button>
-                </div>
-
-                {/* Center Match Reasons & Stat Counts */}
-                <div className="space-y-2 text-center">
-                  {item.matchReasons.length > 0 && (
-                    <div className="space-y-1">
-                      {item.matchReasons.map((r, ri) => (
-                        <p key={ri} className="text-[10px] font-mono-numbers text-amber-300/90 truncate">
-                          ✓ {r}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-center gap-6 text-white font-bold text-sm pt-1">
-                    <button
-                      onClick={(e) => handleToggleLike(item.id, e)}
-                      className="flex items-center gap-1.5 drop-shadow-md hover:scale-105 transition cursor-pointer"
-                    >
-                      <Heart className={`w-4 h-4 ${isItemLiked ? 'fill-rose-500 text-rose-500' : 'fill-white text-white'}`} />
-                      <span>{item.likesCount + (isItemLiked ? 1 : 0)}</span>
-                    </button>
-                    <span className="flex items-center gap-1.5 drop-shadow-md">
-                      <MessageCircle className="w-4 h-4 fill-white text-white" />
-                      <span>{item.commentsCount + (modalComments[item.id]?.length || 0)}</span>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Bottom Caption Preview */}
-                <p className="text-xs text-zinc-300 font-sans line-clamp-2 leading-snug">
-                  {item.caption}
-                </p>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={algorithmWeights.mechanicalPurism}
+                onChange={(e) => setAlgorithmWeights(w => ({ ...w, mechanicalPurism: Number(e.target.value) }))}
+                className="w-full accent-amber-400 cursor-pointer"
+              />
+              <div className="flex justify-between text-[9px] text-zinc-500">
+                <span>Modern AWD Turbo</span>
+                <span>Analog NA Manual</span>
               </div>
             </div>
-          );
-        })}
-      </div>
 
-      {/* ── PHOTO DETAIL MODAL / LIGHTBOX ── */}
+            {/* Dial 2 */}
+            <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
+              <div className="flex justify-between items-center text-zinc-300">
+                <span className="font-bold flex items-center gap-1">
+                  <Mountain className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Tarmac Adhesion (μ)</span>
+                </span>
+                <span className="text-sky-400 font-bold uppercase">{algorithmWeights.surfaceGripTarget}</span>
+              </div>
+              <div className="grid grid-cols-4 gap-1 text-[10px]">
+                {(['all', 'dry', 'damp', 'frost'] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setAlgorithmWeights(w => ({ ...w, surfaceGripTarget: mode }))}
+                    className={`py-1 rounded-lg font-bold uppercase transition cursor-pointer ${
+                      algorithmWeights.surfaceGripTarget === mode
+                        ? 'bg-sky-400 text-black shadow-xs'
+                        : 'bg-white/5 text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Dial 3 */}
+            <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
+              <div className="flex justify-between items-center text-zinc-300">
+                <span className="font-bold flex items-center gap-1">
+                  <Gauge className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Kinematic Load (G)</span>
+                </span>
+                <span className="text-emerald-400 font-bold">{algorithmWeights.kinematicIntensity}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={algorithmWeights.kinematicIntensity}
+                onChange={(e) => setAlgorithmWeights(w => ({ ...w, kinematicIntensity: Number(e.target.value) }))}
+                className="w-full accent-emerald-400 cursor-pointer"
+              />
+            </div>
+
+            {/* Dial 4 */}
+            <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] space-y-2">
+              <div className="flex justify-between items-center text-zinc-300">
+                <span className="font-bold flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Provenance Strictness</span>
+                </span>
+                <span className="text-amber-400 font-bold">{algorithmWeights.provenanceStrictness}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={algorithmWeights.provenanceStrictness}
+                onChange={(e) => setAlgorithmWeights(w => ({ ...w, provenanceStrictness: Number(e.target.value) }))}
+                className="w-full accent-amber-400 cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* ── TAB 1: AUTOMOTIVE UNIVERSE (A TO Z BLUEPRINTS) ──     */}
+      {/* ========================================================= */}
+      {activeTab === 'universe' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredModels.map((car) => {
+              const meta = ARCHETYPE_META[car.archetype];
+              const isGaragePeer = activeVehicle.fullName.toLowerCase().includes(car.make.toLowerCase()) || 
+                                   activeVehicle.fullName.toLowerCase().includes(car.model.toLowerCase());
+
+              return (
+                <div
+                  key={car.id}
+                  onClick={() => {
+                    setActiveModelModal(car);
+                    setModelModalTab('blueprint');
+                  }}
+                  className={`group rounded-3xl border overflow-hidden flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-md ${
+                    isWhiteYellow
+                      ? 'bg-white border-zinc-200 hover:border-yellow-400 hover:shadow-xl'
+                      : 'bg-[#0E0F13] border-white/10 hover:border-amber-400/50 hover:shadow-2xl'
+                  }`}
+                >
+                  {/* Photo Header */}
+                  <div className="relative h-48 overflow-hidden bg-black">
+                    <img
+                      src={car.heroImage}
+                      alt={car.model}
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0E0F13] via-black/25 to-transparent" />
+                    
+                    {/* Top Archetype Badge */}
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-mono-numbers text-white font-bold shadow-lg">
+                      <span>{meta.icon}</span>
+                      <span>{meta.label}</span>
+                    </div>
+
+                    {/* Chassis Code & Years */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                      {isGaragePeer && (
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-400 text-black text-[9px] font-mono-numbers font-extrabold shadow-md">
+                          GARAGE PEER
+                        </span>
+                      )}
+                      <span className="px-2 py-0.5 rounded-md bg-amber-400 text-black text-[10px] font-mono-numbers font-extrabold shadow-md">
+                        {car.chassisCode}
+                      </span>
+                    </div>
+
+                    {/* Bottom overlay title */}
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <p className="text-[11px] font-mono-numbers uppercase tracking-wider text-amber-400 font-bold">
+                        {car.make}
+                      </p>
+                      <h3 className="text-base sm:text-lg font-bold text-white font-luxury-display leading-tight truncate">
+                        {car.model} {car.variant ? `· ${car.variant}` : ''}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Mechanical Telemetry Blueprint Card Body */}
+                  <div className="p-4 space-y-4 flex-1 flex flex-col justify-between">
+                    
+                    {/* Quick Specs Grid */}
+                    <div className="grid grid-cols-2 gap-2 text-xs font-mono-numbers">
+                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Powertrain</span>
+                        <span className="font-bold text-zinc-100 block truncate">{car.specs.engineCode}</span>
+                        <span className="text-[10px] text-amber-400 block font-semibold">{car.specs.powerBhp} BHP · {car.specs.torqueNm} Nm</span>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Curb Weight / P:W</span>
+                        <span className="font-bold text-zinc-100 block">{car.specs.curbWeightKg.toLocaleString()} kg</span>
+                        <span className="text-[10px] text-emerald-400 block font-semibold">{car.specs.powerToWeightBhpPerTonne} BHP/T</span>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">0–60 MPH</span>
+                        <span className="font-bold text-zinc-100 block">{car.specs.zeroToSixtyMph}s</span>
+                        <span className="text-[10px] text-zinc-400 block">{car.specs.topSpeedMph} MPH Top</span>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-0.5">
+                        <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Peak Grip</span>
+                        <span className="font-bold text-sky-400 block">{car.specs.peakLateralG}G</span>
+                        <span className="text-[10px] text-zinc-400 block uppercase">μ: {car.specs.surfaceAffinity}</span>
+                      </div>
+                    </div>
+
+                    {/* Acoustic & Cultural Excerpt */}
+                    <div className="space-y-1.5">
+                      <p className="text-[11px] text-zinc-300 font-sans line-clamp-2 leading-relaxed">
+                        {car.marketIntelligence.ukEnthusiastStatus}
+                      </p>
+                      
+                      <div className="flex items-center gap-1.5 text-[10px] font-mono-numbers text-amber-300/80 truncate">
+                        <Volume2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span className="truncate">{car.marketIntelligence.soundtrackSignature}</span>
+                      </div>
+                    </div>
+
+                    {/* Footer Strip */}
+                    <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                      <span className="font-mono-numbers font-bold text-zinc-400 text-[11px]">
+                        {car.marketIntelligence.estimatedPriceGbp}
+                      </span>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveModelModal(car);
+                          setModelModalTab('blueprint');
+                        }}
+                        className="flex items-center gap-1 text-xs font-mono-numbers font-bold text-amber-400 hover:text-amber-300 group-hover:translate-x-0.5 transition-transform"
+                      >
+                        <span>Inspect Dossier</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {filteredModels.length === 0 && (
+            <div className="text-center py-12 space-y-3">
+              <p className="text-zinc-400 text-sm font-mono-numbers">
+                No automotive models match your current filter criteria.
+              </p>
+              <button
+                onClick={() => {
+                  setSelectedLetter('ALL');
+                  setSelectedArchetype('all');
+                  setSearchQuery('');
+                }}
+                className="px-4 py-2 rounded-xl bg-amber-400 text-zinc-950 font-bold text-xs font-mono-numbers"
+              >
+                Reset All Filters
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* ── TAB 2: COMMUNITY JOURNALS & SHAKEDOWNS ──              */}
+      {/* ========================================================= */}
+      {activeTab === 'community' && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 auto-rows-[250px] md:auto-rows-[290px]">
+          {filteredAndRankedItems.map(item => {
+            const isItemLiked = modalLiked[item.id];
+            const isItemSaved = modalSaved[item.id];
+
+            return (
+              <div
+                key={item.id}
+                onClick={() => handleOpenItem(item)}
+                className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 shadow-md ${
+                  isWhiteYellow
+                    ? 'bg-white border border-zinc-200/90 hover:border-yellow-400/80 hover:shadow-xl'
+                    : 'bg-[#111113] border border-white/[0.08] hover:border-amber-400/50 hover:shadow-2xl'
+                } ${item.spanClass || 'col-span-1 row-span-1'}`}
+              >
+                {/* Photo Media */}
+                <img
+                  src={item.images[0]}
+                  alt={item.caption}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+
+                {/* Top Left: Kinematic Match Score Badge */}
+                <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1">
+                  <span className={`px-2.5 py-1 rounded-full backdrop-blur-md text-[10px] font-mono-numbers font-bold shadow-lg border flex items-center gap-1 ${
+                    item.matchScore >= 80
+                      ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                      : item.matchScore >= 65
+                      ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                      : 'bg-black/70 border-white/15 text-zinc-300'
+                  }`}>
+                    <Zap className="w-3 h-3" />
+                    <span>{item.matchScore}% Match</span>
+                  </span>
+
+                  {item.isActiveVehicleMatch && (
+                    <span className="px-2 py-0.5 rounded-full bg-amber-400 text-black text-[9px] font-mono-numbers font-extrabold shadow-md flex items-center gap-1">
+                      ★ {activeVehicle.name} Fitment
+                    </span>
+                  )}
+                </div>
+
+                {/* Corner Badges */}
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 pointer-events-none">
+                  {item.isMultiImage && (
+                    <div className="px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white text-[10px] font-mono-numbers flex items-center gap-1">
+                      <Layers className="w-3 h-3" />
+                      <span>{item.images.length}</span>
+                    </div>
+                  )}
+                  {item.isVideoReel && (
+                    <div className="p-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white">
+                      <Play className="w-3 h-3 fill-white" />
+                    </div>
+                  )}
+                  {item.isPro && (
+                    <div className="p-1.5 rounded-full bg-amber-500/20 backdrop-blur-md border border-amber-500/40 text-amber-300">
+                      <Wrench className="w-3 h-3" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Always-Visible Soft Bottom Vignette */}
+                <div className="absolute inset-x-0 bottom-0 pt-12 pb-3.5 px-3.5 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end justify-between z-10 pointer-events-none group-hover:opacity-0 transition-opacity duration-200">
+                  <div className="min-w-0 pr-2">
+                    <p className="text-xs font-bold text-white truncate drop-shadow-md">
+                      {item.authorCar}
+                    </p>
+                    <p className="text-[10px] text-zinc-300 font-mono-numbers truncate">
+                      @{item.authorHandle}
+                    </p>
+                  </div>
+                  {item.telemetryTag && (
+                    <span className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono-numbers text-amber-300 shrink-0">
+                      {item.telemetryTag}
+                    </span>
+                  )}
+                </div>
+
+                {/* Tactile Hover Overlay */}
+                <div className="absolute inset-0 bg-[#09090B]/85 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 z-20">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      to={`/car/${getCarProfileId(item.authorHandle)}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-2 min-w-0 group/author hover:opacity-90"
+                    >
+                      <div className="w-7 h-7 rounded-full overflow-hidden border border-white/20 shrink-0 bg-zinc-800">
+                        <img src={item.images[0]} alt={item.authorName} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-white leading-none truncate group-hover/author:text-amber-400 transition-colors">
+                          {item.authorHandle}
+                        </p>
+                        <p className="text-[10px] text-zinc-400 font-mono-numbers truncate mt-0.5">{item.authorCar}</p>
+                      </div>
+                    </Link>
+
+                    <button
+                      onClick={(e) => handleToggleSave(item.id, e)}
+                      className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition shrink-0 cursor-pointer"
+                    >
+                      <Bookmark className={`w-3.5 h-3.5 ${isItemSaved ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                    </button>
+                  </div>
+
+                  {/* Match Reasons & Kudos */}
+                  <div className="space-y-2 text-center">
+                    {item.matchReasons.length > 0 && (
+                      <div className="space-y-1">
+                        {item.matchReasons.map((r, ri) => (
+                          <p key={ri} className="text-[10px] font-mono-numbers text-amber-300/90 truncate">
+                            ✓ {r}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-center gap-6 text-white font-bold text-sm pt-1">
+                      <button
+                        onClick={(e) => handleToggleLike(item.id, e)}
+                        className="flex items-center gap-1.5 drop-shadow-md hover:scale-105 transition cursor-pointer"
+                      >
+                        <Heart className={`w-4 h-4 ${isItemLiked ? 'fill-rose-500 text-rose-500' : 'fill-white text-white'}`} />
+                        <span>{item.likesCount + (isItemLiked ? 1 : 0)}</span>
+                      </button>
+                      <span className="flex items-center gap-1.5 drop-shadow-md">
+                        <MessageCircle className="w-4 h-4 fill-white text-white" />
+                        <span>{item.commentsCount + (modalComments[item.id]?.length || 0)}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-zinc-300 font-sans line-clamp-2 leading-snug">
+                    {item.caption}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* ── AUTOMOTIVE MODEL BLUEPRINT MODAL (Deep Intelligence) ── */}
+      {/* ========================================================= */}
+      {activeModelModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => setActiveModelModal(null)}
+        >
+          <div
+            className={`border rounded-3xl max-w-3xl w-full max-h-[92vh] overflow-hidden flex flex-col shadow-2xl relative ${
+              isWhiteYellow ? 'bg-white border-zinc-200 text-zinc-900' : 'bg-[#0E0F14] border-white/10 text-white'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="p-5 border-b border-white/[0.08] flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono-numbers px-2.5 py-0.5 rounded-full bg-amber-400 text-black font-extrabold uppercase">
+                    {activeModelModal.chassisCode}
+                  </span>
+                  <span className="text-[11px] font-mono-numbers text-zinc-400">
+                    {activeModelModal.productionYears} · {activeModelModal.marketIntelligence.estimatedPriceGbp}
+                  </span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold font-luxury-display">
+                  {activeModelModal.make} {activeModelModal.model}
+                </h2>
+                {activeModelModal.variant && (
+                  <p className="text-xs font-mono-numbers text-amber-400">
+                    {activeModelModal.variant}
+                  </p>
+                )}
+              </div>
+
+              <button
+                onClick={() => setActiveModelModal(null)}
+                className="p-2 rounded-full bg-zinc-800 text-zinc-400 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Nav Tabs */}
+            <div className="flex items-center gap-2 px-5 pt-3 border-b border-white/[0.06] text-xs font-mono-numbers overflow-x-auto no-scrollbar">
+              <button
+                onClick={() => setModelModalTab('blueprint')}
+                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
+                  modelModalTab === 'blueprint' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                Engineering Blueprint
+              </button>
+              <button
+                onClick={() => setModelModalTab('lore')}
+                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
+                  modelModalTab === 'lore' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                UK Enthusiast Lore
+              </button>
+              <button
+                onClick={() => setModelModalTab('watchpoints')}
+                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
+                  modelModalTab === 'watchpoints' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                Inspection Watchpoints
+              </button>
+              <button
+                onClick={() => setModelModalTab('matchup')}
+                className={`pb-2.5 px-2 border-b-2 font-bold cursor-pointer transition whitespace-nowrap ${
+                  modelModalTab === 'matchup' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                Matchup vs {activeVehicle.name}
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 flex-1 overflow-y-auto space-y-5 text-xs font-mono-numbers">
+              {modelModalTab === 'blueprint' && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase">Engine Architecture</span>
+                      <p className="font-bold text-sm text-zinc-100">{activeModelModal.specs.engineCode}</p>
+                      <p className="text-zinc-400 text-[11px]">{activeModelModal.specs.cylinderConfig}</p>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase">Output & Torque</span>
+                      <p className="font-bold text-sm text-amber-400">{activeModelModal.specs.powerBhp} BHP</p>
+                      <p className="text-zinc-400 text-[11px]">{activeModelModal.specs.torqueNm} Nm Peak</p>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase">Power-to-Weight</span>
+                      <p className="font-bold text-sm text-emerald-400">{activeModelModal.specs.powerToWeightBhpPerTonne} BHP/T</p>
+                      <p className="text-zinc-400 text-[11px]">{activeModelModal.specs.curbWeightKg.toLocaleString()} kg Kerb</p>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase">Acceleration & Pace</span>
+                      <p className="font-bold text-sm text-zinc-100">{activeModelModal.specs.zeroToSixtyMph}s (0–60)</p>
+                      <p className="text-zinc-400 text-[11px]">{activeModelModal.specs.topSpeedMph} MPH Top</p>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase">Transmission</span>
+                      <p className="font-bold text-zinc-100">{activeModelModal.specs.transmission}</p>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                      <span className="text-[10px] text-zinc-500 uppercase">Drivetrain & Differential</span>
+                      <p className="font-bold text-zinc-100">{activeModelModal.specs.drivetrain}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-1.5">
+                    <span className="text-[10px] text-zinc-500 uppercase">Factory Chassis & Tyre Spec</span>
+                    <p className="text-zinc-200">{activeModelModal.specs.factoryTireSpec}</p>
+                    <p className="text-zinc-400 text-[11px]">Peak Lateral Acceleration: <span className="text-sky-400 font-bold">{activeModelModal.specs.peakLateralG}G</span> · Optimal Surface: <span className="uppercase text-amber-400">{activeModelModal.specs.surfaceAffinity}</span></p>
+                  </div>
+                </div>
+              )}
+
+              {modelModalTab === 'lore' && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-amber-400/10 border border-amber-400/20 space-y-2">
+                    <span className="text-[10px] text-amber-400 uppercase font-bold">Why Drivers Revere This Platform</span>
+                    <p className="text-zinc-200 font-sans leading-relaxed text-xs">
+                      {activeModelModal.marketIntelligence.ukEnthusiastStatus}
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
+                    <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
+                      <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Exhaust & Valvetrain Acoustic Signature</span>
+                    </span>
+                    <p className="text-zinc-300 font-sans leading-relaxed text-xs italic">
+                      "{activeModelModal.marketIntelligence.soundtrackSignature}"
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
+                    <span className="text-[10px] text-zinc-400 uppercase font-bold flex items-center gap-1.5">
+                      <Compass className="w-3.5 h-3.5 text-sky-400" />
+                      <span>Benchmark UK Road / Sector</span>
+                    </span>
+                    <p className="text-zinc-200 font-bold text-sm">
+                      {activeModelModal.marketIntelligence.benchmarkRoadSector}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {modelModalTab === 'watchpoints' && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <span className="text-[10px] text-rose-400 uppercase font-bold flex items-center gap-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                      <span>Critical Inspection Points & Common Failure Areas</span>
+                    </span>
+                    <div className="space-y-2">
+                      {activeModelModal.marketIntelligence.criticalInspectionPoints.map((pt, i) => (
+                        <div key={i} className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-200 text-xs flex items-start gap-2 font-sans">
+                          <span className="font-bold text-rose-400 font-mono-numbers">0{i+1}.</span>
+                          <span>{pt}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-white/[0.06]">
+                    <span className="text-[10px] text-amber-400 uppercase font-bold flex items-center gap-1.5">
+                      <Wrench className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Celebrated Enthusiast Aftermarket Hardware (BOM)</span>
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {activeModelModal.marketIntelligence.commonEnthusiastMods.map((mod, i) => (
+                        <span key={i} className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-200 text-xs font-mono-numbers">
+                          ✓ {mod}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {modelModalTab === 'matchup' && (
+                <div className="space-y-4">
+                  <div className="p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-amber-400 font-bold uppercase">My Active Custodian Machine</p>
+                      <p className="font-bold text-sm text-white">{activeVehicle.name} ({activeVehicle.fullName})</p>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full bg-amber-400 text-black font-extrabold text-[10px]">
+                      BENCHMARK
+                    </span>
+                  </div>
+
+                  {(() => {
+                    const userBhp = parseInt(activeVehicle.powerOutput, 10) || 500;
+                    const powerDelta = activeModelModal.specs.powerBhp - userBhp;
+                    return (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 space-y-1">
+                          <span className="text-[10px] text-zinc-500 uppercase">Power Comparison</span>
+                          <p className="text-xs text-zinc-300">
+                            {activeModelModal.model}: <span className="font-bold text-amber-400">{activeModelModal.specs.powerBhp} BHP</span>
+                          </p>
+                          <p className="text-xs text-zinc-400">
+                            {activeVehicle.name}: <span className="font-bold text-white">{userBhp} BHP</span>
+                          </p>
+                          <p className={`text-[10px] font-bold ${powerDelta >= 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                            Delta: {powerDelta > 0 ? `+${powerDelta} BHP` : `${powerDelta} BHP`}
+                          </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 space-y-1">
+                          <span className="text-[10px] text-zinc-500 uppercase">Weight Comparison</span>
+                          <p className="text-xs text-zinc-300">
+                            {activeModelModal.model}: <span className="font-bold text-emerald-400">{activeModelModal.specs.curbWeightKg} kg</span>
+                          </p>
+                          <p className="text-xs text-zinc-400">
+                            Drivetrain: <span className="font-bold text-white">{activeModelModal.specs.drivetrain.split('(')[0]}</span>
+                          </p>
+                          <p className="text-[10px] text-sky-400 font-bold">
+                            Peak Lateral: {activeModelModal.specs.peakLateralG}G
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      onClick={() => {
+                        setSearchQuery(`${activeModelModal.make} ${activeModelModal.model} ${activeModelModal.chassisCode}`);
+                        setActiveTab('community');
+                        setActiveModelModal(null);
+                        showToast({
+                          title: 'Filtered Community Feed',
+                          message: `Searching posts matching ${activeModelModal.model}`,
+                          type: 'drive'
+                        });
+                      }}
+                      className="px-4 py-2 rounded-xl bg-amber-400 text-zinc-950 font-bold text-xs cursor-pointer hover:bg-amber-300 transition"
+                    >
+                      Search Community Journals for this Chassis →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Bottom Footer */}
+            <div className="p-4 border-t border-white/[0.08] flex items-center justify-between">
+              <span className="text-[11px] font-mono-numbers text-zinc-500">
+                Verified DATUM Automotive Registry Blueprint
+              </span>
+              <button
+                onClick={() => {
+                  navigator.clipboard?.writeText?.(`${window.location.origin}/explore?car=${activeModelModal.id}`);
+                  showToast({ title: 'Chassis Dossier Link Copied', type: 'clipboard' });
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 text-xs font-mono-numbers text-zinc-300 hover:text-white cursor-pointer"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Share Blueprint</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── PHOTO DETAIL MODAL / LIGHTBOX (Community Journals) ── */}
       {activeModalItem && (
         <div
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150"
@@ -1002,7 +1545,7 @@ export const ExplorePage: FC = () => {
               <X className="w-4 h-4" />
             </button>
 
-            {/* Left 60%: Large Photo Media with Carousel */}
+            {/* Left: Image Carousel */}
             <div className="w-full md:w-[60%] bg-black relative flex items-center justify-center overflow-hidden min-h-[300px] md:min-h-[500px]">
               <img
                 src={activeModalItem.images[modalImageIndex]}
@@ -1010,7 +1553,6 @@ export const ExplorePage: FC = () => {
                 className="w-full h-full object-cover max-h-[85vh] transition-all duration-300"
               />
 
-              {/* Prev/Next arrows for multi-image */}
               {activeModalItem.images.length > 1 && (
                 <>
                   {modalImageIndex > 0 && (
@@ -1029,7 +1571,6 @@ export const ExplorePage: FC = () => {
                       <ChevronRight className="w-5 h-5" />
                     </button>
                   )}
-                  {/* Dot indicators */}
                   <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
                     {activeModalItem.images.map((_, dotIdx) => (
                       <button
@@ -1045,9 +1586,8 @@ export const ExplorePage: FC = () => {
               )}
             </div>
 
-            {/* Right 40%: Car Spec, Caption, Comments */}
+            {/* Right: Caption & Comments */}
             <div className="w-full md:w-[40%] flex flex-col justify-between overflow-y-auto">
-              {/* Header: Author & Car Info */}
               <div className={`p-4 border-b flex items-center justify-between ${isWhiteYellow ? 'border-zinc-200' : 'border-white/[0.08]'}`}>
                 <Link
                   to={`/car/${getCarProfileId(activeModalItem.authorHandle)}`}
@@ -1055,11 +1595,7 @@ export const ExplorePage: FC = () => {
                   onClick={() => setActiveModalItem(null)}
                 >
                   <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20 shrink-0 bg-zinc-800">
-                    <img
-                      src={activeModalItem.images[0]}
-                      alt={activeModalItem.authorName}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={activeModalItem.images[0]} alt={activeModalItem.authorName} className="w-full h-full object-cover" />
                   </div>
                   <div className="min-w-0">
                     <p className={`text-sm font-bold truncate transition ${isWhiteYellow ? 'text-zinc-950 group-hover:text-yellow-600' : 'text-white group-hover:text-amber-300'}`}>
@@ -1079,13 +1615,11 @@ export const ExplorePage: FC = () => {
                 </Link>
               </div>
 
-              {/* Body: Caption, Kinematic Badges, Comments */}
               <div className="p-4 space-y-4 flex-1 overflow-y-auto max-h-[380px]">
                 <p className={`text-xs sm:text-sm leading-relaxed ${isWhiteYellow ? 'text-zinc-800' : 'text-zinc-200'}`}>
                   {activeModalItem.caption}
                 </p>
 
-                {/* Telemetry pill */}
                 {activeModalItem.telemetryTag && (
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-300 font-mono-numbers text-xs font-bold flex items-center gap-1.5">
@@ -1116,7 +1650,6 @@ export const ExplorePage: FC = () => {
                       <span>Did you run traction control completely off or in sport dynamic mode?</span>
                     </p>
                     
-                    {/* User submitted comments */}
                     {modalComments[activeModalItem.id]?.map((cmt, idx) => (
                       <p key={idx} className="animate-in fade-in duration-150">
                         <span className={`font-bold mr-1.5 ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>{cmt.split(': ')[0]}</span>
@@ -1127,7 +1660,7 @@ export const ExplorePage: FC = () => {
                 </div>
               </div>
 
-              {/* Bottom Engagement & Action Bar */}
+              {/* Bottom Engagement Bar */}
               <div className={`p-4 border-t space-y-3 ${isWhiteYellow ? 'border-zinc-200 bg-zinc-50/70' : 'border-white/[0.08] bg-[#111114]'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -1135,9 +1668,7 @@ export const ExplorePage: FC = () => {
                       onClick={(e) => handleToggleLike(activeModalItem.id, e)}
                       className={`transition cursor-pointer ${isWhiteYellow ? 'text-zinc-600 hover:text-zinc-950' : 'text-zinc-400 hover:text-white'}`}
                     >
-                      <Heart
-                        className={`w-6 h-6 ${modalLiked[activeModalItem.id] ? 'fill-rose-500 text-rose-500' : ''}`}
-                      />
+                      <Heart className={`w-6 h-6 ${modalLiked[activeModalItem.id] ? 'fill-rose-500 text-rose-500' : ''}`} />
                     </button>
                     <button className={`transition ${isWhiteYellow ? 'text-zinc-600 hover:text-zinc-950' : 'text-zinc-400 hover:text-white'}`}>
                       <MessageCircle className="w-6 h-6" />
@@ -1157,9 +1688,7 @@ export const ExplorePage: FC = () => {
                     onClick={(e) => handleToggleSave(activeModalItem.id, e)}
                     className={`transition cursor-pointer ${isWhiteYellow ? 'text-zinc-600 hover:text-zinc-950' : 'text-zinc-400 hover:text-white'}`}
                   >
-                    <Bookmark
-                      className={`w-6 h-6 ${modalSaved[activeModalItem.id] ? 'fill-yellow-500 text-yellow-500' : ''}`}
-                    />
+                    <Bookmark className={`w-6 h-6 ${modalSaved[activeModalItem.id] ? 'fill-yellow-500 text-yellow-500' : ''}`} />
                   </button>
                 </div>
 
@@ -1167,10 +1696,10 @@ export const ExplorePage: FC = () => {
                   {(activeModalItem.likesCount + (modalLiked[activeModalItem.id] ? 1 : 0)).toLocaleString()} drivers respected
                 </p>
 
-                {/* Inline Comment Input with Active Vehicle Persona */}
+                {/* Inline Comment Form */}
                 <form onSubmit={handlePostModalComment} className={`flex items-center gap-2 pt-1 border-t ${isWhiteYellow ? 'border-zinc-200' : 'border-white/[0.06]'}`}>
                   <img
-                    src={activeVehicle.heroImage}
+                    src={activeVehicle.heroImage || '/real_uk_m3_cottage.jpg'}
                     alt={activeVehicle.name}
                     className="w-5 h-5 rounded-full object-cover border border-white/20 shrink-0"
                   />
