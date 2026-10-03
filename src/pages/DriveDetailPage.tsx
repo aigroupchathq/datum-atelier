@@ -3,6 +3,8 @@ import type { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { PlateBlurImage } from '../components/common/PlateBlurImage';
 import { PassGripRadarModal } from '../components/telemetry/PassGripRadarModal';
+import { calculateGForceCoords } from '../utils/dashboardKinematics';
+import { calculateRoadGrip } from '../utils/gripCalculation';
 import { useToast } from '../context/ToastContext';
 import { 
   Compass, 
@@ -225,6 +227,51 @@ export const DriveDetailPage: FC = () => {
       yPct: p1.yPct + segmentT * (p2.yPct - p1.yPct),
     };
   }, [progress, activeRoute]);
+
+  // Longitudinal G-force derived from throttle torque & braking deceleration
+  const longitudinalG = useMemo(() => {
+    const accelG = (currentTelemetry.throttlePct / 100) * 0.82;
+    const decelG = (currentTelemetry.brakePct / 100) * 1.25;
+    return Number((accelG - decelG).toFixed(2));
+  }, [currentTelemetry.throttlePct, currentTelemetry.brakePct]);
+
+  // Vector magnitude resultant G
+  const resultantG = useMemo(() => {
+    return Number(Math.sqrt(currentTelemetry.lateralG * currentTelemetry.lateralG + longitudinalG * longitudinalG).toFixed(2));
+  }, [currentTelemetry.lateralG, longitudinalG]);
+
+  // Road Surface Adhesion calculation
+  const gripEvaluation = useMemo(() => {
+    const isWet = activeRoute.surfaceCondition.toLowerCase().includes('damp') || activeRoute.surfaceCondition.toLowerCase().includes('wet');
+    const isFrost = activeRoute.surfaceCondition.toLowerCase().includes('frost') || activeRoute.surfaceCondition.toLowerCase().includes('ice');
+    return calculateRoadGrip({
+      surfaceTempC: isFrost ? -1 : isWet ? 8 : 19,
+      airTempC: isFrost ? 1 : isWet ? 10 : 18,
+      surfaceCondition: activeRoute.surfaceCondition,
+      rainMmPerHour: isWet ? 1.2 : 0,
+      tyreTempC: isWet ? 26 : 48,
+      roadType: 'high_friction_asphalt'
+    });
+  }, [activeRoute.surfaceCondition]);
+
+  const frictionMu = gripEvaluation.frictionNumber || 0.88;
+  const maxAdhesionG = Number((frictionMu * 1.25).toFixed(2));
+  const gripReservePct = Math.max(0, Math.min(100, Math.round((1 - resultantG / maxAdhesionG) * 100)));
+  const isApproachingLimit = resultantG > maxAdhesionG * 0.82;
+  const isLimitExceeded = resultantG >= maxAdhesionG;
+
+  // 2D Coordinates for G-Force Kamm Circle
+  const gCoords = useMemo(() => {
+    return calculateGForceCoords(currentTelemetry.lateralG, longitudinalG, 1.5, 48);
+  }, [currentTelemetry.lateralG, longitudinalG]);
+
+  // Interactive elevation profile scrubbing handler
+  const handleElevationScrub = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newProgress = Math.max(0, Math.min(1, clickX / rect.width));
+    setProgress(newProgress);
+  };
 
   // Auto-play loop
   useEffect(() => {
@@ -480,7 +527,7 @@ export const DriveDetailPage: FC = () => {
         {/* ========================================================= */}
         {/* LIVE SYNCHRONIZED TELEMETRY HUD GAUGE CLUSTER            */}
         {/* ========================================================= */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
           
           {/* Speedometer */}
           <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-850 flex flex-col justify-between">
@@ -524,25 +571,87 @@ export const DriveDetailPage: FC = () => {
             </div>
           </div>
 
-          {/* Lateral G-Force */}
-          <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-850 flex flex-col justify-between">
+          {/* 2D G-Force Target Crosshair & Resultant G */}
+          <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-850 flex flex-col justify-between relative overflow-hidden">
             <div className="flex items-center justify-between text-zinc-500 text-[10px] font-mono-numbers uppercase">
-              <span>Lateral Load</span>
+              <span>G-Meter & Kamm Circle</span>
               <Activity className="w-3.5 h-3.5 text-emerald-400" />
             </div>
-            <div className="my-2">
-              <span className={`text-3xl sm:text-4xl font-black font-mono-numbers tracking-tight ${
-                Math.abs(currentTelemetry.lateralG) > 0.8 ? 'text-rose-400' : 'text-emerald-400'
-              }`}>
-                {Math.abs(currentTelemetry.lateralG)}
-              </span>
-              <span className="text-xs font-mono-numbers text-zinc-500 ml-1">
-                {currentTelemetry.lateralG < 0 ? 'G (L)' : 'G (R)'}
+
+            <div className="flex items-center justify-between my-1">
+              <div>
+                <span className={`text-2xl sm:text-3xl font-black font-mono-numbers tracking-tight ${
+                  isLimitExceeded ? 'text-rose-400 animate-pulse' : isApproachingLimit ? 'text-amber-400' : 'text-emerald-400'
+                }`}>
+                  {resultantG}
+                </span>
+                <span className="text-[10px] font-mono-numbers text-zinc-500 ml-1">G (RES)</span>
+                <div className="text-[9px] font-mono-numbers text-zinc-400 mt-0.5">
+                  Lat: {currentTelemetry.lateralG}G • Long: {longitudinalG > 0 ? `+${longitudinalG}` : longitudinalG}G
+                </div>
+              </div>
+
+              {/* 2D Crosshair Target Radar */}
+              <div className="relative w-14 h-14 rounded-full bg-black/80 border border-white/10 flex items-center justify-center shrink-0">
+                <div className="absolute inset-1 rounded-full border border-white/5" />
+                <div className="absolute inset-3 rounded-full border border-white/10" />
+                <div className="absolute inset-x-0 top-1/2 h-[1px] bg-white/10 -translate-y-1/2" />
+                <div className="absolute inset-y-0 left-1/2 w-[1px] bg-white/10 -translate-x-1/2" />
+                
+                {/* Dynamic Vector Puck */}
+                <div 
+                  className={`absolute w-2.5 h-2.5 rounded-full transition-all duration-75 shadow-md ${
+                    isLimitExceeded ? 'bg-rose-400 shadow-rose-500/50' : isApproachingLimit ? 'bg-amber-400 shadow-amber-500/50' : 'bg-emerald-400 shadow-emerald-500/50'
+                  }`}
+                  style={{
+                    transform: `translate(${gCoords.x * 0.32}px, ${gCoords.y * 0.32}px)`
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[10px] font-mono-numbers">
+              <span className="text-zinc-500">Adhesion Limit:</span>
+              <span className={isLimitExceeded ? 'text-rose-400 font-bold' : 'text-zinc-300'}>
+                {maxAdhesionG}G MAX
               </span>
             </div>
-            <div className="flex items-center justify-between text-[10px] font-mono-numbers text-zinc-500">
-              <span>Peak: 0.98G</span>
-              <span className="text-emerald-400">Nominal</span>
+          </div>
+
+          {/* Surface Adhesion & Friction Coefficient (µ) */}
+          <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-850 flex flex-col justify-between">
+            <div className="flex items-center justify-between text-zinc-500 text-[10px] font-mono-numbers uppercase">
+              <span>Road Grip (µ)</span>
+              <Compass className="w-3.5 h-3.5 text-cyan-400" />
+            </div>
+
+            <div className="my-1">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-cyan-400 tracking-tight">
+                  µ {frictionMu.toFixed(2)}
+                </span>
+                <span className="text-[10px] font-mono-numbers text-zinc-400 font-semibold uppercase">
+                  {gripEvaluation.headline.replace('Grip: ', '')}
+                </span>
+              </div>
+              <div className="text-[10px] font-mono-numbers text-zinc-500 truncate">
+                {activeRoute.surfaceCondition}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-[10px] font-mono-numbers">
+                <span className="text-zinc-500">Traction Reserve:</span>
+                <span className={`font-bold ${gripReservePct < 25 ? 'text-rose-400' : gripReservePct < 50 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                  {gripReservePct}%
+                </span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                <div 
+                  className={`h-full transition-all duration-150 ${gripReservePct < 25 ? 'bg-rose-400' : gripReservePct < 50 ? 'bg-amber-400' : 'bg-cyan-400'}`}
+                  style={{ width: `${gripReservePct}%` }}
+                />
+              </div>
             </div>
           </div>
 
@@ -673,8 +782,12 @@ export const DriveDetailPage: FC = () => {
             </div>
           </div>
 
-          {/* Visual Elevation Profile SVG */}
-          <div className="relative h-28 w-full bg-black/60 rounded-xl overflow-hidden border border-zinc-800/80">
+          {/* Visual Elevation Profile SVG (Clickable Scrub Surface) */}
+          <div 
+            onClick={handleElevationScrub}
+            className="relative h-28 w-full bg-black/60 rounded-xl overflow-hidden border border-zinc-800/80 cursor-crosshair group select-none"
+            title="Click or drag across the mountain pass profile to scrub telemetry"
+          >
             <svg className="w-full h-full" viewBox="0 0 1000 120" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="elevationGrad" x1="0" y1="0" x2="0" y2="1">
@@ -711,6 +824,34 @@ export const DriveDetailPage: FC = () => {
             <div className="absolute top-2 left-[57%] -translate-x-1/2 px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-mono-numbers font-bold border border-amber-500/30">
               Peak Summit ({activeRoute.peakElevationFt} ft)
             </div>
+          </div>
+
+          {/* Quick-Jump Sector Waypoint Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+            <span className="text-[10px] text-zinc-500 font-mono-numbers uppercase shrink-0">Pass Sectors:</span>
+            {activeRoute.telemetry.map((pt, idx) => {
+              const isCurrent = Math.abs(progress - pt.progress) < 0.08;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setProgress(pt.progress);
+                    showToast({
+                      title: `Sector Waypoint: ${pt.sectorName}`,
+                      message: `${pt.elevationFt} ft • ${pt.speedMph} mph • ${pt.notes}`,
+                      type: 'drive'
+                    });
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-mono-numbers whitespace-nowrap transition border ${
+                    isCurrent
+                      ? 'bg-amber-400 text-zinc-950 font-bold border-amber-300 shadow-md'
+                      : 'bg-zinc-900 text-zinc-400 border-white/5 hover:text-white hover:bg-zinc-850'
+                  }`}
+                >
+                  {pt.sectorName} ({pt.elevationFt} ft)
+                </button>
+              );
+            })}
           </div>
         </div>
 

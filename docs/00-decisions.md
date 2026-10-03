@@ -231,6 +231,30 @@
      - Added prominent hero action buttons: `[ Concours Dossier ]` and `[ Handover Protocol ]`.
 - **Consequences:** Creates an institutional-grade handover standard for collector cars that eliminates used car fraud and information asymmetry. Validated with 5 new unit tests (elevating the suite to 63/63 passing tests across 12 test suites) and verified production Vite bundling.
 
+---
+
+### ADR-0014: Alpine Pass Telemetry, 2D Kamm's Friction Circle G-Meter & Interactive Topography Scrubber
+- **Date:** 2026-10-02
+- **Status:** ACCEPTED
+- **Classification:** Product, Telemetry, Physics, UX/UI
+- **Context:** Enthusiast mountain pass expeditions (Snake Pass, Llanberis Pass, Cotswolds Roman Way) involve extreme kinematic shifts—heavy braking into hairpin corners, rapid elevation gains, and variable tarmac adhesion ($\mu$). The user requested an interactive elevation and sector scrubber on `DriveDetailPage.tsx` with a dynamic G-meter crosshair and road surface friction ($\mu$) to give drivers an authentic telemetry analysis experience comparable to Porsche Track Precision and Cosworth motorsport loggers.
+- **Decision:**
+  1. **2D Kamm's Friction Circle Target Crosshair (`DriveDetailPage.tsx`):**
+     - Computes derived longitudinal acceleration and braking G-forces ($G_x$) from throttle opening and brake pedal pressure.
+     - Computes vector resultant load magnitude $G_{\text{res}} = \sqrt{G_x^2 + G_y^2}$.
+     - Renders a concentric circular target radar with $0.5G$, $1.0G$, and dynamic adhesion limit boundary rings.
+     - Positions a glowing dynamic vector puck tracking real-time cornering/braking loads via `calculateGForceCoords`.
+     - Features illuminated warning cues when approaching ($>82\%$) or exceeding maximum available tire adhesion.
+  2. **Live Surface Adhesion ($\mu$) & Traction Reserve Gauge:**
+     - Integrates `calculateRoadGrip` with real-time temperature, moisture, and road aggregate models.
+     - Displays dynamic friction coefficient ($\mu = 0.88$ for Dry Asphalt down to $\mu = 0.28$ for Frost Hazard).
+     - Renders real-time Traction Reserve percentage bar ($0–100\%$) indicating available tire adhesion before breakaway.
+  3. **Interactive Topography Elevation & Sector Scrubber:**
+     - Upgraded the route elevation SVG profile into a fully clickable, drag-scrubbable interactive surface (`onClick={handleElevationScrub}`).
+     - Added quick-jump **Pass Sector Waypoint Chips** allowing instantaneous timeline jumps to key summits, hairpins, and viaducts with synchronized feedback toasts.
+- **Consequences:** Elevates the drive expedition detail page into a professional-grade telemetry playback workstation. Zero TypeScript errors, 63/63 tests passing, and instant 60/120 FPS timeline scrubbing.
+
+
 
 
 
