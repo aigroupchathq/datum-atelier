@@ -14,6 +14,8 @@ import { loadWorkshopStamps } from '../core/workshop/WorkshopStampEngine';
 import { RadialDynamicsCluster } from '../components/telemetry/RadialDynamicsCluster';
 import { DynoStudio } from '../components/profile/DynoStudio';
 import { SupplyChainBomView } from '../components/profile/SupplyChainBomView';
+import { CustodyHandoverModal } from '../components/profile/CustodyHandoverModal';
+import { ConcoursHeritageDossierModal } from '../components/profile/ConcoursHeritageDossierModal';
 import { useToast } from '../context/ToastContext';
 import { 
   Grid, 
@@ -23,7 +25,6 @@ import {
   Activity, 
   ShieldCheck, 
   Share2, 
-  FileText, 
   ArrowRight, 
   MapPin, 
   CheckCircle2, 
@@ -38,7 +39,9 @@ import {
   Sparkles,
   Globe2,
   Thermometer,
-  Layers
+  Layers,
+  Printer,
+  KeyRound
 } from 'lucide-react';
 
 interface CarProfileData {
@@ -609,6 +612,8 @@ export const CarProfilePage: FC = () => {
   const [isTyrePyrometerOpen, setIsTyrePyrometerOpen] = useState<boolean>(false);
   const [isProvenanceBreakdownOpen, setIsProvenanceBreakdownOpen] = useState<boolean>(false);
   const [isWorkshopStampingOpen, setIsWorkshopStampingOpen] = useState<boolean>(false);
+  const [isCustodyHandoverOpen, setIsCustodyHandoverOpen] = useState<boolean>(false);
+  const [isConcoursDossierOpen, setIsConcoursDossierOpen] = useState<boolean>(false);
   const { showToast } = useToast();
 
   const car = ATELIER_VEHICLES[selectedVehicleId] || ATELIER_VEHICLES['car-maya-m3'];
@@ -703,7 +708,7 @@ export const CarProfilePage: FC = () => {
   };
 
   const handleExportDossier = () => {
-    setIsPassportOpen(true);
+    setIsConcoursDossierOpen(true);
   };
 
   const handleShare = () => {
@@ -862,16 +867,25 @@ export const CarProfilePage: FC = () => {
                 title="Message Anonymous Custodian"
               >
                 <MessageSquare className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Encrypted Inquire</span>
+                <span className="hidden sm:inline">Encrypted Inquire</span>
               </button>
 
               <button
                 onClick={handleExportDossier}
                 className="px-4 py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12] text-zinc-200 font-semibold text-xs transition-all flex items-center gap-1.5 backdrop-blur-md"
-                title="Acquire Leather-Bound Certified Dossier (PDF)"
+                title="Concours d'Elegance Heritage Dossier (PDF / Print)"
               >
-                <FileText className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden md:inline">Leather Dossier</span>
+                <Printer className="w-3.5 h-3.5 text-amber-400" />
+                <span>Concours Dossier</span>
+              </button>
+
+              <button
+                onClick={() => setIsCustodyHandoverOpen(true)}
+                className="px-4 py-2.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-semibold text-xs transition-all flex items-center gap-1.5 backdrop-blur-md"
+                title="Sovereign Custodian Handover Protocol"
+              >
+                <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                <span>Handover Protocol</span>
               </button>
 
               <button
@@ -1558,6 +1572,24 @@ export const CarProfilePage: FC = () => {
         isOpen={isWorkshopStampingOpen}
         onClose={() => setIsWorkshopStampingOpen(false)}
         preselectedVehicleId={selectedVehicleId}
+      />
+
+      {/* Sovereign Custodian Handover Protocol Modal */}
+      <CustodyHandoverModal
+        isOpen={isCustodyHandoverOpen}
+        onClose={() => setIsCustodyHandoverOpen(false)}
+        vehicleId={car.id}
+        vehicleName={car.name}
+        vin={car.vin}
+        chassisCode={car.chassisCode}
+        currentMileage={car.mileage}
+      />
+
+      {/* Printable Concours d'Elegance Heritage Dossier Modal */}
+      <ConcoursHeritageDossierModal
+        isOpen={isConcoursDossierOpen}
+        onClose={() => setIsConcoursDossierOpen(false)}
+        car={car}
       />
 
     </div>

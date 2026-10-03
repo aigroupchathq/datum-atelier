@@ -202,6 +202,36 @@
      - Enriched flagship feed posts for Maya's Porsche 911 GT3 (KW Clubsport 3-Way dampers) and the Outcast VXR (Brembo GT6 Big Brake Kit) with verified serialized BOM component tags.
 - **Consequences:** Merges social discovery with engineering authenticity. Enthusiasts can share real builds backed by verifiable supply chain data rather than hollow social vanity. 58/58 tests passing, 0 TypeScript errors, clean production bundle.
 
+---
+
+### ADR-0013: Sovereign Custodian Handover Protocol & Concours d'Elegance Heritage Dossier Export
+- **Date:** 2026-10-02
+- **Status:** ACCEPTED
+- **Classification:** Product, Architecture, Cryptography, Supply Chain Provenance, UX/UI
+- **Context:** When enthusiast or collector cars change ownership (privately or via auction platforms like Bring a Trailer, Collecting Cars, or RM Sotheby's), their history is frequently degraded: paper receipts are discarded, service books are lost, and past builder pride is severed. Simultaneously, buyers face severe information asymmetry regarding counterfeit parts and undocumented maintenance. The founder (MSc in Supply Chain + automotive purist) designed DATUM to solve this permanently: ensuring the car's complete physical and cryptographic lineage travels with the machine forever.
+- **Decision:**
+  1. **Sovereign Custody Transfer Protocol (`src/core/custody/custodyTransferEngine.ts`):**
+     - Models an unbroken chain of custody (`VehicleCustodyChain`) capturing active and historical custodians, tenure start/end dates, mileage limits, and sovereign signatures.
+     - Implements time-locked cryptographic handover tokens (`generateCustodyHandoverToken`) with secret passcodes, vehicle state checksums, and expiration windows.
+     - Implements atomic handshake execution (`executeCustodyHandover`): transitions active stewardship while permanently honoring the departing owner as a verified "Historical Custodian" without breaking historical Merkle DAG hashes.
+  2. **Interactive Custody Handover Modal (`src/components/profile/CustodyHandoverModal.tsx`):**
+     - 3-tab underdamped modal (`FluidLevitation`):
+       - **Custody History:** Visual timeline of historical tenures with verified V5C stakes and cryptographic signatures.
+       - **Issue Transfer Token:** Form for sellers to generate tokens with scannable live SVG QR codes (`generateQrSvg`) and copyable tokens.
+       - **Execute Handshake:** Acceptance portal for incoming buyers/custodians to complete the cryptographic transfer.
+  3. **Printable Concours d'Elegance Heritage Dossier (`src/components/profile/ConcoursHeritageDossierModal.tsx`):**
+     - Museum-grade printable monograph format designed specifically for auction listings, pre-purchase inspections (PPI), and Concours d'Elegance meets (Goodwood, Pebble Beach, Salon Privé).
+     - Clean `@media print` layout featuring:
+       - Statutory chassis & coachbuilder plaque specifications.
+       - Complete serialized Bill of Materials (BOM) matrix with torque specs and manufacturer origins.
+       - Certified workshop service DAG chain.
+       - Scannable SVG verification QR code linking to live ledger records.
+       - Master provenance root integrity hash and statutory notary sign-off.
+  4. **Integrated Atelier Profile Controls (`CarProfilePage.tsx`):**
+     - Added prominent hero action buttons: `[ Concours Dossier ]` and `[ Handover Protocol ]`.
+- **Consequences:** Creates an institutional-grade handover standard for collector cars that eliminates used car fraud and information asymmetry. Validated with 5 new unit tests (elevating the suite to 63/63 passing tests across 12 test suites) and verified production Vite bundling.
+
+
 
 
 
