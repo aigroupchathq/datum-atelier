@@ -287,6 +287,45 @@
      - Connected `FeedPage.tsx` co-pilot sidebar and journal prompt to the live active vehicle with quick cycling.
 - **Consequences:** The entire application is now deeply unified around the user's active car with zero lag, instant switching, 0 TypeScript errors (`tsc -b`), 100% test pass rate (63/63 passing tests across 12 suites), and smooth 60/120 FPS rendering.
 
+---
+
+### ADR-0016: Synaptic Kinematic Discovery Engine & Driver-Tuned Algorithmic Switchgear
+- **Date:** 2026-10-03
+- **Status:** ACCEPTED
+- **Classification:** Product, Architecture, Discovery Algorithm, UX/UI, Machine Kinematics
+- **Context:** The user requested: *"can make expore page more innovative , and alogrithm , keyword pasting, much smart algorithm than any other social media"*.
+  Mainstream automotive feeds (Instagram, TikTok, X, Reddit) rely on superficial engagement-maximizing algorithms, clickbait hashtags (`#car`, `#tuning`), and black-box recommendations designed to trap attention rather than serve driver intent. They cannot parse real engineering specifications, physical kinematics, or provenance authenticity. When an enthusiast pastes a parts invoice, forum setup advice, or chassis tuning notes, conventional platforms return generic junk.
+  DATUM was founded on supply chain rigor, mechanical purism, and deep automotive passion. An innovative discovery architecture was required that:
+  1. Deconstructs unstructured automotive snippets and invoices into physical engineering vector dimensions.
+  2. Empowers the driver with transparent, customizable switchgear sliders rather than an opaque black-box algorithm.
+  3. Computes real-time Kinematic Match Scores based on chassis affinity, mechanical purism, surface friction conditions, and cryptographic provenance strictness.
+- **Decision:**
+  1. **Synaptic Kinematic Vector Engine (`src/core/algorithm/semanticKinematicEngine.ts`):**
+     - Engineered a multi-dimensional physical vector lexicon across 6 domains:
+       - **Chassis Architecture:** `G80`, `992`, `E30`, `L663`, `FK8`, `NA`, `ND`, `A90`, etc.
+       - **Powertrain & Valvetrain:** `S58`, `4.0L NA 9000 RPM`, `M42`, `V8 Supercharged`, `K20C1`, `B58`, `Twin-Turbo`, etc.
+       - **Hardware & BOM Lineage:** `KW V4 / Clubsport`, `Akrapovič Evolution Titanium`, `BBS LM / FI-R`, `Brembo GT6 / Carbon-Ceramic`, `Michelin Pilot Sport Cup 2`, `Öhlins Road & Track`, etc.
+       - **Dynamic Kinematics:** Lateral & longitudinal load vectors (e.g. `1.2G`, `1.4G`), yaw angles, slip boundaries, downforce.
+       - **Topography & Surface Friction ($\mu$):** Snake Pass, Llanberis, Grossglockner, wet bitumen ($\mu = 0.62$), dry aggregate ($\mu = 0.88$), frost.
+       - **Provenance & Verification:** Cryptographic V5C, Merkle DAG, certified workshop stamps, Carnet customs clearance.
+     - Implemented `parseKinematicSnippet(text)`: Parses raw text or clipboard dumps into structured vectors, identifying chassis codes, powertrain mechanics, parts BOM, lateral load boundaries, surface conditions, and an analog purism score.
+     - Implemented `calculateKinematicMatch(item, query, weights)`: Computes an authentic Kinematic Match Score ($0–100\%$) weighted by driver preference.
+  2. **Driver Algorithmic Weights Console (`src/pages/ExplorePage.tsx`):**
+     - Replaced the black-box recommendation with a transparent switchgear console giving the driver direct control over 4 primary tuning vectors:
+       - **Mechanical Purism (0–100%):** Prioritizes manual gearboxes, naturally aspirated high-revving engines, hydraulic steering, and analog chassis feedback.
+       - **Surface Adhesion Target ($\mu$):** Toggles matching against road friction (All, Dry Asphalt $\mu \ge 0.85$, Damp Bitumen $\mu \le 0.65$, Frost Hazard $\mu \le 0.35$).
+       - **Kinematic Load Intensity (0–100%):** Filters for high lateral cornering loads ($>1.0G$) and technical mountain pass trajectories.
+       - **Provenance Strictness (Toggle):** Enforces cryptographic SHA-256 seal integrity and verified workshop DAG chains.
+  3. **Universal Keyword / Forum Snippet Pasting HUD:**
+     - Added `[ 📋 Paste / Sample Snippet ]` button that reads device clipboard or cycles curated enthusiast tuning scenarios (e.g., *"G80 M3 KW V4 S58 Akrapovic 1.2G wet bitumen"*, *"992 GT3 4.0L NA 9000 RPM Cup 2 dry asphalt"*, *"E30 318is M42 analog manual gearbox"*).
+     - Renders real-time vector chips showing parsed chassis, powertrain, hardware BOM, kinematic load, and road conditions.
+  4. **Dynamic Affinity Scoring & Fitment Badging:**
+     - Each explore card displays an illuminated `Zap` Kinematic Match badge (e.g. `98.4% Match`) with engineering rationale tooltips.
+     - Automatic cross-referencing with the user's active vehicle produces `★ {activeVehicle.name} Fitment` compatibility indicators.
+     - Interactive detail modal features active-vehicle signed comments, route telemetry badges, and direct atelier links.
+- **Consequences:** Provides an innovative, transparent, engineering-grade discovery experience unlike anything on traditional social media. Validated with 5 new automated unit tests (`tests/semanticKinematicEngine.test.mjs`) bringing the total suite to 68/68 passing tests, 0 TypeScript errors (`tsc -b`), and verified production Vite bundling.
+
+
 
 
 
