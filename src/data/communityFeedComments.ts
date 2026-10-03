@@ -530,6 +530,76 @@ export const POST_COMMUNITY_MAP: Record<string, PostCommunityContext> = {
         liked: false
       }
     ]
+  },
+
+  // --- Engine Bays, Atelier Servicing & Under-the-Bonnet Maintenance ---
+  'post-314-golf-tdi-service': {
+    locationBadge: 'Derbyshire Home Workshop · Service Bay (Geofenced 300m)',
+    seedComments: [
+      {
+        id: 'c-gt-1',
+        authorHandle: 'vag_specialist_mark',
+        authorName: 'Mark Higgins',
+        authorCar: 'Golf GTD Mk7.5 Daily',
+        avatarUrl: '/feed/vw_golf_r_mk7_lapiz.jpg',
+        text: 'Clean EA288 bay! Did you replace the plastic drain plug or swap to an alloy sump conversion? The VW 507.00 low-ash spec keeps the DPF happy for 200k+ miles.',
+        timeAgo: '18m',
+        likes: 27,
+        liked: true,
+        isVerifiedPro: true
+      },
+      {
+        id: 'c-gt-2',
+        authorHandle: 'hamish_heritage',
+        authorName: 'Hamish MacLeod',
+        authorCar: 'Heritage Engine Bench',
+        avatarUrl: '/feed/heritage_wrenching_workshop.jpg',
+        text: 'Nothing beats the satisfaction of popping the bonnet on a Sunday morning and methodically checking coolant pH and brake fluid moisture with a digital pen. Proper custodianship.',
+        timeAgo: '42m',
+        likes: 38,
+        liked: false,
+        isVerifiedPro: true
+      },
+      {
+        id: 'c-gt-3',
+        authorHandle: 'tdi_commuter',
+        authorName: 'Ross Wilson',
+        authorCar: 'Golf Mk7 2.0 TDI Estate',
+        avatarUrl: '/feed/golf_mk7_open_bonnet_service.png',
+        text: 'G13 coolant expansion tank looks pristine without any silica bag rupture. That yellow dipstick check before a 400-mile trip is mandatory ritual!',
+        timeAgo: '1h 10m',
+        likes: 19,
+        liked: false
+      }
+    ]
+  },
+  'post-315-direct-injection-engine-bay': {
+    locationBadge: 'Litchfield Engineering Dyno Cell · Tewkesbury (Verified Lab)',
+    seedComments: [
+      {
+        id: 'c-di-1',
+        authorHandle: 'boost_wizard',
+        authorName: 'Nathan Cole',
+        authorCar: 'Civic Type R FK8 Time Attack',
+        avatarUrl: '/feed/honda_civic_fl5_typer.jpg',
+        text: 'Wiring loom routing is surgical. Are you running an auxiliary port-injection rail or purely direct injection with an upgraded high-pressure fuel pump (HPFP)?',
+        timeAgo: '12m',
+        likes: 31,
+        liked: false,
+        isVerifiedPro: true
+      },
+      {
+        id: 'c-di-2',
+        authorHandle: 'caterham_cadwell',
+        authorName: 'Oliver Vance',
+        authorCar: 'Caterham 620R Supercharged',
+        avatarUrl: '/feed/caterham_620r_cadwell.jpg',
+        text: 'Thermal management around the turbo up-pipe and heat shielding is top tier. Keeping intake air temperatures (IATs) low is where real consistent track pace comes from.',
+        timeAgo: '35m',
+        likes: 24,
+        liked: true
+      }
+    ]
   }
 };
 

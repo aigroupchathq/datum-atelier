@@ -34,13 +34,32 @@ function AppContent() {
   const { showToast } = useToast();
   const { isWhiteYellow } = useTheme();
   const { activeVehicle } = useActiveVehicle();
-  const [posts, setPosts] = useState<CommunityPost[]>(() => {
+  // Helper to load and intelligently merge posts
+  const loadMergedPosts = (): CommunityPost[] => {
     try {
       const saved = localStorage.getItem('datum_ledger_posts');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: CommunityPost[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Keep custom posts created by the user (IDs not in mockFeedPosts) at the very top,
+          // while merging all latest verified mockFeedPosts below them
+          const userPosts = parsed.filter(p => !mockFeedPosts.some(m => m.id === p.id));
+          return [...userPosts, ...mockFeedPosts];
+        }
+      }
     } catch { /* ignore */ }
     return mockFeedPosts;
-  });
+  };
+
+  const [posts, setPosts] = useState<CommunityPost[]>(loadMergedPosts);
+
+  const handleRefreshPosts = async () => {
+    const refreshed = loadMergedPosts();
+    setPosts(refreshed);
+    try {
+      localStorage.setItem('datum_ledger_posts', JSON.stringify(refreshed));
+    } catch { /* ignore */ }
+  };
   const [isCreatePostOpen, setIsCreatePostOpen] = useState<boolean>(false);
   const [createPostMode, setCreatePostMode] = useState<'post' | 'story'>('post');
   const [isDriveTrackerOpen, setIsDriveTrackerOpen] = useState<boolean>(false);
@@ -180,6 +199,7 @@ function AppContent() {
                   onOpenDriveTracker={handleOpenDriveTracker}
                   posts={posts} 
                   onOpenPassRadar={(id) => { if (id) setPassRadarTarget(id); setIsPassRadarOpen(true); }}
+                  onRefreshFeed={handleRefreshPosts}
                 />
               } 
             />

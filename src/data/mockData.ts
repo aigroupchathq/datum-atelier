@@ -736,6 +736,66 @@ export const mockFeedPosts: CommunityPost[] = [
     }
   },
   {
+    id: 'post-314-golf-tdi-service',
+    authorType: 'user',
+    authorVehicleId: 'car-golf-tdi-mk7',
+    authorVehicleName: 'tdi_custodian',
+    authorVehicleModel: 'Volkswagen Golf Mk7 2.0 TDI (EA288)',
+    authorVehicleYear: 2016,
+    postType: 'MAINTENANCE_UPDATE',
+    title: '120,000-Mile Atelier Servicing: G13 coolant check, Castrol Edge 5W-30 flush & pre-MOT inspection',
+    content: 'Sunday morning under the bonnet. Popped the hood for the full 120,000-mile inspection: drained and flushed with Castrol Edge LongLife 5W-30 (VW 507.00 low-SAPS spec), torqued fresh oil filter canister to 25 Nm, and verified zero silica dispersion in the G13 coolant header tank. Brake fluid boiling point tested at 270°C with digital pen probe. The EA288 turbo-diesel remains the unsung road warrior of British commuting—runs on the scent of an oily rag and feels as tight as the day it rolled out of Wolfsburg when maintained properly.',
+    mediaUrls: [
+      '/feed/golf_mk7_open_bonnet_service.png'
+    ],
+    provenanceTag: 'owner_experience',
+    createdAt: '12m ago',
+    likesCount: 384,
+    respectsCount: 172,
+    repliesCount: 38,
+    taggedBomComponent: {
+      id: 'bom-vw-1',
+      partName: 'Castrol Edge 5W-30 LL + Mann Filter HU7020z',
+      category: 'Lubrication & Filtration',
+      manufacturer: 'Castrol / Mann-Filter',
+      originCountry: 'Germany',
+      torqueSpec: 'Filter cap: 25 Nm • Sump plug: 30 Nm',
+      serialNumber: 'VW-50700-LL3',
+      provenanceHash: 'e7198bb409d22c4f1c97a51d8b139981442a98f1214e9f781198c628f41190bc',
+      installedByWorkshop: 'Self-Maintained (Atelier Ledger)'
+    }
+  },
+  {
+    id: 'post-315-direct-injection-engine-bay',
+    authorType: 'professional',
+    authorVehicleId: 'car-direct-injection-project',
+    authorVehicleName: 'Litchfield Engineering',
+    authorVehicleModel: 'Direct-Injection 2.0T Time Attack Platform',
+    authorVehicleYear: 2024,
+    postType: 'BUILD_UPDATE',
+    title: 'Under-the-Bonnet Blueprint: Surgical high-pressure fuel rail & thermal shielding install',
+    content: 'Final engine bay packaging before the chassis moves into our dyno cell. Precision routing for the upgraded high-pressure fuel pump (HPFP) hardlines, motorsport-grade mil-spec wiring harness, and bespoke carbon fiber heat shielding over the turbo manifold. Vacuum lines smoke-tested to 1.8 bar with zero pressure drop. In high-output direct injection builds, thermal isolation and immaculate mechanical packaging are what separate reliable track day weapons from garage ornaments.',
+    mediaUrls: [
+      '/feed/engine_bay_detailed_direct_injection.jpg'
+    ],
+    provenanceTag: 'verified_professional',
+    createdAt: '30m ago',
+    likesCount: 742,
+    respectsCount: 315,
+    repliesCount: 52,
+    taggedBomComponent: {
+      id: 'bom-di-1',
+      partName: 'Motorsport Mil-Spec Wiring & HPFP Fuel Rail',
+      category: 'Powertrain & Fuel Injection',
+      manufacturer: 'Litchfield Engineering',
+      originCountry: 'United Kingdom',
+      torqueSpec: 'Fuel hardline fittings: 28 Nm • Rail studs: 12 Nm',
+      serialNumber: 'LITCH-DI-2024-08',
+      provenanceHash: '6d9238fb01ea18721c0b8923a1004112e4fbc87291a208c582910fa7812bc891',
+      installedByWorkshop: 'Litchfield Motors (Tewkesbury)'
+    }
+  },
+  {
     id: 'post-301-strata-florida',
     authorType: 'car',
     authorVehicleId: 'car-expedition-110',

@@ -786,7 +786,11 @@ export const AUTOMOTIVE_UNIVERSE: AutomotiveModel[] = [
     productionYears: '2017–2020',
     archetype: 'hot_hatch',
     heroImage: '/feed/vw_golf_r_mk7_lapiz.jpg',
-    galleryImages: ['/feed/vw_golf_r_mk7_lapiz.jpg', '/real_uk_driveway_wash.jpg'],
+    galleryImages: [
+      '/feed/vw_golf_r_mk7_lapiz.jpg',
+      '/feed/golf_mk7_open_bonnet_service.png',
+      '/feed/engine_bay_detailed_direct_injection.jpg'
+    ],
     specs: {
       engineCode: 'EA888 Gen 3',
       displacement: '1,984 cc',

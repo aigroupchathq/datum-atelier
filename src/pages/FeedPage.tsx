@@ -9,6 +9,7 @@ import { GripMetricCard } from '../components/telemetry/GripMetricCard';
 import { fetchPassLiveWeather, type PassLiveWeatherData } from '../utils/openMeteoWeather';
 import { useTheme } from '../context/ThemeContext';
 import { useActiveVehicle } from '../context/ActiveVehicleContext';
+import { useToast } from '../context/ToastContext';
 import {
   Compass,
   GitCommit,
@@ -26,6 +27,7 @@ interface FeedPageProps {
   posts: CommunityPost[];
   onOpenPassRadar?: (passId?: string) => void;
   onOpenDriveTracker?: () => void;
+  onRefreshFeed?: () => Promise<void> | void;
 }
 
 // Shimmer skeleton — uses .skeleton CSS class from index.css
@@ -52,11 +54,14 @@ const SkeletonCard: FC = () => (
 
 const POSTS_PER_PAGE = 8;
 
-export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPassRadar, onOpenDriveTracker }) => {
+export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPassRadar, onOpenDriveTracker, onRefreshFeed }) => {
   const { isWhiteYellow, themeMeta, cycleTheme } = useTheme();
   const { activeVehicle, switchVehicle, userVehicles } = useActiveVehicle();
+  const { showToast } = useToast();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<string>('Just now');
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [followedCars, setFollowedCars] = useState<Record<string, boolean>>(() => {
@@ -82,6 +87,29 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
     const t = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(t);
   }, []);
+
+  const handleRefresh = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    fetchPassLiveWeather('snake-pass-a57').then((data) => {
+      setLiveSnakePassWeather(data);
+    });
+
+    if (onRefreshFeed) {
+      await onRefreshFeed();
+    }
+
+    setTimeout(() => {
+      setIsRefreshing(false);
+      setLastRefreshedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      showToast({
+        title: 'Atelier Feed Synchronized',
+        message: `${filteredPosts.length} verified journals up to date • Live pass telemetry refreshed`,
+        type: 'success',
+        badge: 'SYNCHRONIZED'
+      });
+    }, 550);
+  };
 
   const toggleFollow = (handle: string) => {
     setFollowedCars(prev => {
@@ -289,19 +317,36 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
                 </button>
               ))}
             </div>
-            <span className={`text-[10.5px] font-mono-numbers hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border shrink-0 ${
-              isWhiteYellow
-                ? 'bg-white border-zinc-200 text-zinc-600 shadow-xs'
-                : 'bg-white/[0.03] border-white/[0.05] text-zinc-500'
-            }`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              {filteredPosts.length} entries
-            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className={`text-[10.5px] font-mono-numbers hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border shrink-0 ${
+                isWhiteYellow
+                  ? 'bg-white border-zinc-200 text-zinc-600 shadow-xs'
+                  : 'bg-white/[0.03] border-white/[0.05] text-zinc-500'
+              }`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                {filteredPosts.length} entries
+              </span>
+
+              <button
+                type="button"
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                title={`Last synchronized: ${lastRefreshedAt}. Click to re-sync feed & telemetry.`}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-mono-numbers font-semibold border transition active:scale-95 cursor-pointer disabled:opacity-50 ${
+                  isWhiteYellow
+                    ? 'bg-white hover:bg-yellow-50 text-zinc-700 hover:text-zinc-950 border-zinc-200 hover:border-yellow-400 shadow-xs'
+                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border-white/[0.08] hover:border-amber-400/30'
+                }`}
+              >
+                <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin text-amber-500' : ''}`} />
+                <span>{isRefreshing ? 'Syncing…' : 'Sync Feed'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Feed posts */}
           <div className="space-y-5">
-            {isLoading ? (
+            {isLoading || isRefreshing ? (
               <><SkeletonCard /><SkeletonCard /></>
             ) : (
               <>
