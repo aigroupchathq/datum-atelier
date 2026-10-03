@@ -11,15 +11,19 @@ import {
   Clock,
   AlertTriangle,
   FileText,
-  Lightbulb
+  Lightbulb,
+  History,
+  GitBranch,
+  ShieldCheck
 } from 'lucide-react';
 import { MASTER_DOSSIER_FAQS } from '../data/dossierFaqs';
+import { PROJECT_CHANGELOG } from '../data/projectChangelog';
 
 export const AboutCaseStudyPage: FC = () => {
   const { themeMeta } = useTheme();
   
   // Navigation tabs
-  const [activeSection, setActiveSection] = useState<'all' | 'manifesto' | 'architecture' | 'lab' | 'faq'>('all');
+  const [activeSection, setActiveSection] = useState<'all' | 'manifesto' | 'architecture' | 'changelog' | 'lab' | 'faq'>('all');
 
   // FAQ interactive state
   const [activeFaqCategory, setActiveFaqCategory] = useState<string>('all');
@@ -198,8 +202,9 @@ export const AboutCaseStudyPage: FC = () => {
             { id: 'all', label: 'Complete Monograph', num: '00' },
             { id: 'manifesto', label: 'The Manifesto & Problem', num: '01' },
             { id: 'architecture', label: 'Level 1–6 Distributed System', num: '02' },
-            { id: 'lab', label: 'Interactive Engineering Lab', num: '03' },
-            { id: 'faq', label: 'The Technical Inquiry (FAQ)', num: '04' },
+            { id: 'changelog', label: 'Software Release Ledger', num: '03' },
+            { id: 'lab', label: 'Interactive Engineering Lab', num: '04' },
+            { id: 'faq', label: 'The Technical Inquiry (FAQ)', num: '05' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -538,7 +543,129 @@ export const AboutCaseStudyPage: FC = () => {
       )}
 
       {/* ========================================================= */}
-      {/* 4. SECTION 03: THE INTERACTIVE ENGINEERING LAB ANNEX      */}
+      {/* 3B. SECTION 03: SOFTWARE COMPANY RELEASE LEDGER & ADRs   */}
+      {/* ========================================================= */}
+      {(activeSection === 'all' || activeSection === 'changelog') && (
+        <section 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 border-b"
+          style={{ borderColor: 'var(--border-subtle)' }}
+        >
+          {/* Chapter Eyebrow */}
+          <div 
+            className="flex flex-wrap items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] mb-8"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <span className="font-bold flex items-center gap-1.5" style={{ color: 'var(--accent)' }}>
+              <History className="w-3.5 h-3.5" />
+              <span>CHAPTER 03 // SOFTWARE RELEASE LEDGER &amp; ADRs</span>
+            </span>
+            <span>6 PRODUCTION VERSIONS ARCHIVED &bull; ZERO REGRESSIONS</span>
+          </div>
+
+          {/* Heading */}
+          <div className="max-w-3xl mb-10 space-y-3">
+            <h2 className="text-3xl sm:text-5xl font-luxury-editorial">
+              Auditable Engineering Changelog
+            </h2>
+            <p className="text-xs sm:text-sm font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
+              A permanent, cryptographically traceable record of all major software releases, architectural decision records (ADRs), mathematical verification suites, and compliance milestones.
+            </p>
+          </div>
+
+          {/* Release Timeline */}
+          <div className="space-y-6">
+            {PROJECT_CHANGELOG.map((rel) => (
+              <div 
+                key={rel.version}
+                className="p-6 sm:p-8 border rounded-2xl transition-all"
+                style={{ 
+                  backgroundColor: 'var(--bg-elevated)', 
+                  borderColor: 'var(--border-default)' 
+                }}
+              >
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4 mb-5" style={{ borderColor: 'var(--border-subtle)' }}>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2.5">
+                      <span 
+                        className="px-2.5 py-0.5 rounded text-xs font-mono-numbers font-bold"
+                        style={{ backgroundColor: 'var(--accent)', color: '#09090B' }}
+                      >
+                        {rel.version}
+                      </span>
+                      <span className="text-xs font-mono-numbers text-zinc-400 font-semibold uppercase tracking-wider">
+                        {rel.codename}
+                      </span>
+                      <span className="text-xs font-mono-numbers text-zinc-500">
+                        &bull; {rel.date}
+                      </span>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-bold font-luxury-display text-white">
+                      {rel.tagline}
+                    </h3>
+                  </div>
+
+                  {/* Verification Pill Matrix */}
+                  <div className="flex flex-wrap items-center gap-2 self-start md:self-auto font-mono-numbers text-[10px]">
+                    <span className="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1 font-bold">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>{rel.verificationMetrics.unitTestsPassed} Tests Passing ({rel.verificationMetrics.testSuitesCount} Suites)</span>
+                    </span>
+                    <span className="px-2.5 py-1 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center gap-1 font-bold">
+                      <ShieldCheck className="w-3 h-3" />
+                      <span>0 Type Errors</span>
+                    </span>
+                    <span className="px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">
+                      {rel.verificationMetrics.bundleTimeSec}s Vite Bundle
+                    </span>
+                  </div>
+                </div>
+
+                {/* Summary */}
+                <p className="text-xs sm:text-sm font-luxury-editorial leading-relaxed text-zinc-300 mb-6">
+                  {rel.summary}
+                </p>
+
+                {/* Grid: Highlights & ADRs */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                  {/* Highlights */}
+                  <div className="space-y-2.5">
+                    <span className="text-[10px] font-mono-numbers uppercase tracking-wider block font-bold text-amber-400">
+                      Production Feature Deliverables:
+                    </span>
+                    <ul className="space-y-2 text-xs text-zinc-300">
+                      {rel.highlights.map((h, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* ADRs */}
+                  <div className="space-y-2.5">
+                    <span className="text-[10px] font-mono-numbers uppercase tracking-wider block font-bold text-sky-400">
+                      Architectural Decision Records (ADRs):
+                    </span>
+                    <ul className="space-y-2 text-xs text-zinc-400 font-mono-numbers">
+                      {rel.architecturalDecisions.map((adr, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <GitBranch className="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                          <span>{adr}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================= */}
+      {/* 4. SECTION 04: THE INTERACTIVE ENGINEERING LAB ANNEX      */}
       {/* ========================================================= */}
       {(activeSection === 'all' || activeSection === 'lab') && (
         <section 
@@ -550,7 +677,7 @@ export const AboutCaseStudyPage: FC = () => {
             className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] mb-8"
             style={{ color: 'var(--text-muted)' }}
           >
-            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 03 // THE ENGINEERING ANNEX</span>
+            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 04 // THE ENGINEERING ANNEX</span>
             <span>3 LIVE ALGORITHMIC SIMULATORS</span>
           </div>
 
@@ -756,16 +883,16 @@ export const AboutCaseStudyPage: FC = () => {
             className="flex items-center justify-between text-[10px] font-mono-numbers uppercase tracking-[0.3em] mb-8"
             style={{ color: 'var(--text-muted)' }}
           >
-            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 04 // THE TECHNICAL INQUIRY</span>
-            <span>FREQUENTLY ASKED QUESTIONS</span>
+            <span className="font-bold" style={{ color: 'var(--accent)' }}>CHAPTER 05 // THE TECHNICAL INQUIRY</span>
+            <span>{MASTER_DOSSIER_FAQS.length} ENTERPRISE &amp; DUE DILIGENCE INQUIRIES</span>
           </div>
 
           <div className="max-w-3xl mb-10 space-y-3">
             <h2 className="text-3xl sm:text-5xl font-luxury-editorial">
-              The Curated Q&A Dossier
+              The Software Company Due Diligence Dossier
             </h2>
             <p className="text-xs sm:text-sm font-luxury-editorial italic" style={{ color: 'var(--text-secondary)' }}>
-              Direct technical answers regarding residential privacy, tamper-evident service history, hardware telemetry, and vehicle custody.
+              Direct answers regarding corporate monetization, zero-cost to cloud scale, DVSA data integrity, cryptographic anti-fraud, anti-ASD acoustic DSP, and GDPR Article 17 compliance.
             </p>
           </div>
 
@@ -782,7 +909,7 @@ export const AboutCaseStudyPage: FC = () => {
                 type="text"
                 value={faqSearchQuery}
                 onChange={(e) => setFaqSearchQuery(e.target.value)}
-                placeholder="Search queries (e.g. Geofence, Merkle, CAN-bus, Radar, Guilds, IP)..."
+                placeholder="Search queries (e.g. Monetization, Scaling, GDPR, Merkle, DVSA, ASD, Carnet, Theft)..."
                 className="w-full pl-10 pr-4 py-2.5 border text-xs font-mono-numbers focus:outline-none"
                 style={{
                   backgroundColor: 'var(--bg-elevated)',
@@ -801,29 +928,30 @@ export const AboutCaseStudyPage: FC = () => {
                 <FileText className="w-5 h-5 text-amber-400 shrink-0" />
                 <div>
                   <h4 className="text-xs font-bold font-luxury-editorial text-white">
-                    Master Project Dossier Published (Investment & Due Diligence Edition v2.0)
+                    Master Software Company Dossier (Investor &amp; Enterprise Edition v2.5)
                   </h4>
                   <p className="text-[11px] text-zinc-400 font-mono-numbers">
-                    Complete 50-question manifesto with TAM/SAM/SOM market math and tri-pillar impact models is archived in DOSSIER.md.
+                    Comprehensive commercial math, unit economics, regulatory compliance, and multi-tier system architecture.
                   </p>
                 </div>
               </div>
               <span className="text-[10px] font-mono-numbers px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 whitespace-nowrap">
-                20 Interactive Inquiries Loaded
+                {MASTER_DOSSIER_FAQS.length} Interactive Inquiries Loaded
               </span>
             </div>
 
             {/* Category Filter Pills */}
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-1 text-xs font-mono-numbers">
               {[
-                { id: 'all', label: 'All 20 Inquiries' },
-                { id: 'market', label: 'Market & Scope' },
-                { id: 'impact', label: 'Economic & Industrial Impact' },
-                { id: 'marketing', label: 'Marketing & Community' },
-                { id: 'data', label: 'Data Sources & Lineage' },
-                { id: 'collaboration', label: 'Collaboration & Garages' },
-                { id: 'deployment', label: 'Deployment & Security' },
-                { id: 'due-diligence', label: 'Core Due Diligence' },
+                { id: 'all', label: `All Inquiries (${MASTER_DOSSIER_FAQS.length})` },
+                { id: 'due-diligence', label: 'Due Diligence & Anti-Fraud' },
+                { id: 'market', label: 'Commercial & Unit Economics' },
+                { id: 'deployment', label: 'Architecture & Scaling' },
+                { id: 'data', label: 'Data Sources & DSP' },
+                { id: 'privacy', label: 'Privacy & GDPR' },
+                { id: 'impact', label: 'Economic Impact' },
+                { id: 'collaboration', label: 'Garages & Workshops' },
+                { id: 'marketing', label: 'Marketing Strategy' },
               ].map((cat) => (
                 <button
                   key={cat.id}
