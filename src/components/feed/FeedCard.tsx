@@ -9,6 +9,7 @@ import { ComponentSpecPreviewModal } from './ComponentSpecPreviewModal';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useActiveVehicle } from '../../context/ActiveVehicleContext';
+import { getPostSeedComments, getPostLocationBadge } from '../../data/communityFeedComments';
 import {
   Heart,
   MessageCircle,
@@ -74,44 +75,6 @@ const ELEVATION_WAYPOINTS = [
   { progress: 0.70, elevationFt: 1688, speedMph: 79, gForce: '+0.08G', sector: 'High Peak Summit (1,688 ft)', distanceMi: 48.2 },
   { progress: 0.85, elevationFt: 1210, speedMph: 50, gForce: '-0.95G', sector: 'Doctors Gate Switchback', distanceMi: 62.6 },
   { progress: 1.0, elevationFt: 590, speedMph: 30, gForce: '+0.02G', sector: 'Glossop Moor Finish', distanceMi: 84.6 },
-];
-
-// Seeded realistic automotive discussion thread
-const SEED_COMMENTS: CommentEntry[] = [
-  {
-    id: 'c1',
-    authorHandle: 'kuro_gt3',
-    authorName: 'KURO',
-    authorCar: 'Porsche 911 GT3 (992)',
-    avatarUrl: '/real_uk_gt3_suburb.jpg',
-    text: 'This is what motoring should always be about. Shared knowledge and open garage doors over gatekeeping.',
-    timeAgo: '45m',
-    likes: 18,
-    liked: false
-  },
-  {
-    id: 'c2',
-    authorHandle: 'hamish_heritage',
-    authorName: 'Hamish MacLeod',
-    authorCar: 'Heritage Engine Bench',
-    avatarUrl: '/feed/heritage_wrenching_workshop.jpg',
-    text: 'If anyone in the community needs a dial bore gauge or ring filing tool this weekend, my workshop doors in the hills are always unlocked.',
-    timeAgo: '30m',
-    likes: 34,
-    liked: true,
-    isVerifiedPro: true
-  },
-  {
-    id: 'c3',
-    authorHandle: 'retromod_dan',
-    authorName: 'Dan (E30)',
-    authorCar: 'BMW 318is Slicktop',
-    avatarUrl: '/real_uk_e30_terrace.jpg',
-    text: 'Spot on. We protect the hobby by welcoming the next generation in, not locking them out.',
-    timeAgo: '15m',
-    likes: 12,
-    liked: false
-  }
 ];
 
 // Helper for editorial post category badges based on theme
@@ -183,24 +146,26 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const [commentInput, setCommentInput] = useState('');
   const [drawerInput, setDrawerInput] = useState('');
   const [comments, setComments] = useState<CommentEntry[]>(() => {
+    const seed = getPostSeedComments(post);
     try {
       const savedCmts = localStorage.getItem(`datum_comments_${post.id}`);
       if (savedCmts) {
         const parsed = JSON.parse(savedCmts);
-        if (Array.isArray(parsed)) return [...parsed, ...SEED_COMMENTS];
+        if (Array.isArray(parsed)) return [...parsed, ...seed];
       }
     } catch { /* ignore */ }
-    return SEED_COMMENTS;
+    return seed;
   });
   const [repliesCount, setRepliesCount] = useState<number>(() => {
+    const seed = getPostSeedComments(post);
     try {
       const savedCmts = localStorage.getItem(`datum_comments_${post.id}`);
       if (savedCmts) {
         const parsed = JSON.parse(savedCmts);
-        if (Array.isArray(parsed)) return (post.repliesCount || SEED_COMMENTS.length) + parsed.length;
+        if (Array.isArray(parsed)) return (post.repliesCount || seed.length) + parsed.length;
       }
     } catch { /* ignore */ }
-    return post.repliesCount || SEED_COMMENTS.length;
+    return post.repliesCount || seed.length;
   });
 
   // Carousel
@@ -1545,7 +1510,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
 
         {/* Timestamp */}
         <p className={`text-[10px] font-mono-numbers uppercase tracking-wider ${isWhiteYellow ? 'text-zinc-400' : 'text-zinc-500'}`}>
-          {post.createdAt} · Geofenced 800m
+          {post.createdAt} · {getPostLocationBadge(post)}
         </p>
 
         {/* Quick inline comment input with persona avatar */}

@@ -59,16 +59,19 @@ export const ConcoursHeritageDossierModal: FC<ConcoursHeritageDossierModalProps>
 
   // Generate Dossier Seal QR Code
   const qrSvg = useMemo(() => {
-    const payload = JSON.stringify({
-      datum: 'CONCOURS_HERITAGE_DOSSIER_V1',
-      vin: car.vin,
-      chassis: car.chassisCode,
-      provenanceScore: car.provenanceScore,
-      custodian: custodyChain.activeCustodian.displayName,
-      integrityHash: custodyChain.provenanceIntegrityHash.slice(0, 16),
-      url: `https://datum.atelier/verify/${car.vin}`
-    });
-    return generateQrSvg(payload, { size: 140, margin: 1, darkColor: '#0E1015', lightColor: '#FFFFFF' });
+    try {
+      const payload = JSON.stringify({
+        d: 'CHD_V1',
+        v: car.vin,
+        c: car.chassisCode,
+        s: car.provenanceScore,
+        h: custodyChain.provenanceIntegrityHash.slice(0, 16),
+        u: `https://datum.atelier/v/${car.vin}`
+      });
+      return generateQrSvg(payload, { size: 140, margin: 1, darkColor: '#0E1015', lightColor: '#FFFFFF' });
+    } catch {
+      return generateQrSvg(`https://datum.atelier/v/${car.vin}`, { size: 140, margin: 1, darkColor: '#0E1015', lightColor: '#FFFFFF' });
+    }
   }, [car, custodyChain]);
 
   if (!isOpen) return null;
