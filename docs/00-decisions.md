@@ -178,6 +178,31 @@
      - Enhanced `src/core/crypto/sha256.ts` with byte-stream normalization, supporting non-ASCII marques and specialist facilities (e.g. Akrapovič, Königsegg, Citroën) with zero dependencies.
 - **Consequences:** Elevates DATUM Atelier from a social app into an institutional-grade automotive asset registry. Eliminates counterfeit risk, preserves modification pedigree, and connects supply chain rigor with authentic car culture. 58/58 tests passing across 11 test suites.
 
+---
+
+### ADR-0012: Social Feed Bill of Materials (BOM) Component Tagging & Fastener Spec Inspection Modal
+- **Date:** 2026-10-02
+- **Status:** ACCEPTED
+- **Classification:** Product, UX, UI, Social Architecture, Supply Chain Integration
+- **Context:** Social automotive media (Instagram, Facebook Groups) is plagued by superficial "flex culture" and unverifiable claims—photos of cars with generic hashtags and zero proof of authenticity or engineering rigor. To create a decisive, uncopyable moat, DATUM bridges its institutional Supply Chain BOM registry directly to the public social feed. Car lovers must be able to tag authentic hardware components directly from their car's serialized BOM into feed posts, allowing community members to inspect real fastener torque specs, manufacturing origins, workshop stamps, and cryptographic SHA-256 seals with one tap.
+- **Decision:**
+  1. **Feed BOM Component Tagging in Post Creation (`CreatePostModal.tsx`):**
+     - Integrated a reactive BOM component picker that queries `loadVehicleBom(currentCar.id)`.
+     - Automatically attaches a `TaggedBomComponent` payload (part name, category, manufacturer, origin country, torque spec, serial number, workshop, and SHA-256 seal) to the post submission.
+  2. **Feed Card BOM Attachment Strip (`FeedCard.tsx`):**
+     - Rendered an industrial-grade component callout banner directly beneath the post caption: featuring origin country flag, manufacturer badge, fastener torque spec highlight, and an interactive `[ Inspect BOM Spec ]` button.
+  3. **Tactile Component Spec Preview Modal (`ComponentSpecPreviewModal.tsx`):**
+     - Provides an underdamped `FluidLevitation` modal revealing the part's full engineering dossier:
+       - Fastener torque rating with mechanical wrench badge.
+       - Manufacturing provenance (Country flag, factory of origin, ISO/TÜV compliance).
+       - Certified installing workshop and mileage stamp.
+       - Deterministic SHA-256 provenance seal with one-click clipboard copy.
+       - Direct deep-link navigation to the vehicle's full Chassis Hardware & BOM matrix (`/garage/:id?tab=bom`).
+  4. **Enriched Flagship Mock Data (`mockData.ts`):**
+     - Enriched flagship feed posts for Maya's Porsche 911 GT3 (KW Clubsport 3-Way dampers) and the Outcast VXR (Brembo GT6 Big Brake Kit) with verified serialized BOM component tags.
+- **Consequences:** Merges social discovery with engineering authenticity. Enthusiasts can share real builds backed by verifiable supply chain data rather than hollow social vanity. 58/58 tests passing, 0 TypeScript errors, clean production bundle.
+
+
 
 
 

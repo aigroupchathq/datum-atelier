@@ -5,6 +5,7 @@ import type { CommunityPost } from '../../types';
 import { ProvenanceBadge } from '../common/ProvenanceBadge';
 import { PlateBlurImage } from '../common/PlateBlurImage';
 import { ObsidianDashboardBinnacle } from './ObsidianDashboardBinnacle';
+import { ComponentSpecPreviewModal } from './ComponentSpecPreviewModal';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
@@ -148,6 +149,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const { showToast } = useToast();
   const { isWhiteYellow, themeMeta, layoutMode } = useTheme();
   const [isBomOpen, setIsBomOpen] = useState(false);
+  const [selectedBomComponent, setSelectedBomComponent] = useState<CommunityPost['taggedBomComponent'] | null>(null);
 
   const [respected, setRespected] = useState(false);
   const [showRespectMenu, setShowRespectMenu] = useState(false);
@@ -1159,6 +1161,58 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
         </div>
       )}
 
+      {/* ── VERIFIED SUPPLY CHAIN BOM COMPONENT TAG STRIP ── */}
+      {post.taggedBomComponent && (
+        <div className={`mx-3 sm:mx-4 mt-3 rounded-2xl border p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md ${
+          isWhiteYellow
+            ? 'bg-amber-50/80 border-amber-300/80 text-zinc-900'
+            : 'bg-[#121217] border-[#C5A059]/30 text-zinc-200'
+        }`}>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className={`p-2 rounded-xl shrink-0 border ${
+              isWhiteYellow
+                ? 'bg-amber-100 border-amber-300 text-amber-900'
+                : 'bg-amber-500/15 border-amber-400/30 text-amber-400'
+            }`}>
+              <Wrench className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold flex items-center gap-2 flex-wrap">
+                <span className={`truncate ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>
+                  {post.taggedBomComponent.partName}
+                </span>
+                <span className={`text-[9.5px] font-mono-numbers px-2 py-0.5 rounded-full font-bold border ${
+                  isWhiteYellow
+                    ? 'bg-amber-100 text-amber-900 border-amber-300'
+                    : 'bg-amber-500/10 text-amber-300 border-amber-500/20'
+                }`}>
+                  {post.taggedBomComponent.originCountry} • VERIFIED BOM
+                </span>
+              </div>
+              <div className={`text-[11px] font-mono-numbers mt-0.5 truncate flex items-center gap-2 ${isWhiteYellow ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                <span className="text-amber-400 font-semibold">Torque: {post.taggedBomComponent.torqueSpec.split('•')[0]}</span>
+                <span className="text-zinc-600 hidden sm:inline">•</span>
+                <span className="text-zinc-400 hidden sm:inline">{post.taggedBomComponent.installedByWorkshop || 'Specialist Fitted'}</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setSelectedBomComponent(post.taggedBomComponent)}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+              isWhiteYellow
+                ? 'bg-amber-500 hover:bg-amber-600 border-amber-600 text-black font-bold shadow-xs'
+                : 'bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 text-black font-extrabold shadow-amber-400/10'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-black" />
+            <span>Inspect BOM Spec</span>
+            <ArrowRight className="w-3.5 h-3.5 text-black" />
+          </button>
+        </div>
+      )}
+
       {/* ── ACTION BAR + BODY ── */}
       <div className="px-4 sm:px-6 pt-3.5 pb-4 space-y-3">
 
@@ -1662,6 +1716,15 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
           </div>
         </div>
       )}
+
+      {/* Component Spec Preview Modal */}
+      <ComponentSpecPreviewModal
+        isOpen={!!selectedBomComponent}
+        onClose={() => setSelectedBomComponent(null)}
+        component={selectedBomComponent || null}
+        authorVehicleId={post.authorVehicleId}
+        authorVehicleName={post.authorVehicleName}
+      />
     </article>
   );
 };

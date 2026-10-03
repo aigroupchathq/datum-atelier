@@ -704,6 +704,38 @@ export const mockMayaHealth: VehicleHealth = {
 
 export const mockFeedPosts: CommunityPost[] = [
   {
+    id: 'post-100-maya-kw-v4',
+    authorType: 'car',
+    authorVehicleId: 'car-maya-m3',
+    authorVehicleName: 'MAYA',
+    authorVehicleModel: 'BMW M3 Competition (G80)',
+    authorVehicleYear: 2023,
+    postType: 'BUILD_UPDATE',
+    title: 'KW Variant 4 3-Way Independent Coilovers Installed & Corner-Balanced',
+    content: 'Dialed in the KW Variant 4 3-way coilovers at Litchfield Motors today. Independent high-speed and low-speed compression valving completely transforms how the G80 chassis settles over uneven Cotswold frost heaves. Static corner weights balanced to 50:50 cross-balance with driver ballast. Fastener torques verified: top mounts locked at 35 Nm, lower strut pinch bolts torqued to 56 Nm + 90°. Provenance sealed to chassis ledger.',
+    mediaUrls: [
+      '/real_uk_m3_cottage.jpg',
+      '/real_uk_driveway_wash.jpg'
+    ],
+    provenanceTag: 'verified_professional',
+    createdAt: '8m ago',
+    likesCount: 1420,
+    respectsCount: 420,
+    repliesCount: 68,
+    linkedBuildVersion: 'BUILD 04',
+    taggedBomComponent: {
+      id: 'bom-m3-1',
+      partName: 'KW Variant 4 3-Way Independent Coilovers',
+      category: 'Suspension & Kinematics',
+      manufacturer: 'KW automotive GmbH',
+      originCountry: 'Germany',
+      torqueSpec: 'Top mounts: 35 Nm • Strut clamp: 56 Nm + 90°',
+      serialNumber: 'KW-V4-352-1088-DE',
+      provenanceHash: '9a778841b80e87d3a0429f4007bbf99cfbc87321e11400e932901a08419bf891',
+      installedByWorkshop: 'Litchfield Motors (Tewkesbury)'
+    }
+  },
+  {
     id: 'post-201',
     authorType: 'user',
     authorVehicleId: 'car-zafira-outcast',
@@ -719,7 +751,18 @@ export const mockFeedPosts: CommunityPost[] = [
     provenanceTag: 'owner_experience',
     createdAt: '12m ago',
     likesCount: 384,
-    repliesCount: 42
+    repliesCount: 42,
+    taggedBomComponent: {
+      id: 'bom-outcast-1',
+      partName: 'Airtec Stage 3 80mm High-Flow Intercooler Core',
+      category: 'Exhaust & Induction',
+      manufacturer: 'Airtec Motorsport UK',
+      originCountry: 'United Kingdom',
+      torqueSpec: 'Hose clamps: 4.5 Nm • M8 mounting bolts: 22 Nm',
+      serialNumber: 'AT-INT-Z20-0418',
+      provenanceHash: '84af129841b80e87d3a0429f4007bbf99cfbc87321e11400e932901a08419ca2',
+      installedByWorkshop: 'Self-Commissioned / Custodian Wrenching'
+    }
   },
   {
     id: 'post-202',

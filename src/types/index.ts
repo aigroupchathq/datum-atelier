@@ -217,6 +217,17 @@ export interface CommunityPost {
   repliesCount: number;
   linkedDriveId?: string;
   linkedBuildVersion?: string;
+  taggedBomComponent?: {
+    id: string;
+    partName: string;
+    category: string;
+    manufacturer: string;
+    originCountry: string;
+    torqueSpec: string;
+    serialNumber: string;
+    provenanceHash: string;
+    installedByWorkshop?: string;
+  };
 }
 
 export interface Professional {

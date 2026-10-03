@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import type { FC, DragEvent, ChangeEvent } from 'react';
 import { 
   X, 
@@ -28,6 +28,7 @@ import type { CommunityPost } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
 import { redactPlateOnCanvas } from '../../utils/plateRedactionCanvas';
+import { loadVehicleBom } from '../../core/supplychain/supplyChainBom';
 import { 
   EXPEDITION_PRESETS, 
   calculateDriveCadence, 
@@ -120,6 +121,9 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
   const { isWhiteYellow } = useTheme();
   const [mode, setMode] = useState<'post' | 'story'>(initialMode);
   const [selectedCarIndex, setSelectedCarIndex] = useState<number>(0);
+  const currentCar = STABLE_CARS[selectedCarIndex] || STABLE_CARS[0];
+  const [selectedBomComponentId, setSelectedBomComponentId] = useState<string>('');
+  const availableBomComponents = useMemo(() => loadVehicleBom(currentCar.id), [currentCar.id]);
   const [postType, setPostType] = useState<CommunityPost['postType']>('CAR_STORY');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -228,7 +232,6 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
   if (!isOpen) return null;
 
-  const currentCar = STABLE_CARS[selectedCarIndex];
 
   // Trigger optical scanning animation when image changes
   const triggerOpticalScan = (imageUrl: string, plateText = 'UK PLATE', customBox?: typeof plateBox) => {
@@ -333,6 +336,19 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 
       const finalMediaUrl = (isVeilActive && sanitizedImage) ? sanitizedImage : selectedImage;
 
+      const selectedPart = availableBomComponents.find(c => c.id === selectedBomComponentId);
+      const taggedBomComponent = selectedPart ? {
+        id: selectedPart.id,
+        partName: selectedPart.partName,
+        category: selectedPart.category,
+        manufacturer: selectedPart.manufacturer,
+        originCountry: selectedPart.originCountry,
+        torqueSpec: selectedPart.torqueSpec,
+        serialNumber: selectedPart.serialNumber,
+        provenanceHash: selectedPart.provenanceHash,
+        installedByWorkshop: selectedPart.installedByWorkshop
+      } : undefined;
+
       onSubmitPost({
         postType: mode === 'story' ? 'CAR_STORY' : postType,
         title: title.trim() || undefined,
@@ -350,7 +366,8 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
         cadenceScore: cadenceResult?.totalScore,
         respectsEarned: cadenceResult?.respectsEarned || (postType === 'DRIVE' ? 14 : 10),
         routePassName: title.includes('Pass') ? title : undefined,
-        mediaUrls: [finalMediaUrl]
+        mediaUrls: [finalMediaUrl],
+        taggedBomComponent
       });
 
       // Clear draft upon successful publish
@@ -677,6 +694,41 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
                     : 'bg-[#0B0C0E] border-white/[0.08] text-white placeholder-zinc-600 focus:border-[#C5A059]/60'
                 }`}
               />
+            </div>
+
+            {/* TAG SERIALIZED BOM COMPONENT */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className={`text-[10px] font-mono-numbers uppercase tracking-[0.2em] font-semibold flex items-center gap-1.5 ${
+                  isWhiteYellow ? 'text-zinc-700' : 'text-zinc-400'
+                }`}>
+                  <Wrench className="w-3 h-3 text-[#C5A059]" />
+                  <span>Tag Serialized Hardware (BOM)</span>
+                  <span className="text-zinc-500 font-normal lowercase">(optional)</span>
+                </label>
+                {selectedBomComponentId && (
+                  <span className="text-[9px] font-mono-numbers text-emerald-400 font-bold flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" />
+                    <span>✓ Linked to Chassis BOM</span>
+                  </span>
+                )}
+              </div>
+              <select
+                value={selectedBomComponentId}
+                onChange={(e) => setSelectedBomComponentId(e.target.value)}
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs font-mono-numbers focus:outline-none transition shadow-inner ${
+                  isWhiteYellow
+                    ? 'bg-white border-stone-300 text-zinc-900 focus:border-amber-500'
+                    : 'bg-[#0B0C0E] border-white/[0.08] text-white focus:border-[#C5A059]/60'
+                }`}
+              >
+                <option value="">— No hardware component tagged (General Post / Drive) —</option>
+                {availableBomComponents.map((comp) => (
+                  <option key={comp.id} value={comp.id} className={isWhiteYellow ? 'bg-white text-zinc-900' : 'bg-zinc-900 text-white'}>
+                    {comp.partName} ({comp.category} • Torque: {comp.torqueSpec.split('•')[0]})
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
