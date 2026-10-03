@@ -3,26 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DATUM // Interactive Software Architecture & Visual Sitemap</title>
+  <title>DATUM // Sovereign Automotive Atelier — System Design & Interactive Sitemap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
-
     :root {
-      --bg-color: #F8FAFC;
-      --dot-color: #CBD5E1;
-      --line-color: #CBD5E1;
-      --line-active: #D97706;
-      --orange-bg: #F59E0B;
+      /* Theme: Obsidian Atelier (Default Luxury Dark) */
+      --bg-primary: #070B12;
+      --bg-surface: #0E1524;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --bg-glass: rgba(14, 21, 36, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(217, 119, 6, 0.4);
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --grid-dot: rgba(255, 255, 255, 0.09);
+      --grid-line: rgba(255, 255, 255, 0.03);
+
+      /* Accent & Brand Colors */
+      --amber-gold: #F59E0B;
+      --amber-glow: rgba(245, 158, 11, 0.25);
+      --amber-dark: #B45309;
+      --titanium: #E2E8F0;
+      --blue-accent: #38BDF8;
+      --blue-glow: rgba(56, 189, 248, 0.25);
+      --emerald-live: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+
+      /* Sitemap Visual Hierarchy Tiers */
+      --orange-bg: rgba(245, 158, 11, 0.16);
+      --orange-border: #F59E0B;
+      --orange-text: #FDE68A;
+      --orange-glow: 0 0 20px -2px rgba(245, 158, 11, 0.3);
+
+      --grey-bg: rgba(30, 41, 59, 0.7);
+      --grey-border: rgba(255, 255, 255, 0.12);
+      --grey-text: #E2E8F0;
+
+      --blue-bg: rgba(14, 165, 233, 0.14);
+      --blue-border: #38BDF8;
+      --blue-text: #BAE6FD;
+      --blue-glow: 0 0 16px -2px rgba(56, 189, 248, 0.3);
+
+      --dashed-border: rgba(148, 163, 184, 0.5);
+      --dashed-text: #94A3B8;
+
+      --link-line: rgba(148, 163, 184, 0.25);
+      --link-active: #F59E0B;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-glass: rgba(255, 255, 255, 0.85);
+      --border-subtle: rgba(15, 23, 42, 0.08);
+      --border-accent: rgba(217, 119, 6, 0.35);
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      --grid-dot: rgba(15, 23, 42, 0.12);
+      --grid-line: rgba(15, 23, 42, 0.03);
+
+      --orange-bg: #FEF3C7;
       --orange-border: #D97706;
-      --orange-text: #451A03;
+      --orange-text: #78350F;
+      --orange-glow: 0 4px 14px rgba(217, 119, 6, 0.18);
+
       --grey-bg: #FFFFFF;
       --grey-border: #E2E8F0;
       --grey-text: #334155;
+
       --blue-bg: #EFF6FF;
-      --blue-border: #3B82F6;
+      --blue-border: #2563EB;
       --blue-text: #1E40AF;
+      --blue-glow: 0 4px 14px rgba(37, 99, 235, 0.15);
+
       --dashed-border: #94A3B8;
       --dashed-text: #64748B;
+
+      --link-line: #CBD5E1;
+      --link-active: #D97706;
     }
 
     * {
@@ -30,107 +93,210 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-font-smoothing: antialiased;
     }
 
     body, html {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-color);
-      background-image: radial-gradient(var(--dot-color) 1.25px, transparent 1.25px);
-      background-size: 24px 24px;
-      color: #0F172A;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Top Floating Header & Controls Bar */
-    .app-bar {
+    /* Posh CAD Blueprint Background Grid */
+    .blueprint-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image: 
+        radial-gradient(var(--grid-dot) 1px, transparent 1px),
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 28px 28px, 140px 140px, 140px 140px;
+      z-index: 0;
+    }
+
+    /* Top Floating Executive HUD Bar */
+    .hud-bar {
       position: fixed;
-      top: 16px;
+      top: 14px;
       left: 20px;
       right: 20px;
       z-index: 100;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 16px;
       pointer-events: none;
     }
 
-    .app-title-card {
+    .brand-cluster {
       pointer-events: auto;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      border: 1px solid #E2E8F0;
-      padding: 10px 18px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 20px;
       border-radius: 14px;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .app-title-card .brand {
+    .brand-title {
       font-family: 'Cinzel', serif;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 900;
-      letter-spacing: 0.12em;
-      color: #0F172A;
+      letter-spacing: 0.16em;
+      background: linear-gradient(135deg, #FFF 0%, #D97706 60%, #F59E0B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .app-title-card .pill {
+    [data-theme="light"] .brand-title {
+      background: linear-gradient(135deg, #0F172A 0%, #B45309 80%, #D97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber-gold);
+      border: 1px solid var(--border-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald-live);
+      box-shadow: 0 0 8px var(--emerald-glow);
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* Live Telemetry Ticker */
+    .telemetry-ticker {
+      display: none;
+      align-items: center;
+      gap: 16px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: #FEF3C7;
-      color: #B45309;
-      border: 1px solid #FCD34D;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-left: 1px solid var(--border-subtle);
+      padding-left: 14px;
     }
 
-    .controls-panel {
+    @media (min-width: 1200px) {
+      .telemetry-ticker { display: flex; }
+    }
+
+    .ticker-metric {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ticker-metric strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Controls Center */
+    .controls-cluster {
       pointer-events: auto;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      border: 1px solid #E2E8F0;
-      padding: 6px 10px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 12px;
       border-radius: 14px;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
     }
 
-    .search-box {
+    .posh-search {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #F1F5F9;
-      border: 1px solid #E2E8F0;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 6px 12px;
+      transition: all 0.2s ease;
     }
 
-    .search-box input {
+    [data-theme="light"] .posh-search {
+      background: #F1F5F9;
+    }
+
+    .posh-search:focus-within {
+      border-color: var(--amber-gold);
+      box-shadow: 0 0 12px var(--amber-glow);
+    }
+
+    .posh-search input {
       border: none;
       background: transparent;
       outline: none;
-      font-size: 12px;
-      width: 170px;
-      font-family: 'Inter', sans-serif;
-      color: #0F172A;
+      font-size: 11.5px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      width: 160px;
+      color: var(--text-primary);
     }
 
-    .ctrl-btn {
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      color: #334155;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
+    .kbd-shortcut {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px;
+      background: var(--border-subtle);
+      color: var(--text-muted);
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* View Switcher Tabs */
+    .view-toggle-group {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-subtle);
       border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .toggle-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -138,14 +304,48 @@
       transition: all 0.15s ease;
     }
 
-    .ctrl-btn:hover {
-      background: #F8FAFC;
-      border-color: #CBD5E1;
-      color: #0F172A;
+    .toggle-tab.active {
+      background: var(--amber-gold);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
     }
 
-    .ctrl-btn:active {
-      transform: scale(0.96);
+    .hud-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .hud-btn:hover {
+      border-color: var(--amber-gold);
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--amber-gold);
+    }
+
+    .hud-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Zoom Indicator Pill */
+    .zoom-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      min-width: 48px;
+      text-align: center;
     }
 
     /* Main Viewport Container */
@@ -157,6 +357,7 @@
       left: 0;
       cursor: grab;
       overflow: hidden;
+      z-index: 10;
     }
 
     #viewport.dragging {
@@ -166,7 +367,7 @@
     #scene {
       position: absolute;
       transform-origin: 0 0;
-      transition: transform 0.05s ease-out;
+      transition: transform 0.04s cubic-bezier(0.1, 0.9, 0.2, 1);
       will-change: transform;
     }
 
@@ -181,16 +382,28 @@
 
     .tree-link {
       fill: none;
-      stroke: #CBD5E1;
+      stroke: var(--link-line);
       stroke-width: 1.5px;
       stroke-dasharray: 4 3;
-      transition: stroke 0.2s, stroke-width 0.2s;
+      transition: stroke 0.25s ease, stroke-width 0.25s ease;
     }
 
     .tree-link.active-branch {
-      stroke: #F59E0B;
-      stroke-width: 2px;
+      stroke: var(--amber-gold);
+      stroke-width: 2.2px;
       stroke-dasharray: none;
+      filter: drop-shadow(0 0 6px var(--amber-glow));
+    }
+
+    .tree-link.topology-link {
+      stroke: var(--blue-accent);
+      stroke-width: 2px;
+      stroke-dasharray: 6 4;
+      animation: dash-flow 25s linear infinite;
+    }
+
+    @keyframes dash-flow {
+      to { stroke-dashoffset: -1000; }
     }
 
     /* Map Nodes Layer */
@@ -201,32 +414,34 @@
       z-index: 2;
     }
 
-    /* Node Card Base */
+    /* Node Card Base (Luxury Automotive Spec Sheet Aesthetic) */
     .node-card {
       position: absolute;
-      border-radius: 9px;
-      padding: 8px 12px;
+      border-radius: 10px;
+      padding: 9px 13px;
       font-size: 11.5px;
       font-weight: 600;
-      box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.06);
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      gap: 10px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
       white-space: nowrap;
-      border: 1px solid transparent;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(12px);
     }
 
     .node-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px) scale(1.02);
       z-index: 50 !important;
     }
 
     .node-card.selected {
-      outline: 2px solid #2563EB;
-      outline-offset: 2px;
+      outline: 2px solid var(--amber-gold);
+      outline-offset: 3px;
+      box-shadow: 0 0 25px var(--amber-glow);
     }
 
     .node-card.highlighted {
@@ -234,31 +449,38 @@
     }
 
     @keyframes pulse-border {
-      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
-      70% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.8); }
+      70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
       100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
     }
 
     /* Level 0: Root Brand Node */
     .node-root {
-      background: #FFFFFF;
-      border: 2px solid #0F172A;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12);
-      padding: 16px 28px;
+      background: linear-gradient(145deg, #131B2E 0%, #080C14 100%);
+      border: 2px solid var(--amber-gold);
+      box-shadow: 0 15px 40px -5px rgba(245, 158, 11, 0.25);
+      padding: 16px 26px;
       border-radius: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
+      text-align: center;
+    }
+
+    [data-theme="light"] .node-root {
+      background: linear-gradient(145deg, #FFFFFF 0%, #F1F5F9 100%);
+      border: 2px solid #0F172A;
+      box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.15);
     }
 
     .node-root .root-logo {
       font-family: 'Cinzel', serif;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
-      letter-spacing: 0.2em;
-      color: #0F172A;
+      letter-spacing: 0.22em;
+      color: var(--text-primary);
       line-height: 1;
     }
 
@@ -267,26 +489,36 @@
       font-size: 8.5px;
       text-transform: uppercase;
       letter-spacing: 0.2em;
-      color: #D97706;
+      color: var(--amber-gold);
       font-weight: 700;
     }
 
-    /* Level 1: Main Sections (Orange) */
+    .node-root .root-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Level 1: Main Sections (Orange Luxury Accent) */
     .node-orange {
       background: var(--orange-bg);
       border-color: var(--orange-border);
       color: var(--orange-text);
       font-weight: 700;
       font-size: 12px;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+      box-shadow: var(--orange-glow);
     }
 
     .node-orange:hover {
-      background: #D97706;
-      color: #FFFFFF;
+      background: rgba(245, 158, 11, 0.28);
+      border-color: #FBBF24;
     }
 
-    /* Level 2 & 3: Regular Pages (Grey) */
+    /* Level 2 & 3: Content Pages & Sub-Views (Grey/Titanium) */
     .node-grey {
       background: var(--grey-bg);
       border-color: var(--grey-border);
@@ -294,75 +526,126 @@
     }
 
     .node-grey:hover {
-      border-color: #94A3B8;
-      color: #0F172A;
+      border-color: var(--text-secondary);
+      background: rgba(45, 55, 72, 0.85);
     }
 
-    /* Actions / Triggers / Modals / Gateways (Blue) */
+    [data-theme="light"] .node-grey:hover {
+      border-color: #94A3B8;
+      background: #F8FAFC;
+    }
+
+    /* Actions, Modals & Triggers (Blue Accent) */
     .node-blue {
       background: var(--blue-bg);
       border-color: var(--blue-border);
       color: var(--blue-text);
+      box-shadow: var(--blue-glow);
     }
 
     .node-blue:hover {
-      background: #DBEAFE;
-      border-color: #2563EB;
+      background: rgba(14, 165, 233, 0.25);
+      border-color: #7DD3FC;
     }
 
-    .node-blue::before {
-      content: "⚡";
-      font-size: 10px;
-    }
-
-    /* Planned / Roadmap Items (Dashed) */
+    /* Planned / Roadmap Items (Dashed Precision) */
     .node-dashed {
-      background: #F8FAFC;
+      background: rgba(15, 23, 42, 0.4);
       border: 1.5px dashed var(--dashed-border);
       color: var(--dashed-text);
       font-style: italic;
     }
 
     .node-dashed:hover {
-      border-color: #64748B;
-      color: #334155;
+      border-color: var(--amber-gold);
+      color: var(--text-primary);
     }
 
-    /* Collapse / Expand Badge Indicator */
+    /* Node Sub-Components & Micro-Pills */
+    .node-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .node-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.7;
+    }
+
+    .node-right {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
     .collapse-badge {
       width: 16px;
       height: 16px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
       font-size: 9px;
       font-family: 'JetBrains Mono', monospace;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-left: 2px;
-      transition: background 0.15s;
+      transition: background 0.15s ease, transform 0.15s ease;
+      color: inherit;
     }
 
     .node-card:hover .collapse-badge {
-      background: rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
     }
 
-    /* Fixed Bottom Legend (Key) */
+    /* Posh Architecture Topology Card Specializations */
+    .topology-header-card {
+      position: absolute;
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-accent);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      z-index: 3;
+    }
+
+    .topology-header-card .tier-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--amber-gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .topology-header-card .tier-sub {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Bottom Left Posh Legend */
     .legend-card {
       position: fixed;
       bottom: 20px;
       left: 20px;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(12px);
-      border: 1px solid #E2E8F0;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
       border-radius: 14px;
-      padding: 12px 16px;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+      padding: 14px 18px;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
       font-size: 11px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 9px;
     }
 
     .legend-title {
@@ -370,17 +653,20 @@
       font-weight: 700;
       font-size: 9.5px;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #64748B;
-      border-bottom: 1px solid #F1F5F9;
-      padding-bottom: 4px;
+      letter-spacing: 0.12em;
+      color: var(--amber-gold);
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: #334155;
+      gap: 10px;
+      color: var(--text-secondary);
       font-weight: 500;
     }
 
@@ -395,117 +681,316 @@
     .swatch-orange { background: var(--orange-bg); border-color: var(--orange-border); }
     .swatch-grey { background: var(--grey-bg); border-color: var(--grey-border); }
     .swatch-blue { background: var(--blue-bg); border-color: var(--blue-border); }
-    .swatch-dashed { background: #F8FAFC; border: 1.5px dashed var(--dashed-border); }
+    .swatch-dashed { background: rgba(148, 163, 184, 0.15); border: 1.5px dashed var(--dashed-border); }
 
-    /* Right Details Inspector Drawer */
-    .inspector-card {
+    /* Interactive Radar / Minimap */
+    .radar-container {
       position: fixed;
       bottom: 20px;
       right: 20px;
       z-index: 100;
-      width: 320px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid #E2E8F0;
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12);
-      font-size: 11px;
-      display: none;
-      animation: slide-up 0.2s ease-out;
+      width: 180px;
+      height: 120px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    @keyframes slide-up {
-      from { transform: translateY(10px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    .radar-header {
+      padding: 5px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
     }
 
-    .inspector-card.open {
+    .radar-canvas-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    #radarCanvas {
+      width: 100%;
+      height: 100%;
       display: block;
     }
 
-    .inspector-header {
+    .radar-viewport-box {
+      position: absolute;
+      border: 1.5px solid var(--amber-gold);
+      background: rgba(245, 158, 11, 0.1);
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    /* Right Architectural Inspector Sheet */
+    .inspector-sheet {
+      position: fixed;
+      top: 80px;
+      bottom: 20px;
+      right: 20px;
+      z-index: 101;
+      width: 380px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
+      font-size: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      animation: sheet-slide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    @keyframes sheet-slide {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .inspector-sheet.open {
+      display: flex;
+    }
+
+    .insp-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
     }
 
-    .inspector-title {
-      font-size: 13px;
+    .insp-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
       font-weight: 700;
-      color: #0F172A;
-    }
-
-    .inspector-close {
-      cursor: pointer;
-      color: #94A3B8;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .inspector-close:hover {
-      color: #0F172A;
-    }
-
-    .inspector-row {
-      display: flex;
-      margin-bottom: 6px;
-      gap: 6px;
-    }
-
-    .inspector-label {
-      font-family: 'JetBrains Mono', monospace;
-      color: #64748B;
-      font-size: 10px;
-      min-width: 65px;
+      color: var(--amber-gold);
+      letter-spacing: 0.1em;
       text-transform: uppercase;
+      margin-bottom: 4px;
     }
 
-    .inspector-value {
-      color: #1E293B;
-      font-weight: 500;
+    .insp-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.25;
     }
 
-    .inspector-route {
+    .insp-close {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 16px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      background: var(--border-subtle);
+    }
+
+    .insp-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text-primary);
+    }
+
+    .insp-section-title {
       font-family: 'JetBrains Mono', monospace;
-      color: #2563EB;
-      background: #EFF6FF;
-      padding: 2px 6px;
-      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .insp-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .insp-label {
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+
+    .insp-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .insp-route-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue-accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
       display: inline-block;
     }
 
-    .inspector-desc {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #F1F5F9;
-      color: #475569;
-      line-height: 1.45;
+    .insp-desc {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-size: 11.5px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .insp-launch-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+      color: #000;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 11.5px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+    }
+
+    .insp-launch-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Filter pills */
+    .filter-pills-bar {
+      position: fixed;
+      top: 76px;
+      left: 20px;
+      z-index: 99;
+      display: flex;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .filter-pill {
+      pointer-events: auto;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill:hover, .filter-pill.active {
+      background: var(--border-subtle);
+      color: var(--text-primary);
+      border-color: var(--amber-gold);
+    }
+
+    .filter-pill.active {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber-gold);
+      border-color: var(--amber-gold);
     }
   </style>
 </head>
-<body>
+<body data-theme="dark">
 
-  <!-- Top Floating Controls Header -->
-  <header class="app-bar">
-    <div class="app-title-card">
-      <span class="brand">DATUM</span>
-      <span class="pill">Visual Software Sitemap</span>
-      <span style="font-size: 11px; color: #64748B; font-family: 'JetBrains Mono', monospace;">100% Codebase Verified</span>
+  <!-- Background CAD Precision Grid -->
+  <div class="blueprint-grid"></div>
+
+  <!-- Top Executive HUD Bar -->
+  <header class="hud-bar">
+    <div class="brand-cluster">
+      <span class="brand-title">DATUM</span>
+      <span class="brand-tag">
+        <span class="status-pulse"></span>
+        Sovereign Architecture
+      </span>
+      <div class="telemetry-ticker">
+        <div class="ticker-metric">
+          <span style="color: var(--emerald-live);">●</span>
+          <span>SUITES:</span> <strong>76/76 PASS</strong>
+        </div>
+        <div class="ticker-metric">
+          <span style="color: var(--amber-gold);">●</span>
+          <span>LEDGER:</span> <strong>SHA-256 DAG</strong>
+        </div>
+        <div class="ticker-metric">
+          <span style="color: var(--blue-accent);">●</span>
+          <span>GOV STATUTORY:</span> <strong>DVSA MOT API</strong>
+        </div>
+        <div class="ticker-metric">
+          <span style="color: #A855F7;">●</span>
+          <span>FRICTION μ:</span> <strong>OPEN-METEO</strong>
+        </div>
+      </div>
     </div>
 
-    <div class="controls-panel">
-      <div class="search-box">
-        <span style="color: #94A3B8; font-size: 11px;">🔍</span>
-        <input type="text" id="searchInput" placeholder="Find page, action, modal…" />
+    <div class="controls-cluster">
+      <!-- View Mode Switcher -->
+      <div class="view-toggle-group">
+        <button class="toggle-tab active" id="tabSitemap" onclick="switchView('sitemap')">
+          <span>🗺️</span> Visual Sitemap
+        </button>
+        <button class="toggle-tab" id="tabTopology" onclick="switchView('topology')">
+          <span>⚡</span> System Topology
+        </button>
       </div>
-      <button class="ctrl-btn" onclick="zoomIn()">Zoom +</button>
-      <button class="ctrl-btn" onclick="zoomOut()">Zoom −</button>
-      <button class="ctrl-btn" onclick="resetView()">Reset View</button>
-      <button class="ctrl-btn" onclick="toggleExpandAll()" id="expandBtn">Collapse All</button>
+
+      <!-- Quick Search -->
+      <div class="posh-search">
+        <span style="color: var(--text-muted); font-size: 11px;">🔍</span>
+        <input type="text" id="searchInput" placeholder="Find module, action, route…" />
+        <span class="kbd-shortcut">/</span>
+      </div>
+
+      <!-- Zoom & Nav Controls -->
+      <button class="hud-btn" onclick="zoomIn()" title="Zoom In">+</button>
+      <button class="hud-btn" onclick="zoomOut()" title="Zoom Out">−</button>
+      <span class="zoom-pill" id="zoomDisplay">85%</span>
+      <button class="hud-btn" onclick="resetView()" title="Fit / Reset View">Reset</button>
+      <button class="hud-btn" onclick="toggleExpandAll()" id="expandBtn">Collapse All</button>
+
+      <!-- Theme Switcher -->
+      <button class="hud-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Theme">🌙</button>
     </div>
   </header>
+
+  <!-- Filter Pills Bar -->
+  <div class="filter-pills-bar" id="filterBar">
+    <button class="filter-pill active" onclick="setFilter('all', this)">All Nodes (72)</button>
+    <button class="filter-pill" onclick="setFilter('orange', this)">L1 Core Sections (11)</button>
+    <button class="filter-pill" onclick="setFilter('grey', this)">Pages & Sub-views (36)</button>
+    <button class="filter-pill" onclick="setFilter('blue', this)">Key Triggers & Modals (21)</button>
+    <button class="filter-pill" onclick="setFilter('dashed', this)">Planned Roadmap (4)</button>
+  </div>
 
   <!-- Interactive Pan & Zoom Viewport -->
   <div id="viewport">
@@ -515,51 +1000,107 @@
     </div>
   </div>
 
-  <!-- Legend (Corner Key) -->
-  <aside class="legend-card">
-    <div class="legend-title">Sitemap Visual Legend</div>
+  <!-- Bottom Left Legend -->
+  <aside class="legend-card" id="legendBox">
+    <div class="legend-title">
+      <span>Architectural Key</span>
+      <span style="font-size: 8px; color: var(--emerald-live);">● VERIFIED</span>
+    </div>
     <div class="legend-item">
       <div class="legend-swatch swatch-orange"></div>
-      <span>Main Sections (Level 1)</span>
+      <span>Level 1: Main Platform Modules</span>
     </div>
     <div class="legend-item">
       <div class="legend-swatch swatch-grey"></div>
-      <span>Pages & Sub-Views (Level 2 & 3)</span>
+      <span>Level 2 & 3: Content Pages & Sub-Views</span>
     </div>
     <div class="legend-item">
       <div class="legend-swatch swatch-blue"></div>
-      <span>Actions, Modals & Triggers</span>
+      <span>Level 3: Actions, Modals & Triggers</span>
     </div>
     <div class="legend-item">
       <div class="legend-swatch swatch-dashed"></div>
-      <span>Planned / Roadmap (Not in Code)</span>
+      <span>Dashed: Planned Architectural Roadmap</span>
     </div>
   </aside>
 
-  <!-- Node Details Inspector Drawer -->
-  <div class="inspector-card" id="inspectorCard">
-    <div class="inspector-header">
-      <div class="inspector-title" id="inspTitle">Node Title</div>
-      <span class="inspector-close" onclick="closeInspector()">✕</span>
+  <!-- Interactive Radar / Minimap -->
+  <div class="radar-container" id="radarBox">
+    <div class="radar-header">
+      <span>TELEMETRY RADAR</span>
+      <span id="radarCoords">X:0 Y:0</span>
     </div>
-    <div class="inspector-row">
-      <span class="inspector-label">Level:</span>
-      <span class="inspector-value" id="inspLevel">Level 1</span>
+    <div class="radar-canvas-wrap">
+      <canvas id="radarCanvas"></canvas>
+      <div class="radar-viewport-box" id="radarViewport"></div>
     </div>
-    <div class="inspector-row">
-      <span class="inspector-label">Route:</span>
-      <span class="inspector-route" id="inspRoute">/</span>
-    </div>
-    <div class="inspector-row">
-      <span class="inspector-label">Type:</span>
-      <span class="inspector-value" id="inspType">Main Navigation Section</span>
-    </div>
-    <div class="inspector-desc" id="inspDesc">Description text will appear here explaining user actions and code placement.</div>
   </div>
 
-  <!-- Sitemap Data & Interactive Script -->
+  <!-- Right Architectural Inspector Sheet -->
+  <div class="inspector-sheet" id="inspectorSheet">
+    <div class="insp-header">
+      <div>
+        <div class="insp-badge" id="inspBadge">MODULE SPECIFICATION</div>
+        <div class="insp-title" id="inspTitle">Node Title</div>
+      </div>
+      <div class="insp-close" onclick="closeInspector()">✕</div>
+    </div>
+
+    <div>
+      <div class="insp-section-title">SYSTEM COORDINATES</div>
+      <div class="insp-row">
+        <span class="insp-label">Route Path:</span>
+        <span class="insp-route-tag" id="inspRoute">/</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Hierarchy Level:</span>
+        <span class="insp-val" id="inspLevel">Level 1 (Core Module)</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Layer Classification:</span>
+        <span class="insp-val" id="inspType">Presentation View</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Component Reference:</span>
+        <span class="insp-val" id="inspComponent">src/pages/FeedPage.tsx</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="insp-section-title">FUNCTIONAL ARCHITECTURE & BEHAVIOUR</div>
+      <div class="insp-desc" id="inspDesc">
+        Description text will appear here detailing telemetry inputs, user triggers, and cryptographic verification status.
+      </div>
+    </div>
+
+    <div>
+      <div class="insp-section-title">TECHNICAL SPECIFICATIONS</div>
+      <div class="insp-row">
+        <span class="insp-label">State Store:</span>
+        <span class="insp-val" id="inspStore">ActiveVehicleContext / DAG</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Statutory Verification:</span>
+        <span class="insp-val" style="color: var(--emerald-live);" id="inspVerify">100% Codebase Verified</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Interactive Actions:</span>
+        <span class="insp-val" id="inspActions">Inspect, Scrub, Filter</span>
+      </div>
+    </div>
+
+    <a href="#" target="_blank" class="insp-launch-btn" id="inspLaunchBtn">
+      <span>🚀 Open Route in Live Application</span>
+    </a>
+  </div>
+
+  <!-- Application Architecture & Sitemap Engine -->
   <script>
-    // Complete, forensic inventory of DATUM codebase as it exists right now
+    // Current Active View: "sitemap" or "topology"
+    let currentView = "sitemap";
+    let activeFilter = "all";
+
+    // ── DATASET 1: COMPREHENSIVE SITEMAP HIERARCHY (100% CODEBASE VERIFIED) ──
     const SITEMAP_DATA = {
       id: "root",
       label: "DATUM",
@@ -567,16 +1108,20 @@
       type: "root",
       level: 0,
       route: "/",
-      desc: "Root architecture of the DATUM Sovereign Automotive Atelier operating system.",
+      component: "src/App.tsx",
+      store: "GlobalAppRoot",
+      desc: "Central root of the DATUM Sovereign Automotive operating system. Orchestrates client navigation, spring physics gestures, and cryptographically verified automotive telemetry.",
       children: [
-        // ── 1. ONBOARDING & ENTRY ──
+        // 1. ENTRY & ONBOARDING
         {
           id: "entry",
           label: "Entry & Onboarding",
           type: "orange",
           level: 1,
           route: "/",
-          desc: "Application launch, ignition intro screen, and initial driver persona selection.",
+          component: "src/components/SplashView.tsx",
+          store: "localStorage (hasSeenIntro)",
+          desc: "Application boot sequence, cinematic ignition starter sound, and persona switching.",
           children: [
             {
               id: "splash",
@@ -584,10 +1129,12 @@
               type: "grey",
               level: 2,
               route: "/?splash",
+              component: "src/components/SplashView.tsx",
+              store: "AudioContext",
               desc: "Atmospheric full-screen starter ignition with exhaust flare sound.",
               children: [
-                { id: "sp-ignite", label: "Starter Ignition Sound", type: "blue", level: 3, route: "modal", desc: "Plays synthesized starter motor crank and engine fire." },
-                { id: "sp-skip", label: "Remember Skip Preference", type: "blue", level: 3, route: "localstorage", desc: "Saves skip flag in browser localStorage for faster return visits." }
+                { id: "sp-ignite", label: "Starter Ignition Sound", type: "blue", level: 3, route: "audio", component: "Web Audio Synthesizer", store: "AudioContext", desc: "Plays synthesized starter motor crank and engine fire sequence." },
+                { id: "sp-skip", label: "Remember Skip Preference", type: "blue", level: 3, route: "storage", component: "localStorage API", store: "hasSeenIntro", desc: "Saves skip flag in browser localStorage for faster return visits." }
               ]
             },
             {
@@ -596,37 +1143,43 @@
               type: "blue",
               level: 2,
               route: "header-dropdown",
+              component: "src/components/TopNav.tsx",
+              store: "ActiveVehicleContext",
               desc: "Switches active vehicle persona (MAYA M3, KURO GT3, Cobra 427, Hamish Bench).",
               children: [
-                { id: "ps-stable", label: "Active Stable Selector", type: "blue", level: 3, route: "context", desc: "Instantly updates global ActiveVehicleContext and feed perspectives." },
-                { id: "ps-dossier", label: "Direct Dossier Shortcut", type: "grey", level: 3, route: "/car/:id", desc: "Direct navigation link to active car's digital dossier." }
+                { id: "ps-stable", label: "Active Stable Selector", type: "blue", level: 3, route: "context", component: "ActiveVehicleContext", store: "activeVehicleId", desc: "Instantly updates global ActiveVehicleContext and feed perspectives." },
+                { id: "ps-dossier", label: "Direct Dossier Shortcut", type: "grey", level: 3, route: "/car/:id", component: "CarDetailPage.tsx", store: "mockVehicles", desc: "Direct navigation link to active car's digital dossier." }
               ]
             }
           ]
         },
 
-        // ── 2. COMMUNITY FEED (HOME) ──
+        // 2. COMMUNITY FEED (HOME)
         {
           id: "feed",
           label: "Community Feed",
           type: "orange",
           level: 1,
           route: "/",
+          component: "src/pages/FeedPage.tsx",
+          store: "FeedRepository / mockFeedPosts",
           desc: "Real-time journal stream of drives, builds, mountain passes, and technical banter.",
           children: [
             {
               id: "feed-filter",
-              label: "Journal Filter Pills",
+              label: "Journal Filter Rail",
               type: "grey",
               level: 2,
               route: "/?filter=*",
+              component: "FeedPage.tsx#FilterRail",
+              store: "activeFilter state",
               desc: "Horizontal scrollable filter rail categorizing feed posts.",
               children: [
-                { id: "f-all", label: "All Journals", type: "grey", level: 3, route: "/?filter=all", desc: "Displays entire unified community stream." },
-                { id: "f-drives", label: "Passes & Expeditions", type: "grey", level: 3, route: "/?filter=drives", desc: "Filtered to B-road and mountain pass journeys." },
-                { id: "f-builds", label: "Chassis Spec Builds", type: "grey", level: 3, route: "/?filter=builds", desc: "Filtered to suspension, brake, and engine modifications." },
-                { id: "f-tech", label: "Workshop & Tech Guides", type: "grey", level: 3, route: "/?filter=tech", desc: "DIY mechanical tutorials and workshop rescue logs." },
-                { id: "f-arrivals", label: "Sovereign Arrivals", type: "grey", level: 3, route: "/?filter=arrivals", desc: "New car garage deliveries and concours entries." }
+                { id: "f-all", label: "All Journals", type: "grey", level: 3, route: "/?filter=all", component: "FeedPage.tsx", store: "FeedRepository", desc: "Displays entire unified community stream." },
+                { id: "f-drives", label: "Passes & Expeditions", type: "grey", level: 3, route: "/?filter=drives", component: "FeedPage.tsx", store: "FeedRepository", desc: "Filtered to B-road and mountain pass journeys." },
+                { id: "f-builds", label: "Chassis Spec Builds", type: "grey", level: 3, route: "/?filter=builds", component: "FeedPage.tsx", store: "FeedRepository", desc: "Filtered to suspension, brake, and engine modifications." },
+                { id: "f-tech", label: "Workshop & Tech Guides", type: "grey", level: 3, route: "/?filter=tech", component: "FeedPage.tsx", store: "FeedRepository", desc: "DIY mechanical tutorials and workshop rescue logs." },
+                { id: "f-arrivals", label: "Sovereign Arrivals", type: "grey", level: 3, route: "/?filter=arrivals", component: "FeedPage.tsx", store: "FeedRepository", desc: "New car garage deliveries and concours entries." }
               ]
             },
             {
@@ -635,10 +1188,12 @@
               type: "grey",
               level: 2,
               route: "feed-top",
+              component: "src/components/StoriesRail.tsx",
+              store: "mockStories state",
               desc: "Horizontal Instagram-style stories bar showing 24h driving snippets.",
               children: [
-                { id: "st-add", label: "Add Story Vignette", type: "blue", level: 3, route: "modal", desc: "Opens camera upload to post temporary driving snippet." },
-                { id: "st-view", label: "Interactive Story Viewer", type: "blue", level: 3, route: "modal", desc: "Full-screen story playback with progress timer." }
+                { id: "st-add", label: "Add Story Vignette", type: "blue", level: 3, route: "modal", component: "CreateStoryModal.tsx", store: "SessionStorage", desc: "Opens camera upload to post temporary driving snippet." },
+                { id: "st-view", label: "Story Player", type: "blue", level: 3, route: "modal", component: "StoryViewerModal.tsx", store: "Timer State", desc: "Full-screen story playback with progress timer." }
               ]
             },
             {
@@ -647,10 +1202,12 @@
               type: "grey",
               level: 2,
               route: "/",
+              component: "FeedPage.tsx",
+              store: "FeedRepository",
               desc: "Journal creation and telemetry synchronization controls.",
               children: [
-                { id: "fa-create", label: "Chronicle Journal (+)", type: "blue", level: 3, route: "modal", desc: "Opens CreatePostModal with automatic plate blur." },
-                { id: "fa-sync", label: "Sync Feed Telemetry", type: "blue", level: 3, route: "api", desc: "Re-queries live pass friction and merges latest ledger entries." }
+                { id: "fa-create", label: "Chronicle Journal (+)", type: "blue", level: 3, route: "modal", component: "CreatePostModal.tsx", store: "FeedRepository", desc: "Opens CreatePostModal with automatic plate blur." },
+                { id: "fa-sync", label: "Sync Feed Telemetry", type: "blue", level: 3, route: "api", component: "OpenMeteo / FeedRepository", store: "Live Grip Cache", desc: "Re-queries live pass friction and merges latest ledger entries." }
               ]
             },
             {
@@ -659,25 +1216,29 @@
               type: "grey",
               level: 2,
               route: "feed-items",
+              component: "src/components/FeedCard.tsx",
+              store: "mockFeedPosts",
               desc: "Deeply interactive post cards equipped with telemetry and binnacles.",
               children: [
-                { id: "fc-respect", label: "Respect Rating Burst", type: "blue", level: 3, route: "action", desc: "Awards flow and thermal patience community respect." },
-                { id: "fc-scrub", label: "Drive Telemetry Scrub", type: "blue", level: 3, route: "interactive", desc: "Interactive slider showing elevation, G-force, and sector speed." },
-                { id: "fc-binnacle", label: "Obsidian Gauge Cluster", type: "grey", level: 3, route: "widget", desc: "Dynamic tachometer and manifold turbo boost gauge." },
-                { id: "fc-bom", label: "Inspect BOM Part Pill", type: "blue", level: 3, route: "modal", desc: "Opens ComponentSpecPreviewModal for verified parts." },
-                { id: "fc-comments", label: "Discussion Drawer", type: "blue", level: 3, route: "drawer", desc: "Unique enthusiast discussion threads and inline reply input." }
+                { id: "fc-respect", label: "Respect Rating Burst", type: "blue", level: 3, route: "action", component: "respectRatingEngine.ts", store: "FeedRepository", desc: "Awards flow and thermal patience community respect." },
+                { id: "fc-scrub", label: "Drive Telemetry Scrub", type: "blue", level: 3, route: "interactive", component: "TelemetryScrubber.tsx", store: "Local Scrubber State", desc: "Interactive slider showing elevation, G-force, and sector speed." },
+                { id: "fc-binnacle", label: "Obsidian Gauge Cluster", type: "grey", level: 3, route: "widget", component: "ObsidianBinnacle.tsx", store: "CAN Bus Emulation", desc: "Dynamic tachometer and manifold turbo boost gauge." },
+                { id: "fc-bom", label: "Inspect BOM Part Pill", type: "blue", level: 3, route: "modal", component: "ComponentSpecPreviewModal.tsx", store: "supplyChainBom.ts", desc: "Opens ComponentSpecPreviewModal for verified parts." },
+                { id: "fc-comments", label: "Discussion Drawer", type: "blue", level: 3, route: "drawer", component: "CommentsDrawer.tsx", store: "communityFeedComments.ts", desc: "Unique enthusiast discussion threads and inline reply input." }
               ]
             }
           ]
         },
 
-        // ── 3. VEHICLE ATELIER (MY CAR) ──
+        // 3. VEHICLE ATELIER (MY CAR)
         {
           id: "atelier",
           label: "Vehicle Atelier",
           type: "orange",
           level: 1,
           route: "/car/:carId",
+          component: "src/pages/CarDetailPage.tsx",
+          store: "VehicleRepository",
           desc: "Full digital vehicle ledger, health monitoring, BOM supply chain, and concours passport.",
           children: [
             {
@@ -686,10 +1247,12 @@
               type: "grey",
               level: 2,
               route: "/car/:id",
+              component: "CarDetailPage.tsx#Header",
+              store: "mockVehicles",
               desc: "VIN, chassis code, DVSA MOT statutory pass status, and audio clatter sample.",
               children: [
-                { id: "ci-sound", label: "Exhaust Sound Flare", type: "blue", level: 3, route: "audio", desc: "Plays authentic acoustic recording of the engine." },
-                { id: "ci-blur", label: "Toggle Plate Redaction", type: "blue", level: 3, route: "ui", desc: "Toggles neural blur over the registration plate." }
+                { id: "ci-sound", label: "Exhaust Sound Flare", type: "blue", level: 3, route: "audio", component: "SoundStudioModal.tsx", store: "AudioBuffer", desc: "Plays authentic acoustic recording of the engine." },
+                { id: "ci-blur", label: "Toggle Plate Redaction", type: "blue", level: 3, route: "ui", component: "plateRedaction.ts", store: "UI State", desc: "Toggles neural blur over the registration plate." }
               ]
             },
             {
@@ -698,13 +1261,15 @@
               type: "grey",
               level: 2,
               route: "/car/:id#tabs",
+              component: "CarDetailPage.tsx#Tabs",
+              store: "Active Tab State",
               desc: "Tabbed ledger views covering all vehicle dimensions.",
               children: [
-                { id: "ct-drives", label: "Journals & Drives Tab", type: "grey", level: 3, route: "/car/:id?tab=drives", desc: "Historical record of verified expeditions and road sectors." },
-                { id: "ct-bom", label: "Supply Chain BOM Tab", type: "grey", level: 3, route: "/car/:id?tab=bom", desc: "Interactive parts ledger with torque specs and SHA-256 hashes." },
-                { id: "ct-dyno", label: "Dyno Studio & Clusters", type: "grey", level: 3, route: "/car/:id?tab=dyno", desc: "Interactive power/torque curves and RadialDynamicsCluster." },
-                { id: "ct-health", label: "Health & Service Codex", type: "grey", level: 3, route: "/car/:id?tab=health", desc: "OBD-II DTC status, brake fluid boiling point, tire wear." },
-                { id: "ct-gallery", label: "Tagged Media Gallery", type: "grey", level: 3, route: "/car/:id?tab=gallery", desc: "Categorized high-resolution photo archives." }
+                { id: "ct-drives", label: "Journals & Drives Tab", type: "grey", level: 3, route: "/car/:id?tab=drives", component: "CarDrivesTab.tsx", store: "Drive History", desc: "Historical record of verified expeditions and road sectors." },
+                { id: "ct-bom", label: "Supply Chain BOM Tab", type: "grey", level: 3, route: "/car/:id?tab=bom", component: "CarBomTab.tsx", store: "supplyChainBom.ts", desc: "Interactive parts ledger with torque specs and SHA-256 hashes." },
+                { id: "ct-dyno", label: "Dyno Studio & Clusters", type: "grey", level: 3, route: "/car/:id?tab=dyno", component: "RadialDynamicsCluster.tsx", store: "Kinematic Curves", desc: "Interactive power/torque curves and RadialDynamicsCluster." },
+                { id: "ct-health", label: "Health & Service Codex", type: "grey", level: 3, route: "/car/:id?tab=health", component: "CarHealthTab.tsx", store: "fluidPhysics.ts", desc: "OBD-II DTC status, brake fluid boiling point, tire wear." },
+                { id: "ct-gallery", label: "Tagged Media Gallery", type: "grey", level: 3, route: "/car/:id?tab=gallery", component: "CarGalleryTab.tsx", store: "Photo Ledger", desc: "Categorized high-resolution photo archives." }
               ]
             },
             {
@@ -713,256 +1278,271 @@
               type: "grey",
               level: 2,
               route: "/car/:id",
+              component: "Modals Cluster",
+              store: "Cryptographic Vault",
               desc: "High-value provenance actions, transfers, and customs passports.",
               children: [
-                { id: "cm-handover", label: "Custody Title Handover", type: "blue", level: 3, route: "modal", desc: "Cryptographic escrow title handover to new custodian." },
-                { id: "cm-dossier", label: "Concours Heritage Dossier", type: "blue", level: 3, route: "modal", desc: "Full exportable Concours booklet with offline scannable QR." },
-                { id: "cm-passport", label: "Cryptographic Passport", type: "blue", level: 3, route: "modal", desc: "Exportable provenance proof document with hash signature." },
-                { id: "cm-carnet", label: "ATA Carnet Logistics", type: "blue", level: 3, route: "modal", desc: "Alpine transit customs bond and manifest generator." },
-                { id: "cm-tyre", label: "Tyre Pyrometer Heatmap", type: "blue", level: 3, route: "modal", desc: "Inner/Center/Outer thermal footprint analyzer." }
+                { id: "cm-handover", label: "Custody Title Handover", type: "blue", level: 3, route: "modal", component: "CustodyHandoverModal.tsx", store: "custodyTransfer.ts", desc: "Cryptographic escrow title handover to new custodian." },
+                { id: "cm-dossier", label: "Concours Heritage Dossier", type: "blue", level: 3, route: "modal", component: "ConcoursDossierModal.tsx", store: "QR Code Generator", desc: "Full exportable Concours booklet with offline scannable QR." },
+                { id: "cm-passport", label: "Cryptographic Passport", type: "blue", level: 3, route: "modal", component: "PassportModal.tsx", store: "SHA-256 Signer", desc: "Exportable provenance proof document with hash signature." },
+                { id: "cm-carnet", label: "ATA Carnet Logistics", type: "blue", level: 3, route: "modal", component: "CarnetModal.tsx", store: "transitCarnet.ts", desc: "Alpine transit customs bond and manifest generator." },
+                { id: "cm-tyre", label: "Tyre Pyrometer Heatmap", type: "blue", level: 3, route: "modal", component: "TyrePyrometerModal.tsx", store: "Thermal Matrix", desc: "Inner/Center/Outer thermal footprint analyzer." }
               ]
             }
           ]
         },
 
-        // ── 4. DRIVE DETAIL & SECTORS ──
+        // 4. DRIVE DETAIL & SECTORS
         {
           id: "drive-detail",
           label: "Drive Detail View",
           type: "orange",
           level: 1,
           route: "/drive/:driveId",
+          component: "src/pages/DriveDetailPage.tsx",
+          store: "mockDrives",
           desc: "Deep-dive telemetry analysis for a completed mountain pass expedition.",
           children: [
-            {
-              id: "dd-route",
-              label: "Pass Route Overview",
-              type: "grey",
-              level: 2,
-              route: "/drive/:id",
-              desc: "Mountain pass name (Snake Pass, Buttertubs, Llanberis), duration, and distance."
-            },
-            {
-              id: "dd-telemetry",
-              label: "Telemetry Scrub Player",
-              type: "blue",
-              level: 2,
-              route: "/drive/:id",
-              desc: "Play/pause interactive elevation, lateral G-force, and sector speed."
-            },
-            {
-              id: "dd-waypoints",
-              label: "Waypoint Photo Timeline",
-              type: "grey",
-              level: 2,
-              route: "/drive/:id",
-              desc: "Turnout photo proof, altitude stamps, and ambient friction scores."
-            },
-            {
-              id: "dd-cadence",
-              label: "Cadence & Respect Score",
-              type: "grey",
-              level: 2,
-              route: "/drive/:id",
-              desc: "Official S / EX rank calculation based on thermal patience and road flow."
-            }
+            { id: "dd-route", label: "Pass Route Overview", type: "grey", level: 2, route: "/drive/:id", component: "DriveDetailPage.tsx", store: "mockDrives", desc: "Mountain pass name (Snake Pass, Buttertubs, Llanberis), duration, and distance." },
+            { id: "dd-telemetry", label: "Telemetry Scrub Player", type: "blue", level: 2, route: "/drive/:id", component: "TelemetryPlayer.tsx", store: "GPS / Accelerometer Stream", desc: "Play/pause interactive elevation, lateral G-force, and sector speed." },
+            { id: "dd-waypoints", label: "Waypoint Photo Timeline", type: "grey", level: 2, route: "/drive/:id", component: "WaypointTimeline.tsx", store: "Waypoint Hash Store", desc: "Turnout photo proof, altitude stamps, and ambient friction scores." },
+            { id: "dd-cadence", label: "Cadence & Respect Score", type: "grey", level: 2, route: "/drive/:id", component: "respectRatingEngine.ts", store: "Cadence Calculator", desc: "Official S / EX rank calculation based on thermal patience and road flow." }
           ]
         },
 
-        // ── 5. EXPLORE AUTOMOTIVE UNIVERSE ──
+        // 5. EXPLORE AUTOMOTIVE UNIVERSE
         {
           id: "explore",
           label: "Explore Universe",
           type: "orange",
           level: 1,
           route: "/explore",
+          component: "src/pages/ExplorePage.tsx",
+          store: "motorworldIntelligence.ts",
           desc: "Complete UK automotive intelligence codex, archetype filters, and kinematic matching.",
           children: [
-            {
-              id: "ex-archetypes",
-              label: "Archetype Category Pills",
-              type: "grey",
-              level: 2,
-              route: "/explore?archetype=*",
-              desc: "Filter by car philosophy: Hot Hatches, Analog Purists, Track Weapons, GTs, Restomods."
-            },
-            {
-              id: "ex-kinematic",
-              label: "Kinematic Affinity Matcher",
-              type: "blue",
-              level: 2,
-              route: "modal",
-              desc: "NLP vector search translating driver desires to chassis dynamics."
-            },
-            {
-              id: "ex-motorworld",
-              label: "Motorworld Analytics Codex",
-              type: "blue",
-              level: 2,
-              route: "modal",
-              desc: "Official DVSA MOT pass rates, HowManyLeft UK census, and fluid specs."
-            },
-            {
-              id: "ex-scatter",
-              label: "Fleet Scatter Analytics",
-              type: "grey",
-              level: 2,
-              route: "/explore",
-              desc: "Interactive scatter plot: Power-to-Weight (BHP/T) vs 0-60 MPH acceleration."
-            },
+            { id: "ex-archetypes", label: "Archetype Category Pills", type: "grey", level: 2, route: "/explore?archetype=*", component: "ExplorePage.tsx#Archetypes", store: "Filter State", desc: "Filter by car philosophy: Hot Hatches, Analog Purists, Track Weapons, GTs, Restomods." },
+            { id: "ex-kinematic", label: "Kinematic Affinity Matcher", type: "blue", level: 2, route: "modal", component: "KinematicMatcherModal.tsx", store: "semanticKinematicEngine.ts", desc: "NLP vector search translating driver desires to chassis dynamics." },
+            { id: "ex-motorworld", label: "Motorworld Analytics Codex", type: "blue", level: 2, route: "modal", component: "MotorworldCodexModal.tsx", store: "DVSA MOT / HowManyLeft", desc: "Official DVSA MOT pass rates, HowManyLeft UK census, and fluid specs." },
+            { id: "ex-scatter", label: "Fleet Scatter Analytics", type: "grey", level: 2, route: "/explore", component: "FleetScatterPlot.tsx", store: "BHP/Tonne Calculations", desc: "Interactive scatter plot: Power-to-Weight (BHP/T) vs 0-60 MPH acceleration." },
             {
               id: "ex-cards",
               label: "Vehicle Spec Census Cards",
               type: "grey",
               level: 2,
               route: "/explore",
+              component: "ExploreCard.tsx",
+              store: "ukAutomotiveUniverse.ts",
               desc: "A-to-Z database of 24+ iconic cars with soundtrack signatures and inspection points.",
               children: [
-                { id: "exc-spec", label: "Engine & Gearbox Specs", type: "grey", level: 3, route: "card", desc: "Engine codes (S58, 2JZ, RB26, EA888), redlines, and induction." },
-                { id: "exc-buyer", label: "Critical Inspection Points", type: "grey", level: 3, route: "card", desc: "Common mechanical vulnerabilities and pre-purchase guidance." }
+                { id: "exc-spec", label: "Engine & Gearbox Specs", type: "grey", level: 3, route: "card", component: "ExploreCard.tsx#Specs", store: "Chassis DB", desc: "Engine codes (S58, 2JZ, RB26, EA888), redlines, and induction." },
+                { id: "exc-buyer", label: "Critical Inspection Points", type: "grey", level: 3, route: "card", component: "ExploreCard.tsx#Checklist", store: "Buyer Codex", desc: "Common mechanical vulnerabilities and pre-purchase guidance." }
               ]
             }
           ]
         },
 
-        // ── 6. CLUBS & SANCTUARIES ──
+        // 6. CLUBS & SANCTUARIES
         {
           id: "clubs",
           label: "Clubs & Sanctuaries",
           type: "orange",
           level: 1,
           route: "/communities",
+          component: "src/pages/CommunitiesPage.tsx",
+          store: "mockCommunities",
           desc: "Decentralized custodian cooperatives, shared tool halls, and regional driving convoys.",
           children: [
-            {
-              id: "cl-cats",
-              label: "Community Category Tabs",
-              type: "grey",
-              level: 2,
-              route: "/communities",
-              desc: "Technical Specialists, Motorsport & Performance, Aesthetic Subcultures, Overland."
-            },
+            { id: "cl-cats", label: "Community Category Tabs", type: "grey", level: 2, route: "/communities", component: "CommunitiesPage.tsx#Tabs", store: "Tab State", desc: "Technical Specialists, Motorsport & Performance, Aesthetic Subcultures, Overland." },
             {
               id: "cl-cards",
               label: "Cooperative Garage Cards",
               type: "grey",
               level: 2,
               route: "/communities",
+              component: "CommunityCard.tsx",
+              store: "mockCommunities",
               desc: "Active custodian halls (e.g. Midlands Collective, Highland Overland Guild).",
               children: [
-                { id: "cl-join", label: "Join Cooperative Action", type: "blue", level: 3, route: "action", desc: "Request membership to shared tool cabinet and workshop bay." },
-                { id: "cl-pro", label: "Verified Partner Link", type: "grey", level: 3, route: "/pro", desc: "Links cooperative to their verified pro mechanic partner." }
+                { id: "cl-join", label: "Join Cooperative Action", type: "blue", level: 3, route: "action", component: "JoinClubModal.tsx", store: "Membership State", desc: "Request membership to shared tool cabinet and workshop bay." },
+                { id: "cl-pro", label: "Verified Partner Link", type: "grey", level: 3, route: "/pro", component: "RouterLink", store: "GaragePro Link", desc: "Links cooperative to their verified pro mechanic partner." }
               ]
             }
           ]
         },
 
-        // ── 7. GARAGE PRO SPECIALIST ATELIER ──
+        // 7. GARAGE PRO SPECIALIST ATELIER
         {
           id: "pro",
           label: "Garage Pro Atelier",
           type: "orange",
           level: 1,
           route: "/pro",
+          component: "src/pages/GarageProPage.tsx",
+          store: "mockSpecialists",
           desc: "Directory of certified independent marque specialists, engine machinists, and dyno cells.",
           children: [
-            {
-              id: "pro-dir",
-              label: "Specialist Directory Filter",
-              type: "grey",
-              level: 2,
-              route: "/pro",
-              desc: "Filter by trade: Mechanics, Engine Builders, Dyno Cells, Geometry Specialists."
-            },
+            { id: "pro-dir", label: "Specialist Directory Filter", type: "grey", level: 2, route: "/pro", component: "GarageProPage.tsx#Filter", store: "Trade Filter State", desc: "Filter by trade: Mechanics, Engine Builders, Dyno Cells, Geometry Specialists." },
             {
               id: "pro-cards",
               label: "Verified Workshop Profiles",
               type: "grey",
               level: 2,
               route: "/pro",
+              component: "SpecialistCard.tsx",
+              store: "WorkshopRepository",
               desc: "Certified shops (Evolve, Apex Tyres) with verified jobs counter and in-house tools.",
               children: [
-                { id: "pro-sub", label: "Workshop Terminal Signup", type: "blue", level: 3, route: "payment", desc: "Monthly £99-£249 subscription to issue verified service stamps." }
+                { id: "pro-sub", label: "Workshop Terminal Signup", type: "blue", level: 3, route: "payment", component: "WorkshopSignupModal.tsx", store: "Stripe Billing", desc: "Monthly £99-£249 subscription to issue verified service stamps." }
               ]
             }
           ]
         },
 
-        // ── 8. ATELIER LABS & DIAGNOSTICS SUITES ──
+        // 8. ATELIER LABS & DIAGNOSTICS SUITES
         {
           id: "labs",
           label: "Atelier Suite Labs",
           type: "orange",
           level: 1,
           route: "navbar-flyout",
+          component: "src/components/AtelierSuiteDrawer.tsx",
+          store: "Suite Controller",
           desc: "Dedicated engineering and logistics suites accessible from the global navigation.",
           children: [
-            { id: "lab-radar", label: "Pass Grip Radar", type: "blue", level: 2, route: "modal", desc: "Open-Meteo live weather, road surface temperature, and friction μ radar." },
-            { id: "lab-sound", label: "Exhaust Sound Studio", type: "blue", level: 2, route: "modal", desc: "Anti-ASD microphone analysis of mechanical valvetrain clatter." },
-            { id: "lab-carnet", label: "ATA Carnet Transit Vault", type: "blue", level: 2, route: "modal", desc: "FIA/LCCI digital border transit passport with QR manifest." },
-            { id: "lab-stamp", label: "Workshop Stamping Desk", type: "blue", level: 2, route: "modal", desc: "Cryptographic SHA-256 mechanic digital service seal." },
-            { id: "lab-chamber", label: "Chamber Designer Studio", type: "blue", level: 2, route: "modal", desc: "Architectural 3D showroom lighting and acoustic designer." },
-            { id: "lab-telemetry", label: "Vehicle Telemetry Inspector", type: "blue", level: 2, route: "modal", desc: "Live CAN bus telemetry streams and ledger block inspector." }
+            { id: "lab-radar", label: "Pass Grip Radar", type: "blue", level: 2, route: "modal", component: "PassWeatherBinnacle.tsx", store: "OpenMeteo / gripCalculation.ts", desc: "Open-Meteo live weather, road surface temperature, and friction μ radar." },
+            { id: "lab-sound", label: "Exhaust Sound Studio", type: "blue", level: 2, route: "modal", component: "SoundStudioModal.tsx", store: "acousticFingerprint.ts", desc: "Anti-ASD microphone analysis of mechanical valvetrain clatter." },
+            { id: "lab-carnet", label: "ATA Carnet Transit Vault", type: "blue", level: 2, route: "modal", component: "CarnetModal.tsx", store: "transitCarnet.ts", desc: "FIA/LCCI digital border transit passport with QR manifest." },
+            { id: "lab-stamp", label: "Workshop Stamping Desk", type: "blue", level: 2, route: "modal", component: "WorkshopStampModal.tsx", store: "workshopStamping.ts", desc: "Cryptographic SHA-256 mechanic digital service seal." },
+            { id: "lab-chamber", label: "Chamber Designer Studio", type: "blue", level: 2, route: "modal", component: "ChamberDesignerModal.tsx", store: "Three.js / Lighting State", desc: "Architectural 3D showroom lighting and acoustic designer." },
+            { id: "lab-telemetry", label: "Vehicle Telemetry Inspector", type: "blue", level: 2, route: "modal", component: "TelemetryInspectorModal.tsx", store: "CAN Bus Stream", desc: "Live CAN bus telemetry streams and ledger block inspector." }
           ]
         },
 
-        // ── 9. GLOBAL CONTROLS & PRIVACY ──
+        // 9. GLOBAL CONTROLS & PRIVACY
         {
           id: "controls",
           label: "Global Platform Controls",
           type: "orange",
           level: 1,
           route: "navbar",
+          component: "src/components/TopNav.tsx",
+          store: "Global Settings",
           desc: "Command palette, privacy geofence auditing, and luxury styling engines.",
           children: [
-            { id: "gc-cmd", label: "Command Palette (⌘K)", type: "blue", level: 2, route: "modal", desc: "Universal search across vehicles, passes, tools, and actions." },
-            { id: "gc-priv", label: "800m Privacy Veil Audit", type: "blue", level: 2, route: "modal", desc: "Residential address cloaking status and plate protection audit." },
-            { id: "gc-pts", label: "PTS Color Palette Selector", type: "blue", level: 2, route: "dropdown", desc: "Switches between 5 luxury cockpit themes (White & Gold, Obsidian, etc.)." },
-            { id: "gc-font", label: "Typography Mode Tuner", type: "blue", level: 2, route: "dropdown", desc: "Switches between Haute Horlogerie, Modernist, and Technical fonts." }
+            { id: "gc-cmd", label: "Command Palette (⌘K)", type: "blue", level: 2, route: "modal", component: "CommandPaletteModal.tsx", store: "QuickIndex", desc: "Universal search across vehicles, passes, tools, and actions." },
+            { id: "gc-priv", label: "800m Privacy Veil Audit", type: "blue", level: 2, route: "modal", component: "PrivacyAuditModal.tsx", store: "Geofencing Engine", desc: "Residential address cloaking status and plate protection audit." },
+            { id: "gc-pts", label: "PTS Color Palette Selector", type: "blue", level: 2, route: "dropdown", component: "ThemeSwitcher.tsx", store: "CSS Variables", desc: "Switches between 5 luxury cockpit themes (White & Gold, Obsidian, etc.)." },
+            { id: "gc-font", label: "Typography Mode Tuner", type: "blue", level: 2, route: "dropdown", component: "FontSwitcher.tsx", store: "Font Family Root", desc: "Switches between Haute Horlogerie, Modernist, and Technical fonts." }
           ]
         },
 
-        // ── 10. ABOUT, CASE STUDY & FAQ ──
+        // 10. ABOUT & EXECUTIVE BRIEFINGS
         {
           id: "about",
           label: "About & Case Study",
           type: "orange",
           level: 1,
           route: "/about",
+          component: "src/pages/AboutPage.tsx",
+          store: "Static Manifesto",
           desc: "Company manifesto, architectural blueprint, FAQ, and downloadable executive prospectus.",
           children: [
-            { id: "ab-manifesto", label: "Founding Manifesto", type: "grey", level: 2, route: "/about#manifesto", desc: "Why we built DATUM: restoring the mechanical spark and open garage doors." },
-            { id: "ab-blueprint", label: "Architecture Blueprint", type: "grey", level: 2, route: "/about#blueprint", desc: "Technical breakdown of DAG provenance, friction fusion, and privacy cloaking." },
-            { id: "ab-pdf", label: "Download Founder PDF", type: "blue", level: 2, route: "/DATUM_Founder_Executive_Briefing.pdf", desc: "Direct download link to executive prospectus PDF." },
-            { id: "ab-faq", label: "Enterprise & Driver FAQ", type: "grey", level: 2, route: "/about#faq", desc: "Answers to hard questions regarding fraud, OEMs, and data ownership." }
+            { id: "ab-manifesto", label: "Founding Manifesto", type: "grey", level: 2, route: "/about#manifesto", component: "AboutPage.tsx", store: "Philosophy Codex", desc: "Why we built DATUM: restoring the mechanical spark and open garage doors." },
+            { id: "ab-blueprint", label: "Architecture Blueprint", type: "grey", level: 2, route: "/about#blueprint", component: "AboutPage.tsx", store: "Topology Docs", desc: "Technical breakdown of DAG provenance, friction fusion, and privacy cloaking." },
+            { id: "ab-pdf", label: "Download Founder PDF", type: "blue", level: 2, route: "/DATUM_Founder_Executive_Briefing.pdf", component: "Edge PDF Engine", store: "Static Asset", desc: "Direct download link to executive prospectus PDF." },
+            { id: "ab-faq", label: "Enterprise & Driver FAQ", type: "grey", level: 2, route: "/about#faq", component: "AboutPage.tsx", store: "FAQ Accordion", desc: "Answers to hard questions regarding fraud, OEMs, and data ownership." }
           ]
         },
 
-        // ── 11. PLANNED ROADMAP (DASHED OUTLINE) ──
+        // 11. PLANNED ROADMAP
         {
           id: "roadmap",
           label: "Planned Roadmap",
           type: "orange",
           level: 1,
           route: "roadmap",
+          component: "Specs Documentation",
+          store: "Future Pipeline",
           desc: "Architectural features designed in specifications but not yet compiled into production code.",
           children: [
-            { id: "rm-obd", label: "OBD-II Bluetooth Live Stream", type: "dashed", level: 2, route: "hardware", desc: "Direct BLE hardware dongle streaming live engine manifold sensors." },
-            { id: "rm-dvla", label: "DVLA Automated Title Handover", type: "dashed", level: 2, route: "gov-api", desc: "Direct governmental statutory digital title exchange upon escrow release." },
-            { id: "rm-chain", label: "Public Blockchain Settlement Anchor", type: "dashed", level: 2, route: "web3", desc: "Periodic cryptographic state-root rollup to public decentralized ledger." },
-            { id: "rm-carplay", label: "Apple CarPlay / Android Auto HUD", type: "dashed", level: 2, route: "mobile", desc: "In-dash live road surface grip and sector cadence telemetry." }
+            { id: "rm-obd", label: "OBD-II Bluetooth Live Stream", type: "dashed", level: 2, route: "hardware", component: "Web Bluetooth API", store: "BLE Dongle", desc: "Direct BLE hardware dongle streaming live engine manifold sensors." },
+            { id: "rm-dvla", label: "DVLA Automated Title Handover", type: "dashed", level: 2, route: "gov-api", component: "DVLA REST API", store: "Gov Gateway", desc: "Direct governmental statutory digital title exchange upon escrow release." },
+            { id: "rm-chain", label: "Public Blockchain Settlement Anchor", type: "dashed", level: 2, route: "web3", component: "Ethereum / Polygon Rollup", store: "State Root", desc: "Periodic cryptographic state-root rollup to public decentralized ledger." },
+            { id: "rm-carplay", label: "Apple CarPlay / Android Auto HUD", type: "dashed", level: 2, route: "mobile", component: "CarPlay Protocol", store: "In-Dash Bridge", desc: "In-dash live road surface grip and sector cadence telemetry." }
           ]
         }
       ]
     };
 
-    // ── Layout Geometry Calculation Engine ──
-    const NODE_WIDTH = 190;
-    const NODE_HEIGHT = 38;
-    const HORIZONTAL_GAP = 55;
+    // ── DATASET 2: POSH SYSTEM DESIGN TOPOLOGY (END-TO-END ARCHITECTURE) ──
+    const TOPOLOGY_DATA = {
+      tiers: [
+        {
+          id: "tier-1",
+          name: "TIER 1: PRESENTATION & KINEMATICS",
+          subtitle: "React 19 + TypeScript + Spring Physics Gestures",
+          nodes: [
+            { id: "top-react", label: "React 19 Concurrent Root", type: "orange", route: "src/main.tsx", desc: "Hydrates Virtual DOM with concurrent rendering and instant state transitions." },
+            { id: "top-physics", label: "Fluid Spring Dynamics Engine", type: "blue", route: "src/utils/fluidPhysics.ts", desc: "stepSpring1D underdamped harmonic oscillator and gesture VelocityTracker." },
+            { id: "top-binnacle", label: "Obsidian Gauge Kinematics", type: "grey", route: "src/utils/dashboardKinematics.ts", desc: "Computes authentic tachometer sweep (270°), manifold boost, and lateral G-coords." },
+            { id: "top-theme", label: "Luxury PTS Dynamic Theming", type: "grey", route: "src/context/ThemeContext.tsx", desc: "Real-time CSS variable injector for 5 bespoke cockpit palettes." }
+          ]
+        },
+        {
+          id: "tier-2",
+          name: "TIER 2: DOMAIN MANAGERS & STATE",
+          subtitle: "Reactive Repositories & Context Orchestration",
+          nodes: [
+            { id: "top-veh-ctx", label: "Active Vehicle Persona Context", type: "orange", route: "src/context/ActiveVehicleContext.tsx", desc: "Broadcasts active stable vehicle telemetry to all child pages." },
+            { id: "top-repo-veh", label: "Vehicle Ledger Repository", type: "grey", route: "src/services/VehicleRepository.ts", desc: "In-memory & localStorage persistent store for vehicle specs and dossiers." },
+            { id: "top-repo-feed", label: "Community Feed Repository", type: "grey", route: "src/services/FeedRepository.ts", desc: "Manages journal streams, dynamic respects, and smart-merges user posts." },
+            { id: "top-repo-shop", label: "Workshop & Atelier Registry", type: "grey", route: "src/services/WorkshopRepository.ts", desc: "Verifies specialist mechanic accreditation and historical service hashes." }
+          ]
+        },
+        {
+          id: "tier-3",
+          name: "TIER 3: CORE ALGORITHMIC ENGINES",
+          subtitle: "Pure Automotive Mathematics & Signal Processing",
+          nodes: [
+            { id: "top-alg-grip", label: "Dynamic Surface Grip μ Engine", type: "blue", route: "src/utils/gripCalculation.ts", desc: "Calculates tire adhesion from asphalt moisture, road temp, and compound heat." },
+            { id: "top-alg-fft", label: "Acoustic Valvetrain FFT Analyzer", type: "blue", route: "src/utils/acousticFingerprint.ts", desc: "Anti-ASD harmonic decomposition isolating mechanical clatter from speaker audio." },
+            { id: "top-alg-nlp", label: "Semantic Kinematic NLP Matcher", type: "blue", route: "src/utils/semanticKinematicEngine.ts", desc: "Deconstructs automotive driver desires into multi-dimensional chassis vectors." },
+            { id: "top-alg-rank", label: "Respect & Cadence Ranking", type: "blue", route: "src/utils/respectRatingEngine.ts", desc: "Awards S and EX ranks for mountain pass drives based on thermal patience." }
+          ]
+        },
+        {
+          id: "tier-4",
+          name: "TIER 4: CRYPTOGRAPHIC SOVEREIGN VAULT",
+          subtitle: "Immutable Lineage & Fraud Defense",
+          nodes: [
+            { id: "top-crypto-dag", label: "SHA-256 Provenance DAG", type: "orange", route: "src/utils/workshopStamping.ts", desc: "Chains service events into an immutable, mathematically verifiable audit log." },
+            { id: "top-crypto-carnet", label: "ATA Carnet Logistics Vault", type: "blue", route: "src/utils/transitCarnet.ts", desc: "Issues time-locked border transit tokens and LCCI/FIA compliant manifests." },
+            { id: "top-crypto-bom", label: "Verified Supply Chain BOM", type: "blue", route: "src/utils/supplyChainBom.ts", desc: "Counterfeit part defense sealing component serials with 64-char hashes." },
+            { id: "top-crypto-title", label: "Custody Title Handover Protocol", type: "blue", route: "src/utils/custodyTransfer.ts", desc: "Dual-key cryptographic handover transitioning vehicle title between custodians." }
+          ]
+        },
+        {
+          id: "tier-5",
+          name: "TIER 5: STATUTORY & EXTERNAL TELEMETRY",
+          subtitle: "Live Government & Environmental Gateways",
+          nodes: [
+            { id: "top-ext-mot", label: "DVSA UK Statutory MOT Gateway", type: "orange", route: "src/utils/motorworldIntelligence.ts", desc: "Direct integration with official UK vehicle testing database for pass rates." },
+            { id: "top-ext-meteo", label: "Open-Meteo Road Surface API", type: "blue", route: "src/utils/openMeteoWeather.ts", desc: "Real-time satellite feed for dew point, road surface temps, and precipitation." },
+            { id: "top-ext-audio", label: "Web Audio Synthesizer Core", type: "grey", route: "src/utils/soundEffects.ts", desc: "Zero-dependency sound generator for starter motors, rev flares, and shifts." },
+            { id: "top-ext-hml", label: "HowManyLeft UK Automotive Census", type: "grey", route: "src/data/ukAutomotiveUniverse.ts", desc: "Historical fleet tracking calculating vehicle rarity tiers across the UK." }
+          ]
+        }
+      ]
+    };
+
+    // ── GEOMETRY & STATE ENGINE ──
+    const NODE_WIDTH = 200;
+    const NODE_HEIGHT = 40;
+    const HORIZONTAL_GAP = 60;
     const VERTICAL_GAP = 16;
-    const ROOT_WIDTH = 260;
-    const ROOT_HEIGHT = 75;
+    const ROOT_WIDTH = 270;
+    const ROOT_HEIGHT = 80;
 
     let nodePositions = new Map();
     let collapsedNodes = new Set();
@@ -970,8 +1550,8 @@
 
     // Viewport transform state
     let scale = 0.85;
-    let panX = 120;
-    let panY = 80;
+    let panX = 140;
+    let panY = 70;
     let isDragging = false;
     let startX, startY;
 
@@ -980,15 +1560,35 @@
     const nodesLayer = document.getElementById("nodes-layer");
     const connectorCanvas = document.getElementById("connector-canvas");
     const searchInput = document.getElementById("searchInput");
+    const zoomDisplay = document.getElementById("zoomDisplay");
+    const radarCanvas = document.getElementById("radarCanvas");
+    const radarCtx = radarCanvas.getContext("2d");
+    const radarViewport = document.getElementById("radarViewport");
 
-    // Initialize Layout
-    function calculateTreeLayout() {
+    // Initialize Layout based on active view mode
+    function calculateLayout() {
       nodePositions.clear();
-      let currentY = 160;
 
-      // Position Root Node
+      if (currentView === "sitemap") {
+        calculateSitemapTreeLayout();
+      } else {
+        calculateTopologyLayout();
+      }
+
+      // Update SVG size
+      const positions = Array.from(nodePositions.values());
+      const maxX = Math.max(...positions.map(p => p.x + p.width)) + 300;
+      const maxY = Math.max(...positions.map(p => p.y + p.height)) + 300;
+      connectorCanvas.setAttribute("width", maxX);
+      connectorCanvas.setAttribute("height", maxY);
+
+      // Render radar
+      drawRadar(maxX, maxY);
+    }
+
+    function calculateSitemapTreeLayout() {
       const rootX = 60;
-      const rootY = 600;
+      const rootY = 620;
       nodePositions.set("root", {
         x: rootX,
         y: rootY,
@@ -997,11 +1597,13 @@
         data: SITEMAP_DATA
       });
 
-      // Position Level 1 Branches (Main Sections)
-      let branchY = 80;
+      let branchY = 90;
       const L1_X = rootX + ROOT_WIDTH + 140;
 
-      SITEMAP_DATA.children.forEach((l1, idx) => {
+      SITEMAP_DATA.children.forEach(l1 => {
+        // Filter check
+        if (!nodeMatchesFilter(l1)) return;
+
         const isCollapsed = collapsedNodes.has(l1.id);
         const l1Height = calculateSubtreeHeight(l1);
         const l1CenterY = branchY + (l1Height / 2) - (NODE_HEIGHT / 2);
@@ -1009,23 +1611,17 @@
         nodePositions.set(l1.id, {
           x: L1_X,
           y: l1CenterY,
-          width: NODE_WIDTH + 20,
+          width: NODE_WIDTH + 24,
           height: NODE_HEIGHT + 6,
           data: l1
         });
 
         if (!isCollapsed && l1.children) {
-          layoutChildren(l1.children, L1_X + NODE_WIDTH + 20 + HORIZONTAL_GAP, branchY);
+          layoutChildren(l1.children, L1_X + NODE_WIDTH + 24 + HORIZONTAL_GAP, branchY);
         }
 
         branchY += Math.max(l1Height + 36, NODE_HEIGHT + 36);
       });
-
-      // Size SVG canvas to encompass entire scene
-      const maxX = Math.max(...Array.from(nodePositions.values()).map(p => p.x + p.width)) + 300;
-      const maxY = Math.max(...Array.from(nodePositions.values()).map(p => p.y + p.height)) + 300;
-      connectorCanvas.setAttribute("width", maxX);
-      connectorCanvas.setAttribute("height", maxY);
     }
 
     function calculateSubtreeHeight(node) {
@@ -1034,7 +1630,9 @@
       }
       let h = 0;
       node.children.forEach(child => {
-        h += calculateSubtreeHeight(child) + VERTICAL_GAP;
+        if (nodeMatchesFilter(child)) {
+          h += calculateSubtreeHeight(child) + VERTICAL_GAP;
+        }
       });
       return Math.max(h - VERTICAL_GAP, NODE_HEIGHT);
     }
@@ -1042,6 +1640,8 @@
     function layoutChildren(children, startX, startY) {
       let curY = startY;
       children.forEach(child => {
+        if (!nodeMatchesFilter(child)) return;
+
         const isCollapsed = collapsedNodes.has(child.id);
         const childHeight = calculateSubtreeHeight(child);
         const centerY = curY + (childHeight / 2) - (NODE_HEIGHT / 2);
@@ -1062,14 +1662,62 @@
       });
     }
 
-    // Render Nodes & Connecting Orthogonal Lines
+    // Topology View Layout (5 horizontal architectural tiers)
+    function calculateTopologyLayout() {
+      const TIER_X_GAP = 320;
+      const START_X = 60;
+      const START_Y = 100;
+
+      TOPOLOGY_DATA.tiers.forEach((tier, tIdx) => {
+        const tierX = START_X + (tIdx * TIER_X_GAP);
+        let curY = START_Y + 70;
+
+        // Header node
+        nodePositions.set(tier.id, {
+          x: tierX,
+          y: START_Y,
+          width: 260,
+          height: 50,
+          data: {
+            id: tier.id,
+            label: tier.name,
+            sub: tier.subtitle,
+            type: "topology-header",
+            level: 1,
+            desc: `Architectural stratum: ${tier.subtitle}`
+          }
+        });
+
+        // Child nodes inside tier
+        tier.nodes.forEach(node => {
+          nodePositions.set(node.id, {
+            x: tierX + 10,
+            y: curY,
+            width: 240,
+            height: NODE_HEIGHT + 4,
+            data: node
+          });
+          curY += NODE_HEIGHT + 24;
+        });
+      });
+    }
+
+    function nodeMatchesFilter(node) {
+      if (activeFilter === "all") return true;
+      return node.type === activeFilter;
+    }
+
+    // ── RENDER ENGINE ──
     function renderMap() {
-      calculateTreeLayout();
+      calculateLayout();
       nodesLayer.innerHTML = "";
       connectorCanvas.innerHTML = "";
 
-      // Draw Connectors first
-      renderConnectors(SITEMAP_DATA);
+      if (currentView === "sitemap") {
+        renderSitemapConnectors(SITEMAP_DATA);
+      } else {
+        renderTopologyConnectors();
+      }
 
       // Render Nodes
       nodePositions.forEach((pos, id) => {
@@ -1083,6 +1731,13 @@
           nodeEl.innerHTML = `
             <div class="root-logo">${d.label}</div>
             <div class="root-sub">${d.sub}</div>
+            <div class="root-badge">SOVEREIGN CORE</div>
+          `;
+        } else if (d.type === "topology-header") {
+          nodeEl.className = "topology-header-card";
+          nodeEl.innerHTML = `
+            <div class="tier-title">${d.label}</div>
+            <div class="tier-sub">${d.sub}</div>
           `;
         } else {
           nodeEl.className = `node-card node-${d.type} ${selectedNodeId === id ? 'selected' : ''}`;
@@ -1092,9 +1747,16 @@
             collapseHtml = `<span class="collapse-badge">${isCollapsed ? '+' : '−'}</span>`;
           }
 
+          let dotHtml = `<span class="node-dot"></span>`;
+
           nodeEl.innerHTML = `
-            <span>${d.label}</span>
-            ${collapseHtml}
+            <div class="node-left">
+              ${dotHtml}
+              <span>${d.label}</span>
+            </div>
+            <div class="node-right">
+              ${collapseHtml}
+            </div>
           `;
         }
 
@@ -1117,7 +1779,7 @@
       updateTransform();
     }
 
-    function renderConnectors(parent) {
+    function renderSitemapConnectors(parent) {
       if (collapsedNodes.has(parent.id) || !parent.children) return;
 
       const pPos = nodePositions.get(parent.id);
@@ -1127,13 +1789,15 @@
       const pCenterY = pPos.y + (pPos.height / 2);
 
       parent.children.forEach(child => {
+        if (!nodeMatchesFilter(child)) return;
+
         const cPos = nodePositions.get(child.id);
         if (!cPos) return;
 
         const cLeftX = cPos.x;
         const cCenterY = cPos.y + (cPos.height / 2);
 
-        // Orthogonal / cubic bezier curve linking parent to child
+        // Cubic bezier spline
         const midX = pRightX + (cLeftX - pRightX) * 0.5;
         const pathData = `M ${pRightX} ${pCenterY} C ${midX} ${pCenterY}, ${midX} ${cCenterY}, ${cLeftX} ${cCenterY}`;
 
@@ -1142,11 +1806,82 @@
         path.setAttribute("class", `tree-link ${parent.type === 'orange' ? 'active-branch' : ''}`);
         connectorCanvas.appendChild(path);
 
-        renderConnectors(child);
+        renderSitemapConnectors(child);
       });
     }
 
-    // Interactive Actions
+    function renderTopologyConnectors() {
+      // Connect tier header to each tier node, and connect adjacent tiers
+      for (let t = 0; t < TOPOLOGY_DATA.tiers.length - 1; t++) {
+        const curTier = TOPOLOGY_DATA.tiers[t];
+        const nextTier = TOPOLOGY_DATA.tiers[t + 1];
+
+        curTier.nodes.forEach((cNode, idx) => {
+          const targetNode = nextTier.nodes[idx % nextTier.nodes.length];
+          const pPos = nodePositions.get(cNode.id);
+          const cPos = nodePositions.get(targetNode.id);
+
+          if (!pPos || !cPos) return;
+
+          const pRightX = pPos.x + pPos.width;
+          const pCenterY = pPos.y + (pPos.height / 2);
+          const cLeftX = cPos.x;
+          const cCenterY = cPos.y + (cPos.height / 2);
+
+          const midX = pRightX + (cLeftX - pRightX) * 0.5;
+          const pathData = `M ${pRightX} ${pCenterY} C ${midX} ${pCenterY}, ${midX} ${cCenterY}, ${cLeftX} ${cCenterY}`;
+
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute("d", pathData);
+          path.setAttribute("class", "tree-link topology-link");
+          connectorCanvas.appendChild(path);
+        });
+      }
+    }
+
+    // ── INTERACTIVE ACTIONS & INSPECTOR ──
+    function selectNode(id) {
+      selectedNodeId = id;
+      const pos = nodePositions.get(id);
+      if (!pos) return;
+
+      const d = pos.data;
+      if (d.type === "topology-header") return;
+
+      document.getElementById("inspTitle").textContent = d.label;
+      document.getElementById("inspLevel").textContent = `Tier ${d.level || 1} Specification`;
+      document.getElementById("inspRoute").textContent = d.route || "/";
+      
+      const typeLabels = {
+        "root": "Root Architecture Core",
+        "orange": "Level 1: Main Platform Module",
+        "grey": "Level 2: Content Page / Sub-View",
+        "blue": "Level 3: Key Trigger / Modal Action",
+        "dashed": "Planned Architectural Roadmap"
+      };
+      document.getElementById("inspType").textContent = typeLabels[d.type] || "Architectural Node";
+      document.getElementById("inspComponent").textContent = d.component || "src/App.tsx";
+      document.getElementById("inspStore").textContent = d.store || "ActiveVehicleContext / DAG";
+      document.getElementById("inspDesc").textContent = d.desc || "Verified component in the DATUM automotive codebase.";
+      
+      // Update Launch Button
+      const launchBtn = document.getElementById("inspLaunchBtn");
+      let appUrl = "http://localhost:5173";
+      if (d.route && d.route.startsWith("/")) {
+        appUrl += d.route.replace(":carId", "car-gt3-992").replace(":id", "car-gt3-992").replace(":driveId", "drive-snake-pass");
+      }
+      launchBtn.href = appUrl;
+
+      document.getElementById("inspectorSheet").classList.add("open");
+      renderMap();
+    }
+
+    function closeInspector() {
+      document.getElementById("inspectorSheet").classList.remove("open");
+      selectedNodeId = null;
+      renderMap();
+    }
+
     function toggleNodeCollapse(id) {
       if (collapsedNodes.has(id)) {
         collapsedNodes.delete(id);
@@ -1159,7 +1894,6 @@
     function toggleExpandAll() {
       const btn = document.getElementById("expandBtn");
       if (collapsedNodes.size === 0) {
-        // Collapse all L1
         SITEMAP_DATA.children.forEach(c => collapsedNodes.add(c.id));
         btn.textContent = "Expand All";
       } else {
@@ -1169,39 +1903,38 @@
       renderMap();
     }
 
-    function selectNode(id) {
-      selectedNodeId = id;
-      const pos = nodePositions.get(id);
-      if (!pos) return;
+    function switchView(mode) {
+      currentView = mode;
+      document.getElementById("tabSitemap").classList.toggle("active", mode === "sitemap");
+      document.getElementById("tabTopology").classList.toggle("active", mode === "topology");
+      document.getElementById("legendBox").style.display = mode === "sitemap" ? "flex" : "none";
+      document.getElementById("filterBar").style.display = mode === "sitemap" ? "flex" : "none";
 
-      const d = pos.data;
-      document.getElementById("inspTitle").textContent = d.label;
-      document.getElementById("inspLevel").textContent = `Level ${d.level || 0}`;
-      document.getElementById("inspRoute").textContent = d.route || "/";
-      
-      const typeLabels = {
-        "root": "Root Architecture Emblem",
-        "orange": "Main Level-1 Navigation Section",
-        "grey": "Content Page / Sub-View",
-        "blue": "Key Trigger / Action Modal",
-        "dashed": "Planned Architectural Feature"
-      };
-      document.getElementById("inspType").textContent = typeLabels[d.type] || "Application View";
-      document.getElementById("inspDesc").textContent = d.desc || "Verified component in the DATUM atelier codebase.";
-      
-      document.getElementById("inspectorCard").classList.add("open");
+      resetView();
+    }
+
+    function setFilter(filter, el) {
+      activeFilter = filter;
+      document.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("active"));
+      el.classList.add("active");
       renderMap();
     }
 
-    function closeInspector() {
-      document.getElementById("inspectorCard").classList.remove("open");
-      selectedNodeId = null;
+    function toggleTheme() {
+      const body = document.body;
+      const current = body.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      body.setAttribute("data-theme", next);
+      document.getElementById("themeBtn").textContent = next === "dark" ? "🌙" : "☀️";
       renderMap();
     }
 
-    // Pan & Zoom Engine
+    // ── PAN & ZOOM ENGINE ──
     function updateTransform() {
       scene.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      zoomDisplay.textContent = `${Math.round(scale * 100)}%`;
+      document.getElementById("radarCoords").textContent = `X:${Math.round(-panX)} Y:${Math.round(-panY)}`;
+      updateRadarViewport();
     }
 
     viewport.addEventListener("mousedown", (e) => {
@@ -1230,7 +1963,7 @@
       const mouseY = e.clientY;
 
       let newScale = e.deltaY < 0 ? scale * zoomFactor : scale / zoomFactor;
-      newScale = Math.min(Math.max(newScale, 0.25), 2.5);
+      newScale = Math.min(Math.max(newScale, 0.25), 2.2);
 
       panX = mouseX - (mouseX - panX) * (newScale / scale);
       panY = mouseY - (mouseY - panY) * (newScale / scale);
@@ -1240,7 +1973,7 @@
     }, { passive: false });
 
     function zoomIn() {
-      scale = Math.min(scale * 1.2, 2.5);
+      scale = Math.min(scale * 1.2, 2.2);
       updateTransform();
     }
 
@@ -1250,29 +1983,32 @@
     }
 
     function resetView() {
-      scale = 0.72;
-      panX = 80;
-      panY = 40;
+      scale = currentView === "sitemap" ? 0.72 : 0.65;
+      panX = 90;
+      panY = 50;
       updateTransform();
     }
 
-    // Search filter
+    // ── SEARCH HIGHLIGHT & AUTO-PAN ──
     searchInput.addEventListener("input", (e) => {
       const q = e.target.value.toLowerCase().trim();
       document.querySelectorAll(".node-card").forEach(el => el.classList.remove("highlighted"));
 
       if (!q) return;
 
-      let matchCount = 0;
       let firstMatchPos = null;
 
       nodePositions.forEach((pos, id) => {
         const d = pos.data;
-        if (d.label.toLowerCase().includes(q) || (d.desc && d.desc.toLowerCase().includes(q)) || (d.route && d.route.toLowerCase().includes(q))) {
-          matchCount++;
+        if (!d.label) return;
+
+        const match = d.label.toLowerCase().includes(q) || 
+                      (d.desc && d.desc.toLowerCase().includes(q)) || 
+                      (d.route && d.route.toLowerCase().includes(q)) ||
+                      (d.component && d.component.toLowerCase().includes(q));
+
+        if (match) {
           if (!firstMatchPos) firstMatchPos = pos;
-          
-          // Find element and highlight
           const allEls = document.querySelectorAll(".node-card");
           allEls.forEach(el => {
             if (el.textContent.includes(d.label)) {
@@ -1282,7 +2018,6 @@
         }
       });
 
-      // Center on first match
       if (firstMatchPos) {
         panX = (window.innerWidth / 2) - (firstMatchPos.x * scale);
         panY = (window.innerHeight / 2) - (firstMatchPos.y * scale);
@@ -1290,7 +2025,69 @@
       }
     });
 
-    // Initial render
+    // Keyboard shortcut '/' to search
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "/" && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      }
+      if (e.key === "Escape") {
+        searchInput.blur();
+        closeInspector();
+      }
+    });
+
+    // ── RADAR MINIMAP ENGINE ──
+    let radarBounds = { width: 3000, height: 2000 };
+
+    function drawRadar(totalWidth, totalHeight) {
+      radarBounds.width = totalWidth;
+      radarBounds.height = totalHeight;
+
+      radarCanvas.width = 180;
+      radarCanvas.height = 100;
+
+      radarCtx.clearRect(0, 0, 180, 100);
+      const isDark = document.body.getAttribute("data-theme") === "dark";
+
+      // Draw dots for each node
+      nodePositions.forEach((pos, id) => {
+        const rx = (pos.x / totalWidth) * 180;
+        const ry = (pos.y / totalHeight) * 100;
+
+        if (pos.data.type === "orange" || pos.data.type === "root") {
+          radarCtx.fillStyle = "#F59E0B";
+        } else if (pos.data.type === "blue") {
+          radarCtx.fillStyle = "#38BDF8";
+        } else {
+          radarCtx.fillStyle = isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)";
+        }
+
+        radarCtx.beginPath();
+        radarCtx.arc(rx, ry, 2, 0, Math.PI * 2);
+        radarCtx.fill();
+      });
+
+      updateRadarViewport();
+    }
+
+    function updateRadarViewport() {
+      const viewW = window.innerWidth;
+      const viewH = window.innerHeight;
+
+      const rw = ((viewW / scale) / radarBounds.width) * 180;
+      const rh = ((viewH / scale) / radarBounds.height) * 100;
+      const rx = ((-panX / scale) / radarBounds.width) * 180;
+      const ry = ((-panY / scale) / radarBounds.height) * 100;
+
+      radarViewport.style.width = `${Math.min(rw, 180)}px`;
+      radarViewport.style.height = `${Math.min(rh, 100)}px`;
+      radarViewport.style.left = `${Math.max(0, Math.min(rx, 180 - rw))}px`;
+      radarViewport.style.top = `${Math.max(0, Math.min(ry, 100 - rh))}px`;
+    }
+
+    // Initial boot sequence
     renderMap();
     resetView();
   </script>
