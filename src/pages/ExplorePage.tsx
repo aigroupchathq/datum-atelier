@@ -8,8 +8,7 @@ import {
   parseKinematicSnippet,
   calculateKinematicMatch,
   CURATED_SNIPPETS,
-  type AlgorithmWeights,
-  type ExploreEntity
+  type AlgorithmWeights
 } from '../core/algorithm/semanticKinematicEngine';
 import {
   Search,
@@ -32,25 +31,37 @@ import {
   Activity,
   Zap,
   Mountain,
-  Gauge,
-  Cpu
+  Gauge
 } from 'lucide-react';
 
 const getCarProfileId = (handle: string): string => {
-  if (handle.includes('m3') || handle.includes('maya')) return 'car-maya-m3';
-  if (handle.includes('gt3') || handle.includes('kuro')) return 'car-kuro-gt3';
-  if (handle.includes('e30') || handle.includes('classic') || handle.includes('heritage')) return 'car-e30-retromod';
-  if (handle.includes('110') || handle.includes('overland') || handle.includes('defender')) return 'car-expedition-110';
+  const h = handle.toLowerCase();
+  if (h.includes('m3') || h.includes('maya') || h.includes('audi') || h.includes('b7')) return 'car-maya-m3';
+  if (h.includes('gt3') || h.includes('kuro') || h.includes('supercar') || h.includes('curator')) return 'car-kuro-gt3';
+  if (h.includes('e30') || h.includes('classic') || h.includes('heritage') || h.includes('mgb') || h.includes('nova') || h.includes('splitty') || h.includes('barn')) return 'car-e30-retromod';
+  if (h.includes('110') || h.includes('overland') || h.includes('defender') || h.includes('expedition') || h.includes('convoy')) return 'car-expedition-110';
   return 'car-maya-m3';
 };
 
-interface ExploreItem extends ExploreEntity {
+interface ExploreItem {
+  id: string;
+  category: 'pass' | 'track' | 'supercar' | 'build' | 'engine' | 'classic' | 'stance';
+  authorHandle: string;
+  authorName: string;
+  authorCar: string;
   images: string[];
   likesCount: number;
   commentsCount: number;
+  caption: string;
+  telemetryTag?: string;
   isMultiImage?: boolean;
   isVideoReel?: boolean;
+  isPro?: boolean;
   spanClass?: string;
+  purismScore?: number;
+  surfaceCondition?: 'dry' | 'damp' | 'frost';
+  peakLateralG?: number;
+  provenanceScore?: number;
 }
 
 const EXPLORE_ITEMS: ExploreItem[] = [
@@ -62,6 +73,7 @@ const EXPLORE_ITEMS: ExploreItem[] = [
     authorCar: 'BMW M3 Competition (G80)',
     images: [
       '/real_uk_m3_cottage.jpg',
+      '/clean_garage_m3.jpg',
       '/real_uk_driveway_wash.jpg'
     ],
     likesCount: 1420,
@@ -83,12 +95,14 @@ const EXPLORE_ITEMS: ExploreItem[] = [
     authorName: 'KURO',
     authorCar: 'Porsche 911 GT3 (992)',
     images: [
-      '/real_uk_gt3_suburb.jpg'
+      '/real_uk_gt3_suburb.jpg',
+      '/clean_garage_gt3.jpg'
     ],
     likesCount: 2890,
     commentsCount: 164,
     caption: 'British suburban block-paved driveway cold start. 4.0L naturally aspirated flat-six 9,000 RPM idle warm-up with 6-speed purist manual and Michelin Pilot Sport Cup 2 tyres.',
     telemetryTag: '9,000 RPM · 502 BHP',
+    isMultiImage: true,
     isVideoReel: true,
     purismScore: 95,
     surfaceCondition: 'dry',
@@ -99,20 +113,23 @@ const EXPLORE_ITEMS: ExploreItem[] = [
   {
     id: 'exp-03',
     category: 'track',
-    authorHandle: 'yuki_gr_yaris',
-    authorName: 'YUKI',
-    authorCar: 'Toyota GR Yaris Circuit',
+    authorHandle: 'outcast_vxr',
+    authorName: 'Outcast Racing',
+    authorCar: 'Vauxhall Zafira VXR Aero Spec',
     images: [
-      'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=90'
+      '/feed/zafira_vxr_outcast_black_red.jpg',
+      '/feed/widebody_zafira_speedhunters_aero.jpg'
     ],
-    likesCount: 840,
-    commentsCount: 52,
-    caption: 'Cadwell Park Hall Bends kerb ride. 28 PSI cold target hit 32 PSI hot perfectly under 1.42G sustained cornering load.',
+    likesCount: 1840,
+    commentsCount: 94,
+    caption: 'Cadwell Park Hall Bends kerb ride. 28 PSI cold target hit 32 PSI hot perfectly under 1.42G sustained cornering load. Brembo 6-pot forged calipers and Speedhunters aero splitters.',
     telemetryTag: '1:38.4 Cadwell · 1.42G',
-    purismScore: 75,
+    isMultiImage: true,
+    purismScore: 78,
     surfaceCondition: 'dry',
     peakLateralG: 1.42,
-    provenanceScore: 94
+    provenanceScore: 96,
+    isPro: true
   },
   {
     id: 'exp-04',
@@ -121,12 +138,14 @@ const EXPLORE_ITEMS: ExploreItem[] = [
     authorName: 'Driveway Detailing',
     authorCar: 'Sunday Decon Routine',
     images: [
-      '/real_uk_driveway_wash.jpg'
+      '/real_uk_driveway_wash.jpg',
+      '/clean_garage_m3.jpg'
     ],
     likesCount: 1980,
     commentsCount: 142,
     caption: 'Sunday 07:00 AM snow-foam pre-wash outside suburban semi. Bilt-Hamber touchless decon before the road run. Paint micrometer depth verified at 134 microns.',
     telemetryTag: 'Detailing · pH Neutral',
+    isMultiImage: true,
     isPro: true,
     purismScore: 80,
     surfaceCondition: 'damp',
@@ -135,21 +154,25 @@ const EXPLORE_ITEMS: ExploreItem[] = [
   },
   {
     id: 'exp-05',
-    category: 'supercar',
-    authorHandle: 'valkyrie_720s',
-    authorName: 'VALKYRIE',
-    authorCar: 'McLaren 720S Performance',
+    category: 'classic',
+    authorHandle: 'barn_concours',
+    authorName: 'Barn Heritage',
+    authorCar: 'Shelby Cobra & Ferrari 250 GT',
     images: [
-      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1200&q=90'
+      '/stone_garage_cobra_ferrari.jpg',
+      '/collective_atelier_hall.jpg'
     ],
     likesCount: 3410,
     commentsCount: 220,
-    caption: 'Papaya Spark in the evening shadows. 710 BHP twin-turbo V8, carbon monocage II, dry weight 1,419 kg with carbon ceramic stopping power.',
-    telemetryTag: '710 BHP · 1,419 kg',
-    purismScore: 50,
+    caption: 'Private Cotswolds stone barn collection resting in ambient dehumidified climate. Hand-formed aluminium bodywork and Weber twin-choke carburettor tune.',
+    telemetryTag: 'V8 & V12 · Concours',
+    spanClass: 'col-span-1 md:col-span-2 md:row-span-2',
+    isMultiImage: true,
+    isPro: true,
+    purismScore: 99,
     surfaceCondition: 'dry',
-    peakLateralG: 1.35,
-    provenanceScore: 96
+    peakLateralG: 0.88,
+    provenanceScore: 100
   },
   {
     id: 'exp-06',
@@ -158,74 +181,79 @@ const EXPLORE_ITEMS: ExploreItem[] = [
     authorName: 'RetroMod Dan',
     authorCar: 'BMW 318is (E30) Slicktop',
     images: [
-      '/real_uk_e30_terrace.jpg'
+      '/real_uk_e30_terrace.jpg',
+      '/heritage_wrenching_workshop.jpg'
     ],
     likesCount: 1250,
     commentsCount: 88,
     caption: 'Victorian terraced street residential parking. 1989 E30 318is factory slicktop sunroof-delete with M42 twin-cam, small-case 4.10 LSD, and period-correct BBS basketweaves.',
     telemetryTag: '1989 Analog · 1,120 kg',
+    isMultiImage: true,
     purismScore: 98,
     surfaceCondition: 'dry',
     peakLateralG: 0.95,
-    provenanceScore: 96,
+    provenanceScore: 98,
     isPro: true
   },
   {
     id: 'exp-07',
     category: 'pass',
-    authorHandle: 'uk_broads_club',
-    authorName: 'UK B-Roads',
-    authorCar: 'Collective Convoy',
+    authorHandle: 'overland_convoy',
+    authorName: 'Alpine Expedition',
+    authorCar: 'Winter Mountain Convoy',
     images: [
-      'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=90',
-      'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=90'
+      '/snow_mountain_overland_convoy.jpg',
+      '/real_uk_defender_farm.jpg'
     ],
     likesCount: 2190,
     commentsCount: 175,
-    caption: 'Midnight convoy through Snake Pass (A57) and Brecon Beacons. 16 cars running high peak summit over damp bitumen under clear moonlight.',
-    telemetryTag: '16 Cars · 42.8 mi Pass',
+    caption: 'Sub-zero high pass traverse with BFGoodrich tyres aired down for fresh powder and packed ice. Cryospheric telemetry logged with zero brake fade over 2,200m summit.',
+    telemetryTag: '2,240m Summit · Sub-Zero',
     isMultiImage: true,
-    spanClass: 'col-span-1 md:col-span-2 md:row-span-2',
-    purismScore: 78,
-    surfaceCondition: 'damp',
-    peakLateralG: 1.15,
+    purismScore: 74,
+    surfaceCondition: 'frost',
+    peakLateralG: 0.82,
     provenanceScore: 95
   },
   {
     id: 'exp-08',
     category: 'engine',
-    authorHandle: 'apex_engineering',
-    authorName: 'Apex Track',
-    authorCar: 'Specialist Dyno Cell',
+    authorHandle: 'heritage_works',
+    authorName: 'Atelier Workshop',
+    authorCar: 'Engine Bay Machining',
     images: [
-      'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=90'
+      '/heritage_wrenching_workshop.jpg',
+      '/clean_garage_m3.jpg'
     ],
-    likesCount: 960,
-    commentsCount: 68,
-    caption: 'S58 twin-turbo cylinder head port flow study. Akrapovič titanium exhaust downpipe installation and 80 PSI walnut shell media valve rejuvenation.',
-    telemetryTag: 'Dyno Cell 2 · +14 CFM',
+    likesCount: 1960,
+    commentsCount: 88,
+    caption: 'Cylinder head port flow study and crankshaft balancing on the engine stand. Akrapovič titanium system matched with bespoke inlet trumpets and 8,500 RPM valvetrain harmonics.',
+    telemetryTag: 'Specialist Bay · 8,500 RPM',
+    isMultiImage: true,
     isPro: true,
-    purismScore: 68,
+    purismScore: 88,
     surfaceCondition: 'dry',
     peakLateralG: 0.50,
     provenanceScore: 99
   },
   {
     id: 'exp-09',
-    category: 'stance',
-    authorHandle: 'bbs_archive',
-    authorName: 'Stance Guild',
-    authorCar: 'Porsche 964 Carrera RS',
+    category: 'classic',
+    authorHandle: 'sebring_classics',
+    authorName: 'Sebring Works',
+    authorCar: 'MGB Roadster Sebring Spec',
     images: [
-      'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=90'
+      '/feed/mgb_roadster_sebring_bwg_15t.jpg',
+      '/stone_garage_cobra_ferrari.jpg'
     ],
     likesCount: 3120,
     commentsCount: 240,
-    caption: 'Air-cooled 964 rotisserie build. Zero arch rub with custom 3-piece BBS LM offsets and unmolested factory seam-welded cosmoline.',
-    telemetryTag: 'Flush Offset · ET18',
-    purismScore: 94,
+    caption: 'Period Sebring wide-arch race conversions with Minilite magnesium wheels, straight-cut dog-box, and Weber 45 DCOE induction bark across Sussex lanes.',
+    telemetryTag: 'Sebring Arches · Weber 45',
+    isMultiImage: true,
+    purismScore: 96,
     surfaceCondition: 'dry',
-    peakLateralG: 1.05,
+    peakLateralG: 1.02,
     provenanceScore: 98
   },
   {
@@ -235,12 +263,14 @@ const EXPLORE_ITEMS: ExploreItem[] = [
     authorName: 'EXPEDITION',
     authorCar: 'Defender 110 V8 (L663)',
     images: [
-      '/real_uk_defender_farm.jpg'
+      '/real_uk_defender_farm.jpg',
+      '/snow_mountain_overland_convoy.jpg'
     ],
     likesCount: 1680,
     commentsCount: 104,
     caption: 'Yorkshire Dales stone barn driveway shakedown. BFGoodrich KO2 all-terrain tyres aired down to 18 PSI after Strata Florida river crossings with 900mm wading active.',
     telemetryTag: '900mm Wading · 18 PSI',
+    isMultiImage: true,
     purismScore: 60,
     surfaceCondition: 'damp',
     peakLateralG: 0.65,
@@ -250,39 +280,124 @@ const EXPLORE_ITEMS: ExploreItem[] = [
   {
     id: 'exp-11',
     category: 'track',
-    authorHandle: 'caffeine_machine',
-    authorName: 'Sunday Dawn',
-    authorCar: 'Dawn Patrol Gathering',
+    authorHandle: 'arden_nova',
+    authorName: 'Arden Performance',
+    authorCar: 'Vauxhall Nova Turbo (C20LET)',
     images: [
-      'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=90'
+      '/feed/nova_turbo_arden_k77_nva.jpg',
+      '/feed/widebody_zafira_speedhunters_aero.jpg'
     ],
-    likesCount: 4210,
-    commentsCount: 310,
-    caption: 'Caffeine & Machine 06:30 AM yard roll-call. Cold morning exhaust notes, Cotswolds B-road loop, and fresh roast coffee with fellow custodians.',
-    telemetryTag: 'Cotswolds Loop · 06:30 AM',
-    isVideoReel: true,
-    purismScore: 82,
+    likesCount: 2410,
+    commentsCount: 130,
+    caption: 'C20LET turbo swap with Quaife ATB differential and Speedline Alessio wheels. 310 BHP in an 830 kg chassis tearing through Curborough sprint circuit.',
+    telemetryTag: '310 BHP · 830 kg · C20LET',
+    isMultiImage: true,
+    purismScore: 85,
     surfaceCondition: 'dry',
-    peakLateralG: 0.85,
-    provenanceScore: 94
+    peakLateralG: 1.26,
+    provenanceScore: 95
   },
   {
     id: 'exp-12',
-    category: 'supercar',
-    authorHandle: 'apex_gt4',
-    authorName: 'Marcus GT4',
-    authorCar: 'Porsche 718 Cayman GT4',
+    category: 'stance',
+    authorHandle: 'atelier_curator',
+    authorName: 'Collective Atelier',
+    authorCar: 'Curated Heritage Hall',
     images: [
-      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=90'
+      '/collective_atelier_hall.jpg',
+      '/clean_garage_gt3.jpg'
     ],
-    likesCount: 1840,
-    commentsCount: 96,
-    caption: 'Viton PCV membrane upgrade and Brembo high-friction compound installed. Rock-solid 800 RPM idle restored through Surrey twisties with 4.0L naturally aspirated boxer.',
-    telemetryTag: '4.0L Boxer-6 · 414 BHP',
-    purismScore: 92,
+    likesCount: 2840,
+    commentsCount: 156,
+    caption: 'Curated lineup under industrial hangar lights. Mirror-polished concrete reflection showing millimeter-calibrated ride height and custom titanium exhaust tips.',
+    telemetryTag: 'Atelier Pavilion · Zero Rub',
+    isMultiImage: true,
+    purismScore: 90,
     surfaceCondition: 'dry',
-    peakLateralG: 1.28,
-    provenanceScore: 97
+    peakLateralG: 0.90,
+    provenanceScore: 99,
+    isPro: true
+  },
+  {
+    id: 'exp-13',
+    category: 'classic',
+    authorHandle: 'aircooled_vault',
+    authorName: 'Aircooled Vault',
+    authorCar: 'VW Split-Screen Single Cab',
+    images: [
+      '/feed/vw_splitty_singlecab_ubd_214g.jpg',
+      '/feed/messerschmitt_kr200_bubblecar.jpg'
+    ],
+    likesCount: 1720,
+    commentsCount: 82,
+    caption: 'Barn-find survivor preserved in genuine patina. Twin-carb 1600cc boxer with dropped spindles and period timber dropsides.',
+    telemetryTag: '1964 Aircooled · Patina',
+    isMultiImage: true,
+    purismScore: 97,
+    surfaceCondition: 'dry',
+    peakLateralG: 0.60,
+    provenanceScore: 96
+  },
+  {
+    id: 'exp-14',
+    category: 'build',
+    authorHandle: 'b7_artisan',
+    authorName: 'Brembo Atelier',
+    authorCar: 'Audi B7 Cabriolet Red Roof',
+    images: [
+      '/feed/audi_b7_cabriolet_red_roof_brembo.jpg',
+      '/feed/audi_cabriolet_mythos_sw71_ryb.jpg'
+    ],
+    likesCount: 1650,
+    commentsCount: 78,
+    caption: 'Brembo GT6 380mm 2-piece floating discs behind custom forged wheels. Contrast crimson mohair roof with Mythos Black paint restoration.',
+    telemetryTag: 'Brembo GT6 · 380mm Floating',
+    isMultiImage: true,
+    purismScore: 70,
+    surfaceCondition: 'dry',
+    peakLateralG: 1.10,
+    provenanceScore: 96,
+    isPro: true
+  },
+  {
+    id: 'exp-15',
+    category: 'classic',
+    authorHandle: 'bubble_heritage',
+    authorName: 'Microcar Archive',
+    authorCar: 'Messerschmitt KR200',
+    images: [
+      '/feed/messerschmitt_kr200_bubblecar.jpg',
+      '/feed/ford_taunus_crayford_classic_pg_1135.jpg'
+    ],
+    likesCount: 2210,
+    commentsCount: 114,
+    caption: 'Aviation-inspired tandem cockpit with transparent plexiglass dome canopy and Fichtel & Sachs two-stroke single cylinder engine.',
+    telemetryTag: '191cc Two-Stroke · 230 kg',
+    isMultiImage: true,
+    purismScore: 99,
+    surfaceCondition: 'dry',
+    peakLateralG: 0.72,
+    provenanceScore: 99
+  },
+  {
+    id: 'exp-16',
+    category: 'stance',
+    authorHandle: 'stance_vxr',
+    authorName: 'Arden Stance',
+    authorCar: 'Vauxhall Zafira VXR Air-Ride',
+    images: [
+      '/feed/bagged_zafira_vxr_arden_stance.jpg',
+      '/feed/kadett_e_cabrio_yellow_widebody.jpg'
+    ],
+    likesCount: 1540,
+    commentsCount: 92,
+    caption: 'Airlift 3P management with custom notched subframe and 19-inch BBS forged wheels tucked flush into rolling arches.',
+    telemetryTag: 'AirLift 3P · Zero Clearance',
+    isMultiImage: true,
+    purismScore: 62,
+    surfaceCondition: 'dry',
+    peakLateralG: 0.85,
+    provenanceScore: 94
   }
 ];
 
@@ -336,7 +451,7 @@ export const ExplorePage: FC = () => {
         if (text) {
           setSearchQuery(text);
           showToast({
-            title: 'Snippet Deconstructed by Synaptic Engine',
+            title: 'Snippet Analyzed',
             message: 'Extracted mechanical, kinematic, and chassis telemetry vectors.',
             type: 'drive',
             badge: 'PARSER ACTIVE'
@@ -352,10 +467,10 @@ export const ExplorePage: FC = () => {
     const randomSnippet = CURATED_SNIPPETS[Math.floor(Math.random() * CURATED_SNIPPETS.length)];
     setSearchQuery(randomSnippet.snippet);
     showToast({
-      title: `Deconstructed: ${randomSnippet.title}`,
+      title: randomSnippet.title,
       message: 'Automotive telemetry vectors mapped across stable.',
       type: 'drive',
-      badge: 'SYNAPTIC VECTOR'
+      badge: 'KINEMATIC VECTOR'
     });
   };
 
@@ -420,7 +535,7 @@ export const ExplorePage: FC = () => {
     const next = !modalSaved[id];
     setModalSaved(prev => ({ ...prev, [id]: next }));
     showToast({
-      title: next ? 'Saved to Route & Spec Pocket' : 'Removed from Saved',
+      title: next ? 'Saved to Pocket' : 'Removed from Saved',
       message: next ? 'Cached for offline vehicle inspection' : undefined,
       type: 'drive'
     });
@@ -446,157 +561,146 @@ export const ExplorePage: FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8 py-6 space-y-6 animate-in fade-in duration-200">
       
-      {/* ── TOP INNOVATIVE SEARCH & SYNAPTIC TELEMETRY HORIZON ── */}
+      {/* ── REFINED KINEMATIC DISCOVERY COMMAND BAR (Calm, Smart, Effortless) ── */}
       <div className="space-y-4">
         
-        {/* Heraldic Discovery Banner with Algorithmic Indicator */}
-        <div className={`p-4 sm:p-5 rounded-3xl border transition-all shadow-lg ${
-          isWhiteYellow
-            ? 'bg-white border-zinc-200/90'
-            : 'bg-zinc-950/80 border-white/[0.08] backdrop-blur-xl'
-        }`}>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-luxury-display text-sm sm:text-base font-bold tracking-[0.2em] uppercase text-zinc-100">
-                  SYNAPTIC KINEMATIC DISCOVERY
-                </span>
-                <span className="text-[9px] font-mono-numbers px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 font-semibold border border-amber-400/25 uppercase flex items-center gap-1">
-                  <Cpu className="w-3 h-3 text-amber-400" />
-                  <span>HEURISTIC AI</span>
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400 font-mono-numbers mt-1">
-                Deconstruct forum posts, parts catalogs & telemetry snippets into physical engineering vectors.
-              </p>
+        {/* Understated Header Strip */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-white/[0.06]">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="font-luxury-display text-lg sm:text-xl font-bold tracking-wider text-zinc-100 uppercase">
+                Atelier Discovery
+              </h1>
+              <span className="text-[10px] font-mono-numbers px-2.5 py-0.5 rounded-full bg-zinc-900 border border-white/10 text-zinc-300 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Kinematic Search Engine
+              </span>
             </div>
-
-            {/* Quick Actions Strip */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handlePasteFromClipboard}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono-numbers font-bold transition-all border border-amber-400/30 bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 cursor-pointer shadow-xs"
-                title="Paste text from clipboard or try curated automotive snippets"
-              >
-                <Clipboard className="w-3.5 h-3.5 text-amber-400" />
-                <span>Paste / Sample Snippet</span>
-              </button>
-
-              <button
-                onClick={() => setIsAlgorithmTuningOpen(!isAlgorithmTuningOpen)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono-numbers font-bold transition-all border cursor-pointer ${
-                  isAlgorithmTuningOpen
-                    ? 'bg-gradient-to-r from-zinc-200 to-white text-black font-extrabold shadow-md'
-                    : isWhiteYellow
-                    ? 'bg-zinc-100 hover:bg-zinc-200 border-zinc-300 text-zinc-800'
-                    : 'bg-white/[0.05] hover:bg-white/[0.1] border-white/10 text-zinc-300'
-                }`}
-                title="Open Driver-Controlled Algorithm Console"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>Tune Algorithm</span>
-              </button>
-            </div>
+            <p className="text-xs text-zinc-400 mt-1 max-w-xl font-sans">
+              Discover verified chassis builds, technical mountain passes, and hardware setups across the collective stable.
+            </p>
           </div>
 
-          {/* Search & Snippet Input Bar */}
-          <div className="relative mt-4">
-            <Search className={`w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none ${isWhiteYellow ? 'text-zinc-400' : 'text-zinc-500'}`} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Paste forum discussions, workshop receipts, mountain pass notes, or spec snippets…"
-              className={`w-full pl-11 pr-24 py-3.5 rounded-2xl border text-xs sm:text-sm transition font-sans shadow-inner ${
-                isWhiteYellow
-                  ? 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400'
-                  : 'bg-black/50 border-white/[0.12] text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-amber-400/50'
+          {/* Understated Action Strip */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePasteFromClipboard}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono-numbers transition-all border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white cursor-pointer"
+              title="Paste text from clipboard or sample an enthusiast snippet"
+            >
+              <Clipboard className="w-3.5 h-3.5 text-amber-400" />
+              <span>Paste Snippet</span>
+            </button>
+
+            <button
+              onClick={() => setIsAlgorithmTuningOpen(!isAlgorithmTuningOpen)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono-numbers transition-all border cursor-pointer ${
+                isAlgorithmTuningOpen
+                  ? 'bg-amber-400 text-zinc-950 font-bold border-amber-300 shadow-sm'
+                  : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 text-zinc-300 hover:text-white'
               }`}
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-mono-numbers flex items-center gap-1 cursor-pointer transition"
+              title="Tune Discovery Weights"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Switchgear</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Clean, Tactile Search Input */}
+        <div className="relative">
+          <Search className={`w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none ${isWhiteYellow ? 'text-zinc-400' : 'text-zinc-500'}`} />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search chassis (G80, 992, E30, L663), mechanical specs, parts, or paste tuning notes…"
+            className={`w-full pl-11 pr-24 py-3 rounded-2xl border text-xs sm:text-sm transition font-sans shadow-inner ${
+              isWhiteYellow
+                ? 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400'
+                : 'bg-zinc-950/70 border-white/10 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-amber-400/50'
+            }`}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-mono-numbers flex items-center gap-1 cursor-pointer transition"
+            >
+              <X className="w-3 h-3" />
+              <span>Clear</span>
+            </button>
+          )}
+        </div>
+
+        {/* Real-time Detected Vectors Strip (Refined & Non-Intrusive) */}
+        {parsedQuery.detectedVectors.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 pt-1 animate-in fade-in duration-200">
+            <span className="text-[11px] font-mono-numbers text-zinc-400 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              <span>Extracted physical vectors ({parsedQuery.detectedVectors.length}):</span>
+            </span>
+            {parsedQuery.detectedVectors.map((v, i) => (
+              <span
+                key={i}
+                className="px-2.5 py-0.5 rounded-full bg-zinc-900 border border-white/10 text-[11px] font-mono-numbers text-zinc-300 flex items-center gap-1.5"
               >
-                <X className="w-3 h-3" />
-                <span>Clear</span>
-              </button>
+                <span className="text-[9px] uppercase tracking-wider text-amber-400 font-semibold">{v.category}</span>
+                <span>{v.displayLabel}</span>
+              </span>
+            ))}
+            {parsedQuery.kinematicTargetG && (
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono-numbers text-emerald-400 font-semibold">
+                {parsedQuery.kinematicTargetG}G Target
+              </span>
+            )}
+            {parsedQuery.adhesionTarget && (
+              <span className="px-2 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-[10px] font-mono-numbers text-sky-400 font-semibold uppercase">
+                μ: {parsedQuery.adhesionTarget}
+              </span>
             )}
           </div>
+        )}
 
-          {/* Real-time Synaptic Deconstruction Badges (HUD) */}
-          {parsedQuery.detectedVectors.length > 0 && (
-            <div className="mt-4 pt-3.5 border-t border-white/[0.06] space-y-2 animate-in fade-in duration-150">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono-numbers uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>DECONSTRUCTED TELEMETRY VECTORS ({parsedQuery.detectedVectors.length}):</span>
-                </span>
-                {parsedQuery.kinematicTargetG && (
-                  <span className="text-[10px] font-mono-numbers text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 font-bold">
-                    Target Load: {parsedQuery.kinematicTargetG}G
-                  </span>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-1.5">
-                {parsedQuery.detectedVectors.map((v, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.1] text-[11px] font-mono-numbers text-zinc-200 flex items-center gap-1.5"
-                  >
-                    <span className="text-[9px] uppercase px-1 rounded bg-amber-400/20 text-amber-300 font-bold">
-                      {v.category}
-                    </span>
-                    <span>{v.displayLabel}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Curated Sample Snippet Seed Chips */}
-          <div className="mt-3.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-            <span className="text-[10px] font-mono-numbers uppercase tracking-wider text-zinc-500 shrink-0 font-bold">
-              Try Snippets:
-            </span>
-            {CURATED_SNIPPETS.map((sample, i) => (
-              <button
-                key={i}
-                onClick={() => setSearchQuery(sample.snippet)}
-                className={`px-3 py-1 rounded-xl text-[11px] font-mono-numbers transition whitespace-nowrap shrink-0 border cursor-pointer ${
-                  searchQuery === sample.snippet
-                    ? 'bg-amber-400 text-black font-bold border-amber-300'
-                    : isWhiteYellow
-                    ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-200'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border-white/[0.06]'
-                }`}
-              >
-                {sample.title}
-              </button>
-            ))}
-          </div>
-
+        {/* Curated Sample Snippet Seed Chips */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 text-xs">
+          <span className="text-[11px] font-mono-numbers text-zinc-500 shrink-0 font-medium">
+            Inspiration:
+          </span>
+          {CURATED_SNIPPETS.map((sample, i) => (
+            <button
+              key={i}
+              onClick={() => setSearchQuery(sample.snippet)}
+              className={`px-3 py-1 rounded-full text-xs font-mono-numbers transition-all whitespace-nowrap shrink-0 border cursor-pointer ${
+                searchQuery === sample.snippet
+                  ? 'bg-amber-400/20 text-amber-300 border-amber-400/40 font-semibold'
+                  : isWhiteYellow
+                  ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-200'
+                  : 'bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-zinc-200 border-white/[0.06]'
+              }`}
+            >
+              {sample.title}
+            </button>
+          ))}
         </div>
 
         {/* ── DRIVER-TUNED ALGORITHM SWITCHGEAR CONSOLE (Expandable) ── */}
         {isAlgorithmTuningOpen && (
           <div className={`p-5 rounded-3xl border space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 ${
-            isWhiteYellow ? 'bg-zinc-50 border-zinc-300 shadow-md' : 'bg-zinc-950 border-amber-400/30 shadow-2xl'
+            isWhiteYellow ? 'bg-zinc-50 border-zinc-300 shadow-md' : 'bg-zinc-950/95 border-white/10 backdrop-blur-xl shadow-2xl'
           }`}>
             <div className="flex items-center justify-between border-b pb-3 border-white/[0.08]">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-mono-numbers uppercase tracking-widest font-bold text-zinc-100">
-                  DRIVER ALGORITHMIC WEIGHTS (NO BLACK BOX MANIPULATION)
+                <span className="text-xs font-mono-numbers uppercase tracking-wider font-bold text-zinc-100">
+                  Driver Algorithmic Weights (Zero Black-Box Bias)
                 </span>
               </div>
               <button
                 onClick={() => setAlgorithmWeights(DEFAULT_ALGORITHM_WEIGHTS)}
-                className="text-[10px] font-mono-numbers text-zinc-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                className="text-[11px] font-mono-numbers text-zinc-400 hover:text-white flex items-center gap-1 cursor-pointer transition"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Reset Factory Defaults</span>
+                <span>Reset Defaults</span>
               </button>
             </div>
 
@@ -725,7 +829,7 @@ export const ExplorePage: FC = () => {
 
       </div>
 
-      {/* ── INNOVATIVE EXPLORE GRID WITH KINEMATIC MATCH SCORES ── */}
+      {/* ── INNOVATIVE EXPLORE GRID WITH RICH VISUAL EFFECTS ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 auto-rows-[250px] md:auto-rows-[290px]">
         {filteredAndRankedItems.map(item => {
           const isItemLiked = modalLiked[item.id];
@@ -735,23 +839,23 @@ export const ExplorePage: FC = () => {
             <div
               key={item.id}
               onClick={() => handleOpenItem(item)}
-              className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 ${
+              className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 shadow-md ${
                 isWhiteYellow
-                  ? 'bg-white border border-zinc-200/90 shadow-xs hover:border-yellow-400/80 hover:shadow-md'
+                  ? 'bg-white border border-zinc-200/90 hover:border-yellow-400/80 hover:shadow-xl'
                   : 'bg-[#111113] border border-white/[0.08] hover:border-amber-400/50 hover:shadow-2xl'
               } ${item.spanClass || 'col-span-1 row-span-1'}`}
             >
-              {/* Photo Media */}
+              {/* Photo Media with Smooth Zoom */}
               <img
                 src={item.images[0]}
                 alt={item.caption}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 loading="lazy"
               />
 
               {/* Top Left: Kinematic Match Score Badge */}
               <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1">
-                <span className={`px-2.5 py-1 rounded-lg backdrop-blur-md text-[10px] font-mono-numbers font-bold shadow-lg border flex items-center gap-1 ${
+                <span className={`px-2.5 py-1 rounded-full backdrop-blur-md text-[10px] font-mono-numbers font-bold shadow-lg border flex items-center gap-1 ${
                   item.matchScore >= 80
                     ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
                     : item.matchScore >= 65
@@ -763,43 +867,51 @@ export const ExplorePage: FC = () => {
                 </span>
 
                 {item.isActiveVehicleMatch && (
-                  <span className="px-2 py-0.5 rounded-md bg-amber-400 text-black text-[9px] font-mono-numbers font-extrabold shadow-md flex items-center gap-1">
+                  <span className="px-2 py-0.5 rounded-full bg-amber-400 text-black text-[9px] font-mono-numbers font-extrabold shadow-md flex items-center gap-1">
                     ★ {activeVehicle.name} Fitment
                   </span>
                 )}
               </div>
 
-              {/* Corner Badges (Carousel / Video Reel / Pro) */}
+              {/* Corner Badges (Multi-Image / Video Reel / Pro) */}
               <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 pointer-events-none">
                 {item.isMultiImage && (
-                  <div className="p-1.5 rounded-lg bg-[#09090B]/80 backdrop-blur-md border border-white/[0.1] text-white">
-                    <Layers className="w-3.5 h-3.5" />
+                  <div className="px-2 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white text-[10px] font-mono-numbers flex items-center gap-1">
+                    <Layers className="w-3 h-3" />
+                    <span>{item.images.length}</span>
                   </div>
                 )}
                 {item.isVideoReel && (
-                  <div className="p-1.5 rounded-lg bg-[#09090B]/80 backdrop-blur-md border border-white/[0.1] text-white">
-                    <Play className="w-3.5 h-3.5 fill-white" />
+                  <div className="p-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white">
+                    <Play className="w-3 h-3 fill-white" />
                   </div>
                 )}
                 {item.isPro && (
-                  <div className="p-1.5 rounded-lg bg-amber-500/20 backdrop-blur-md border border-amber-500/40 text-amber-300">
-                    <Wrench className="w-3.5 h-3.5" />
+                  <div className="p-1.5 rounded-full bg-amber-500/20 backdrop-blur-md border border-amber-500/40 text-amber-300">
+                    <Wrench className="w-3 h-3" />
                   </div>
                 )}
               </div>
 
-              {/* Telemetry pill on bottom left if present */}
-              {item.telemetryTag && (
-                <div className="absolute bottom-3 left-3 z-10 opacity-90 group-hover:opacity-0 transition-opacity pointer-events-none">
-                  <span className="px-2.5 py-1 rounded-lg bg-[#09090B]/85 backdrop-blur-md border border-white/[0.09] text-[10px] font-mono-numbers text-zinc-300 font-semibold shadow-md flex items-center gap-1">
-                    <Compass className="w-3 h-3 text-amber-400" />
-                    <span>{item.telemetryTag}</span>
-                  </span>
+              {/* Always-Visible Soft Bottom Vignette for Rich Context */}
+              <div className="absolute inset-x-0 bottom-0 pt-12 pb-3.5 px-3.5 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end justify-between z-10 pointer-events-none group-hover:opacity-0 transition-opacity duration-200">
+                <div className="min-w-0 pr-2">
+                  <p className="text-xs font-bold text-white truncate drop-shadow-md">
+                    {item.authorCar}
+                  </p>
+                  <p className="text-[10px] text-zinc-300 font-mono-numbers truncate">
+                    @{item.authorHandle}
+                  </p>
                 </div>
-              )}
+                {item.telemetryTag && (
+                  <span className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono-numbers text-amber-300 shrink-0">
+                    {item.telemetryTag}
+                  </span>
+                )}
+              </div>
 
-              {/* Instagram/Atelier Hover Overlay */}
-              <div className="absolute inset-0 bg-[#09090B]/85 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-4 z-20">
+              {/* Subtle Tactile Hover Overlay */}
+              <div className="absolute inset-0 bg-[#09090B]/85 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 z-20">
                 
                 {/* Top Author Tag & Quick Bookmark */}
                 <div className="flex items-center justify-between">
@@ -809,7 +921,7 @@ export const ExplorePage: FC = () => {
                     className="flex items-center gap-2 min-w-0 group/author hover:opacity-90"
                     title={`View ${item.authorName}'s Atelier Dossier`}
                   >
-                    <div className="w-7 h-7 rounded-full overflow-hidden border border-white/[0.2] shrink-0 bg-zinc-800">
+                    <div className="w-7 h-7 rounded-full overflow-hidden border border-white/20 shrink-0 bg-zinc-800">
                       <img
                         src={item.images[0]}
                         alt={item.authorName}
@@ -826,10 +938,10 @@ export const ExplorePage: FC = () => {
 
                   <button
                     onClick={(e) => handleToggleSave(item.id, e)}
-                    className="p-1.5 rounded-lg bg-white/[0.1] hover:bg-white/[0.2] text-white transition shrink-0 cursor-pointer"
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition shrink-0 cursor-pointer"
                     title={isItemSaved ? 'Saved' : 'Save to Pocket'}
                   >
-                    <Bookmark className={`w-3.5 h-3.5 ${isItemSaved ? 'fill-white text-white' : ''}`} />
+                    <Bookmark className={`w-3.5 h-3.5 ${isItemSaved ? 'fill-yellow-400 text-yellow-400' : ''}`} />
                   </button>
                 </div>
 
@@ -846,13 +958,16 @@ export const ExplorePage: FC = () => {
                   )}
 
                   <div className="flex items-center justify-center gap-6 text-white font-bold text-sm pt-1">
-                    <span className="flex items-center gap-2 drop-shadow-md">
-                      <Heart className={`w-5 h-5 ${isItemLiked ? 'fill-rose-500 text-rose-500' : 'fill-white text-white'}`} />
+                    <button
+                      onClick={(e) => handleToggleLike(item.id, e)}
+                      className="flex items-center gap-1.5 drop-shadow-md hover:scale-105 transition cursor-pointer"
+                    >
+                      <Heart className={`w-4 h-4 ${isItemLiked ? 'fill-rose-500 text-rose-500' : 'fill-white text-white'}`} />
                       <span>{item.likesCount + (isItemLiked ? 1 : 0)}</span>
-                    </span>
-                    <span className="flex items-center gap-2 drop-shadow-md">
-                      <MessageCircle className="w-5 h-5 fill-white text-white" />
-                      <span>{item.commentsCount}</span>
+                    </button>
+                    <span className="flex items-center gap-1.5 drop-shadow-md">
+                      <MessageCircle className="w-4 h-4 fill-white text-white" />
+                      <span>{item.commentsCount + (modalComments[item.id]?.length || 0)}</span>
                     </span>
                   </div>
                 </div>
@@ -892,7 +1007,7 @@ export const ExplorePage: FC = () => {
               <img
                 src={activeModalItem.images[modalImageIndex]}
                 alt={activeModalItem.caption}
-                className="w-full h-full object-cover max-h-[85vh]"
+                className="w-full h-full object-cover max-h-[85vh] transition-all duration-300"
               />
 
               {/* Prev/Next arrows for multi-image */}
@@ -917,10 +1032,11 @@ export const ExplorePage: FC = () => {
                   {/* Dot indicators */}
                   <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
                     {activeModalItem.images.map((_, dotIdx) => (
-                      <span
+                      <button
                         key={dotIdx}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          modalImageIndex === dotIdx ? 'bg-amber-400 w-4' : 'bg-white/40'
+                        onClick={() => setModalImageIndex(dotIdx)}
+                        className={`h-2 rounded-full transition-all cursor-pointer ${
+                          modalImageIndex === dotIdx ? 'bg-amber-400 w-4' : 'bg-white/40 w-2 hover:bg-white/70'
                         }`}
                       />
                     ))}
