@@ -16,6 +16,8 @@ import {
   type AutomotiveModel,
   type CarArchetype
 } from '../data/ukAutomotiveUniverse';
+import { MotorworldCore } from '../components/explore/MotorworldCore';
+import { CustodianAnalyticsView } from '../components/explore/CustodianAnalyticsView';
 import {
   Search,
   Heart,
@@ -436,8 +438,8 @@ export const ExplorePage: FC = () => {
   const { isWhiteYellow } = useTheme();
   const { activeVehicle } = useActiveVehicle();
 
-  // Active Explore Mode: 'universe' (A-Z Car Universe) vs 'community' (Photo Journals)
-  const [activeTab, setActiveTab] = useState<'universe' | 'community'>('universe');
+  // Active Explore Mode: 'universe' | 'motorworld' | 'analytics' | 'community'
+  const [activeTab, setActiveTab] = useState<'universe' | 'motorworld' | 'analytics' | 'community'>('universe');
 
   // Search & Pasting State
   const [searchQuery, setSearchQuery] = useState('');
@@ -716,12 +718,12 @@ export const ExplorePage: FC = () => {
           </div>
         )}
 
-        {/* ── UNIVERSE VS COMMUNITY PRIMARY SWITCHER ── */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] pt-2">
-          <div className="flex items-center gap-2">
+        {/* ── 4-PILLAR PRIMARY SWITCHER ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.08] pt-2 gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
             <button
               onClick={() => setActiveTab('universe')}
-              className={`pb-2.5 px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+              className={`pb-2.5 px-2.5 sm:px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 shrink-0 ${
                 activeTab === 'universe'
                   ? 'border-amber-400 text-amber-400'
                   : 'border-transparent text-zinc-400 hover:text-zinc-200'
@@ -732,19 +734,43 @@ export const ExplorePage: FC = () => {
             </button>
 
             <button
+              onClick={() => setActiveTab('motorworld')}
+              className={`pb-2.5 px-2.5 sm:px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 shrink-0 ${
+                activeTab === 'motorworld'
+                  ? 'border-amber-400 text-amber-400'
+                  : 'border-transparent text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              <Wrench className="w-4 h-4" />
+              <span>Motorworld Codex</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`pb-2.5 px-2.5 sm:px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 shrink-0 ${
+                activeTab === 'analytics'
+                  ? 'border-amber-400 text-amber-400'
+                  : 'border-transparent text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              <Gauge className="w-4 h-4" />
+              <span>User &amp; Fleet Analytics</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('community')}
-              className={`pb-2.5 px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 ${
+              className={`pb-2.5 px-2.5 sm:px-3 text-xs sm:text-sm font-luxury-display uppercase font-bold tracking-wider transition-all flex items-center gap-2 cursor-pointer border-b-2 shrink-0 ${
                 activeTab === 'community'
                   ? 'border-amber-400 text-amber-400'
                   : 'border-transparent text-zinc-400 hover:text-zinc-200'
               }`}
             >
               <Layers className="w-4 h-4" />
-              <span>Community Journals & Feeds ({filteredAndRankedItems.length})</span>
+              <span>Journals &amp; Feeds ({filteredAndRankedItems.length})</span>
             </button>
           </div>
 
-          <span className="text-[11px] font-mono-numbers text-zinc-500 hidden sm:inline">
+          <span className="text-[11px] font-mono-numbers text-zinc-500 hidden lg:inline">
             Active: {activeVehicle.name} ({activeVehicle.fullName})
           </span>
         </div>
@@ -1099,7 +1125,35 @@ export const ExplorePage: FC = () => {
       )}
 
       {/* ========================================================= */}
-      {/* ── TAB 2: COMMUNITY JOURNALS & SHAKEDOWNS ──              */}
+      {/* ── TAB 2: MOTORWORLD TECHNICAL & RELIABILITY CODEX ──     */}
+      {/* ========================================================= */}
+      {activeTab === 'motorworld' && (
+        <MotorworldCore 
+          isWhiteYellow={isWhiteYellow} 
+          onSelectVehicleChassis={(chassis) => {
+            setSelectedLetter('ALL');
+            setSelectedArchetype('all');
+            setSearchQuery(chassis);
+            setActiveTab('universe');
+            showToast({
+              title: 'Chassis Blueprint Selected',
+              message: `Loaded ${chassis} mechanical telemetry profile.`,
+              type: 'garage',
+              badge: 'MOTORWORLD'
+            });
+          }} 
+        />
+      )}
+
+      {/* ========================================================= */}
+      {/* ── TAB 3: CUSTODIAN & FLEET TELEMETRY ANALYTICS ──        */}
+      {/* ========================================================= */}
+      {activeTab === 'analytics' && (
+        <CustodianAnalyticsView isWhiteYellow={isWhiteYellow} />
+      )}
+
+      {/* ========================================================= */}
+      {/* ── TAB 4: COMMUNITY JOURNALS & SHAKEDOWNS ──              */}
       {/* ========================================================= */}
       {activeTab === 'community' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 auto-rows-[250px] md:auto-rows-[290px]">
