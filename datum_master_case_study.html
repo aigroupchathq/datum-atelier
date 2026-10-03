@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DATUM // Strategic Case Study & Market Research Whitepaper</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    @page {
+      size: A4;
+      margin: 14mm 14mm 16mm 14mm;
+      @bottom-right {
+        content: counter(page) " / " counter(pages);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8pt;
+        color: #71717A;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #FFFFFF;
+      color: #18181B;
+      line-height: 1.55;
+      font-size: 9.6pt;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-break { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+
+    /* Header */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #D4AF37;
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      font-family: 'Cinzel', serif;
+      font-size: 24pt;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: #09090B;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: #D4AF37;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .doc-meta {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.8pt;
+      color: #71717A;
+      line-height: 1.35;
+    }
+
+    .doc-badge {
+      display: inline-block;
+      background: #09090B;
+      color: #D4AF37;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      font-size: 7.5pt;
+      margin-bottom: 3px;
+    }
+
+    /* Headings */
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 17pt;
+      font-weight: 800;
+      color: #09090B;
+      letter-spacing: 0.03em;
+      margin: 16px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10pt;
+      color: #D4AF37;
+      background: #FAFAFA;
+      border: 1px solid #E4E4E7;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 12.5pt;
+      font-weight: 700;
+      color: #18181B;
+      margin: 14px 0 6px 0;
+      border-left: 3px solid #D4AF37;
+      padding-left: 8px;
+    }
+
+    h3 {
+      font-size: 10.2pt;
+      font-weight: 700;
+      color: #27272A;
+      margin: 10px 0 4px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    p {
+      margin-bottom: 8px;
+      color: #3F3F46;
+      text-align: justify;
+    }
+
+    strong { color: #09090B; font-weight: 600; }
+
+    /* Executive Lead Box */
+    .executive-lead {
+      background: linear-gradient(135deg, #09090B 0%, #18181B 100%);
+      color: #FAFAFA;
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #27272A;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .executive-lead .quote {
+      font-family: 'Cinzel', serif;
+      font-size: 12.5pt;
+      font-weight: 700;
+      color: #F4F4F5;
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+
+    .executive-lead .quote span { color: #D4AF37; }
+
+    .executive-lead .author {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      color: #A1A1AA;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Grids */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 12px 0; }
+
+    .grid-card {
+      background: #FAFAFA;
+      border: 1px solid #E4E4E7;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .grid-card .icon-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 8.8pt;
+      color: #09090B;
+      margin-bottom: 5px;
+    }
+
+    .grid-card p {
+      font-size: 8.6pt;
+      line-height: 1.4;
+      color: #52525B;
+      margin: 0;
+      text-align: left;
+    }
+
+    .highlight-gold {
+      background: #FFFDF5;
+      border: 1px solid #F3E8C4;
+      border-left: 4px solid #D4AF37;
+      padding: 11px 14px;
+      border-radius: 6px;
+      margin: 10px 0;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.6pt;
+      margin: 12px 0;
+      background: #FFFFFF;
+    }
+
+    th {
+      background: #09090B;
+      color: #F4F4F5;
+      text-align: left;
+      padding: 7px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid #27272A;
+    }
+
+    td {
+      padding: 6.5px 10px;
+      border: 1px solid #E4E4E7;
+      color: #27272A;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td { background: #FAFAFA; }
+
+    .badge-amber {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #B45309;
+      background: #FEF3C7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 7.6pt;
+    }
+
+    .algo-box {
+      background: #0D0E12;
+      color: #E4E4E7;
+      border-radius: 8px;
+      padding: 11px 13px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.2pt;
+      line-height: 1.45;
+      margin: 10px 0;
+      border: 1px solid #27272A;
+    }
+
+    .algo-box .kw { color: #F59E0B; font-weight: bold; }
+    .algo-box .fn { color: #38BDF8; }
+    .algo-box .cm { color: #71717A; font-style: italic; }
+
+    .footer-bar {
+      border-top: 1px solid #E4E4E7;
+      padding-top: 8px;
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.2pt;
+      color: #71717A;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAGE 1: EXECUTIVE CONCEPT & PHILOSOPHY            -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="header-bar">
+    <div>
+      <div class="brand-mark">DATUM</div>
+      <div class="brand-sub">Master Strategic Case Study & Research Monograph</div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-badge">GLOBAL &bull; UK &bull; INDIA RESEARCH</div><br>
+      CONFIDENTIAL EXECUTIVE DOSSIER<br>
+      OCTOBER 2026 // VERSION 3.0
+    </div>
+  </div>
+
+  <div class="executive-lead">
+    <div class="quote">
+      "Motoring is not mere transportation; it is an emotional and mechanical art form. <span>DATUM restores mechanical truth, open garage doors, and cryptographic sovereignty</span> to a £142 Billion global enthusiast economy fractured by speculation and gatekeeping."
+    </div>
+    <div class="author">// FOUNDING STRATEGIC MANIFESTO • DATUM ATELIER PROTOCOL</div>
+  </div>
+
+  <h1><span class="section-num">01</span> The Concept & The Passion Involved</h1>
+  <p>
+    Over the past century, the automobile evolved into humanity's most emotionally resonant mechanical creation. The bond between a passionate driver and their machine is forged through tactile physical communication: the weighted resistance of a mechanical steering rack, the thermal crescendo of a flat-plane V8 at 8,500 RPM, and the satisfaction of bleeding brakes or honing a cylinder bore on a Sunday morning.
+  </p>
+  <p>
+    However, the enthusiast world has reached an existential crisis. Rare cars are increasingly locked away in speculative tax vaults, paper service records are forged, social media algorithms reward reckless stunts in quiet neighborhoods, and younger drivers are alienated by elitist gatekeeping.
+  </p>
+
+  <div class="grid-2">
+    <div class="grid-card">
+      <div class="icon-title">🛡️ CRYPTOGRAPHIC INTEGRITY (DAG)</div>
+      <p>Replaces fragile paper logbooks and unverifiable stamps with an append-only SHA-256 hash-chained ledger. Maintenance, dyno curves, and component BOMs (Bill of Materials) are permanently authenticated by certified workshops.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">⚡ AWARE MOTORING TELEMETRY</div>
+      <p>Fuses live atmospheric data, road surface temperatures, and tire compound physics into a real-time friction coefficient (&mu;). Incentivizes smooth mountain pass cadence and flow over reckless speeding.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">🤝 ANTI-GATEKEEPING SANCTUARY</div>
+      <p>Decentralized cooperative garage halls, shared Snap-on tool cabinets, open diagnostic benches, and master machinist mentorship that welcomes the next generation of apprentices into the craft.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">🔒 RESIDENTIAL PRIVACY VEIL</div>
+      <p>Automated 800-metre residential geofence and neural client-side license plate redaction. Custodians share spirited track and pass telemetry while completely protecting their homes and families.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAGE 2: GLOBAL MARKET DYNAMICS                     -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="header-bar">
+    <div>
+      <div class="brand-mark">DATUM</div>
+      <div class="brand-sub">Market Research Pillar I // Global Landscape</div>
+    </div>
+    <div class="doc-meta">
+      GLOBAL TAM: £142B / $180B<br>
+      COLLECTOR ASSET CLASS ANALYSIS
+    </div>
+  </div>
+
+  <h1><span class="section-num">02</span> Global Automotive & Collector Market</h1>
+  <p>
+    The global enthusiast and collector automotive economy represents an annual expenditure exceeding <strong>£142 Billion</strong> across vehicle transactions, high-performance aftermarket engineering, historic restoration, and international events.
+  </p>
+
+  <div class="grid-3">
+    <div class="grid-card">
+      <div class="icon-title">📈 £31.4B &rarr; £54.2B</div>
+      <p><strong>Collector Car Valuation:</strong> Growing at 7.8% CAGR to 2032. Modern classics (1980s–2000s JDM and European performance) are seeing unprecedented demand.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">🎯 48% NEXT-GEN BIDDERS</div>
+      <p><strong>Demographic Shift:</strong> Nearly half of international auction bidders are now Gen Z and Millennials, who demand mobile transparency and digital proof.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">📉 12%–18% LEMON PENALTY</div>
+      <p><strong>Information Asymmetry:</strong> Unverified history and missing invoices depress transaction values by thousands of pounds per car.</p>
+    </div>
+  </div>
+
+  <h2>Global Structural Inefficiencies</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Market Problem</th>
+        <th style="width: 38%;">Traditional Legacy System</th>
+        <th style="width: 37%;">DATUM Global Transformation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Auction Fees & Monopoly</strong></td>
+        <td>Physical auction houses charge 10%–15% buyer/seller premiums with paper catalog vetting.</td>
+        <td><span class="badge-amber">Sovereign Escrow</span> 1.5% decentralized title handover with cryptographic provenance passports.</td>
+      </tr>
+      <tr>
+        <td><strong>Cross-Border Rallying</strong></td>
+        <td>Weeks of paperwork and 40% cash bonds for physical ATA Carnets and FIA papers.</td>
+        <td><span class="badge-amber">Carnet Vault</span> Digital customs passports, QR-verifiable manifests, and offline cryptographic clearance.</td>
+      </tr>
+      <tr>
+        <td><strong>Synthetic Sound (ASD)</strong></td>
+        <td>OEMs pumping fake engine sounds through cabin speakers to mask muted emissions filters.</td>
+        <td><span class="badge-amber">Anti-ASD Acoustic Studio</span> FFT microphone verification certifying genuine valvetrain acoustics.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAGE 3: UK MARKET DEEP DIVE                        -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="header-bar">
+    <div>
+      <div class="brand-mark">DATUM</div>
+      <div class="brand-sub">Market Research Pillar II // United Kingdom Heartland</div>
+    </div>
+    <div class="doc-meta">
+      UK SECTOR: £18.3B ECONOMIC VALUE<br>
+      113,000 SKILLED JOBS
+    </div>
+  </div>
+
+  <h1><span class="section-num">03</span> United Kingdom Market Deep Dive</h1>
+  <p>
+    The UK is the historic epicenter of global motorsport and specialized automotive craft. Home to <strong>Motorsport Valley</strong> (housing 75% of global F1 teams and engineering consultancies within a 90-mile radius), the British market blends statutory transparency with legendary driving geography.
+  </p>
+
+  <div class="highlight-gold">
+    <strong>The UK Automotive Asset Base:</strong> Over <strong>1.54 Million registered historic vehicles</strong> and <strong>3.2 Million enthusiast performance cars</strong> are maintained across the UK, generating £18.3 Billion in annual value and supporting 113,000 high-skilled trade jobs.
+  </div>
+
+  <h2>Distinctive British Motoring Dynamics</h2>
+  <div class="grid-2">
+    <div class="grid-card">
+      <div class="icon-title">🌧️ THE B-ROAD & PASS PHENOMENON</div>
+      <p>Narrow lanes, negative cambers, broken asphalt frost heaves, and standing water (e.g. Snake Pass, Buttertubs, Llanberis). Huge straight-line power fails without chassis compliance, damping nuance, and limited slip differentials. DATUM’s live road grip radar (&mu;) guides drivers through blind crests.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">🏛️ STATUTORY MOT DATA INTEGRATION</div>
+      <p>Every UK vehicle over 3 years old undergoes annual statutory testing. DATUM interfaces directly with official DVSA MOT API endpoints, linking verified statutory passes, odometer readings, and emissions compliance directly into the vehicle's permanent ledger.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">🏞️ GREENLANING & BYWAYS (BOATs)</div>
+      <p>Centuries-old unpaved parish highways (e.g. Strata Florida river crossings, Walna Scar slate pass). DATUM’s overland protocol logs wading depth checks, differential breathers, and trail clearance to ensure environmental compliance and protect legal access.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">🔧 INDEPENDENT MARQUE ARTISANS</div>
+      <p>Specialist restoration houses and engine machinists (e.g. Bicester Heritage, Litchfield, Evolve) gain a verified digital workshop stamping terminal, empowering them against franchised OEM dealer service monopolies.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAGE 4: INDIA MARKET DEEP DIVE                     -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="header-bar">
+    <div>
+      <div class="brand-mark">DATUM</div>
+      <div class="brand-sub">Market Research Pillar III // India Frontier</div>
+    </div>
+    <div class="doc-meta">
+      WORLD'S 3RD LARGEST AUTO MARKET<br>
+      EXPLODING TUNER & OVERLAND CULTURE
+    </div>
+  </div>
+
+  <h1><span class="section-num">04</span> India Market Deep Dive</h1>
+  <p>
+    India has surpassed Japan to become the <strong>3rd largest automotive market globally</strong>. Beyond mass-market commuting, a generational explosion in lifestyle, performance, and overland automotive subcultures is transforming urban metros and regional centers alike.
+  </p>
+
+  <h2>1. The Four Indian Enthusiast Subcultures</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Subculture</th>
+        <th>Key Vehicle Platforms</th>
+        <th>Geographic Hotspots</th>
+        <th>Unique Operational Demands</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Stage Remap Tuners</strong></td>
+        <td>Polo GT TSI, Octavia vRS, BMW 330i/M340i, i20 N Line</td>
+        <td>Bengaluru, Mumbai, Delhi-NCR, Kochi, Pune, Chennai</td>
+        <td>High-pressure fuel pump logs, intercooler thermal tracking in 42&deg;C heat, dyno provenance.</td>
+      </tr>
+      <tr>
+        <td><strong>Overland & 4x4</strong></td>
+        <td>Mahindra Thar (Roxx), Maruti Jimny, Gypsy, Gurkha, Fortuner</td>
+        <td>Ladakh, Spiti Valley, Western Ghats, Thar Desert</td>
+        <td>High-altitude air density adjustments (17,000+ ft), snorkel checks, differential breathers.</td>
+      </tr>
+      <tr>
+        <td><strong>Amateur Track Days</strong></td>
+        <td>Custom track builds, Civic, BMW M, Porsche GT</td>
+        <td>BIC (Greater Noida), Kari & CoASTT (Coimbatore), MMRT</td>
+        <td>Tire pyrometer heatmaps, brake fluid boiling point audits under tropical humidity.</td>
+      </tr>
+      <tr>
+        <td><strong>Heritage & Classics</strong></td>
+        <td>Ambassador, Contessa, Premier Padmini, Vintage Mercedes</td>
+        <td>Kolkata, Delhi, Mumbai, Hyderabad, Royal Garages</td>
+        <td>MoRTH Rule 81A vintage certification compliance dossiers for 50+ year old cars.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Regulatory Friction & Why DATUM is Urgent in India</h2>
+  <div class="grid-2">
+    <div class="grid-card">
+      <div class="icon-title">⚠️ NGT 10/15-YEAR BAN (DELHI-NCR)</div>
+      <p>The National Green Tribunal mandates automatic deregistration of 10-year diesel and 15-year petrol cars. Pristine modern classics are forced into distress sales. DATUM enables verified inter-state custody transfer to enthusiasts in non-NCR states.</p>
+    </div>
+    <div class="grid-card">
+      <div class="icon-title">🛡️ COMBATING COUNTERFEIT PARTS</div>
+      <p>Over 30% of aftermarket spares in India are counterfeit. DATUM's cryptographically sealed BOM (Bill of Materials) gives independent tuners verifiable proof of authentic imported dampers, brake pads, and turbo components.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAGE 5: BUSINESS MODEL & ARCHITECTURE              -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="header-bar">
+    <div>
+      <div class="brand-mark">DATUM</div>
+      <div class="brand-sub">Business Model Economics & Core Systems Architecture</div>
+    </div>
+    <div class="doc-meta">
+      YEAR 3 TARGET: £16.8M ARR<br>
+      82% GROSS SOFTWARE MARGIN
+    </div>
+  </div>
+
+  <h1><span class="section-num">05</span> Revenue Strategy & Unit Economics</h1>
+  <p>
+    DATUM deploys five non-advertising, capital-efficient revenue streams adapted to regional market maturity:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Pillar</th>
+        <th>UK & Europe Pricing</th>
+        <th>India Domestic Pricing</th>
+        <th>Year 2 Target</th>
+        <th>Year 3 Target</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Atelier Pro SaaS</strong></td>
+        <td>£99 &ndash; £249 / mo / shop</td>
+        <td>₹3,999 &ndash; ₹9,999 / mo</td>
+        <td>£3.6M ARR (1,500 shops)</td>
+        <td>£5.2M ARR (2,800 shops)</td>
+      </tr>
+      <tr>
+        <td><strong>2. Custody Title Escrow</strong></td>
+        <td>1.5% fee (capped £1,500)</td>
+        <td>1.25% fee (capped ₹75,000)</td>
+        <td>£4.8M Rev (£280M GMV)</td>
+        <td>£7.4M Rev (£490M GMV)</td>
+      </tr>
+      <tr>
+        <td><strong>3. Digital Carnet Vault</strong></td>
+        <td>£49 &ndash; £120 / transit pass</td>
+        <td>₹2,999 / interstate rally pass</td>
+        <td>£1.4M ARR (22k passes)</td>
+        <td>£2.1M ARR (35k passes)</td>
+      </tr>
+      <tr>
+        <td><strong>4. B2B Road Grip Data (&mu;)</strong></td>
+        <td>£50k &ndash; £250k / yr (OEMs)</td>
+        <td>Pilot with NHAI / Telematics</td>
+        <td>£2.8M ARR (20 contracts)</td>
+        <td>£4.5M ARR (38 contracts)</td>
+      </tr>
+      <tr>
+        <td><strong>5. Custodian Concours Pro</strong></td>
+        <td>£8.99 / mo (£89 / yr)</td>
+        <td>₹499 / mo (₹4,999 / yr)</td>
+        <td>£4.2M ARR (47k subs)</td>
+        <td>£6.8M ARR (76k subs)</td>
+      </tr>
+      <tr>
+        <td><strong>TOTALS</strong></td>
+        <td colspan="2"><strong>Consolidated Blended ARR</strong></td>
+        <td><strong>£16.8M ARR</strong></td>
+        <td><strong>£26.0M ARR</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h1><span class="section-num">06</span> Proprietary Computational Algorithms</h1>
+  <div class="algo-box">
+<span class="cm">// 1. Cryptographic Provenance DAG</span>
+StateHash_t = SHA256(StateHash_{t-1} + ComponentHash + WorkshopSignatoryKey + Odometer + Timestamp)
+
+<span class="cm">// 2. Dynamic Road Surface Adhesion Fusion (&mu;)</span>
+&mu;(t) = &mu;_dry &times; (1.0 - WaterPenalty(rainMm, surfTemp)) &times; (1.0 + TyreWarmthBonus(psi, tyreTemp))
+
+<span class="cm">// 3. Anti-ASD Acoustic Mechanical Combustion Physics</span>
+f_firing = (Engine_RPM &times; Cylinders) / 120;  f_valvetrain = 2 &times; f_firing; <span class="cm">// FFT detects real cam clatter</span>
+
+<span class="cm">// 4. Semantic Kinematic Vector Engine</span>
+KinematicMatch = CosineSimilarity(Vector_DriverIntent, Vector_ChassisDynamics)
+
+<span class="cm">// 5. Respect Rating & Cadence Engine</span>
+RespectScore = 30&times;Flow(Smooth_Lateral_G) + 25&times;Thermal(Warmup_Patience) + 20&times;Waypoint + 50&times;HazardAlert
+  </div>
+
+  <div class="footer-bar">
+    <div>DATUM ATELIER PROTOCOL &bull; PROPRIETARY & CONFIDENTIAL &bull; ALL RIGHTS RESERVED</div>
+    <div>COMPILED FOR STRATEGIC PARTNERS & INVESTORS</div>
+  </div>
+
+</body>
+</html>

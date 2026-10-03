@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DATUM // The Custodian's Journey — Bespoke Horology Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void-bg: #05070B;
+      --chassis-bg: #0A0D15;
+      --glass-panel: rgba(15, 21, 34, 0.9);
+      --billet-aluminum: #E2E8F0;
+      --satin-titanium: #94A3B8;
+      --hairline-metal: rgba(255, 255, 255, 0.08);
+      --cognac-gold: #E5A93C;
+      --champagne-amber: #F59E0B;
+      --amber-halo: rgba(229, 169, 60, 0.28);
+      --racing-green: #10B981;
+      --caliper-red: #E11D48;
+      --cobalt-cadence: #38BDF8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--void-bg);
+      color: var(--billet-aluminum);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .cad-canvas-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image:
+        radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px, 160px 160px, 160px 160px;
+      z-index: 0;
+    }
+
+    /* Executive Top Navigation */
+    .top-binnacle {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--glass-panel);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-bottom: 1px solid var(--hairline-metal);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .marque-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      background: linear-gradient(135deg, #FFF 0%, #D49020 60%, #E5A93C 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .marque-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--cognac-gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .milled-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--hairline-metal);
+      color: var(--billet-aluminum);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .milled-btn:hover {
+      border-color: var(--cognac-gold);
+      color: var(--cognac-gold);
+      background: rgba(229, 169, 60, 0.1);
+    }
+
+    .milled-btn.primary {
+      background: linear-gradient(180deg, #E5A93C 0%, #B45309 100%);
+      color: #000;
+      border-color: #FDE68A;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(229, 169, 60, 0.35);
+    }
+
+    /* Main Showcase Stage */
+    .showcase-stage {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 36px 24px 60px 24px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .hero-lead {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--cognac-gold);
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      line-height: 1.2;
+    }
+
+    .hero-desc {
+      max-width: 640px;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--satin-titanium);
+    }
+
+    /* Chapter Stepper */
+    .chapter-bar {
+      display: flex;
+      background: var(--chassis-bg);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 14px;
+      padding: 6px;
+      gap: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .chapter-bar { overflow-x: auto; }
+    }
+
+    .chap-tab {
+      flex: 1;
+      min-width: 140px;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .chap-tab:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .chap-tab.active {
+      background: rgba(229, 169, 60, 0.12);
+      border-color: rgba(229, 169, 60, 0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .chap-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px;
+      color: var(--cognac-gold);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .chap-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--billet-aluminum);
+      white-space: nowrap;
+    }
+
+    /* Horology Experience Console */
+    .horology-console {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.95) 0%, rgba(10, 14, 22, 0.96) 100%);
+      border: 1.5px solid rgba(229, 169, 60, 0.5);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 35px rgba(229, 169, 60, 0.2);
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    @media (max-width: 860px) {
+      .horology-console {
+        grid-template-columns: 1fr;
+        padding: 24px;
+        gap: 24px;
+      }
+    }
+
+    .console-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .act-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--cognac-gold);
+      background: rgba(229, 169, 60, 0.12);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      width: fit-content;
+      text-transform: uppercase;
+    }
+
+    .act-title {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: 0.04em;
+    }
+
+    .act-story {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--satin-titanium);
+    }
+
+    .act-story strong {
+      color: var(--billet-aluminum);
+    }
+
+    .act-story em {
+      color: var(--cognac-gold);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* Physical Binnacle Stage */
+    .binnacle-unit {
+      background: radial-gradient(circle at center, #111726 0%, #07090F 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .binnacle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px;
+      color: var(--satin-titanium);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 6px;
+      letter-spacing: 0.1em;
+    }
+
+    /* Hardware Simulator Widgets */
+    .ignition-cluster {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 16px;
+      padding: 8px 0;
+    }
+
+    .rotary-bezel {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1F293D 0%, #0D121D 100%);
+      border: 3px solid #334155;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .rotary-notch {
+      width: 4px;
+      height: 14px;
+      background: var(--cognac-gold);
+      border-radius: 2px;
+      box-shadow: 0 0 8px var(--cognac-gold);
+      position: absolute;
+      top: 6px;
+    }
+
+    .rotary-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--billet-aluminum);
+      text-align: center;
+      line-height: 1.1;
+      margin-top: 8px;
+    }
+
+    .safety-cover-btn {
+      width: 110px;
+      height: 48px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #DC2626 0%, #991B1B 100%);
+      border: 2px solid #F87171;
+      color: #FFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .safety-cover-btn:hover {
+      box-shadow: 0 10px 25px rgba(220, 38, 38, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .safety-cover-btn.fired {
+      background: linear-gradient(180deg, #059669 0%, #047857 100%);
+      border-color: #34D399;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    /* G-Meter & Telemetry */
+    .telemetry-stage {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .friction-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.5) 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .friction-ball {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--caliper-red);
+      box-shadow: 0 0 10px var(--caliper-red);
+      position: absolute;
+      transition: all 0.08s ease-out;
+    }
+
+    .analog-scrubber {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .analog-scrubber::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--cognac-gold);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--amber-halo);
+    }
+
+    /* Stamp Press */
+    .stamp-press-unit {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .wax-seal-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #D49020 0%, #875A14 100%);
+      border: 2px solid #FDE68A;
+      box-shadow: 0 6px 18px rgba(229, 169, 60, 0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 8px;
+      text-align: center;
+      line-height: 1.1;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+
+    .wax-seal-badge:active { transform: scale(0.92); }
+
+    /* Smiths Dial */
+    .smiths-dial-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .smiths-gauge {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1A2234 0%, #0A0E17 100%);
+      border: 3px solid #475569;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 3px 6px rgba(255,255,255,0.15);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .gauge-needle {
+      position: absolute;
+      width: 2px;
+      height: 42px;
+      background: var(--cognac-gold);
+      bottom: 50%;
+      left: calc(50% - 1px);
+      transform-origin: bottom center;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 6px var(--cognac-gold);
+    }
+
+    .gauge-pivot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      position: absolute;
+    }
+
+    /* Footer Navigation */
+    .console-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      background: var(--chassis-bg);
+      border: 1.5px solid var(--cognac-gold);
+      color: var(--billet-aluminum);
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cad-canvas-bg"></div>
+
+  <!-- Header -->
+  <header class="top-binnacle">
+    <div class="brand-wrap">
+      <span class="marque-logo">DATUM</span>
+      <span class="marque-sub">CUSTODIAN JOURNEY</span>
+    </div>
+
+    <div class="top-actions">
+      <a href="datum_sitemap.html?monograph=true" class="milled-btn" style="border-color: rgba(56, 189, 248, 0.4); color: #7DD3FC;">
+        <span>📜</span> Architecture Monograph
+      </a>
+      <button class="milled-btn" onclick="copyJourneyUrl()">
+        <span>📋</span> Share Framework
+      </button>
+      <a href="datum_sitemap.html" class="milled-btn">
+        <span>🗺️</span> CAD Blueprint Tree
+      </a>
+      <a href="http://localhost:5173" target="_blank" class="milled-btn primary">
+        <span>🚀</span> Live Application
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Stage -->
+  <main class="showcase-stage">
+    <div class="hero-lead">
+      <span class="hero-pre">Bespoke Horology & Sovereign Automotive Framework</span>
+      <h1 class="hero-title">The Custodian's Journey</h1>
+      <p class="hero-desc">
+        A tactile, five-act traversal of mechanical empathy, anti-gatekeeping, and sovereign provenance. Interact with each bespoke physical binnacle below to experience the architecture firsthand.
+      </p>
+    </div>
+
+    <!-- Chapter Bar -->
+    <nav class="chapter-bar">
+      <button class="chap-tab active" onclick="setAct(0)">
+        <span class="chap-num">ACT I</span>
+        <span class="chap-name">Sovereign Ignition</span>
+      </button>
+      <button class="chap-tab" onclick="setAct(1)">
+        <span class="chap-num">ACT II</span>
+        <span class="chap-name">Open Garage Feed</span>
+      </button>
+      <button class="chap-tab" onclick="setAct(2)">
+        <span class="chap-num">ACT III</span>
+        <span class="chap-name">SHA-256 Provenance</span>
+      </button>
+      <button class="chap-tab" onclick="setAct(3)">
+        <span class="chap-num">ACT IV</span>
+        <span class="chap-name">Dynamic Grip (μ)</span>
+      </button>
+      <button class="chap-tab" onclick="setAct(4)">
+        <span class="chap-num">ACT V</span>
+        <span class="chap-name">Carnet & Custody</span>
+      </button>
+    </nav>
+
+    <!-- Console -->
+    <article class="horology-console">
+      <div class="console-meta">
+        <span class="act-tag" id="actTag">ACT I // CALIBRATION</span>
+        <h2 class="act-title" id="actTitle">The Sovereign Machine Ignition</h2>
+        <p class="act-story" id="actStory">
+          You enter DATUM not as a spectator, but as an <em>accredited machine custodian</em>. Before turning a single mile, calibrate your machine's mechanical profile. Turn the <strong>billet selector bezel</strong> to choose your stable car, then flip the safety cover and fire the ignition.
+        </p>
+      </div>
+
+      <div class="binnacle-unit" id="binnacleStage">
+        <!-- Interactive hardware simulator -->
+      </div>
+    </article>
+
+    <!-- Console Footer -->
+    <div class="console-footer">
+      <button class="milled-btn" id="prevBtn" onclick="prevAct()" style="opacity: 0.4;">◄ Previous Act</button>
+      <div style="font-family: 'JetBrains Mono'; font-size: 11px; color: var(--satin-titanium);" id="actNumDisp">1 OF 5</div>
+      <button class="milled-btn primary" id="nextBtn" onclick="nextAct()">Next Act ►</button>
+    </div>
+  </main>
+
+  <div class="toast-msg" id="toast">Link copied to clipboard!</div>
+
+  <script>
+    let currentAct = 0;
+    let audioCtx = null;
+
+    function getAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function soundRelay() {
+      try {
+        const ctx = getAudio();
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.04);
+        g.gain.setValueAtTime(0.12, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.045);
+      } catch (e) {}
+    }
+
+    function soundIgnition() {
+      try {
+        const ctx = getAudio();
+        const now = ctx.currentTime;
+        for (let i = 0; i < 3; i++) {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(70, now + i * 0.12);
+          g.gain.setValueAtTime(0.14, now + i * 0.12);
+          g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.08);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(now + i * 0.12);
+          osc.stop(now + i * 0.12 + 0.09);
+        }
+        const fire = ctx.createOscillator();
+        const fg = ctx.createGain();
+        fire.type = 'triangle';
+        fire.frequency.setValueAtTime(90, now + 0.42);
+        fire.frequency.exponentialRampToValueAtTime(320, now + 0.65);
+        fire.frequency.exponentialRampToValueAtTime(110, now + 1.15);
+        fg.gain.setValueAtTime(0.24, now + 0.42);
+        fg.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        fire.connect(fg);
+        fg.connect(ctx.destination);
+        fire.start(now + 0.42);
+        fire.stop(now + 1.25);
+      } catch (e) {}
+    }
+
+    function soundStamp() {
+      try {
+        const ctx = getAudio();
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.12);
+        g.gain.setValueAtTime(0.3, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.13);
+      } catch (e) {}
+    }
+
+    const ACTS = [
+      {
+        tag: "ACT I // CALIBRATION",
+        title: "The Sovereign Machine Ignition",
+        story: `You enter DATUM not as a spectator, but as an <em>accredited machine custodian</em>. Before turning a single mile, calibrate your machine's mechanical profile. Turn the <strong>billet selector bezel</strong> to choose your stable car, then flip the safety cover and fire the ignition.`,
+        render: (el) => {
+          el.innerHTML = `
+            <div class="binnacle-header">
+              <span>MACHINE CALIBRATION // STARTER CYLINDER</span>
+              <span id="calibStatus" style="color: var(--cognac-gold);">STANDBY // COLD</span>
+            </div>
+            <div class="ignition-cluster">
+              <div class="rotary-bezel" onclick="rotatePersona()">
+                <div class="rotary-notch" id="rotNotch"></div>
+                <div class="rotary-text" id="rotText">KURO<br>GT3</div>
+              </div>
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <button class="safety-cover-btn" id="fireBtn" onclick="fireIgnitionButton()">
+                  <span>⚡</span> IGNITE
+                </button>
+                <span style="font-family: 'JetBrains Mono'; font-size: 8px; color: var(--satin-titanium);">START / STOP CORE</span>
+              </div>
+            </div>
+          `;
+        }
+      },
+      {
+        tag: "ACT II // THE OPEN GARAGE",
+        title: "The Anti-Gatekeeping Chronicle & Telemetry",
+        story: `Vanity influencer reels and gatekept knowledge are replaced by <em>mechanical empathy</em>: shared torque specs, open workshop doors, and verified mountain pass telemetry. Scrub the <strong>Snake Pass pace slider</strong> below to observe real-time lateral G-force movement on the friction circle.`,
+        render: (el) => {
+          el.innerHTML = `
+            <div class="binnacle-header">
+              <span>SNAKE PASS // BREMBO FRICTION G-METER</span>
+              <span id="paceDisplay" style="color: var(--cobalt-cadence);">40% PACE // 0.85G</span>
+            </div>
+            <div class="telemetry-stage">
+              <div class="friction-circle">
+                <div style="position: absolute; width: 100%; height: 1px; background: rgba(255,255,255,0.1);"></div>
+                <div style="position: absolute; height: 100%; width: 1px; background: rgba(255,255,255,0.1);"></div>
+                <div class="friction-ball" id="fBall" style="left: calc(50% + 14px); top: calc(50% - 10px);"></div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="range" class="analog-scrubber" min="0" max="100" value="40" oninput="scrubTelemetry(this.value)">
+                <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium);">
+                  <span>ALT: <strong id="altVal" style="color:#FFF;">492m</strong></span>
+                  <span>CADENCE: <strong style="color: var(--cognac-gold);">S-RANK</strong></span>
+                </div>
+                <button class="milled-btn primary" style="justify-content: center; padding: 6px;" onclick="awardRespectAction()">
+                  <span>❤️</span> Award Flow Respect (+1)
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      },
+      {
+        tag: "ACT III // SOVEREIGN ATELIER",
+        title: "Cryptographic Provenance DAG",
+        story: `Sports cars are living engineering history. Fraudulent paper stamps and closed dealer registries are dead. Every valve adjustment, Brembo caliper rebuild, and damper rebuild is stamped into an <em>immutable SHA-256 DAG ledger</em>. Press the brass wax seal below to issue a cryptographic service block.`,
+        render: (el) => {
+          el.innerHTML = `
+            <div class="binnacle-header">
+              <span>ATELIER PROVENANCE PRESS // SHA-256</span>
+              <span style="color: var(--racing-green);">DAG CHAIN VERIFIED</span>
+            </div>
+            <div class="stamp-press-unit">
+              <div class="wax-seal-badge" onclick="pressWaxSeal()" title="Press to seal service in DAG">
+                <span>DATUM</span>
+                <span style="font-size: 6px;">SEAL</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                <div style="font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium);">
+                  SERVICE: <strong>Brembo 6-Pot Caliper Overhaul</strong>
+                </div>
+                <div id="dagHashOutput" style="font-family: 'JetBrains Mono'; font-size: 8.5px; color: var(--racing-green); background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); padding: 6px; border-radius: 6px; word-break: break-all;">
+                  PREV_BLOCK: 8f4a19c67e8902bca3...
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      },
+      {
+        tag: "ACT IV // MOUNTAIN PASS KINEMATICS",
+        title: "Atmospheric Surface Friction Engine (μ)",
+        story: `Before attacking Hardknott or Snake Pass, blind optimism is replaced by physics. DATUM fuses <em>Open-Meteo satellite weather</em> with asphalt moisture and tire compound temperatures to compute the <strong>true dynamic friction coefficient ($\mu$)</strong>. Watch the needle sweep dynamically below:`,
+        render: (el) => {
+          el.innerHTML = `
+            <div class="binnacle-header">
+              <span>SMITHS DUAL-NEEDLE FRICTION GAUGE</span>
+              <span id="smithsStatus" style="color: var(--racing-green);">OPTIMAL ADHESION</span>
+            </div>
+            <div class="smiths-dial-wrapper">
+              <div class="smiths-gauge">
+                <div class="gauge-needle" id="smithsNeedle" style="transform: rotate(45deg);"></div>
+                <div class="gauge-pivot"></div>
+                <span style="position: absolute; bottom: 12px; font-family: 'JetBrains Mono'; font-size: 8px; color: var(--cognac-gold); font-weight: 700;" id="needleReadout">μ = 0.92</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-family: 'JetBrains Mono'; font-size: 9px; display: flex; justify-content: space-between;">
+                  <span>Moisture:</span> <span id="moistVal" style="color: var(--cobalt-cadence);">15% (Dry)</span>
+                </div>
+                <input type="range" class="analog-scrubber" min="0" max="100" value="15" oninput="adjustGripWeather(this.value)">
+                <span style="font-size: 9.5px; color: var(--satin-titanium); line-height: 1.3;">Satellite sensor fusion updates asphalt adhesion in real-time.</span>
+              </div>
+            </div>
+          `;
+        }
+      },
+      {
+        tag: "ACT V // SOVEREIGN CARNET",
+        title: "Alpine Transit Sovereignty & Escrow Handover",
+        story: `Crossing borders for an Alpine Tour or transferring vehicle title to the next custodian? DATUM generates <em>LCCI & FIA compliant ATA Carnet transit tokens</em> with a 40% customs bond guarantee and cryptographic dual-key title transfer. You can share this framework directly with your friends.`,
+        render: (el) => {
+          el.innerHTML = `
+            <div class="binnacle-header">
+              <span>ATA CARNET TRANSIT VAULT</span>
+              <span style="color: var(--cognac-gold);">LCCI BOND: 40%</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid var(--hairline-metal);">
+              <div style="width: 48px; height: 48px; background: #FFF; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 900; font-family: 'JetBrains Mono'; font-size: 9.5px;">
+                QR [FIA]
+              </div>
+              <div style="font-size: 11px; line-height: 1.4; color: var(--satin-titanium);">
+                <div>TOKEN: <strong style="color: var(--cobalt-cadence);">GB-CH-2026-992</strong></div>
+                <div>CUSTOMS: <strong>CALAIS CLEARED (STAMPED)</strong></div>
+              </div>
+            </div>
+            <a href="http://localhost:5173" target="_blank" class="milled-btn primary" style="text-decoration: none; justify-content: center; margin-top: 4px;">
+              <span>🚀</span> Launch Full Live Application
+            </a>
+          `;
+        }
+      }
+    ];
+
+    let pIdx = 0;
+    const P_LIST = [
+      { name: "KURO\nGT3", desc: "992 GT3 // TITANIUM EXHAUST" },
+      { name: "MAYA\nM3 CSL", desc: "E46 M3 // CARBON AIRBOX" },
+      { name: "HAMISH\nCOBRA", desc: "427 V8 // TWIN HOLLEY" }
+    ];
+
+    function rotatePersona() {
+      soundRelay();
+      pIdx = (pIdx + 1) % P_LIST.length;
+      document.getElementById("rotText").innerHTML = P_LIST[pIdx].name.replace('\n', '<br>');
+      document.getElementById("rotNotch").style.transform = `rotate(${pIdx * 120}deg)`;
+      document.getElementById("calibStatus").textContent = P_LIST[pIdx].desc;
+    }
+
+    function fireIgnitionButton() {
+      soundIgnition();
+      const btn = document.getElementById("fireBtn");
+      btn.classList.add("fired");
+      btn.innerHTML = "<span>🔥</span> RUNNING";
+      document.getElementById("calibStatus").textContent = "ENGINE RUNNING // 850 RPM";
+      document.getElementById("calibStatus").style.color = "var(--racing-green)";
+    }
+
+    function scrubTelemetry(val) {
+      const p = parseInt(val);
+      const g = (0.2 + (Math.sin(p / 14) * 0.7) + (p / 220)).toFixed(2);
+      document.getElementById("paceDisplay").textContent = `${p}% PACE // ${g}G LATERAL`;
+      document.getElementById("altVal").textContent = `${460 + Math.round((p/100)*52)}m`;
+      const ball = document.getElementById("fBall");
+      if (ball) {
+        ball.style.left = `calc(50% + ${Math.sin(p/10)*32}px)`;
+        ball.style.top = `calc(50% + ${Math.cos(p/12)*24}px)`;
+      }
+    }
+
+    function awardRespectAction() {
+      soundRelay();
+      showToast("❤️ Flow Respect logged in sovereign ledger.");
+    }
+
+    function pressWaxSeal() {
+      soundStamp();
+      const hex = Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+      document.getElementById("dagHashOutput").innerHTML = `
+        <strong>SEALED IN DAG:</strong><br>
+        SHA-256: ${hex.substring(0, 36)}...
+      `;
+      showToast("🔐 Sealed in SHA-256 DAG ledger!");
+    }
+
+    function adjustGripWeather(val) {
+      const m = parseInt(val);
+      document.getElementById("moistVal").textContent = `${m}% (${m > 50 ? 'Wet' : 'Dry'})`;
+      let mu = Math.max(0.2, Math.min(0.98, 0.96 - (m * 0.005))).toFixed(2);
+      document.getElementById("smithsNeedle").style.transform = `rotate(${-45 + (mu * 90)}deg)`;
+      document.getElementById("needleReadout").textContent = `μ = ${mu}`;
+      const s = document.getElementById("smithsStatus");
+      if (mu > 0.8) { s.textContent = "OPTIMAL ADHESION"; s.style.color = "var(--racing-green)"; }
+      else if (mu > 0.5) { s.textContent = "DAMP ASPHALT"; s.style.color = "var(--cognac-gold)"; }
+      else { s.textContent = "FROST / ICE HAZARD"; s.style.color = "var(--caliper-red)"; }
+    }
+
+    function setAct(i) {
+      soundRelay();
+      currentAct = i;
+      updateUI();
+    }
+
+    function nextAct() {
+      if (currentAct < ACTS.length - 1) {
+        currentAct++;
+        soundRelay();
+        updateUI();
+      } else {
+        window.location.href = "http://localhost:5173";
+      }
+    }
+
+    function prevAct() {
+      if (currentAct > 0) {
+        currentAct--;
+        soundRelay();
+        updateUI();
+      }
+    }
+
+    function updateUI() {
+      const a = ACTS[currentAct];
+      document.getElementById("actTag").textContent = a.tag;
+      document.getElementById("actTitle").textContent = a.title;
+      document.getElementById("actStory").innerHTML = a.story;
+      document.getElementById("actNumDisp").textContent = `${currentAct + 1} OF ${ACTS.length}`;
+      a.render(document.getElementById("binnacleStage"));
+
+      document.querySelectorAll(".chap-tab").forEach((t, i) => {
+        t.classList.toggle("active", i === currentAct);
+      });
+
+      document.getElementById("prevBtn").style.opacity = currentAct === 0 ? "0.4" : "1";
+      document.getElementById("nextBtn").textContent = currentAct === ACTS.length - 1 ? "Launch Application 🚀" : "Next Act ►";
+    }
+
+    function copyJourneyUrl() {
+      soundRelay();
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast("✨ Shareable link copied to clipboard!");
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 3500);
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
