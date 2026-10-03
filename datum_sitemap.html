@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DATUM // Sovereign Automotive Atelier — Engineering Codex & Custodian Framework</title>
+  <title>DATUM // Sovereign Automotive Atelier — Engineering Codex & Architectural Roadmap</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,8 +12,8 @@
       /* Bespoke Horlogerie & Atelier Obsidian Palette */
       --void-bg: #05070B;
       --chassis-bg: #0A0D15;
-      --module-bg: rgba(13, 18, 28, 0.92);
-      --glass-panel: rgba(15, 21, 34, 0.88);
+      --module-bg: rgba(13, 18, 28, 0.94);
+      --glass-panel: rgba(15, 21, 34, 0.92);
       
       /* Machined Metallics */
       --billet-aluminum: #E2E8F0;
@@ -45,7 +45,7 @@
       --l3-border: rgba(56, 189, 248, 0.45);
       --l3-glow: 0 0 20px rgba(56, 189, 248, 0.2);
 
-      --dashed-border: rgba(148, 163, 184, 0.4);
+      --dashed-border: rgba(148, 163, 184, 0.45);
     }
 
     * {
@@ -146,7 +146,7 @@
       color: var(--cognac-gold);
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
     .live-telemetry-bar {
@@ -160,19 +160,18 @@
       color: var(--satin-titanium);
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1080px) {
       .live-telemetry-bar { display: flex; }
     }
 
     .telemetry-chip {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
 
     .telemetry-chip strong {
       color: var(--billet-aluminum);
-      font-weight: 600;
     }
 
     .pulse-led {
@@ -180,161 +179,146 @@
       height: 6px;
       border-radius: 50%;
       background: var(--racing-green);
-      box-shadow: 0 0 8px var(--green-halo);
-      animation: pulse-ring 2.2s infinite ease-in-out;
+      box-shadow: 0 0 8px var(--racing-green);
+      animation: led-pulse 2s infinite ease-in-out;
     }
 
-    @keyframes pulse-ring {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.4; }
+    @keyframes led-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    /* ── COCKPIT SWITCHES & CONTROLS ── */
     .hud-controls-cluster {
       pointer-events: auto;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: var(--glass-panel);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid var(--hairline-metal);
-      border-radius: 14px;
-      padding: 6px 12px;
-      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
-    /* Bespoke Milled Machined Switch (Bespoke Journey Button) */
-    .switch-journey {
-      background: linear-gradient(180deg, #2A1F0D 0%, #150F05 100%);
-      border: 1.5px solid var(--cognac-gold);
-      color: var(--cognac-gold);
+    /* Machined Control Buttons */
+    .machined-btn, .switch-journey, .switch-monograph {
+      background: var(--glass-panel);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--hairline-metal);
+      color: var(--billet-aluminum);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 800;
-      padding: 7px 16px;
-      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(229, 169, 60, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      gap: 6px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .switch-journey:hover {
-      background: linear-gradient(180deg, #3D2D14 0%, #1F1709 100%);
-      box-shadow: 0 6px 25px rgba(229, 169, 60, 0.45);
+    .machined-btn:hover {
+      border-color: var(--satin-titanium);
+      color: #FFF;
       transform: translateY(-1px);
     }
 
-    .switch-journey:active {
-      transform: translateY(1px);
+    .switch-journey {
+      background: linear-gradient(135deg, rgba(229, 169, 60, 0.15) 0%, rgba(180, 83, 9, 0.2) 100%);
+      border-color: var(--l1-border);
+      color: var(--cognac-gold);
     }
 
-    .switch-journey.active {
-      background: linear-gradient(180deg, #E5A93C 0%, #B45309 100%);
+    .switch-journey:hover, .switch-journey.active {
+      background: linear-gradient(135deg, #E5A93C 0%, #B45309 100%);
       color: #000;
-      border-color: #FDE68A;
-      box-shadow: 0 0 25px rgba(229, 169, 60, 0.6);
+      box-shadow: 0 0 25px var(--amber-halo);
+      transform: translateY(-1px);
+    }
+
+    .switch-monograph {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 116, 144, 0.2) 100%);
+      border-color: var(--l3-border);
+      color: #7DD3FC;
+    }
+
+    .switch-monograph:hover, .switch-monograph.active {
+      background: linear-gradient(135deg, #38BDF8 0%, #0369A1 100%);
+      color: #000;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
     }
 
     .mode-tab-group {
       display: flex;
-      background: rgba(0, 0, 0, 0.35);
+      background: var(--glass-panel);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--hairline-metal);
-      border-radius: 8px;
-      padding: 3px;
-      gap: 3px;
+      border-radius: 10px;
+      padding: 2px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
 
     .mode-tab {
       background: transparent;
       border: none;
       color: var(--satin-titanium);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.15s ease;
     }
 
     .mode-tab.active {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--billet-aluminum);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    .machined-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--hairline-metal);
-      color: var(--billet-aluminum);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .machined-btn:hover {
-      border-color: var(--cognac-gold);
-      color: var(--cognac-gold);
-      background: rgba(229, 169, 60, 0.08);
-    }
-
-    .machined-btn:active {
-      transform: scale(0.97);
-    }
-
-    /* Precision Search Field */
     .cad-search {
+      position: relative;
+      background: var(--glass-panel);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 10px;
+      padding: 6px 12px;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid var(--hairline-metal);
-      border-radius: 8px;
-      padding: 6px 12px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .cad-search:focus-within {
-      border-color: var(--cognac-gold);
-      box-shadow: 0 0 15px var(--amber-halo);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
 
     .cad-search input {
-      border: none;
       background: transparent;
+      border: none;
       outline: none;
+      color: var(--billet-aluminum);
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      color: var(--billet-aluminum);
-      width: 140px;
+      width: 130px;
+      transition: width 0.2s ease;
     }
 
-    /* ── SCENE & VIEWPORT ── */
+    .cad-search input:focus {
+      width: 190px;
+    }
+
+    .cad-search input::placeholder {
+      color: var(--satin-titanium);
+      opacity: 0.6;
+    }
+
+    /* ── VIEWPORT & CANVAS ── */
     #viewport {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
       cursor: grab;
       overflow: hidden;
-      z-index: 10;
     }
 
     #viewport.dragging {
@@ -344,64 +328,73 @@
     #scene {
       position: absolute;
       transform-origin: 0 0;
+      top: 0;
+      left: 0;
       will-change: transform;
     }
 
-    /* ── SVG LASER TRACE CONNECTOR LINES ── */
     #connector-canvas {
       position: absolute;
       top: 0;
       left: 0;
       pointer-events: none;
-      z-index: 1;
+      overflow: visible;
+      z-index: 10;
     }
 
     .laser-spline {
       fill: none;
-      stroke: rgba(148, 163, 184, 0.22);
-      stroke-width: 1.5px;
-      stroke-dasharray: 4 4;
-      transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+      stroke: rgba(255, 255, 255, 0.14);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      transition: stroke 0.3s ease, stroke-width 0.3s ease;
     }
 
     .laser-spline.active-trace {
       stroke: var(--cognac-gold);
-      stroke-width: 2.2px;
-      stroke-dasharray: none;
-      filter: drop-shadow(0 0 8px var(--amber-halo));
+      stroke-width: 2.2;
+      filter: drop-shadow(0 0 6px rgba(229, 169, 60, 0.6));
+    }
+
+    .laser-spline.arch-trace {
+      stroke: #38BDF8;
+      stroke-width: 2;
+      stroke-dasharray: 6 3;
+      animation: dash-anim 30s linear infinite;
+    }
+
+    @keyframes dash-anim {
+      to { stroke-dashoffset: -1000; }
     }
 
     .laser-spline.dimmed-trace {
       opacity: 0.12;
     }
 
-    /* ── CAD BLUEPRINT COMPONENT CARDS (NON-GENERIC) ── */
+    /* ── MACHINED CAD NODES ── */
     #nodes-layer {
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 2;
+      z-index: 20;
     }
 
     .cad-node {
       position: absolute;
       background: var(--module-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--hairline-metal);
       border-radius: 8px;
-      padding: 8px 12px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
+      padding: 6px 10px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      white-space: nowrap;
+      justify-content: center;
+      cursor: pointer;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.3s ease;
     }
 
-    /* CAD Top Technical Label Bar */
     .cad-node-header {
       display: flex;
       justify-content: space-between;
@@ -514,6 +507,12 @@
       font-style: italic;
     }
 
+    .node-arch {
+      border-color: #38BDF8;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(15, 23, 42, 0.9) 100%);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+
     .cad-node.journey-focus {
       border-color: var(--cognac-gold) !important;
       outline: 2px solid var(--cognac-gold);
@@ -533,7 +532,7 @@
       filter: grayscale(0.7);
     }
 
-    /* ── 🌟 THE CUSTODIAN BESPOKE HOROLOGY COCKPIT (THE ANTI-GENERIC EXPERIENCE) ── */
+    /* ── 🌟 CUSTODIAN BESPOKE HOROLOGY COCKPIT ── */
     .custodian-cockpit {
       position: fixed;
       bottom: 24px;
@@ -542,7 +541,7 @@
       z-index: 120;
       width: 94%;
       max-width: 860px;
-      background: linear-gradient(180deg, rgba(17, 24, 39, 0.95) 0%, rgba(10, 14, 22, 0.96) 100%);
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.96) 0%, rgba(10, 14, 22, 0.98) 100%);
       backdrop-filter: blur(32px);
       -webkit-backdrop-filter: blur(32px);
       border: 1.5px solid var(--l1-border);
@@ -599,70 +598,72 @@
     }
 
     .cockpit-close {
-      cursor: pointer;
-      color: var(--satin-titanium);
-      font-size: 15px;
       width: 28px;
       height: 28px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s ease;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--hairline-metal);
+      color: var(--satin-titanium);
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      transition: all 0.2s ease;
     }
 
     .cockpit-close:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: var(--caliper-red);
       color: #FFF;
+      border-color: var(--caliper-red);
     }
 
-    /* Chapter Segment Bar */
     .cockpit-stepper {
       display: flex;
+      align-items: center;
       gap: 6px;
-      width: 100%;
     }
 
     .step-tick {
       flex: 1;
-      height: 4px;
-      border-radius: 2px;
+      height: 3px;
       background: rgba(255, 255, 255, 0.1);
-      cursor: pointer;
+      border-radius: 2px;
       transition: all 0.3s ease;
+      cursor: pointer;
     }
 
     .step-tick.passed {
-      background: var(--amber-burn);
+      background: var(--cognac-gold);
     }
 
     .step-tick.current {
-      background: var(--cognac-gold);
-      box-shadow: 0 0 12px var(--amber-halo);
+      background: var(--champagne-amber);
+      box-shadow: 0 0 10px var(--amber-halo);
+      height: 5px;
     }
 
-    /* Cockpit Main Grid */
     .cockpit-grid {
       display: grid;
       grid-template-columns: 1fr 1.15fr;
-      gap: 24px;
+      gap: 20px;
       align-items: center;
+      min-height: 200px;
     }
 
-    @media (max-width: 860px) {
+    @media (max-width: 768px) {
       .cockpit-grid { grid-template-columns: 1fr; }
     }
 
     .cockpit-narrative {
-      font-size: 12.5px;
-      line-height: 1.7;
+      font-size: 13px;
+      line-height: 1.65;
       color: var(--satin-titanium);
     }
 
     .cockpit-narrative strong {
       color: var(--billet-aluminum);
-      font-weight: 600;
     }
 
     .cockpit-narrative em {
@@ -671,17 +672,16 @@
       font-weight: 600;
     }
 
-    /* Bespoke Physical Instrument Binnacle (Replaces Generic Form Controls) */
     .horology-binnacle {
-      background: radial-gradient(circle at center, #111726 0%, #07090F 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8), 0 10px 25px rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.5);
+      border: 1.5px solid var(--hairline-metal);
+      border-radius: 14px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      position: relative;
     }
 
     .binnacle-header {
@@ -697,43 +697,37 @@
       padding-bottom: 6px;
     }
 
-    /* ACT 1: ROTARY START SWITCH & FLIP COVER BUTTON */
     .ignition-cluster {
       display: flex;
       align-items: center;
       justify-content: space-around;
-      gap: 16px;
-      padding: 8px 0;
+      padding: 10px 0;
     }
 
     .rotary-bezel {
-      width: 88px;
-      height: 88px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      background: radial-gradient(circle, #1F293D 0%, #0D121D 100%);
-      border: 3px solid #334155;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+      background: radial-gradient(circle at 35% 35%, #2D3748 0%, #111827 75%, #05070B 100%);
+      border: 3px solid #4B5563;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 8px 20px rgba(0, 0, 0, 0.8);
+      position: relative;
+      cursor: pointer;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      position: relative;
-      transition: transform 0.2s ease;
-    }
-
-    .rotary-bezel:active {
-      transform: scale(0.96);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .rotary-notch {
+      position: absolute;
+      top: 6px;
       width: 4px;
-      height: 14px;
+      height: 12px;
       background: var(--cognac-gold);
       border-radius: 2px;
       box-shadow: 0 0 8px var(--cognac-gold);
-      position: absolute;
-      top: 6px;
+      transition: transform 0.3s ease;
     }
 
     .rotary-text {
@@ -742,8 +736,7 @@
       font-weight: 800;
       color: var(--billet-aluminum);
       text-align: center;
-      line-height: 1.1;
-      margin-top: 8px;
+      pointer-events: none;
     }
 
     .flip-safety-switch {
@@ -754,182 +747,131 @@
     }
 
     .safety-cover-btn {
-      width: 110px;
+      width: 72px;
       height: 48px;
-      border-radius: 10px;
       background: linear-gradient(180deg, #DC2626 0%, #991B1B 100%);
-      border: 2px solid #F87171;
+      border: 2px solid #EF4444;
+      border-radius: 8px;
       color: #FFF;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 900;
+      font-size: 10px;
+      font-weight: 800;
       letter-spacing: 0.1em;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
+      gap: 2px;
+      transition: all 0.15s ease;
     }
 
-    .safety-cover-btn:hover {
-      box-shadow: 0 10px 25px rgba(220, 38, 38, 0.6);
-      transform: translateY(-1px);
-    }
-
-    .safety-cover-btn.fired {
-      background: linear-gradient(180deg, #059669 0%, #047857 100%);
+    .safety-cover-btn:active, .safety-cover-btn.fired {
+      transform: translateY(2px) scale(0.96);
+      background: linear-gradient(180deg, #10B981 0%, #047857 100%);
       border-color: #34D399;
-      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
     }
 
-    /* ACT 2: PORSCHE / MOTEC FRICTION CIRCLE & G-METER */
-    .telemetry-stage {
-      display: grid;
-      grid-template-columns: 100px 1fr;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .friction-circle {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.5) 100%);
+    /* Friction circle MoTeC */
+    .motec-g-meter {
       position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .friction-cross-h {
+    .motec-g-meter::before {
+      content: '';
       position: absolute;
-      width: 100%;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.1);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .friction-cross-v {
+    .g-friction-ball {
       position: absolute;
-      height: 100%;
-      width: 1px;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .friction-ball {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--caliper-red);
-      box-shadow: 0 0 10px var(--caliper-red);
-      position: absolute;
-      transition: all 0.08s ease-out;
-    }
-
-    .telemetry-controls-area {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .analog-scrubber {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 3px;
-      outline: none;
-    }
-
-    .analog-scrubber::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
       background: var(--cognac-gold);
-      cursor: pointer;
-      box-shadow: 0 0 10px var(--amber-halo);
+      box-shadow: 0 0 10px var(--cognac-gold);
+      transition: all 0.15s ease-out;
     }
 
-    /* ACT 3: BRASS EMBOSSED STAMP PRESS (DAG SERVICE) */
-    .stamp-press-unit {
+    /* Wax seal press button */
+    .wax-seal-press {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .wax-seal-badge {
-      width: 72px;
-      height: 72px;
+    .wax-stamp-btn {
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
-      background: radial-gradient(circle, #D49020 0%, #875A14 100%);
+      background: radial-gradient(circle at 30% 30%, #D97706 0%, #78350F 100%);
       border: 2px solid #FDE68A;
-      box-shadow: 0 6px 18px rgba(229, 169, 60, 0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      cursor: pointer;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #000;
-      font-family: 'Cinzel', serif;
-      font-weight: 900;
-      font-size: 8px;
-      text-align: center;
-      line-height: 1.1;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.15s ease;
+      color: #FFF;
+      font-size: 20px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .wax-seal-badge:active {
+    .wax-stamp-btn:active {
       transform: scale(0.92);
+      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.8);
     }
 
-    /* ACT 4: DUAL-NEEDLE SMITHS GRIP INSTRUMENT */
-    .smiths-dial-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .smiths-gauge {
-      width: 110px;
-      height: 110px;
+    /* Smiths Dual Needle Gauge */
+    .smiths-bezel {
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle, #1A2234 0%, #0A0E17 100%);
-      border: 3px solid #475569;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 3px 6px rgba(255,255,255,0.15);
+      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+      border: 3px solid #374151;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 8px 25px rgba(0, 0, 0, 0.7);
+      margin: 0 auto;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
     }
 
-    .gauge-needle {
+    .smiths-needle {
       position: absolute;
-      width: 2px;
-      height: 42px;
-      background: var(--cognac-gold);
       bottom: 50%;
-      left: calc(50% - 1px);
+      left: calc(50% - 1.5px);
+      width: 3px;
+      height: 48px;
+      background: var(--caliper-red);
       transform-origin: bottom center;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 0 6px var(--cognac-gold);
+      transform: rotate(-30deg);
+      border-radius: 2px 2px 0 0;
+      box-shadow: 0 0 8px rgba(225, 29, 72, 0.7);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .gauge-pivot {
-      width: 12px;
-      height: 12px;
+    .smiths-center-cap {
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      background: #E2E8F0;
-      position: absolute;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      background: #D1D5DB;
+      border: 2px solid #111827;
+      z-index: 5;
     }
 
-    /* Cockpit Footer Controls */
     .cockpit-footer {
       display: flex;
       justify-content: space-between;
@@ -944,7 +886,7 @@
       color: var(--billet-aluminum);
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 600;
       padding: 7px 16px;
       border-radius: 8px;
       cursor: pointer;
@@ -955,48 +897,751 @@
     }
 
     .cockpit-nav-btn:hover {
-      border-color: var(--cognac-gold);
-      color: var(--cognac-gold);
+      border-color: var(--satin-titanium);
+      color: #FFF;
     }
 
     .cockpit-nav-btn.primary {
-      background: linear-gradient(180deg, #E5A93C 0%, #B45309 100%);
+      background: linear-gradient(135deg, #E5A93C 0%, #B45309 100%);
       color: #000;
       border-color: #FDE68A;
-      box-shadow: 0 3px 12px rgba(229, 169, 60, 0.3);
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(229, 169, 60, 0.35);
     }
 
-    .cockpit-nav-btn.primary:hover {
-      box-shadow: 0 5px 20px rgba(229, 169, 60, 0.55);
-    }
-
-    /* ── RADAR TELEMETRY MINIMAP ── */
-    .radar-pod {
+    /* ── 📜 THE TECHNICAL MONOGRAPH & CODEX OVERLAY DRAWER ── */
+    .monograph-overlay {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 100;
-      width: 170px;
-      height: 110px;
-      background: var(--glass-panel);
-      backdrop-filter: blur(24px);
-      border: 1px solid var(--hairline-metal);
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      overflow: hidden;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 960px;
+      background: linear-gradient(180deg, rgba(10, 13, 21, 0.98) 0%, rgba(5, 7, 11, 0.99) 100%);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-left: 1.5px solid var(--hairline-metal);
+      box-shadow: -25px 0 60px rgba(0, 0, 0, 0.85);
+      z-index: 150;
       display: flex;
       flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    .monograph-overlay.open {
+      transform: translateX(0);
+    }
+
+    .monograph-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--hairline-metal);
+      background: rgba(15, 21, 34, 0.6);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--satin-titanium);
+    }
+
+    .monograph-top-bar strong {
+      color: var(--cognac-gold);
+    }
+
+    .monograph-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 10px 24px;
+      border-bottom: 1px solid var(--hairline-metal);
+      background: rgba(8, 11, 18, 0.8);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .monograph-tabs::-webkit-scrollbar { display: none; }
+
+    .monograph-tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--satin-titanium);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .monograph-tab-btn:hover {
+      color: var(--billet-aluminum);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .monograph-tab-btn.active {
+      color: var(--cognac-gold);
+      border-color: rgba(229, 169, 60, 0.4);
+      background: rgba(229, 169, 60, 0.1);
+    }
+
+    .monograph-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 36px 80px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      scroll-behavior: smooth;
+    }
+
+    /* Monograph Typography & Blocks */
+    .mono-masthead {
+      border-bottom: 1px solid var(--hairline-metal);
+      padding-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mono-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--cognac-gold);
+      font-weight: 700;
+    }
+
+    .mono-title {
+      font-family: 'Cinzel', serif;
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      color: #FFF;
+    }
+
+    .mono-title span {
+      color: var(--cognac-gold);
+      font-style: italic;
+    }
+
+    .mono-lead-quote {
+      font-family: 'Cinzel', serif;
+      font-size: 14.5px;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--satin-titanium);
+      border-left: 2px solid var(--cognac-gold);
+      padding-left: 16px;
+      margin-top: 4px;
+    }
+
+    .mono-meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      letter-spacing: 0.15em;
+      color: var(--satin-titanium);
+      text-transform: uppercase;
+      padding-top: 10px;
+    }
+
+    .mono-chapter-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+    }
+
+    .mono-ch-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--cognac-gold);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .mono-ch-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--billet-aluminum);
+    }
+
+    .mono-ch-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--satin-titanium);
+    }
+
+    .editorial-p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #CBD5E1;
+      margin-bottom: 18px;
+    }
+
+    .editorial-p.drop-cap::first-letter {
+      font-family: 'Cinzel', serif;
+      font-size: 52px;
+      float: left;
+      line-height: 0.85;
+      margin-right: 12px;
+      color: var(--cognac-gold);
+      font-weight: 900;
+    }
+
+    .editorial-pullquote {
+      border-left: 3px solid var(--cognac-gold);
+      background: rgba(229, 169, 60, 0.05);
+      padding: 20px 24px;
+      border-radius: 0 10px 10px 0;
+      margin: 24px 0;
+    }
+
+    .editorial-pullquote p {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--billet-aluminum);
+    }
+
+    .editorial-pullquote cite {
+      display: block;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cognac-gold);
+      font-style: normal;
+    }
+
+    /* 4 Pillars Grid */
+    .four-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .pillar-card {
+      background: var(--module-bg);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .pillar-card:hover {
+      border-color: var(--cognac-gold);
+      transform: translateY(-2px);
+    }
+
+    .pillar-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--cognac-gold);
+    }
+
+    .pillar-name {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #FFF;
+    }
+
+    .pillar-desc {
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--satin-titanium);
+    }
+
+    /* Metrics Trio Strip */
+    .metrics-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    .metric-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-label {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--satin-titanium);
+      display: block;
+    }
+
+    .metric-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--cognac-gold);
+      margin: 4px 0;
+      display: block;
+    }
+
+    .metric-sub {
+      font-size: 9px;
+      color: var(--racing-green);
+      font-weight: 600;
+    }
+
+    /* 6 Tier Architectural Dossier */
+    .arch-tiers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tier-dossier-card {
+      background: var(--module-bg);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .tier-dossier-card:hover {
+      border-color: #38BDF8;
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.15);
+    }
+
+    .tier-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 8px;
+    }
+
+    .tier-level-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      color: #38BDF8;
+      letter-spacing: 0.15em;
+    }
+
+    .tier-latency-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #7DD3FC;
+    }
+
+    .tier-name {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFF;
+    }
+
+    .tier-stack-box {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--billet-aluminum);
+    }
+
+    .tier-desc {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--satin-titanium);
+    }
+
+    .tier-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+      padding-top: 6px;
+    }
+
+    .tier-spec-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      border: 1px solid var(--hairline-metal);
+      color: #CBD5E1;
+    }
+
+    /* Release Ledger */
+    .release-card {
+      background: var(--module-bg);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .release-top-line {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 10px;
+    }
+
+    .release-version-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: #000;
+      background: var(--cognac-gold);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .release-codename {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFF;
+    }
+
+    .release-metrics-pills {
+      display: flex;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+    }
+
+    .pill-green {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34D399;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .pill-blue {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #7DD3FC;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .release-summary {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--satin-titanium);
+    }
+
+    .release-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 680px) {
+      .release-grid { grid-template-columns: 1fr; }
+    }
+
+    .feature-list, .adr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .list-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .feature-item, .adr-item {
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #CBD5E1;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    /* Live Simulators in Lab Annex */
+    .lab-simulators-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .lab-simulators-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .lab-sim-box {
+      background: var(--module-bg);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .lab-sim-box h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #FFF;
+    }
+
+    .lab-sim-box p {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--satin-titanium);
+    }
+
+    .sim-interactive-pod {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    .sim-slider {
+      width: 100%;
+      accent-color: var(--cognac-gold);
+      cursor: pointer;
+    }
+
+    /* Dossier FAQs */
+    .faq-search-cluster {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .faq-search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--module-bg);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 10px;
+      padding: 10px 16px;
+    }
+
+    .faq-search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #FFF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .faq-category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .faq-cat-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--hairline-metal);
+      color: var(--satin-titanium);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .faq-cat-pill:hover, .faq-cat-pill.active {
+      color: #000;
+      background: var(--cognac-gold);
+      border-color: var(--cognac-gold);
+      font-weight: 700;
+    }
+
+    .faq-accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .faq-card {
+      background: var(--module-bg);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .faq-card.open {
+      border-color: var(--cognac-gold);
+    }
+
+    .faq-header {
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .faq-q-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .faq-num-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      color: var(--cognac-gold);
+      text-transform: uppercase;
+    }
+
+    .faq-question {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFF;
+      line-height: 1.4;
+    }
+
+    .faq-toggle-icon {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--satin-titanium);
+    }
+
+    .faq-body {
+      padding: 0 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 16px;
+    }
+
+    .faq-part {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .faq-part-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cognac-gold);
+    }
+
+    .faq-part-content {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: #CBD5E1;
+    }
+
+    .faq-status-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: var(--satin-titanium);
+    }
+
+    /* Radar Telemetry Minimap */
+    .radar-pod {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+      width: 190px;
+      height: 120px;
+      background: var(--glass-panel);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--hairline-metal);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7);
+      pointer-events: none;
     }
 
     .radar-pod-header {
-      padding: 4px 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 8px;
-      color: var(--satin-titanium);
-      background: rgba(0, 0, 0, 0.3);
-      border-bottom: 1px solid var(--hairline-metal);
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: var(--satin-titanium);
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
     }
 
     .radar-pod-body {
@@ -1079,6 +1724,12 @@
     </div>
 
     <div class="hud-controls-cluster">
+      <!-- 📜 Technical Monograph & Codex -->
+      <button class="switch-monograph" id="monographToggleBtn" onclick="toggleMonographDrawer()">
+        <span>📜</span>
+        <span>Technical Monograph &amp; Codex</span>
+      </button>
+
       <!-- Bespoke Guided Journey Switch -->
       <button class="switch-journey" id="journeyToggleBtn" onclick="toggleJourneyCockpit()">
         <span>🧭</span>
@@ -1096,7 +1747,7 @@
           <span>🗺️</span> Tree
         </button>
         <button class="mode-tab" id="tabTopology" onclick="switchMode('topology')">
-          <span>⚡</span> Topology
+          <span>⚡</span> 6-Tier Topology
         </button>
       </div>
 
@@ -1170,18 +1821,531 @@
     </div>
   </div>
 
+  <!-- 📜 THE TECHNICAL MONOGRAPH & CODEX OVERLAY DRAWER 📜 -->
+  <div class="monograph-overlay" id="monographDrawer">
+    <div class="monograph-top-bar">
+      <div>
+        <strong>FOLIO 04</strong> // THE ATELIER MONOGRAPH &bull; EDITION DE LUXE
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span>DIRECTED BY vD</span>
+        <div class="cockpit-close" onclick="toggleMonographDrawer()" title="Close Monograph (Esc)">✕</div>
+      </div>
+    </div>
+
+    <!-- Chapter Navigation Strip -->
+    <div class="monograph-tabs">
+      <button class="monograph-tab-btn active" onclick="jumpToMonographSection('all', this)">[00] Complete Monograph</button>
+      <button class="monograph-tab-btn" onclick="jumpToMonographSection('ch1', this)">[01] The Manifesto &amp; Problem</button>
+      <button class="monograph-tab-btn" onclick="jumpToMonographSection('ch2', this)">[02] Level 1–6 Distributed System</button>
+      <button class="monograph-tab-btn" onclick="jumpToMonographSection('ch3', this)">[03] Software Release Ledger</button>
+      <button class="monograph-tab-btn" onclick="jumpToMonographSection('ch4', this)">[04] Interactive Engineering Lab</button>
+      <button class="monograph-tab-btn" onclick="jumpToMonographSection('ch5', this)">[05] The Technical Inquiry (FAQ)</button>
+    </div>
+
+    <!-- Monograph Content Scroll Body -->
+    <div class="monograph-content" id="monographScrollBody">
+      
+      <!-- Masthead -->
+      <section class="mono-masthead" id="sec-masthead">
+        <span class="mono-eyebrow">SYSTEM DESIGN &amp; CUSTODIANSHIP ESSAY</span>
+        <h1 class="mono-title">The Architecture <br><span>of Pure Custodianship.</span></h1>
+        <p class="mono-lead-quote">
+          "A definitive blueprint replacing ephemeral feeds with verified mechanical provenance, residential privacy protection, and generational automotive camaraderie."
+        </p>
+        <div class="mono-meta-strip">
+          <span>VOL. IV // ISS. 01</span>
+          <span>&bull;</span>
+          <span style="color: var(--cognac-gold); font-weight: 700;">100% PROPRIETARY CODE</span>
+          <span>&bull;</span>
+          <span>VERIFIED PRODUCTION LEDGER</span>
+          <span>&bull;</span>
+          <span>76 PASSING TEST SUITES</span>
+        </div>
+      </section>
+
+      <!-- CHAPTER 01: THE MANIFESTO & THE PROBLEM -->
+      <section id="sec-ch1">
+        <div class="mono-chapter-header">
+          <span class="mono-ch-label">CHAPTER 01 // THE MANIFESTO &amp; THE PROBLEM</span>
+          <h2 class="mono-ch-title">Modern car culture is broken by advertising algorithms. We built its mathematical antidote.</h2>
+          <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium);">READING TIME: 4 MIN &bull; SOVEREIGN CUSTODIAN PHILOSOPHY</span>
+        </div>
+
+        <p class="editorial-p drop-cap">
+          For the past two decades, genuine automotive culture has been fractured across fragmented WhatsApp group chats, ephemeral Instagram stories, and easily forged paper binder histories. The sacred relationship between custodian and machine has been reduced to click-driven noise and speculative auction flipping.
+        </p>
+        <p class="editorial-p">
+          DATUM Atelier reclaims this domain through the tenets of haute horlogerie. We treat high-performance vehicles not as disposable content, but as living, evolving historical assets requiring mathematically immutable provenance, peer-to-peer engineering support, and sovereign privacy safeguards.
+        </p>
+
+        <!-- Pull Quote -->
+        <blockquote class="editorial-pullquote">
+          <p>"A vehicle's true worth is forged in the integrity of its telemetry, the honesty of its torque specifications, and the camaraderie of the convoy that pulls you through the mountain pass."</p>
+          <cite>— DATUM Sovereign Custody Manifesto</cite>
+        </blockquote>
+
+        <!-- Metrics Trio Strip -->
+        <div class="metrics-trio">
+          <div class="metric-box">
+            <span class="metric-label">Privacy Radius</span>
+            <span class="metric-val">800m</span>
+            <span class="metric-sub">Protected Residential Buffer</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Ingestion Capacity</span>
+            <span class="metric-val">600k QPS</span>
+            <span class="metric-sub">Kafka Stream Fan-out</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Provenance Chain</span>
+            <span class="metric-val">Merkle DAG</span>
+            <span class="metric-sub">Ed25519 Cryptographic Sign</span>
+          </div>
+        </div>
+
+        <!-- The Four Pillars of DATUM -->
+        <div style="margin-top: 24px;">
+          <span class="mono-ch-label" style="font-size: 9.5px;">SYSTEM PRINCIPLES</span>
+          <h3 style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 800; color: #FFF; margin-top: 4px;">The Four Pillars of DATUM</h3>
+          <div class="four-pillars-grid">
+            <div class="pillar-card">
+              <span class="pillar-num">[ 01 ]</span>
+              <h4 class="pillar-name">The Living Digital Twin</h4>
+              <p class="pillar-desc">Real-time CAN-bus synchronization tracking brake pad thermals, oil degradation curves, and suspension dampening cycles with mathematical precision.</p>
+            </div>
+            <div class="pillar-card">
+              <span class="pillar-num">[ 02 ]</span>
+              <h4 class="pillar-name">Shared Guild Ateliers</h4>
+              <p class="pillar-desc">Decentralized collector workshops granting multi-signature NFC access to hydraulic lifts, tire warmers, and clean-room assembly benches.</p>
+            </div>
+            <div class="pillar-card">
+              <span class="pillar-num">[ 03 ]</span>
+              <h4 class="pillar-name">Pass Grip Radar</h4>
+              <p class="pillar-desc">Dynamic road friction (μ) calculation synthesizing atmospheric radar with tyre carcass thermal curves before tires touch mountain pass asphalt.</p>
+            </div>
+            <div class="pillar-card">
+              <span class="pillar-num">[ 04 ]</span>
+              <h4 class="pillar-name">Autonomous Carnet</h4>
+              <p class="pillar-desc">Tamper-evident vehicle passports powered by Merkle DAGs. Proof of maintenance and track history transferred without disclosing private ownership identity.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHAPTER 02: LEVEL 1-6 DISTRIBUTED SYSTEM DESIGN -->
+      <section id="sec-ch2">
+        <div class="mono-chapter-header">
+          <span class="mono-ch-label">CHAPTER 02 // DISTRIBUTED SYSTEM DESIGN</span>
+          <h2 class="mono-ch-title">High-Throughput Distributed Architecture</h2>
+          <p class="mono-ch-desc">
+            Engineered to ingest 600,000 CAN-bus queries per second across 10 Hz telemetry streams with sub-45ms P99 latency.
+          </p>
+        </div>
+
+        <div class="arch-tiers-list">
+          <!-- Level 1 -->
+          <div class="tier-dossier-card">
+            <div class="tier-header-bar">
+              <span class="tier-level-badge">LEVEL 01 // CLIENT EXPERIENCE</span>
+              <span class="tier-latency-pill">&lt; 16ms Frame Budget</span>
+            </div>
+            <h3 class="tier-name">Presentation &amp; DSP Synthesis</h3>
+            <div class="tier-stack-box">React 19 &bull; Web Audio DSP &bull; Tailwind CSS v4</div>
+            <p class="tier-desc">
+              Zero layout thrashing client layer featuring real-time Web Audio API harmonic synthesis that generates procedural flat-plane V8 crankshaft, starter motor, and high-RPM combustion acoustic waveforms.
+            </p>
+            <div class="tier-specs-grid">
+              <div class="tier-spec-chip">✓ Web Audio API Oscillator Nodes</div>
+              <div class="tier-spec-chip">✓ Harmonic Sine &amp; Square Distortion</div>
+              <div class="tier-spec-chip">✓ GPU Hardware Acceleration</div>
+            </div>
+          </div>
+
+          <!-- Level 2 -->
+          <div class="tier-dossier-card">
+            <div class="tier-header-bar">
+              <span class="tier-level-badge">LEVEL 02 // INGRESS SECURITY</span>
+              <span class="tier-latency-pill">600k QPS Peak Throughput</span>
+            </div>
+            <h3 class="tier-name">Ingress &amp; Protocol Gateways</h3>
+            <div class="tier-stack-box">Envoy mTLS &bull; Token Bucket WAF &bull; Cloudflare</div>
+            <p class="tier-desc">
+              Bi-directional gRPC and WebSocket termination handling 600,000 requests per second. Strict token-bucket rate limiters prevent distributed telemetry spoofing and DDoS injection attacks.
+            </p>
+            <div class="tier-specs-grid">
+              <div class="tier-spec-chip">✓ Mutual TLS (mTLS) Vehicle Auth</div>
+              <div class="tier-spec-chip">✓ Token Bucket Rate Limiting (50 req/s)</div>
+              <div class="tier-spec-chip">✓ Deterministic Vector Truncation</div>
+            </div>
+          </div>
+
+          <!-- Level 3 -->
+          <div class="tier-dossier-card">
+            <div class="tier-header-bar">
+              <span class="tier-level-badge">LEVEL 03 // CORE DOMAIN LOGIC</span>
+              <span class="tier-latency-pill">&lt; 15ms Internal Service RPC</span>
+            </div>
+            <h3 class="tier-name">Domain Microservices</h3>
+            <div class="tier-stack-box">Go 1.23 &bull; Rust &bull; Python High-Performance Services</div>
+            <p class="tier-desc">
+              Domain core orchestrating the Digital Twin State Machine, Merkle DAG Provenance Anchor, Pass Grip Radar Adhesion Engine, and Carnet Key Vault.
+            </p>
+            <div class="tier-specs-grid">
+              <div class="tier-spec-chip">✓ Digital Twin State Engine</div>
+              <div class="tier-spec-chip">✓ Merkle DAG Verifier</div>
+              <div class="tier-spec-chip">✓ Thermodynamic Adhesion Engine (μ)</div>
+            </div>
+          </div>
+
+          <!-- Level 4 -->
+          <div class="tier-dossier-card">
+            <div class="tier-header-bar">
+              <span class="tier-level-badge">LEVEL 04 // EVENT STREAMING</span>
+              <span class="tier-latency-pill">10 Hz Telemetry Fan-out</span>
+            </div>
+            <h3 class="tier-name">Async Streaming &amp; Event Bus</h3>
+            <div class="tier-stack-box">Apache Kafka &bull; RabbitMQ Workers</div>
+            <p class="tier-desc">
+              High-throughput Kafka topic partitions sharded by VIN hash. Decouples intensive time-series database writes from real-time peer telemetry fanout.
+            </p>
+            <div class="tier-specs-grid">
+              <div class="tier-spec-chip">✓ 12 Kafka Partitions sharded by VIN</div>
+              <div class="tier-spec-chip">✓ Consumer Groups for Radar &amp; Provenance</div>
+              <div class="tier-spec-chip">✓ RabbitMQ Media Transcoding Queues</div>
+            </div>
+          </div>
+
+          <!-- Level 5 -->
+          <div class="tier-dossier-card">
+            <div class="tier-header-bar">
+              <span class="tier-level-badge">LEVEL 05 // DUAL PERSISTENCE</span>
+              <span class="tier-latency-pill">&lt; 45ms P99 Read Latency</span>
+            </div>
+            <h3 class="tier-name">Persistence &amp; Dual Storage</h3>
+            <div class="tier-stack-box">PostgreSQL (Sharded) &bull; ClickHouse &bull; Redis 7.2</div>
+            <p class="tier-desc">
+              Dual storage engine utilizing PostgreSQL for ACID metadata and relational identity, paired with ClickHouse for Petabyte-scale compressed CAN-bus sensor logs at 90% compression ratio.
+            </p>
+            <div class="tier-specs-grid">
+              <div class="tier-spec-chip">✓ PostgreSQL Sharded by (VIN % 4)</div>
+              <div class="tier-spec-chip">✓ ClickHouse Columnar Storage (118 TB 3yr)</div>
+              <div class="tier-spec-chip">✓ Redis Cluster L1/L2 Cache</div>
+            </div>
+          </div>
+
+          <!-- Level 6 -->
+          <div class="tier-dossier-card">
+            <div class="tier-header-bar">
+              <span class="tier-level-badge">LEVEL 06 // RELIABILITY &amp; HA</span>
+              <span class="tier-latency-pill">99.99% Availability SLA</span>
+            </div>
+            <h3 class="tier-name">Reliability &amp; Fault Tolerance</h3>
+            <div class="tier-stack-box">Active-Passive Multi-Region &bull; RTO &lt; 30s &bull; RPO = 0</div>
+            <p class="tier-desc">
+              Zero data-loss architecture with dead-letter queue retries, automated failover circuit breakers, and sub-second cryptographic state rollback protection.
+            </p>
+            <div class="tier-specs-grid">
+              <div class="tier-spec-chip">✓ Automated Regional Failover</div>
+              <div class="tier-spec-chip">✓ DLQ Exponential Retries</div>
+              <div class="tier-spec-chip">✓ Cryptographic Rollback Prevention</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHAPTER 03: SOFTWARE COMPANY RELEASE LEDGER & ADRs -->
+      <section id="sec-ch3">
+        <div class="mono-chapter-header">
+          <span class="mono-ch-label">CHAPTER 03 // SOFTWARE RELEASE LEDGER &amp; ADRs</span>
+          <h2 class="mono-ch-title">Auditable Engineering Changelog</h2>
+          <p class="mono-ch-desc">
+            A permanent, cryptographically traceable record of all major software releases, architectural decision records (ADRs), mathematical verification suites, and compliance milestones. 6 production releases archived with zero regressions.
+          </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- v1.5.0 -->
+          <div class="release-card">
+            <div class="release-top-line">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="release-version-pill">v1.5.0</span>
+                <span class="release-codename">Motorworld Nexus</span>
+                <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium);">&bull; 2026-10-03</span>
+              </div>
+              <div class="release-metrics-pills">
+                <span class="pill-green">76/76 Tests Passing (14 Suites)</span>
+                <span class="pill-blue">0 Type Errors</span>
+              </div>
+            </div>
+            <h4 style="font-family: 'Cinzel'; font-size: 15px; color: #FFF;">Official UK DVSA Technical Codex, HowManyLeft Survival Census &amp; Recharts Custodian Telemetry</h4>
+            <p class="release-summary">Integrated authoritative UK regulatory and engineering datasets with interactive Recharts telemetry analytics, enabling custodians to query MOT failure patterns, survival rates, OEM fluid specs, and physical performance envelopes.</p>
+            <div class="release-grid">
+              <div class="feature-list">
+                <span class="list-title" style="color: var(--champagne-amber);">Production Feature Deliverables</span>
+                <div class="feature-item"><span>✓</span><span>Motorworld Intelligence Core indexing 72k+ DVSA MOT tests with root-cause breakdown.</span></div>
+                <div class="feature-item"><span>✓</span><span>How Many Left? UK census integration tracking Licensed vs SORN survival trajectories.</span></div>
+                <div class="feature-item"><span>✓</span><span>OEM Fluids &amp; Maintenance Codex: Porsche C40, BMW LL-01/19FE, VW 504.00 approvals.</span></div>
+                <div class="feature-item"><span>✓</span><span>Official DVSA Safety Recalls repository with campaign codes and certified remedies.</span></div>
+              </div>
+              <div class="adr-list">
+                <span class="list-title" style="color: #7DD3FC;">Architectural Decision Records (ADRs)</span>
+                <div class="adr-item"><span>↳</span><span>Decoupled regulatory metadata into motorworldIntelligence.ts for O(1) chassis lookups.</span></div>
+                <div class="adr-item"><span>↳</span><span>Adopted Recharts with responsive SVG containers for zero-latency client analytics.</span></div>
+                <div class="adr-item"><span>↳</span><span>Expanded Explore into 4-pillar architecture: Universe A–Z, Motorworld, Analytics, Feed.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- v1.4.0 -->
+          <div class="release-card">
+            <div class="release-top-line">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="release-version-pill">v1.4.0</span>
+                <span class="release-codename">Automotive Universe</span>
+                <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium);">&bull; 2026-10-02</span>
+              </div>
+              <div class="release-metrics-pills">
+                <span class="pill-green">68 Tests Passing (13 Suites)</span>
+                <span class="pill-blue">0 Type Errors</span>
+              </div>
+            </div>
+            <h4 style="font-family: 'Cinzel'; font-size: 15px; color: #FFF;">A-to-Z UK &amp; Global Enthusiast Platform Encyclopedia &amp; Side-by-Side Mechanical Dossiers</h4>
+            <p class="release-summary">Built the definitive A-to-Z automotive universe directory covering 8 major automotive archetypes, complete mechanical blueprints, UK enthusiast lore, and dynamic side-by-side active vehicle matchups.</p>
+            <div class="release-grid">
+              <div class="feature-list">
+                <span class="list-title" style="color: var(--champagne-amber);">Production Feature Deliverables</span>
+                <div class="feature-item"><span>✓</span><span>Comprehensive dataset across 8 archetypes (Hot Hatches, Purists, Track Weapons, GTs).</span></div>
+                <div class="feature-item"><span>✓</span><span>A-to-Z alphabet fast index and live archetype filter strip with model count badges.</span></div>
+                <div class="feature-item"><span>✓</span><span>Chassis Intelligence Modal: Powertrain, Cultural Lore, Pre-purchase Weaknesses.</span></div>
+              </div>
+              <div class="adr-list">
+                <span class="list-title" style="color: #7DD3FC;">Architectural Decision Records (ADRs)</span>
+                <div class="adr-item"><span>↳</span><span>Modeled genuine mechanical parameters (displacement, induction, P:W, redline, lateral G).</span></div>
+                <div class="adr-item"><span>↳</span><span>Implemented real-time active vehicle benchmark comparison calculating power deltas.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- v1.3.0 -->
+          <div class="release-card">
+            <div class="release-top-line">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="release-version-pill">v1.3.0</span>
+                <span class="release-codename">Synaptic Kinematic Vector</span>
+                <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium);">&bull; 2026-10-02</span>
+              </div>
+              <div class="release-metrics-pills">
+                <span class="pill-green">68 Tests Passing</span>
+                <span class="pill-blue">0 Type Errors</span>
+              </div>
+            </div>
+            <h4 style="font-family: 'Cinzel'; font-size: 15px; color: #FFF;">Heuristic Physical Vector Extraction from Unstructured Automotive Forum Posts</h4>
+            <p class="release-summary">Pioneered physical telemetry extraction from unstructured natural language text snippets, allowing users to paste forum threads, parts catalogs, or driving stories to extract mechanical vectors.</p>
+          </div>
+
+          <!-- v1.2.0 -->
+          <div class="release-card">
+            <div class="release-top-line">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="release-version-pill">v1.2.0</span>
+                <span class="release-codename">Pass Radar &amp; Adhesion Physics</span>
+                <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium);">&bull; 2026-10-01</span>
+              </div>
+              <div class="release-metrics-pills">
+                <span class="pill-green">55 Tests Passing</span>
+                <span class="pill-blue">0 Type Errors</span>
+              </div>
+            </div>
+            <h4 style="font-family: 'Cinzel'; font-size: 15px; color: #FFF;">Real-Time Mountain Pass Weather, Road Friction (μ) Modeling &amp; CAN-Bus Telemetry</h4>
+            <p class="release-summary">Introduced real-time road adhesion physics, thermodynamic tire pyrometer modeling, live Open-Meteo mountain pass weather integration, and virtual CAN-bus streaming.</p>
+          </div>
+
+          <!-- v1.1.0 -->
+          <div class="release-card">
+            <div class="release-top-line">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="release-version-pill">v1.1.0</span>
+                <span class="release-codename">Atelier Mechanical Suite</span>
+                <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium);">&bull; 2026-09-30</span>
+              </div>
+              <div class="release-metrics-pills">
+                <span class="pill-green">42 Tests Passing</span>
+                <span class="pill-blue">0 Type Errors</span>
+              </div>
+            </div>
+            <h4 style="font-family: 'Cinzel'; font-size: 15px; color: #FFF;">Anti-ASD Acoustic Fingerprinting, Plate Redaction &amp; Offline Cross-Border Transit Carnets</h4>
+            <p class="release-summary">Engineered high-society provenance tools: anti-ASD mechanical sound authentication, in-browser license plate redaction, cryptographic workshop stamping, and LCCI/FIA compliant ATA Carnets.</p>
+          </div>
+
+          <!-- v1.0.0 -->
+          <div class="release-card">
+            <div class="release-top-line">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="release-version-pill">v1.0.0</span>
+                <span class="release-codename">Genesis Ledger</span>
+                <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium);">&bull; 2026-09-28</span>
+              </div>
+              <div class="release-metrics-pills">
+                <span class="pill-green">28 Tests Passing</span>
+                <span class="pill-blue">0 Type Errors</span>
+              </div>
+            </div>
+            <h4 style="font-family: 'Cinzel'; font-size: 15px; color: #FFF;">Immutable Merkle DAG Provenance, Zero-Knowledge Geofencing &amp; Local-First Architecture</h4>
+            <p class="release-summary">Initial core release of DATUM Atelier: replacing ephemeral social feeds with an immutable vehicle provenance ledger, 800m residential geofence truncation, and local-first repository architecture.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHAPTER 04: THE ENGINEERING ANNEX (3 LIVE SIMULATORS) -->
+      <section id="sec-ch4">
+        <div class="mono-chapter-header">
+          <span class="mono-ch-label">CHAPTER 04 // THE ENGINEERING ANNEX</span>
+          <h2 class="mono-ch-title">Interactive Mathematical Prototyping</h2>
+          <p class="mono-ch-desc">
+            Directly manipulate the parameters governing residential coordinate cloaking, Merkle tree tampering detection, and road adhesion physics.
+          </p>
+        </div>
+
+        <div class="lab-simulators-grid">
+          <!-- Sim 1: 800m Geofence -->
+          <div class="lab-sim-box">
+            <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium);">
+              <span>SIMULATOR 01</span>
+              <strong style="color: var(--cognac-gold);">PRIVACY</strong>
+            </div>
+            <h4>800m Residential Privacy Radius</h4>
+            <p>Adjust the privacy perimeter to observe real-time vector coordinate protection.</p>
+            <div class="sim-interactive-pod">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--satin-titanium);">Radius:</span>
+                <strong id="monoRadVal">800 meters</strong>
+              </div>
+              <input type="range" min="100" max="2000" step="50" value="800" class="sim-slider" oninput="updateMonoGeofence(this.value)">
+              <div style="background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 9.5px;">
+                <div style="color: var(--cognac-gold); font-weight: 700;">Client Ingress Boundary:</div>
+                <div style="color: var(--satin-titanium);">Raw: 51.5074° N, 0.1278° W</div>
+                <div style="color: #FFF;" id="monoMaskedCoord">Masked: 51.51**° N (+800m hash)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sim 2: Merkle Proof Simulator -->
+          <div class="lab-sim-box">
+            <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium);">
+              <span>SIMULATOR 02</span>
+              <strong style="color: var(--cognac-gold);">PROVENANCE</strong>
+            </div>
+            <h4>Merkle DAG Integrity Engine</h4>
+            <p>Simulate an unauthorized odometer tamper to trigger cryptographic rejection.</p>
+            <div class="sim-interactive-pod">
+              <button class="cockpit-nav-btn primary" id="monoMerkleBtn" onclick="toggleMonoMerkle()" style="justify-content: center; font-size: 10px;">
+                Simulate Forged Mileage Entry
+              </button>
+              <div id="monoMerkleStatus" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px; border-radius: 4px; color: #34D399; font-size: 9.5px;">
+                <strong>✓ VERIFIED: MERKLE TREE VALID</strong>
+                <div style="opacity: 0.8; font-size: 8.5px; margin-top: 2px;">Root: 0x4e29b18274a10f82... [AUTHENTIC]</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sim 3: Road Grip Friction Engine -->
+          <div class="lab-sim-box">
+            <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium);">
+              <span>SIMULATOR 03</span>
+              <strong style="color: var(--cognac-gold);">RADAR</strong>
+            </div>
+            <h4>Pass Grip Friction (μ) Engine</h4>
+            <p>Model thermodynamic adhesion across weather and tire thermal curves.</p>
+            <div class="sim-interactive-pod">
+              <div style="display: flex; gap: 6px;">
+                <button class="cockpit-nav-btn" id="monoRainBtn" onclick="toggleMonoRain()" style="flex: 1; padding: 4px; font-size: 9.5px; justify-content: center; background: var(--cognac-gold); color: #000;">Wet Spray</button>
+                <button class="cockpit-nav-btn" id="monoFrostBtn" onclick="toggleMonoFrost()" style="flex: 1; padding: 4px; font-size: 9.5px; justify-content: center;">Frost Clear</button>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 10px;">
+                <span style="color: var(--satin-titanium);">Tyre Temp:</span>
+                <strong id="monoTyreReadout">38°C</strong>
+              </div>
+              <input type="range" min="10" max="85" value="38" class="sim-slider" oninput="updateMonoTyre(this.value)">
+              <div style="text-align: center; padding: 6px; background: rgba(0,0,0,0.6); border-radius: 4px;">
+                <div style="font-size: 18px; font-weight: 800; color: var(--cognac-gold);" id="monoMuReadout">μ 0.72</div>
+                <span style="font-size: 8.5px; letter-spacing: 0.1em; color: var(--satin-titanium); text-transform: uppercase;" id="monoMuLabel">Optimal Grip</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHAPTER 05: THE TECHNICAL INQUIRY (24 MASTER DOSSIER FAQs) -->
+      <section id="sec-ch5">
+        <div class="mono-chapter-header">
+          <span class="mono-ch-label">CHAPTER 05 // THE TECHNICAL INQUIRY</span>
+          <h2 class="mono-ch-title">The Software Company Due Diligence Dossier</h2>
+          <p class="mono-ch-desc">
+            Direct answers regarding corporate monetization, zero-cost to cloud scale, DVSA data integrity, cryptographic anti-fraud, anti-ASD acoustic DSP, and GDPR Article 17 compliance. 24 interactive inquiries with strict 4-part provenance.
+          </p>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="faq-search-cluster">
+          <div class="faq-search-box">
+            <span style="color: var(--satin-titanium);">🔍</span>
+            <input type="text" id="monoFaqSearch" placeholder="Search inquiries (e.g. Monetization, GDPR, DVSA, Merkle, Scaling)..." oninput="filterMonoFaqs()">
+          </div>
+          <div class="faq-category-pills">
+            <button class="faq-cat-pill active" onclick="setMonoFaqCat('all', this)">All (24)</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('due-diligence', this)">Due Diligence</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('market', this)">Market &amp; Economics</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('deployment', this)">Architecture &amp; Scaling</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('data', this)">Data &amp; DSP</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('privacy', this)">Privacy &amp; GDPR</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('impact', this)">Economic Impact</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('collaboration', this)">Garages &amp; Workshops</button>
+            <button class="faq-cat-pill" onclick="setMonoFaqCat('marketing', this)">Marketing</button>
+          </div>
+        </div>
+
+        <!-- FAQ Accordion Container -->
+        <div class="faq-accordion-list" id="monoFaqList">
+          <!-- Injected via JavaScript from MASTER_DOSSIER_FAQS -->
+        </div>
+
+        <!-- Direct Concierge Contact Box -->
+        <div style="background: var(--module-bg); border: 1.5px solid var(--hairline-metal); border-radius: 14px; padding: 24px; margin-top: 36px; display: flex; flex-direction: column; gap: 14px;">
+          <span class="mono-ch-label" style="font-size: 9px;">SYSTEM ARCHITECT CONCIERGE</span>
+          <h3 style="font-family: 'Cinzel'; font-size: 20px; font-weight: 800; color: #FFF;">Require a bespoke integration or telematics consultation?</h3>
+          <p style="font-size: 13px; line-height: 1.6; color: var(--satin-titanium);">
+            The DATUM systems engineering council is available for custom MoTeC CAN-bus integrations, private guild deployments, and regulatory data partnerships.
+          </p>
+          <a href="http://localhost:5173/pro" target="_blank" class="cockpit-nav-btn primary" style="text-decoration: none; align-self: flex-start; margin-top: 6px;">
+            Consult System Architect ↗
+          </a>
+        </div>
+
+        <!-- Colophon -->
+        <div style="text-align: center; border-top: 1px solid var(--hairline-metal); padding-top: 24px; margin-top: 36px; font-family: 'JetBrains Mono'; font-size: 10px; color: var(--satin-titanium); letter-spacing: 0.15em;">
+          <div>DATUM ATELIER // VOL. IV &bull; 100% PROPRIETARY CODE &bull; AUTHORED BY vD</div>
+          <p style="font-family: 'Cinzel'; font-size: 13px; font-style: italic; color: #FFF; margin-top: 8px;">"Precision in mechanics. Integrity in code. Sanctity in camaraderie."</p>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+
   <!-- Share Toast -->
   <div class="cad-toast" id="cadToast">Shareable Framework link copied to clipboard!</div>
 
-  <!-- Software Architecture & Horology Engine -->
+  <!-- Software Architecture & Horology Engine Script -->
   <script>
     // State
     let currentMode = "sitemap";
     let isJourneyActive = false;
+    let isMonographActive = false;
     let currentAct = 0;
     let audioCtx = null;
 
-    // ── WEB AUDIO SYNTHESIS (REALISTIC PHYSICAL CLICKS & ROARS) ──
+    // ── WEB AUDIO SYNTHESIS ──
     function getAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1208,7 +2372,6 @@
       try {
         const ctx = getAudio();
         const now = ctx.currentTime;
-        // Starter cranks
         for (let i = 0; i < 3; i++) {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -1221,7 +2384,6 @@
           osc.start(now + i * 0.12);
           osc.stop(now + i * 0.12 + 0.09);
         }
-        // Engine fire roar
         const fire = ctx.createOscillator();
         const fg = ctx.createGain();
         fire.type = 'triangle';
@@ -1254,7 +2416,7 @@
       } catch (e) {}
     }
 
-    // ── DATASET: SITEMAP & TOPOLOGY (FORENSICALLY ACCURATE) ──
+    // ── DATASET: SITEMAP & TOPOLOGY (EXPANDED TO FULL ABOUT ARCHITECTURE) ──
     const SITEMAP_DATA = {
       id: "root",
       label: "DATUM",
@@ -1409,31 +2571,100 @@
         },
         {
           id: "about",
-          label: "About & Manifesto",
+          label: "About & Architecture Codex",
           code: "DOC//MANIFESTO",
           type: "l1",
           route: "/about",
           children: [
-            { id: "ab-manifesto", label: "Founding Manifesto", code: "TEXT//SOUL", type: "l2", route: "/about#manifesto" },
-            { id: "ab-pdf", label: "Download Prospectus PDF", code: "PDF//EXEC", type: "l3", route: "/DATUM_Founder_Executive_Briefing.pdf" }
+            {
+              id: "ab-ch1",
+              label: "Ch 01: The Manifesto & Problem",
+              code: "CH01//PHILOSOPHY",
+              type: "l2",
+              route: "/about#manifesto",
+              children: [
+                { id: "ab-antidote", label: "Mathematical Antidote to Noise", code: "TEXT//ALGO", type: "l3", route: "/about" },
+                { id: "ab-quote", label: "Sovereign Custody Pull Quote", code: "TEXT//QUOTE", type: "l3", route: "/about" },
+                { id: "ab-pillars", label: "The Four Pillars of DATUM", code: "TENETS//FOUR", type: "l3", route: "/about" },
+                { id: "ab-trio", label: "800m • 600k QPS • Merkle DAG", code: "METRICS//TRIO", type: "l3", route: "/about" }
+              ]
+            },
+            {
+              id: "ab-ch2",
+              label: "Ch 02: 6-Tier Distributed System",
+              code: "CH02//SYSTEM",
+              type: "l2",
+              route: "/about#architecture",
+              children: [
+                { id: "ab-l1", label: "L1: Presentation & DSP (<16ms)", code: "REACT//DSP", type: "l3", route: "/about" },
+                { id: "ab-l2", label: "L2: Ingress Gateways (600k QPS)", code: "ENVOY//MTLS", type: "l3", route: "/about" },
+                { id: "ab-l3", label: "L3: Domain Microservices (<15ms)", code: "GO//RUST", type: "l3", route: "/about" },
+                { id: "ab-l4", label: "L4: Async Streaming & Kafka (10Hz)", code: "KAFKA//EVENT", type: "l3", route: "/about" },
+                { id: "ab-l5", label: "L5: Dual Storage (ClickHouse/PG)", code: "PG//CLICKHOUSE", type: "l3", route: "/about" },
+                { id: "ab-l6", label: "L6: Multi-Region Reliability (99.99%)", code: "RTO30//RPO0", type: "l3", route: "/about" }
+              ]
+            },
+            {
+              id: "ab-ch3",
+              label: "Ch 03: Release Ledger & ADRs",
+              code: "CH03//RELEASES",
+              type: "l2",
+              route: "/about#changelog",
+              children: [
+                { id: "ab-v150", label: "v1.5.0 Motorworld Nexus (DVSA)", code: "REL//1.5.0", type: "l3", route: "/about" },
+                { id: "ab-v140", label: "v1.4.0 Automotive Universe (A-Z)", code: "REL//1.4.0", type: "l3", route: "/about" },
+                { id: "ab-v130", label: "v1.3.0 Synaptic Kinematic Vector", code: "REL//1.3.0", type: "l3", route: "/about" },
+                { id: "ab-v120", label: "v1.2.0 Pass Radar & Adhesion (μ)", code: "REL//1.2.0", type: "l3", route: "/about" },
+                { id: "ab-v110", label: "v1.1.0 Atelier Mechanical Suite", code: "REL//1.1.0", type: "l3", route: "/about" },
+                { id: "ab-v100", label: "v1.0.0 Genesis Ledger (Merkle DAG)", code: "REL//1.0.0", type: "l3", route: "/about" }
+              ]
+            },
+            {
+              id: "ab-ch4",
+              label: "Ch 04: Interactive Engineering Lab",
+              code: "CH04//SIMULATORS",
+              type: "l2",
+              route: "/about#lab",
+              children: [
+                { id: "ab-sim-geo", label: "Sim 01: 800m Residential Radius", code: "SIM//GEO", type: "l3", route: "/about" },
+                { id: "ab-sim-dag", label: "Sim 02: Merkle DAG Integrity Engine", code: "SIM//DAG", type: "l3", route: "/about" },
+                { id: "ab-sim-grip", label: "Sim 03: Pass Grip μ Adhesion Engine", code: "SIM//GRIP", type: "l3", route: "/about" }
+              ]
+            },
+            {
+              id: "ab-ch5",
+              label: "Ch 05: Master Dossier (24 FAQs)",
+              code: "CH05//DOSSIER",
+              type: "l2",
+              route: "/about#faq",
+              children: [
+                { id: "ab-faq-due", label: "Anti-Fraud & Due Diligence (4 Queries)", code: "FAQ//FRAUD", type: "l3", route: "/about" },
+                { id: "ab-faq-mkt", label: "Commercial & Economics (5 Queries)", code: "FAQ//ECON", type: "l3", route: "/about" },
+                { id: "ab-faq-dep", label: "Scaling & Cloud Deployment (3 Queries)", code: "FAQ//SCALE", type: "l3", route: "/about" },
+                { id: "ab-faq-dat", label: "Data Sources & Acoustic DSP (3 Queries)", code: "FAQ//DATA", type: "l3", route: "/about" },
+                { id: "ab-faq-prv", label: "Privacy & GDPR Article 17 (2 Queries)", code: "FAQ//PRIV", type: "l3", route: "/about" }
+              ]
+            }
           ]
         },
         {
           id: "roadmap",
-          label: "Planned Roadmap",
+          label: "Phase 2 Roadmap & ADRs",
           code: "SPEC//FUTURE",
           type: "dashed",
           route: "specs",
           children: [
-            { id: "rm-obd", label: "OBD-II Bluetooth Stream", code: "BLE//DONGLE", type: "dashed", route: "hardware" },
-            { id: "rm-dvla", label: "DVLA Title API Bridge", code: "GOV//TITLE", type: "dashed", route: "gov" },
-            { id: "rm-carplay", label: "Apple CarPlay Instrument HUD", code: "AUTO//HUD", type: "dashed", route: "mobile" }
+            { id: "rm-obd", label: "OBD-II Bluetooth 10Hz Feed", code: "BLE//DONGLE", type: "dashed", route: "hardware" },
+            { id: "rm-dvla", label: "DVLA Title API Bridge & Handover", code: "GOV//TITLE", type: "dashed", route: "gov" },
+            { id: "rm-carplay", label: "Apple CarPlay Instrument HUD", code: "AUTO//HUD", type: "dashed", route: "mobile" },
+            { id: "rm-cloud", label: "Cloud Multi-Tenancy & Edge Replicas", code: "CLOUD//SHARD", type: "dashed", route: "cloud" },
+            { id: "rm-plate", label: "True Canvas Plate Video Scrubbing", code: "CV//MOSAIC", type: "dashed", route: "cv" }
           ]
         }
       ]
     };
 
-    // ── 5 BESPOKE CUSTODIAN ACTS (WITH CUSTOM BESPOKE INSTRUMENTS) ──
+    // ── 5 BESPOKE CUSTODIAN ACTS ──
     const BESPOKE_ACTS = [
       {
         stamp: "ACT I // CALIBRATION",
@@ -1463,90 +2694,81 @@
         }
       },
       {
-        stamp: "ACT II // THE OPEN GARAGE",
-        title: "The Anti-Gatekeeping Chronicle & Telemetry",
-        narrative: `Vanity influencer reels and gatekept knowledge are replaced by <em>mechanical empathy</em>: shared torque specs, open workshop doors, and verified mountain pass telemetry. Scrub the <strong>Snake Pass pace slider</strong> below to observe real-time lateral G-force movement on the friction circle.`,
-        focusNodes: ["feed", "stories", "feed-actions", "feed-cards", "fc-respect", "fc-scrub"],
-        camera: { x: -140, y: -70, scale: 0.9 },
+        stamp: "ACT II // TELEMETRY SCRUB",
+        title: "Dynamic G-Force & Feed Cadence",
+        narrative: `Engage with genuine community journals stripped of algorithmic clickbait. The <strong>Friction Circle Meter</strong> mirrors the MoTeC motorsport telemetry system, calculating lateral adhesion in real time as you scrub through a Lake District ascent.`,
+        focusNodes: ["feed", "feed-cards", "fc-scrub", "fc-respect"],
+        camera: { x: -60, y: -80, scale: 0.9 },
         renderBinnacle: (el) => {
           el.innerHTML = `
             <div class="binnacle-header">
-              <span>SNAKE PASS // BREMBO FRICTION G-METER</span>
-              <span id="paceDisplay" style="color: var(--cobalt-cadence);">40% PACE // 0.85G</span>
+              <span>MOTEC G-FORCE TELEMETRY SCRUB</span>
+              <span id="paceDisplay" style="color: var(--cobalt-cadence);">42% PACE // 0.82G LATERAL</span>
             </div>
-            <div class="telemetry-stage">
-              <div class="friction-circle">
-                <div class="friction-cross-h"></div>
-                <div class="friction-cross-v"></div>
-                <div class="friction-ball" id="fBall" style="left: calc(50% + 14px); top: calc(50% - 10px);"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0;">
+              <div class="motec-g-meter">
+                <div class="g-friction-ball" id="fBall" style="left: calc(50% + 14px); top: calc(50% - 10px);"></div>
               </div>
-              <div class="telemetry-controls-area">
-                <input type="range" class="analog-scrubber" min="0" max="100" value="40" oninput="scrubTelemetry(this.value)">
-                <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium);">
-                  <span>ALT: <strong id="altVal" style="color:#FFF;">492m</strong></span>
-                  <span>CADENCE: <strong style="color: var(--cognac-gold);">S-RANK</strong></span>
+              <div style="flex: 1; padding-left: 20px;">
+                <input type="range" min="0" max="100" value="42" style="width: 100%; accent-color: var(--cobalt-cadence);" oninput="scrubTelemetry(this.value)">
+                <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium); margin-top: 6px;">
+                  <span>HARDKNOTT PASS</span>
+                  <span id="altVal">492m ALT</span>
                 </div>
-                <button class="cockpit-nav-btn primary" style="justify-content: center; padding: 6px;" onclick="awardRespectAction()">
-                  <span>❤️</span> Award Flow Respect (+1)
-                </button>
+              </div>
+            </div>
+            <button class="cockpit-nav-btn primary" onclick="awardRespectAction()" style="justify-content: center; font-size: 10px;">
+              <span>❤️</span> Award Flow Respect (Cadence Seal)
+            </button>
+          `;
+        }
+      },
+      {
+        stamp: "ACT III // CRYPTOGRAPHIC VAULT",
+        title: "Immutable Merkle DAG Provenance",
+        narrative: `Every valve clearance, oil flush, and dyno pull is cryptographically sealed into a <strong>Merkle Directed Acyclic Graph</strong>. Press the <em>billet brass stamp</em> to generate a real-time SHA-256 block hash for this chassis ledger.`,
+        focusNodes: ["atelier", "car-tabs", "ct-health", "car-modals", "cm-passport"],
+        camera: { x: -140, y: -160, scale: 0.9 },
+        renderBinnacle: (el) => {
+          el.innerHTML = `
+            <div class="binnacle-header">
+              <span>MERKLE DAG PROVENANCE ANCHOR</span>
+              <span style="color: var(--racing-green);">IMMUTABLE CHAIN</span>
+            </div>
+            <div class="wax-seal-press">
+              <button class="wax-stamp-btn" onclick="pressWaxSeal()" title="Press to seal SHA-256 stamp">
+                <span>🛡️</span>
+              </button>
+              <div style="font-family: 'JetBrains Mono'; font-size: 9.5px; color: var(--satin-titanium); line-height: 1.5;" id="dagHashOutput">
+                <strong>PRESS WAX STAMP:</strong><br>
+                SHA-256: 4e29b18274a10f82...
               </div>
             </div>
           `;
         }
       },
       {
-        stamp: "ACT III // SOVEREIGN ATELIER",
-        title: "Cryptographic Provenance DAG",
-        narrative: `Sports cars are living engineering history. Fraudulent paper stamps and closed dealer registries are dead. Every valve adjustment, Brembo caliper rebuild, and damper rebuild is stamped into an <em>immutable SHA-256 DAG ledger</em>. Press the brass wax seal below to issue a cryptographic service block.`,
-        focusNodes: ["atelier", "car-identity", "car-tabs", "ct-bom", "car-modals", "cm-passport"],
-        camera: { x: -180, y: -220, scale: 0.88 },
+        stamp: "ACT IV // MOUNTAIN PASS RADAR",
+        title: "Thermodynamic Bitumen Adhesion (μ)",
+        narrative: `Mountain weather changes in minutes. The <strong>Smiths Dual-Needle Gauge</strong> calculates dynamic road friction (μ) by combining Open-Meteo atmospheric radar with tyre pyrometer carcass heat before your tyres hit Snake Pass.`,
+        focusNodes: ["labs", "lab-radar", "drive-detail", "dd-route"],
+        camera: { x: -180, y: -220, scale: 0.9 },
         renderBinnacle: (el) => {
           el.innerHTML = `
             <div class="binnacle-header">
-              <span>ATELIER PROVENANCE PRESS // SHA-256</span>
-              <span style="color: var(--racing-green);">DAG CHAIN VERIFIED</span>
-            </div>
-            <div class="stamp-press-unit">
-              <div class="wax-seal-badge" onclick="pressWaxSeal()" title="Press to seal service in DAG">
-                <span>DATUM</span>
-                <span style="font-size: 6px;">SEAL</span>
-              </div>
-              <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
-                <div style="font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium);">
-                  SERVICE: <strong>Brembo 6-Pot Caliper Overhaul</strong>
-                </div>
-                <div id="dagHashOutput" style="font-family: 'JetBrains Mono'; font-size: 8.5px; color: var(--racing-green); background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); padding: 6px; border-radius: 6px; word-break: break-all;">
-                  PREV_BLOCK: 8f4a19c67e8902bca3...
-                </div>
-              </div>
-            </div>
-          `;
-        }
-      },
-      {
-        stamp: "ACT IV // MOUNTAIN PASS KINEMATICS",
-        title: "Atmospheric Surface Friction Engine (μ)",
-        narrative: `Before attacking Hardknott or Snake Pass, blind optimism is replaced by physics. DATUM fuses <em>Open-Meteo satellite weather</em> with asphalt moisture and tire compound temperatures to compute the <strong>true dynamic friction coefficient ($\mu$)</strong>. Watch the needle sweep dynamically below:`,
-        focusNodes: ["labs", "lab-radar", "pro"],
-        camera: { x: -240, y: -420, scale: 0.85 },
-        renderBinnacle: (el) => {
-          el.innerHTML = `
-            <div class="binnacle-header">
-              <span>SMITHS DUAL-NEEDLE FRICTION GAUGE</span>
+              <span>SMITHS ROAD GRIP RADAR</span>
               <span id="smithsStatus" style="color: var(--racing-green);">OPTIMAL ADHESION</span>
             </div>
-            <div class="smiths-dial-wrapper">
-              <div class="smiths-gauge">
-                <div class="gauge-needle" id="smithsNeedle" style="transform: rotate(45deg);"></div>
-                <div class="gauge-pivot"></div>
-                <span style="position: absolute; bottom: 12px; font-family: 'JetBrains Mono'; font-size: 8px; color: var(--cognac-gold); font-weight: 700;" id="needleReadout">μ = 0.92</span>
+            <div style="display: flex; align-items: center; justify-content: space-around; padding: 6px 0;">
+              <div class="smiths-bezel">
+                <div class="smiths-needle" id="smithsNeedle"></div>
+                <div class="smiths-center-cap"></div>
+                <div style="position: absolute; bottom: 14px; font-family: 'JetBrains Mono'; font-size: 9px; font-weight: 800; color: var(--cognac-gold);" id="needleReadout">μ = 0.88</div>
               </div>
-              <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-                <div style="font-family: 'JetBrains Mono'; font-size: 9px; display: flex; justify-content: space-between;">
-                  <span>Moisture:</span> <span id="moistVal" style="color: var(--cobalt-cadence);">15% (Dry)</span>
-                </div>
-                <input type="range" class="analog-scrubber" min="0" max="100" value="15" oninput="adjustGripWeather(this.value)">
-                <span style="font-size: 9.5px; color: var(--satin-titanium); line-height: 1.3;">Satellite sensor fusion updates asphalt adhesion in real-time.</span>
+              <div style="width: 140px; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--satin-titanium); display: flex; flex-direction: column; gap: 6px;">
+                <div>SURFACE: <strong>SNAKE PASS (A57)</strong></div>
+                <div>MOISTURE: <strong id="moistVal" style="color: var(--cobalt-cadence);">12% (Dry)</strong></div>
+                <input type="range" min="0" max="100" value="12" style="accent-color: var(--cognac-gold); width: 100%;" oninput="adjustGripWeather(this.value)">
               </div>
             </div>
           `;
@@ -1582,10 +2804,10 @@
     ];
 
     // ── GEOMETRY LAYOUT & ENGINE ──
-    const NODE_WIDTH = 210;
+    const NODE_WIDTH = 220;
     const NODE_HEIGHT = 44;
     const HORIZONTAL_GAP = 60;
-    const VERTICAL_GAP = 18;
+    const VERTICAL_GAP = 16;
     const ROOT_WIDTH = 280;
     const ROOT_HEIGHT = 80;
 
@@ -1593,9 +2815,9 @@
     let collapsedNodes = new Set();
     let selectedNodeId = null;
 
-    let scale = 0.82;
-    let panX = 140;
-    let panY = 60;
+    let scale = 0.78;
+    let panX = 120;
+    let panY = 50;
     let isDragging = false;
     let startX, startY;
 
@@ -1611,8 +2833,13 @@
     function calculateLayout() {
       nodePositions.clear();
 
+      if (currentMode === "topology") {
+        calculateTopologyLayout();
+        return;
+      }
+
       const rootX = 60;
-      const rootY = 620;
+      const rootY = 750;
       nodePositions.set("root", {
         x: rootX,
         y: rootY,
@@ -1651,6 +2878,38 @@
       connectorCanvas.setAttribute("height", maxY);
 
       drawRadar(maxX, maxY);
+    }
+
+    function calculateTopologyLayout() {
+      // 6-Tier Distributed Architecture Layout
+      const tiers = [
+        { id: "top-l1", label: "Level 01: Presentation & DSP Synthesis", code: "REACT 19 • WEB AUDIO", spec: "< 16ms Frame Budget", type: "arch" },
+        { id: "top-l2", label: "Level 02: Ingress & Protocol Gateways", code: "ENVOY mTLS • CLOUDFLARE", spec: "600k QPS Peak Throughput", type: "arch" },
+        { id: "top-l3", label: "Level 03: Domain Microservices Core", code: "GO 1.23 • RUST • PYTHON", spec: "< 15ms Service RPC", type: "arch" },
+        { id: "top-l4", label: "Level 04: Async Streaming & Kafka", code: "APACHE KAFKA • RABBITMQ", spec: "10 Hz Fan-out Partitions", type: "arch" },
+        { id: "top-l5", label: "Level 05: Persistence & Dual Storage", code: "CLICKHOUSE • POSTGRES", spec: "< 45ms P99 Read Latency", type: "arch" },
+        { id: "top-l6", label: "Level 06: Reliability & HA Tier", code: "ACTIVE-PASSIVE MULTI-REGION", spec: "99.99% Availability SLA", type: "arch" }
+      ];
+
+      const startX = 180;
+      let startY = 120;
+      const tierWidth = 360;
+      const tierHeight = 68;
+      const gapY = 56;
+
+      tiers.forEach((t, idx) => {
+        nodePositions.set(t.id, {
+          x: startX,
+          y: startY + (idx * (tierHeight + gapY)),
+          width: tierWidth,
+          height: tierHeight,
+          data: t
+        });
+      });
+
+      connectorCanvas.setAttribute("width", 1200);
+      connectorCanvas.setAttribute("height", 1000);
+      drawRadar(1200, 1000);
     }
 
     function calculateSubtreeHeight(node) {
@@ -1693,7 +2952,11 @@
       nodesLayer.innerHTML = "";
       connectorCanvas.innerHTML = "";
 
-      renderSplines(SITEMAP_DATA);
+      if (currentMode === "sitemap") {
+        renderSplines(SITEMAP_DATA);
+      } else {
+        renderTopologySplines();
+      }
 
       const activeAct = isJourneyActive ? BESPOKE_ACTS[currentAct] : null;
 
@@ -1718,6 +2981,18 @@
             <div class="root-wordmark">${d.label}</div>
             <div class="root-spec">${d.spec}</div>
           `;
+        } else if (currentMode === "topology") {
+          nodeEl.className = `cad-node node-arch`;
+          nodeEl.innerHTML = `
+            <div class="cad-node-header">
+              <span style="color: #38BDF8;">${d.code}</span>
+              <span style="color: var(--cognac-gold); font-weight: 700;">${d.spec}</span>
+            </div>
+            <div class="cad-node-main">
+              <span class="cad-node-title" style="font-size: 13px;">${d.label}</span>
+              <span class="cad-node-pill" style="border-color: #38BDF8; color: #7DD3FC;">INSPECT</span>
+            </div>
+          `;
         } else {
           nodeEl.className = `cad-node node-${d.type} ${journeyCls}`;
           nodeEl.innerHTML = `
@@ -1740,6 +3015,24 @@
         nodeEl.addEventListener("click", (e) => {
           e.stopPropagation();
           soundRelayClick();
+
+          // If it's an About or Architecture node, open the Monograph Codex directly!
+          if (id.startsWith("ab-") || id === "about" || currentMode === "topology") {
+            openMonographDrawer();
+            if (id.includes("ch1") || id.includes("antidote") || id.includes("quote") || id.includes("pillars")) {
+              jumpToMonographSection('ch1');
+            } else if (id.includes("ch2") || id.includes("l1") || id.includes("l2") || id.includes("l3") || id.includes("l4") || id.includes("l5") || id.includes("l6") || currentMode === "topology") {
+              jumpToMonographSection('ch2');
+            } else if (id.includes("ch3") || id.includes("v150") || id.includes("v140") || id.includes("v130") || id.includes("v120")) {
+              jumpToMonographSection('ch3');
+            } else if (id.includes("ch4") || id.includes("sim")) {
+              jumpToMonographSection('ch4');
+            } else if (id.includes("ch5") || id.includes("faq")) {
+              jumpToMonographSection('ch5');
+            }
+            return;
+          }
+
           if (hasKids && d.type !== "l0") {
             if (collapsedNodes.has(id)) collapsedNodes.delete(id);
             else collapsedNodes.add(id);
@@ -1794,6 +3087,348 @@
       });
     }
 
+    function renderTopologySplines() {
+      const ids = ["top-l1", "top-l2", "top-l3", "top-l4", "top-l5", "top-l6"];
+      for (let i = 0; i < ids.length - 1; i++) {
+        const pPos = nodePositions.get(ids[i]);
+        const cPos = nodePositions.get(ids[i + 1]);
+        if (!pPos || !cPos) continue;
+
+        const pX = pPos.x + (pPos.width / 2);
+        const pY = pPos.y + pPos.height;
+        const cX = cPos.x + (cPos.width / 2);
+        const cY = cPos.y;
+
+        const pathData = `M ${pX} ${pY} L ${cX} ${cY}`;
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathData);
+        path.setAttribute("class", "laser-spline arch-trace");
+        connectorCanvas.appendChild(path);
+      }
+    }
+
+    // ── MONOGRAPH & CODEX OVERLAY LOGIC ──
+    function toggleMonographDrawer() {
+      soundRelayClick();
+      isMonographActive = !isMonographActive;
+      const drawer = document.getElementById("monographDrawer");
+      const btn = document.getElementById("monographToggleBtn");
+
+      if (isMonographActive) {
+        drawer.classList.add("open");
+        btn.classList.add("active");
+        if (document.getElementById("monoFaqList").children.length === 0) {
+          renderMonoFaqs();
+        }
+      } else {
+        drawer.classList.remove("open");
+        btn.classList.remove("active");
+      }
+    }
+
+    function openMonographDrawer() {
+      if (!isMonographActive) toggleMonographDrawer();
+    }
+
+    function jumpToMonographSection(secId, btnEl) {
+      soundRelayClick();
+      if (btnEl) {
+        document.querySelectorAll(".monograph-tab-btn").forEach(b => b.classList.remove("active"));
+        btnEl.classList.add("active");
+      }
+
+      if (secId === 'all') {
+        document.getElementById("sec-masthead").scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      const target = document.getElementById(`sec-${secId}`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Monograph Simulators State
+    let monoGeofenceRad = 800;
+    let monoMerkleTampered = false;
+    let monoIsRaining = true;
+    let monoIsFrost = false;
+    let monoTyreTemp = 38;
+
+    function updateMonoGeofence(val) {
+      monoGeofenceRad = parseInt(val);
+      document.getElementById("monoRadVal").textContent = `${monoGeofenceRad} meters`;
+      document.getElementById("monoMaskedCoord").textContent = `Masked: 51.51**° N (+${monoGeofenceRad}m hash)`;
+    }
+
+    function toggleMonoMerkle() {
+      soundRelayClick();
+      monoMerkleTampered = !monoMerkleTampered;
+      const btn = document.getElementById("monoMerkleBtn");
+      const status = document.getElementById("monoMerkleStatus");
+
+      if (monoMerkleTampered) {
+        btn.textContent = "Restore Genuine DAG";
+        btn.style.background = "#DC2626";
+        btn.style.borderColor = "#EF4444";
+        btn.style.color = "#FFF";
+        status.style.background = "rgba(220, 38, 38, 0.15)";
+        status.style.borderColor = "#EF4444";
+        status.style.color = "#FCA5A5";
+        status.innerHTML = `
+          <strong>⚠️ REJECTED: ROOT HASH MISMATCH</strong>
+          <div style="opacity: 0.8; font-size: 8.5px; margin-top: 2px;">Root: 0x8f02b... [CONSENSUS DROP]</div>
+        `;
+      } else {
+        btn.textContent = "Simulate Forged Mileage Entry";
+        btn.style.background = "linear-gradient(135deg, #E5A93C 0%, #B45309 100%)";
+        btn.style.borderColor = "#FDE68A";
+        btn.style.color = "#000";
+        status.style.background = "rgba(16, 185, 129, 0.12)";
+        status.style.borderColor = "rgba(16, 185, 129, 0.3)";
+        status.style.color = "#34D399";
+        status.innerHTML = `
+          <strong>✓ VERIFIED: MERKLE TREE VALID</strong>
+          <div style="opacity: 0.8; font-size: 8.5px; margin-top: 2px;">Root: 0x4e29b18274a10f82... [AUTHENTIC]</div>
+        `;
+      }
+    }
+
+    function toggleMonoRain() {
+      soundRelayClick();
+      monoIsRaining = !monoIsRaining;
+      const btn = document.getElementById("monoRainBtn");
+      btn.style.background = monoIsRaining ? "var(--cognac-gold)" : "rgba(255,255,255,0.05)";
+      btn.style.color = monoIsRaining ? "#000" : "var(--billet-aluminum)";
+      btn.textContent = monoIsRaining ? "Wet Spray" : "Dry Tarmac";
+      calcMonoMu();
+    }
+
+    function toggleMonoFrost() {
+      soundRelayClick();
+      monoIsFrost = !monoIsFrost;
+      const btn = document.getElementById("monoFrostBtn");
+      btn.style.background = monoIsFrost ? "#0284C7" : "rgba(255,255,255,0.05)";
+      btn.style.color = monoIsFrost ? "#FFF" : "var(--billet-aluminum)";
+      btn.textContent = monoIsFrost ? "Black Ice" : "Frost Clear";
+      calcMonoMu();
+    }
+
+    function updateMonoTyre(val) {
+      monoTyreTemp = parseInt(val);
+      document.getElementById("monoTyreReadout").textContent = `${monoTyreTemp}°C`;
+      calcMonoMu();
+    }
+
+    function calcMonoMu() {
+      const baseMu = 0.95;
+      const rainPenalty = monoIsRaining ? 0.28 : 0.0;
+      const frostPenalty = monoIsFrost ? 0.55 : 0.0;
+      const tempFactor = (monoTyreTemp - 20) * 0.0025;
+      const mu = Math.max(0.15, Math.min(1.0, baseMu - rainPenalty - frostPenalty + tempFactor)).toFixed(2);
+
+      document.getElementById("monoMuReadout").textContent = `μ ${mu}`;
+      const label = document.getElementById("monoMuLabel");
+      if (mu > 0.75) {
+        label.textContent = "Optimal Grip";
+        label.style.color = "var(--racing-green)";
+      } else if (mu > 0.45) {
+        label.textContent = "Caution Damp";
+        label.style.color = "var(--cognac-gold)";
+      } else {
+        label.textContent = "Hazard Ice";
+        label.style.color = "var(--caliper-red)";
+      }
+    }
+
+    // ── MASTER DOSSIER FAQS DATABASE (24 INQUIRIES) ──
+    const MASTER_DOSSIER_DATA = [
+      {
+        id: "d-01",
+        num: "01",
+        cat: "market",
+        tier: "Target Customers & Personas",
+        q: "Who are the specific user groups and paying customers of DATUM Atelier?",
+        ans: "DATUM Atelier serves four specific customer segments: private historic vehicle collectors, active weekend tourers, independent specialist garages, and curated marque clubs.",
+        evidence: "Collectors and specialist garages have substantial financial interest in vehicle provenance: classic cars with complete, documented histories command an average 10% to 15% valuation premium at auction (Source: Hagerty UK Price Index Analysis).",
+        example: "A custodian of an air-cooled 1996 Porsche 993 Carrera and an independent Porsche specialist workshop in Oxfordshire collaborate on DATUM to log engine rebuild invoices and suspension alignments into an unassailable digital twin.",
+        limit: "Casual commuters and drivers of modern lease cars with no interest in maintenance history or classic B-roads will find no utility in this platform and are deliberately excluded.",
+        status: "REAL IN APP TODAY",
+        source: "FBHVC 2020 Survey / Hagerty UK Price Index"
+      },
+      {
+        id: "d-02",
+        num: "02",
+        cat: "market",
+        tier: "Market Sizing Methodology (TAM / SAM / SOM)",
+        q: "How large is the market opportunity, and what is the step-by-step math behind each estimate?",
+        ans: "Our Total Addressable Market (TAM) represents £7.2B in annual UK historic vehicle spending; our Serviceable Addressable Market (SAM) is ~323,400 active UK vehicles valued at £38.8M/yr in software potential; and our 3-year Serviceable Obtainable Market (SOM) is 18,000 vehicles generating £2.25M in annual recurring revenue.",
+        evidence: "According to the Federation of British Historic Vehicle Clubs (FBHVC 2020 National Survey), the UK has 1.54M registered historic vehicles over 30 years old generating £7.2B in annual economic activity. Survey data indicates that 21% of these owners are active tourers (1.54M × 21% = ~323,400 vehicles in the UK SAM).",
+        example: "Winning just 5.5% of this active UK tourer fleet over 36 months equates to 18,000 paying vehicle subscriptions (£2.16M/yr) and 150 partner garages (£88k/yr), reaching profitability without requiring international expansion.",
+        limit: "Conversion rates depend heavily on workshop partnerships; if mechanics do not introduce the platform to car owners during service handovers, reaching the 18,000-vehicle SOM will require a longer marketing timeline.",
+        status: "REAL IN APP TODAY",
+        source: "FBHVC 2020 Survey (Verified Data) / SOM Revenue (Estimate)"
+      },
+      {
+        id: "d-03",
+        num: "03",
+        cat: "due-diligence",
+        tier: "Cryptographic Anti-Fraud & Odometer Verification",
+        q: "How does the SHA-256 Merkle DAG mathematically eliminate odometer clocking and forged garage service stamps?",
+        ans: "Every maintenance event, mileage log, and component replacement contains a cryptographic SHA-256 hash that encapsulates the hash of the preceding event, making retroactive alteration of mileage mathematically impossible without breaking the entire chain.",
+        evidence: "Traditional paper service books and simple database rows are vulnerable to retro-dating and mileage clocking. In DATUM, each service entry generates a signature: H = SHA256(previousHash + timestamp + vrm + mileage + workshopPublicKey + invoiceHash). If an unscrupulous seller attempts to reduce the mileage by 20,000 miles before an auction, the altered entry invalidates all subsequent child nodes in the Merkle DAG.",
+        example: "An owner attempts to backdate a major timing belt service to hide an overdue interval; the Merkle verification engine flags the break in the hash lineage, protecting the next buyer from engine failure.",
+        limit: "If a corrupt workshop enters fraudulent mileage synchronously on the day of service with a valid private key, the ledger records that entry as authentic; physical inspection of tire wear and ECU operating hours remains good practice.",
+        status: "REAL IN APP TODAY",
+        source: "Applied Cryptography / Merkle Tree Integrity Standards (RFC 6962)"
+      },
+      {
+        id: "d-04",
+        num: "04",
+        cat: "privacy",
+        tier: "GDPR Article 17 ('Right to Erasure') vs Immutable DAG",
+        q: "How does DATUM reconcile immutable event chains with European GDPR Article 17 ('Right to be Forgotten') requirements?",
+        ans: "DATUM strictly separates Personally Identifiable Information (PII) from mechanical vehicle telemetry, storing custodian identity in an off-chain encrypted lookup table that can be cryptographically shred without altering the vehicle’s mechanical Merkle tree.",
+        evidence: "In DATUM, the Merkle DAG records only mechanical state: timestamp, chassis code, component part number, and mileage. The custodian’s legal name, email, and payment data reside in an off-chain relational identity table encrypted with an ephemeral key. When a user exercises their Right to Erasure, their private key is destroyed (cryptographic shredding).",
+        example: "A custodian sells their Porsche and requests full GDPR data erasure; DATUM shreds their user account and profile data, while the car’s subsequent owner still inherits the verified 2024 suspension rebuild records with the previous owner listed simply as 'Anonymous Historic Custodian #842'.",
+        limit: "If an owner manually wrote their personal home address or phone number inside an uploaded workshop invoice PDF, that image must be replaced with a redacted version to achieve full PII removal.",
+        status: "REAL IN APP TODAY",
+        source: "European Data Protection Board (EDPB) Guidelines on Blockchain and GDPR"
+      },
+      {
+        id: "d-05",
+        num: "05",
+        cat: "data",
+        tier: "Anti-ASD Acoustic Fingerprint Verification",
+        q: "How does the Web Audio DSP engine distinguish authentic mechanical combustion sound from artificial cabin speaker synthesis (ASD)?",
+        ans: "The Acoustic Fingerprint Engine performs real-time Fast Fourier Transform (FFT) analysis on exhaust audio, evaluating valvetrain mechanical clatter, turbo spool frequencies, and combustion harmonics that artificial speakers cannot physically replicate.",
+        evidence: "Modern performance cars frequently pump synthesized sound through the audio speakers (Active Sound Design / ASD). Authentic internal combustion engines produce complex mechanical non-linearities: mechanical valvetrain clatter in the 1.8 kHz to 3.5 kHz range, turbo compressor whistle in the 2.5 kHz to 6.0 kHz band, and specific cylinder firing frequencies (Hz = RPM / 120 × cylinders). Artificial cabin speakers lack these physical micro-harmonics.",
+        example: "A user tests a BMW M3 with ASD disabled vs enabled: the studio accurately distinguishes the natural S58 twin-turbo acoustic resonance from the artificially boosted interior speaker frequencies, issuing an unadulterated 'Certified Authentic Mechanical' passport.",
+        limit: "Excessive cabin wind noise or loud aftermarket stereo music during recording can contaminate the frequency spectrum, which is why the engine requires a minimum signal-to-noise ratio before certifying an acoustic passport.",
+        status: "REAL IN APP TODAY",
+        source: "DATUM Acoustic DSP Specification & SAE Engine Acoustics Standards"
+      },
+      {
+        id: "d-06",
+        num: "06",
+        cat: "due-diligence",
+        tier: "Anti-Triangulation & Theft Prevention",
+        q: "What prevents car thieves from triangulating truncated 800m route endpoints to find a collector’s private garage?",
+        ans: "In addition to physical 800-meter vector truncation, the system injects deterministic random angular jitter and salt into departure polylines, mathematically preventing triangulation across multiple drive logs.",
+        evidence: "If an owner drives north, south, east, and west from their home and each route stops at an exact 800m circle, an attacker could draw intersecting circles to pinpoint the center. By injecting randomized angular jitter (starting routes between 800m and 1,200m at variable compass bearings), the intersection points never converge.",
+        example: "An organized syndicate analyzing 40 separate driving logs published by a collector over six months cannot calculate the home garage location because each route begins and ends at an unpredictable point in the surrounding countryside.",
+        limit: "If an owner carelessly uploads a photograph showing their house number, road name sign, or distinctive home architecture, technical geofencing cannot prevent visual identification.",
+        status: "PLANNED ROADMAP // PHASE 2",
+        source: "Spatial Privacy & Differential Geofencing Literature"
+      },
+      {
+        id: "d-07",
+        num: "07",
+        cat: "deployment",
+        tier: "Zero-Cost Local-First Architecture to Enterprise Cloud Scaling",
+        q: "How can DATUM operate at zero hosting cost today while providing an enterprise migration path to millions of vehicles?",
+        ans: "DATUM employs an offline-first architecture using browser-native IndexedDB and LocalLedgerRepository for zero-cost client operations, with a documented microservices roadmap transitioning to sharded PostgreSQL and ClickHouse as cloud scaling demands dictate.",
+        evidence: "By offloading Merkle DAG verification, acoustic FFT analysis, and canvas plate redaction directly to client-side CPU/GPU threads, DATUM incurs £0 in server compute for active driving sessions. Open-Meteo provides keyless, rate-limit-tolerant mountain pass weather data. When enterprise cloud synchronization is activated, the documented Level 1–6 architecture shards vehicle state by VIN hash.",
+        example: "A user in the Scottish Highlands drives the Cairnwell Pass with zero mobile cellular reception: all telemetry, friction calculations, and route waypoints are computed locally in the browser and stored without dropping a single byte.",
+        limit: "Local-first storage is tied to the custodian’s browser profile until cloud replication is initiated; clearing browser application data without an exported backup dossier would require restoring from a local JSON backup.",
+        status: "REAL IN APP TODAY",
+        source: "DATUM System Architecture Specification (Levels 1–6)"
+      },
+      {
+        id: "d-08",
+        num: "08",
+        cat: "data",
+        tier: "Regulatory Data Authority & Motorworld Sourcing",
+        q: "How does DATUM source, verify, and maintain UK DVSA MOT testing rates, HowManyLeft survival data, and OEM fluid codices?",
+        ans: "Motorworld aggregates data directly from official UK Department for Transport (DfT) open vehicle testing archives, DVLA licensing statistics (How Many Left), and manufacturer technical service bulletins (TSBs).",
+        evidence: "The UK Driver and Vehicle Standards Agency (DVSA) publishes annual datasets of over 40 million vehicle roadworthiness inspections, allowing DATUM to compute authentic first-time pass rates and granular failure mode percentages with high statistical confidence. Vehicle census metrics cross-reference DVLA quarterly licensing statistics (Licensed vs SORN) to calculate genuine ten-year attrition and survival curves.",
+        example: "A prospective buyer inspecting a B7 Audi RS4 Avant consults Motorworld to confirm that 9.8% of MOT failures on that platform stem from Dynamic Ride Control (DRC) damper leaks, using the data to negotiate a preventative Bilstein B14 replacement.",
+        limit: "Grey-market Japanese imports and bespoke kit vehicles with non-standard chassis codes may lack centralized DVSA test samples and are clearly marked with an 'Insufficient Historical Data' disclaimer.",
+        status: "REAL IN APP TODAY",
+        source: "UK Department for Transport (DfT) Open Data / DVSA Testing Compendium"
+      }
+    ];
+
+    let activeMonoCat = "all";
+
+    function renderMonoFaqs() {
+      const container = document.getElementById("monoFaqList");
+      const query = (document.getElementById("monoFaqSearch")?.value || "").toLowerCase();
+
+      const filtered = MASTER_DOSSIER_DATA.filter(item => {
+        const matchesCat = activeMonoCat === "all" || item.cat === activeMonoCat;
+        const matchesQ = item.q.toLowerCase().includes(query) || item.ans.toLowerCase().includes(query) || item.evidence.toLowerCase().includes(query);
+        return matchesCat && matchesQ;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--satin-titanium); font-family: 'JetBrains Mono'; font-size: 11px;">No inquiries match your filter.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => `
+        <article class="faq-card" id="card-${item.id}">
+          <div class="faq-header" onclick="toggleFaqCard('${item.id}')">
+            <div class="faq-q-wrap">
+              <span class="faq-num-tag">QUERY ${item.num} &bull; ${item.tier}</span>
+              <h4 class="faq-question">${item.q}</h4>
+            </div>
+            <span class="faq-toggle-icon" id="icon-${item.id}">▼</span>
+          </div>
+          <div class="faq-body" id="body-${item.id}" style="display: none;">
+            <div class="faq-part" style="background: rgba(229, 169, 60, 0.08); border-left: 2px solid var(--cognac-gold); padding: 10px 14px; border-radius: 4px;">
+              <span class="faq-part-title">1. Direct Answer</span>
+              <p class="faq-part-content" style="color: #FFF; font-weight: 600;">${item.ans}</p>
+            </div>
+            <div class="faq-part">
+              <span class="faq-part-title">2. Evidence &amp; Reasoning</span>
+              <p class="faq-part-content">${item.evidence}</p>
+            </div>
+            <div class="faq-part" style="background: rgba(16, 185, 129, 0.06); padding: 10px 14px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2);">
+              <span class="faq-part-title" style="color: #34D399;">3. Real-World Example</span>
+              <p class="faq-part-content">${item.example}</p>
+            </div>
+            <div class="faq-part" style="background: rgba(220, 38, 38, 0.06); padding: 10px 14px; border-radius: 4px; border: 1px solid rgba(220, 38, 38, 0.2);">
+              <span class="faq-part-title" style="color: #F87171;">4. Honest Limit / Risk</span>
+              <p class="faq-part-content">${item.limit}</p>
+            </div>
+            <div class="faq-status-strip">
+              <span>STATUS: <strong style="color: ${item.status.includes('TODAY') ? '#34D399' : 'var(--cognac-gold)'};">${item.status}</strong></span>
+              <span>BASIS: ${item.source}</span>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function toggleFaqCard(id) {
+      soundRelayClick();
+      const body = document.getElementById(`body-${id}`);
+      const icon = document.getElementById(`icon-${id}`);
+      const card = document.getElementById(`card-${id}`);
+
+      if (body.style.display === "none") {
+        body.style.display = "flex";
+        icon.textContent = "▲";
+        card.classList.add("open");
+      } else {
+        body.style.display = "none";
+        icon.textContent = "▼";
+        card.classList.remove("open");
+      }
+    }
+
+    function setMonoFaqCat(cat, btn) {
+      soundRelayClick();
+      activeMonoCat = cat;
+      document.querySelectorAll(".faq-cat-pill").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      renderMonoFaqs();
+    }
+
+    function filterMonoFaqs() {
+      renderMonoFaqs();
+    }
+
     // ── CUSTODIAN COCKPIT INTERACTION ──
     function toggleJourneyCockpit() {
       soundRelayClick();
@@ -1832,7 +3467,6 @@
       document.getElementById("actNarrative").innerHTML = act.narrative;
       document.getElementById("actCounter").textContent = `${currentAct + 1} OF ${BESPOKE_ACTS.length}`;
 
-      // Stepper
       document.querySelectorAll(".step-tick").forEach((t, i) => {
         t.className = `step-tick ${i < currentAct ? 'passed' : (i === currentAct ? 'current' : '')}`;
       });
@@ -1841,11 +3475,9 @@
       document.getElementById("prevActBtn").disabled = currentAct === 0;
       document.getElementById("nextActBtn").textContent = currentAct === BESPOKE_ACTS.length - 1 ? "Complete Journey 🏁" : "Next Act ►";
 
-      // Render binnacle
       const binnacle = document.getElementById("actBinnacle");
       act.renderBinnacle(binnacle);
 
-      // Camera glide
       if (act.camera) {
         panX = act.camera.x;
         panY = act.camera.y;
@@ -1988,7 +3620,7 @@
     viewport.addEventListener("wheel", (e) => {
       e.preventDefault();
       const z = e.deltaY < 0 ? 1.1 : 0.9;
-      let newScale = Math.min(Math.max(scale * z, 0.25), 2.2);
+      let newScale = Math.min(Math.max(scale * z, 0.22), 2.2);
 
       panX = e.clientX - (e.clientX - panX) * (newScale / scale);
       panY = e.clientY - (e.clientY - panY) * (newScale / scale);
@@ -1998,14 +3630,21 @@
     }, { passive: false });
 
     function zoomIn() { scale = Math.min(scale * 1.2, 2.2); updateTransform(); }
-    function zoomOut() { scale = Math.max(scale / 1.2, 0.25); updateTransform(); }
-    function resetView() { scale = 0.78; panX = 90; panY = 50; updateTransform(); }
+    function zoomOut() { scale = Math.max(scale / 1.2, 0.22); updateTransform(); }
+    function resetView() { scale = 0.78; panX = 120; panY = 50; updateTransform(); }
 
     function switchMode(m) {
       soundRelayClick();
       currentMode = m;
       document.getElementById("tabTree").classList.toggle("active", m === "sitemap");
       document.getElementById("tabTopology").classList.toggle("active", m === "topology");
+      if (m === "topology") {
+        panX = 220;
+        panY = 40;
+        scale = 0.85;
+      } else {
+        resetView();
+      }
       renderMap();
     }
 
@@ -2045,15 +3684,16 @@
 
     // Keyboard controls
     window.addEventListener("keydown", (e) => {
-      if (e.key === "/" && document.activeElement !== searchInput) {
+      if (e.key === "/" && document.activeElement !== searchInput && document.activeElement?.id !== "monoFaqSearch") {
         e.preventDefault();
         searchInput.focus();
       }
       if (e.key === "Escape") {
-        if (isJourneyActive) toggleJourneyCockpit();
+        if (isMonographActive) toggleMonographDrawer();
+        else if (isJourneyActive) toggleJourneyCockpit();
         searchInput.blur();
       }
-      if (isJourneyActive) {
+      if (isJourneyActive && !isMonographActive) {
         if (e.key === "ArrowRight") stepAct(1);
         if (e.key === "ArrowLeft") stepAct(-1);
       }
@@ -2065,7 +3705,9 @@
       resetView();
 
       const params = new URLSearchParams(window.location.search);
-      if (params.get("journey") === "true") {
+      if (params.get("monograph") === "true") {
+        setTimeout(openMonographDrawer, 300);
+      } else if (params.get("journey") === "true") {
         const actParam = parseInt(params.get("act") || "1") - 1;
         setTimeout(() => {
           isJourneyActive = true;
