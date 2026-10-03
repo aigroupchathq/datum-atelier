@@ -18,10 +18,12 @@ import {
   X,
   Layers,
   Radio,
-  FileCheck2
+  FileCheck2,
+  Shield
 } from 'lucide-react';
 import { useTheme, ATELIER_THEMES } from '../../context/ThemeContext';
 import type { Theme } from '../../context/ThemeContext';
+import { useActiveVehicle } from '../../context/ActiveVehicleContext';
 import { CommandPalette } from '../common/CommandPalette';
 
 interface NavbarProps {
@@ -50,9 +52,11 @@ export const Navbar: FC<NavbarProps> = ({
   onOpenWorkshopStamping
 }) => {
   const { theme, setTheme, themeMeta } = useTheme();
+  const { activeVehicle, userVehicles, switchVehicle } = useActiveVehicle();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [isFontDropdownOpen, setIsFontDropdownOpen] = useState(false);
   const [isStudioHubOpen, setIsStudioHubOpen] = useState(false);
+  const [isCarDropdownOpen, setIsCarDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [fontMode, setFontMode] = useState<FontMode>('horlogerie');
@@ -70,6 +74,7 @@ export const Navbar: FC<NavbarProps> = ({
     setIsThemeDropdownOpen(false);
     setIsFontDropdownOpen(false);
     setIsStudioHubOpen(false);
+    setIsCarDropdownOpen(false);
   };
 
   return (
@@ -138,6 +143,7 @@ export const Navbar: FC<NavbarProps> = ({
             <nav className="hidden lg:flex items-center gap-1">
               {[
                 { to: '/', label: 'Feed' },
+                { to: `/car/${activeVehicle.id}`, label: 'My Atelier', icon: <Shield className="w-3.5 h-3.5" /> },
                 { to: '/explore', label: 'Explore', icon: <Compass className="w-3.5 h-3.5" /> },
                 { to: '/communities', label: 'Clubs', icon: <Users className="w-3.5 h-3.5" /> },
                 { to: '/pro', label: 'Pro', icon: <Wrench className="w-3.5 h-3.5" /> },
@@ -540,6 +546,105 @@ export const Navbar: FC<NavbarProps> = ({
               )}
             </div>
 
+            {/* ── ACTIVE VEHICLE SELECTOR PILL (User's Car Centered) ── */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setIsCarDropdownOpen(!isCarDropdownOpen);
+                  setIsThemeDropdownOpen(false);
+                  setIsFontDropdownOpen(false);
+                  setIsStudioHubOpen(false);
+                }}
+                className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg border text-xs transition cursor-pointer select-none"
+                style={{
+                  backgroundColor: isCarDropdownOpen ? 'var(--bg-elevated)' : 'var(--bg-void)',
+                  borderColor: isCarDropdownOpen ? 'var(--accent)' : 'var(--border-subtle)',
+                  color: 'var(--text-primary)',
+                }}
+                title={`Active Vehicle: ${activeVehicle.name} (${activeVehicle.fullName})`}
+              >
+                <img
+                  src={activeVehicle.heroImage}
+                  alt={activeVehicle.name}
+                  className="w-5 h-5 rounded-full object-cover border border-white/20 shrink-0"
+                />
+                <span className="font-bold font-mono-numbers text-[11px] hidden sm:inline">{activeVehicle.name}</span>
+                <span className="text-[9px] font-mono-numbers px-1 rounded bg-white/10 hidden md:inline opacity-70">
+                  {activeVehicle.chassisCode.split('-')[0]}
+                </span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isCarDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Active Vehicle Switcher Dropdown */}
+              {isCarDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={closeAllDropdowns} />
+                  <div
+                    className="absolute right-0 mt-2 w-72 rounded-2xl p-2 z-50 border shadow-2xl backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-150"
+                    style={{
+                      backgroundColor: 'var(--bg-surface)',
+                      borderColor: 'var(--border-default)',
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    <div className="px-3 py-2 border-b mb-1 flex items-center justify-between" style={{ borderColor: 'var(--border-subtle)' }}>
+                      <span className="text-[10px] font-mono-numbers uppercase tracking-widest font-bold flex items-center gap-1.5 text-zinc-400">
+                        <Shield className="w-3.5 h-3.5 text-amber-500" />
+                        ACTIVE ATELIER STABLE
+                      </span>
+                      <Link
+                        to={`/car/${activeVehicle.id}`}
+                        onClick={closeAllDropdowns}
+                        className="text-[10px] text-amber-400 hover:text-amber-300 font-bold"
+                      >
+                        Dossier →
+                      </Link>
+                    </div>
+
+                    <div className="space-y-1">
+                      {userVehicles.map((v) => {
+                        const isCurrent = v.id === activeVehicle.id;
+                        return (
+                          <button
+                            key={v.id}
+                            onClick={() => {
+                              switchVehicle(v.id);
+                              closeAllDropdowns();
+                            }}
+                            className="w-full text-left p-2 rounded-xl text-xs transition flex items-center justify-between gap-2.5 cursor-pointer"
+                            style={{
+                              backgroundColor: isCurrent ? 'var(--bg-elevated)' : 'transparent',
+                              color: 'var(--text-primary)',
+                            }}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <img
+                                src={v.heroImage}
+                                alt={v.name}
+                                className="w-8 h-8 rounded-lg object-cover border border-white/20 shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <div className="font-bold text-xs truncate flex items-center gap-1.5">
+                                  <span>{v.name}</span>
+                                  <span className="text-[9px] font-mono-numbers px-1 rounded bg-white/10 opacity-75">
+                                    {v.year}
+                                  </span>
+                                </div>
+                                <div className="text-[10px] text-zinc-400 font-mono-numbers truncate">
+                                  {v.fullName}
+                                </div>
+                              </div>
+                            </div>
+                            {isCurrent && <Check className="w-4 h-4 text-amber-400 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
             {/* Quick Action Button: + Log Drive */}
             <button
               onClick={() => onOpenCreatePost('post')}
@@ -585,6 +690,7 @@ export const Navbar: FC<NavbarProps> = ({
           <div className="grid grid-cols-3 gap-2">
             {[
               { to: '/', label: 'Feed', icon: <Compass className="w-4 h-4" /> },
+              { to: `/car/${activeVehicle.id}`, label: 'Atelier', icon: <Shield className="w-4 h-4" /> },
               { to: '/explore', label: 'Explore', icon: <Compass className="w-4 h-4" /> },
               { to: '/communities', label: 'Clubs', icon: <Users className="w-4 h-4" /> },
               { to: '/pro', label: 'Pro', icon: <Wrench className="w-4 h-4" /> },

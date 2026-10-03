@@ -6,6 +6,7 @@ import { PassGripRadarModal } from '../components/telemetry/PassGripRadarModal';
 import { calculateGForceCoords } from '../utils/dashboardKinematics';
 import { calculateRoadGrip } from '../utils/gripCalculation';
 import { useToast } from '../context/ToastContext';
+import { useActiveVehicle } from '../context/ActiveVehicleContext';
 import { 
   Compass, 
   ShieldCheck, 
@@ -171,6 +172,7 @@ const ROUTE_PRESETS: Record<string, RoutePreset> = {
 
 export const DriveDetailPage: FC = () => {
   const { showToast } = useToast();
+  const { activeVehicle } = useActiveVehicle();
   const [selectedRouteId, setSelectedRouteId] = useState<string>('snake-pass');
   const activeRoute = ROUTE_PRESETS[selectedRouteId];
 
@@ -178,10 +180,11 @@ export const DriveDetailPage: FC = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasDimensionsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
 
   // Convoy registration modal state
   const [isConvoyModalOpen, setIsConvoyModalOpen] = useState<boolean>(false);
-  const [convoyVehicle, setConvoyVehicle] = useState<string>('MAYA — BMW M3 Competition (G80)');
+  const [convoyVehicle, setConvoyVehicle] = useState<string>(() => `${activeVehicle.name} — ${activeVehicle.fullName}`);
   const [radioChecked, setRadioChecked] = useState<boolean>(true);
   const [tyresChecked, setTyresChecked] = useState<boolean>(true);
   const [fuelChecked, setFuelChecked] = useState<boolean>(true);
@@ -273,21 +276,35 @@ export const DriveDetailPage: FC = () => {
     setProgress(newProgress);
   };
 
-  // Auto-play loop
+  // Auto-play loop using requestAnimationFrame for buttery smooth 60fps/120fps playback
   useEffect(() => {
     if (!isPlaying) return;
-    const interval = setInterval(() => {
+
+    let animFrameId: number;
+    let lastTime: number | null = null;
+
+    const tick = (now: number) => {
+      if (lastTime === null) lastTime = now;
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
+      // Advance smoothly: ~0.08 progress units per second at 1x speed
+      const increment = 0.08 * playbackSpeed * dt;
+
       setProgress((prev) => {
-        const next = prev + 0.005 * playbackSpeed;
+        const next = prev + increment;
         if (next >= 1) {
           setIsPlaying(false);
           return 1;
         }
         return next;
       });
-    }, 50);
 
-    return () => clearInterval(interval);
+      animFrameId = requestAnimationFrame(tick);
+    };
+
+    animFrameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animFrameId);
   }, [isPlaying, playbackSpeed]);
 
   // Canvas map drawing
@@ -299,8 +316,16 @@ export const DriveDetailPage: FC = () => {
 
     const width = canvas.parentElement?.clientWidth || 700;
     const height = 300;
-    canvas.width = width * 2;
-    canvas.height = height * 2;
+
+    // Cache canvas backing store dimensions to eliminate GPU reallocation lag
+    if (canvasDimensionsRef.current.width !== width || canvasDimensionsRef.current.height !== height) {
+      canvas.width = width * 2;
+      canvas.height = height * 2;
+      canvasDimensionsRef.current = { width, height };
+    }
+
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(2, 2);
 
     // Muted dark canvas background
@@ -419,6 +444,7 @@ export const DriveDetailPage: FC = () => {
     ctx.stroke();
     ctx.shadowBlur = 0;
 
+    ctx.restore();
   }, [currentTelemetry, activeRoute]);
 
   const handleConfirmConvoy = (e: React.FormEvent) => {
@@ -442,7 +468,7 @@ export const DriveDetailPage: FC = () => {
       {/* Return Navigation & Route Preset Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Link
-          to="/car/car-maya-m3"
+          to={`/car/${activeVehicle.id}`}
           className="inline-flex items-center gap-2 text-xs font-mono-numbers text-zinc-400 hover:text-white transition px-3 py-1.5 rounded-xl bg-zinc-900/80 border border-zinc-800 shrink-0 w-fit"
         >
           <ArrowLeft className="w-3.5 h-3.5" />

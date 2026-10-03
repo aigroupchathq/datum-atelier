@@ -21,12 +21,19 @@ import { ArchitecturalChamberModal } from './components/atelier/ArchitecturalCha
 import { WorkshopStampingModal } from './components/workshop/WorkshopStampingModal';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { ActiveVehicleProvider, useActiveVehicle } from './context/ActiveVehicleContext';
 import { mockFeedPosts } from './data/mockData';
 import type { CommunityPost } from './types';
+
+function CarRouteRedirect() {
+  const { activeVehicle } = useActiveVehicle();
+  return <Navigate to={`/car/${activeVehicle.id}`} replace />;
+}
 
 function AppContent() {
   const { showToast } = useToast();
   const { isWhiteYellow } = useTheme();
+  const { activeVehicle } = useActiveVehicle();
   const [posts, setPosts] = useState<CommunityPost[]>(() => {
     try {
       const saved = localStorage.getItem('datum_ledger_posts');
@@ -79,10 +86,10 @@ function AppContent() {
   };
 
   const handleNewPost = (newPostData: Partial<CommunityPost>) => {
-    const vehicleName = newPostData.authorVehicleName || 'MAYA';
-    const vehicleModel = newPostData.authorVehicleModel || 'BMW M3 Competition';
-    const vehicleId = newPostData.authorVehicleId || 'car-maya-m3';
-    const vehicleYear = newPostData.authorVehicleYear || 2023;
+    const vehicleName = newPostData.authorVehicleName || activeVehicle.name;
+    const vehicleModel = newPostData.authorVehicleModel || activeVehicle.fullName;
+    const vehicleId = newPostData.authorVehicleId || activeVehicle.id;
+    const vehicleYear = newPostData.authorVehicleYear || activeVehicle.year;
 
     const createdPost: CommunityPost = {
       id: `post-${Date.now()}`,
@@ -175,7 +182,7 @@ function AppContent() {
               } 
             />
             <Route path="/car/:carId" element={<CarProfilePage />} />
-            <Route path="/car" element={<Navigate to="/car/car-maya-m3" replace />} />
+            <Route path="/car" element={<CarRouteRedirect />} />
             <Route path="/drive/:driveId" element={<DriveDetailPage />} />
             <Route path="/explore" element={<ExplorePage />} />
             <Route path="/communities" element={<CommunitiesPage />} />
@@ -335,7 +342,9 @@ export function App() {
   return (
     <ThemeProvider>
       <ToastProvider>
-        <AppContent />
+        <ActiveVehicleProvider>
+          <AppContent />
+        </ActiveVehicleProvider>
       </ToastProvider>
     </ThemeProvider>
   );

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FC } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import { PlateBlurImage } from '../components/common/PlateBlurImage';
 import { ProvenanceBadge } from '../components/common/ProvenanceBadge';
 import { VehiclePassportModal } from '../components/common/VehiclePassportModal';
@@ -17,6 +17,7 @@ import { SupplyChainBomView } from '../components/profile/SupplyChainBomView';
 import { CustodyHandoverModal } from '../components/profile/CustodyHandoverModal';
 import { ConcoursHeritageDossierModal } from '../components/profile/ConcoursHeritageDossierModal';
 import { useToast } from '../context/ToastContext';
+import { useActiveVehicle } from '../context/ActiveVehicleContext';
 import { 
   Grid, 
   Compass, 
@@ -41,7 +42,8 @@ import {
   Thermometer,
   Layers,
   Printer,
-  KeyRound
+  KeyRound,
+  Star
 } from 'lucide-react';
 
 interface CarProfileData {
@@ -598,11 +600,26 @@ const VEHICLE_DIAGNOSTICS: Record<string, {
 };
 
 export const CarProfilePage: FC = () => {
+  const { carId } = useParams<{ carId?: string }>();
+  const navigate = useNavigate();
+  const { activeVehicleId, setActiveVehicleId } = useActiveVehicle();
+
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'grid';
   const [activeTab, setActiveTab] = useState<string>(initialTab === 'bom' ? 'build' : initialTab);
   const [hardwareViewMode, setHardwareViewMode] = useState<'bom' | 'evolution'>('bom');
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('car-maya-m3');
+  
+  const initialVehicleId = (carId && ATELIER_VEHICLES[carId]) 
+    ? carId 
+    : (ATELIER_VEHICLES[activeVehicleId] ? activeVehicleId : 'car-maya-m3');
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string>(initialVehicleId);
+
+  useEffect(() => {
+    if (carId && ATELIER_VEHICLES[carId] && carId !== selectedVehicleId) {
+      setSelectedVehicleId(carId);
+      setIsPlayingAudio(false);
+    }
+  }, [carId]);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
   const [isPassportOpen, setIsPassportOpen] = useState<boolean>(false);
@@ -763,20 +780,25 @@ export const CarProfilePage: FC = () => {
           {Object.keys(ATELIER_VEHICLES).map((vKey) => {
             const v = ATELIER_VEHICLES[vKey];
             const isSelected = selectedVehicleId === vKey;
+            const isUserActive = activeVehicleId === vKey;
             return (
               <button
                 key={vKey}
                 onClick={() => {
                   setSelectedVehicleId(vKey);
                   setIsPlayingAudio(false);
+                  navigate(`/car/${vKey}`);
                 }}
-                className={`px-3.5 py-1.5 rounded-lg transition-all text-xs font-semibold whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg transition-all text-xs font-semibold whitespace-nowrap cursor-pointer ${
                   isSelected
                     ? 'bg-gradient-to-r from-zinc-200 to-white text-black shadow-md font-bold'
                     : 'text-zinc-400 hover:text-white'
                 }`}
               >
-                {v.name} ({v.chassisCode.split('-')[0]})
+                <span>{v.name} ({v.chassisCode.split('-')[0]})</span>
+                {isUserActive && (
+                  <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-amber-600' : 'bg-amber-400'}`} title="Current Active Atelier Vehicle" />
+                )}
               </button>
             );
           })}
@@ -850,6 +872,31 @@ export const CarProfilePage: FC = () => {
 
             {/* Posh Action Strip */}
             <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+              {/* Active Vehicle State / Toggle */}
+              {selectedVehicleId === activeVehicleId ? (
+                <div className="px-4 py-2.5 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-md shadow-xs">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  <span>Your Active Vehicle</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setActiveVehicleId(selectedVehicleId);
+                    showToast({
+                      title: `Active Vehicle Set: ${car.name}`,
+                      message: `${car.fullName} is now your active vehicle for logbooks and feeds.`,
+                      type: 'garage',
+                      badge: 'ACTIVE CAR'
+                    });
+                  }}
+                  className="px-4 py-2.5 rounded-full bg-white/[0.06] hover:bg-amber-400/15 border border-white/[0.15] hover:border-amber-400/40 text-zinc-200 hover:text-amber-200 font-semibold text-xs transition-all flex items-center gap-1.5 backdrop-blur-md cursor-pointer"
+                  title="Make this your active vehicle across Datum"
+                >
+                  <Star className="w-3.5 h-3.5 text-zinc-400 group-hover:text-amber-300" />
+                  <span>Set as Active Vehicle</span>
+                </button>
+              )}
+
               <button
                 onClick={toggleFollow}
                 className={`flex-1 sm:flex-none px-6 py-2.5 rounded-full font-bold text-xs tracking-wider uppercase transition-all shadow-md ${

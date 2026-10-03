@@ -27,6 +27,7 @@ import {
 import type { CommunityPost } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useActiveVehicle } from '../../context/ActiveVehicleContext';
 import { redactPlateOnCanvas } from '../../utils/plateRedactionCanvas';
 import { loadVehicleBom } from '../../core/supplychain/supplyChainBom';
 import { 
@@ -106,7 +107,7 @@ const DEMO_PRESETS = [
 const STABLE_CARS = [
   { id: 'car-maya-m3', name: 'MAYA', model: 'BMW M3 Competition (G80)', year: 2023, defaultPresetIndex: 0 },
   { id: 'car-kuro-gt3', name: 'KURO', model: 'Porsche 911 GT3 Touring (992)', year: 2023, defaultPresetIndex: 1 },
-  { id: 'car-retro-e30', name: 'RETRO MOD', model: 'BMW 318is Slicktop (E30)', year: 1991, defaultPresetIndex: 2 },
+  { id: 'car-e30-retromod', name: 'RETRO MOD', model: 'BMW 318is Slicktop (E30)', year: 1991, defaultPresetIndex: 2 },
   { id: 'car-expedition-110', name: 'EXPEDITION', model: 'Defender 110 P400 SE', year: 2022, defaultPresetIndex: 3 }
 ];
 
@@ -119,8 +120,15 @@ export const CreatePostModal: FC<CreatePostModalProps> = ({
 }) => {
   const { showToast } = useToast();
   const { isWhiteYellow } = useTheme();
+  const { activeVehicle } = useActiveVehicle();
   const [mode, setMode] = useState<'post' | 'story'>(initialMode);
-  const [selectedCarIndex, setSelectedCarIndex] = useState<number>(0);
+  
+  const initialCarIndex = useMemo(() => {
+    const idx = STABLE_CARS.findIndex(c => c.id === activeVehicle.id);
+    return idx >= 0 ? idx : 0;
+  }, [activeVehicle.id]);
+
+  const [selectedCarIndex, setSelectedCarIndex] = useState<number>(initialCarIndex);
   const currentCar = STABLE_CARS[selectedCarIndex] || STABLE_CARS[0];
   const [selectedBomComponentId, setSelectedBomComponentId] = useState<string>('');
   const availableBomComponents = useMemo(() => loadVehicleBom(currentCar.id), [currentCar.id]);

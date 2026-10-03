@@ -8,6 +8,7 @@ import { ObsidianDashboardBinnacle } from './ObsidianDashboardBinnacle';
 import { ComponentSpecPreviewModal } from './ComponentSpecPreviewModal';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useActiveVehicle } from '../../context/ActiveVehicleContext';
 import {
   Heart,
   MessageCircle,
@@ -148,6 +149,7 @@ const LikeCounter: FC<{ count: number; bumped: boolean; isWhiteYellow?: boolean 
 export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const { showToast } = useToast();
   const { isWhiteYellow, themeMeta, layoutMode } = useTheme();
+  const { activeVehicle } = useActiveVehicle();
   const [isBomOpen, setIsBomOpen] = useState(false);
   const [selectedBomComponent, setSelectedBomComponent] = useState<CommunityPost['taggedBomComponent'] | null>(null);
 
@@ -290,12 +292,13 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
 
   const postNewComment = (text: string) => {
     if (!text.trim()) return;
+    const handleClean = activeVehicle.name.toLowerCase().replace(/\s+/g, '_') + '_' + activeVehicle.chassisCode.split('-')[0].toLowerCase();
     const newEntry: CommentEntry = {
       id: `c-${Date.now()}`,
-      authorHandle: 'maya_m3',
-      authorName: 'MAYA',
-      authorCar: 'BMW M3 Competition',
-      avatarUrl: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=150&q=90',
+      authorHandle: handleClean,
+      authorName: activeVehicle.name,
+      authorCar: activeVehicle.fullName,
+      avatarUrl: activeVehicle.heroImage,
       text: text.trim(),
       timeAgo: 'Just now',
       likes: 1,
@@ -305,7 +308,7 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
     setRepliesCount(c => c + 1);
     showToast({
       title: 'Comment Published',
-      message: 'Added as MAYA (BMW M3 Competition)',
+      message: `Added as ${activeVehicle.name} (${activeVehicle.fullName})`,
       type: 'success'
     });
   };

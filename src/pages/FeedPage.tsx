@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { mockMayaVehicle, mockOtherVehicles } from '../data/mockData';
 import type { CommunityPost } from '../types';
 import { FeedCard } from '../components/feed/FeedCard';
 import { StoriesBar } from '../components/feed/StoriesBar';
@@ -9,6 +8,7 @@ import { FeedEmptyState } from '../components/feed/FeedEmptyState';
 import { GripMetricCard } from '../components/telemetry/GripMetricCard';
 import { fetchPassLiveWeather, type PassLiveWeatherData } from '../utils/openMeteoWeather';
 import { useTheme } from '../context/ThemeContext';
+import { useActiveVehicle } from '../context/ActiveVehicleContext';
 import {
   Compass,
   GitCommit,
@@ -54,11 +54,11 @@ const POSTS_PER_PAGE = 8;
 
 export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPassRadar, onOpenDriveTracker }) => {
   const { isWhiteYellow, themeMeta, cycleTheme } = useTheme();
+  const { activeVehicle, switchVehicle, userVehicles } = useActiveVehicle();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [selectedPersona, setSelectedPersona] = useState<'maya' | 'kuro'>('maya');
   const [followedCars, setFollowedCars] = useState<Record<string, boolean>>(() => {
     try {
       const saved = localStorage.getItem('datum_followed_handles');
@@ -106,8 +106,6 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
     if (selectedFilter === 'questions') return post.postType === 'QUESTION';
     return true;
   });
-
-  const activeCar = selectedPersona === 'maya' ? mockMayaVehicle : mockOtherVehicles[0];
 
   const FILTERS = [
     { id: 'all', label: 'All Journals' },
@@ -175,11 +173,11 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
               : 'card-surface'
           }`}>
             <div className="flex items-center gap-3">
-              <Link to="/car/car-maya-m3" className="shrink-0" title="Inspect active vehicle passport">
+              <Link to={`/car/${activeVehicle.id}`} className="shrink-0" title={`Inspect ${activeVehicle.name}'s Atelier Dossier`}>
                 <div className="w-10 h-10 rounded-full ring-maya p-[1.5px] transition-transform duration-300 hover:scale-105 shadow-sm">
                   <img
-                    src={activeCar.heroImageUrl}
-                    alt={activeCar.name}
+                    src={activeVehicle.heroImage}
+                    alt={activeVehicle.name}
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
@@ -193,7 +191,7 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
                     : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.08] hover:border-amber-400/30 text-zinc-400 hover:text-zinc-200 shadow-inner'
                 }`}
               >
-                <span className="truncate">Chronicle today's journey with {activeCar.name}…</span>
+                <span className="truncate">Chronicle today's journey with {activeVehicle.name}…</span>
                 <span className={`text-[10.5px] font-mono-numbers px-2.5 py-1 rounded-full border transition shrink-0 ml-2 font-bold ${
                   isWhiteYellow
                     ? 'bg-yellow-400 text-zinc-950 border-yellow-500 shadow-xs group-hover:bg-yellow-300'
@@ -363,30 +361,40 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
             isWhiteYellow ? 'bg-white border-zinc-200/90 shadow-xs' : 'card-surface'
           }`}>
             <div className="flex items-center justify-between">
-              <Link to={`/car/${activeCar.id}`} className="flex items-center gap-3 group min-w-0">
+              <Link to={`/car/${activeVehicle.id}`} className="flex items-center gap-3 group min-w-0">
                 <div className="w-11 h-11 rounded-full ring-maya p-[2px] shrink-0 transition group-hover:scale-105">
                   <img
-                    src={activeCar.heroImageUrl}
-                    alt={activeCar.name}
+                    src={activeVehicle.heroImage}
+                    alt={activeVehicle.name}
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
                 <div className="min-w-0">
-                  <p className={`text-sm font-bold truncate transition-colors ${
-                    isWhiteYellow ? 'text-zinc-950 group-hover:text-yellow-600' : 'text-[#F4F4F5] group-hover:text-amber-300'
-                  }`}>
-                    {activeCar.name}
-                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <p className={`text-sm font-bold truncate transition-colors ${
+                      isWhiteYellow ? 'text-zinc-950 group-hover:text-yellow-600' : 'text-[#F4F4F5] group-hover:text-amber-300'
+                    }`}>
+                      {activeVehicle.name}
+                    </p>
+                    <span className="text-[9px] font-mono-numbers px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                      ACTIVE
+                    </span>
+                  </div>
                   <p className={`text-[11px] font-mono-numbers truncate ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-500'}`}>
-                    {activeCar.make} · {activeCar.model}
+                    {activeVehicle.fullName}
                   </p>
                 </div>
               </Link>
               <button
-                onClick={() => setSelectedPersona(selectedPersona === 'maya' ? 'kuro' : 'maya')}
-                className={`text-[12px] font-bold transition shrink-0 font-mono-numbers ${
+                onClick={() => {
+                  const currentIdx = userVehicles.findIndex(v => v.id === activeVehicle.id);
+                  const nextVehicle = userVehicles[(currentIdx + 1) % userVehicles.length];
+                  switchVehicle(nextVehicle.id);
+                }}
+                className={`text-[12px] font-bold transition shrink-0 font-mono-numbers cursor-pointer ${
                   isWhiteYellow ? 'text-yellow-700 hover:text-yellow-800' : 'text-zinc-400 hover:text-white'
                 }`}
+                title="Switch active garage vehicle"
               >
                 Switch
               </button>
@@ -395,9 +403,9 @@ export const FeedPage: FC<FeedPageProps> = ({ onOpenCreatePost, posts, onOpenPas
             {/* 3 metric chips */}
             <div className={`grid grid-cols-3 gap-2 mt-4 pt-3.5 border-t ${isWhiteYellow ? 'border-zinc-200' : 'border-white/[0.06]'}`}>
               {[
-                { label: 'Drives', value: String(activeCar.metrics.drivesCount) },
-                { label: 'Miles', value: `${(activeCar.spec.mileageCurrent / 1000).toFixed(1)}k` },
-                { label: 'Health', value: '92%', accent: true },
+                { label: 'Drives', value: '94' },
+                { label: 'Miles', value: `${(activeVehicle.mileage / 1000).toFixed(1)}k` },
+                { label: 'Provenance', value: `${activeVehicle.provenanceScore}%`, accent: true },
               ].map(({ label, value, accent }) => (
                 <div 
                   key={label} 
