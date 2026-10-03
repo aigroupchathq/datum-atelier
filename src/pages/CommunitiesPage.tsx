@@ -4,6 +4,7 @@ import { mockCommunities } from '../data/mockData';
 import type { Community } from '../types';
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
+import { useActiveVehicle } from '../context/ActiveVehicleContext';
 import { 
   Wrench, 
   Flag, 
@@ -19,7 +20,8 @@ import {
   Activity,
   CheckCircle2,
   Clock,
-  MapPin
+  MapPin,
+  Plus
 } from 'lucide-react';
 
 interface ConvoyRosterItem {
@@ -40,7 +42,7 @@ interface ConvoyRosterItem {
   }[];
 }
 
-const LIVE_CONVOYS: ConvoyRosterItem[] = [
+const BASE_CONVOYS: ConvoyRosterItem[] = [
   {
     id: 'convoy-cotswolds',
     convoyTitle: 'Cotswolds Dawn Patrol (B4425 Loop)',
@@ -63,8 +65,8 @@ const LIVE_CONVOYS: ConvoyRosterItem[] = [
     radioFrequency: 'PMR446 Ch 3 • CTCSS 8 (88.5 Hz)',
     carsCount: 8,
     roster: [
-      { vehicleName: 'VALKYRIE', model: 'McLaren 720S Performance', driver: 'Night Lead', tyresColdPsi: '31.0 PSI', fuelGrade: 'Shell V-Power 99', status: 'READY', avatarUrl: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=150&q=90' },
-      { vehicleName: 'YUKI', model: 'Toyota GR Yaris Circuit', driver: 'Mid-Pack Scout', tyresColdPsi: '28.0 PSI', fuelGrade: 'Tesco 99', status: 'STAGED', avatarUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=150&q=90' }
+      { vehicleName: 'OUTCAST', model: 'Vauxhall Zafira VXR Aero Spec', driver: 'Night Lead', tyresColdPsi: '31.0 PSI', fuelGrade: 'Shell V-Power 99', status: 'READY', avatarUrl: '/feed/zafira_vxr_outcast_black_red.jpg' },
+      { vehicleName: 'ARDEN NOVA', model: 'Vauxhall Nova Turbo (C20LET)', driver: 'Mid-Pack Scout', tyresColdPsi: '28.0 PSI', fuelGrade: 'Tesco 99', status: 'STAGED', avatarUrl: '/feed/nova_turbo_arden_k77_nva.jpg' }
     ]
   }
 ];
@@ -106,23 +108,59 @@ const GUILD_CHALLENGES = [
 ];
 
 export const CommunitiesPage: FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [activeClub, setActiveClub] = useState<Community | null>(null);
-  const [enrolledClubs, setEnrolledClubs] = useState<Record<string, boolean>>({
-    'comm-tuning-s58': true,
-    'comm-cars-coffee-dawn': true,
-  });
-  
-  // Convoy check-in status
-  const [checkedInConvoys, setCheckedInConvoys] = useState<Record<string, boolean>>({
-    'convoy-cotswolds': true
-  });
-
   const { showToast } = useToast();
   const { isWhiteYellow } = useTheme();
+  const { activeVehicle } = useActiveVehicle();
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [activeClub, setActiveClub] = useState<Community | null>(null);
+  const [isProposeConvoyOpen, setIsProposeConvoyOpen] = useState(false);
+
+  // Convoy form state
+  const [convoyTitleInput, setConvoyTitleInput] = useState('');
+  const [convoyDepartureInput, setConvoyDepartureInput] = useState('Saturday 06:30 AM');
+  const [convoySectorInput, setConvoySectorInput] = useState('');
+  const [convoyRadioInput, setConvoyRadioInput] = useState('PMR446 Ch 7 • CTCSS 12');
+
+  // Enrolled clubs with persistence
+  const [enrolledClubs, setEnrolledClubs] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('datum_enrolled_clubs');
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return {
+      'comm-tuning-s58': true,
+      'comm-cars-coffee-dawn': true,
+    };
+  });
+
+  // Convoy check-in status with persistence
+  const [checkedInConvoys, setCheckedInConvoys] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('datum_checked_in_convoys');
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return {
+      'convoy-cotswolds': true
+    };
+  });
+
+  // Custom User-Dispatched Convoys
+  const [customConvoys, setCustomConvoys] = useState<ConvoyRosterItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('datum_custom_convoys');
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return [];
+  });
+
+  const allConvoys = [...customConvoys, ...BASE_CONVOYS];
+
+  const enrolledCount = Object.keys(enrolledClubs).filter(k => enrolledClubs[k]).length;
 
   const categories = [
     { id: 'all', label: 'All Guilds', icon: Layers, count: mockCommunities.length },
+    { id: 'enrolled', label: 'My Inducted Guilds', icon: ShieldCheck, count: enrolledCount },
     { 
       id: 'technical_expert', 
       label: 'Technical & Engineering', 
@@ -157,6 +195,7 @@ export const CommunitiesPage: FC = () => {
 
   const filteredCommunities = mockCommunities.filter((comm) => {
     if (selectedCategory === 'all') return true;
+    if (selectedCategory === 'enrolled') return !!enrolledClubs[comm.id];
     return comm.category === selectedCategory;
   });
 
@@ -164,16 +203,20 @@ export const CommunitiesPage: FC = () => {
     setEnrolledClubs((prev) => {
       const isEnrolled = !!prev[clubId];
       const updated = { ...prev, [clubId]: !isEnrolled };
+      try {
+        localStorage.setItem('datum_enrolled_clubs', JSON.stringify(updated));
+      } catch { /* ignore */ }
+      
       if (!isEnrolled) {
         showToast({
-          title: `Inducted: ${clubName}`,
-          message: 'MAYA has been officially enrolled into the collective registry.',
+          title: `Inducted into ${clubName}`,
+          message: `${activeVehicle.name} has been officially enrolled into the club registry.`,
           type: 'privacy'
         });
       } else {
         showToast({
           title: `Withdrawn from ${clubName}`,
-          message: 'Collective telemetry synchronization paused.',
+          message: `${activeVehicle.name} collective telemetry synchronization paused.`,
           type: 'garage'
         });
       }
@@ -184,14 +227,71 @@ export const CommunitiesPage: FC = () => {
   const handleToggleConvoyCheckIn = (convoyId: string, convoyTitle: string) => {
     setCheckedInConvoys((prev) => {
       const isChecked = !prev[convoyId];
+      const updated = { ...prev, [convoyId]: isChecked };
+      try {
+        localStorage.setItem('datum_checked_in_convoys', JSON.stringify(updated));
+      } catch { /* ignore */ }
+      
       showToast({
         title: isChecked ? 'Convoy Roster Confirmed' : 'Roster Position Relinquished',
         message: isChecked 
-          ? `MAYA confirmed for ${convoyTitle}. Radio frequency locked. 800m privacy geofenced.`
+          ? `${activeVehicle.name} confirmed for ${convoyTitle}. Radio frequency locked. 800m privacy geofenced.`
           : `Departure slot released for ${convoyTitle}.`,
         type: 'drive'
       });
-      return { ...prev, [convoyId]: isChecked };
+      return updated;
+    });
+  };
+
+  const handleCreateConvoy = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!convoyTitleInput.trim() || !convoySectorInput.trim()) return;
+
+    const newConvoy: ConvoyRosterItem = {
+      id: `convoy-${Date.now()}`,
+      convoyTitle: convoyTitleInput.trim(),
+      departureTime: convoyDepartureInput.trim(),
+      routeSector: convoySectorInput.trim(),
+      radioFrequency: convoyRadioInput.trim() || 'PMR446 Ch 7 • CTCSS 12',
+      carsCount: 1,
+      roster: [
+        {
+          vehicleName: activeVehicle.name,
+          model: activeVehicle.fullName,
+          driver: 'Convoy Lead',
+          tyresColdPsi: '32.0 PSI',
+          fuelGrade: 'Shell V-Power 99',
+          status: 'READY',
+          avatarUrl: activeVehicle.heroImage || '/real_uk_m3_cottage.jpg'
+        }
+      ]
+    };
+
+    setCustomConvoys((prev) => {
+      const updated = [newConvoy, ...prev];
+      try {
+        localStorage.setItem('datum_custom_convoys', JSON.stringify(updated));
+      } catch { /* ignore */ }
+      return updated;
+    });
+
+    setCheckedInConvoys((prev) => {
+      const updated = { ...prev, [newConvoy.id]: true };
+      try {
+        localStorage.setItem('datum_checked_in_convoys', JSON.stringify(updated));
+      } catch { /* ignore */ }
+      return updated;
+    });
+
+    setIsProposeConvoyOpen(false);
+    setConvoyTitleInput('');
+    setConvoySectorInput('');
+
+    showToast({
+      title: 'Convoy Dispatch Staged',
+      message: `${activeVehicle.name} scheduled lead car for "${newConvoy.convoyTitle}".`,
+      type: 'drive',
+      badge: 'DISPATCH ACTIVE'
     });
   };
 
@@ -219,7 +319,7 @@ export const CommunitiesPage: FC = () => {
               <span>SOVEREIGN PADDOCK GUILDS & EXPEDITIONS</span>
             </span>
             <span className={`text-xs font-mono-numbers ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
-              Zero Generic Clones • Real Hardware Ledgers • 800m Privacy Geofenced
+              Active Car: {activeVehicle.name} • 800m Privacy Geofenced
             </span>
           </div>
 
@@ -260,7 +360,7 @@ export const CommunitiesPage: FC = () => {
       {/* 2. LIVE CONVOY ROLL-CALL HUD                              */}
       {/* ========================================================= */}
       <div className="space-y-4">
-        <div className={`flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b pb-3 ${
+        <div className={`flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b pb-3 ${
           isWhiteYellow ? 'border-zinc-200' : 'border-zinc-800'
         }`}>
           <div>
@@ -275,20 +375,29 @@ export const CommunitiesPage: FC = () => {
               Live Convoy Roll-Call & Staging
             </h2>
           </div>
-          <p className={`text-xs font-sans max-w-md ${
-            isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'
-          }`}>
-            Real-time pre-flight inspection for upcoming B-road departures. Automatic 800m privacy cloaks residential start coordinates.
-          </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsProposeConvoyOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono-numbers font-bold transition bg-amber-400 text-zinc-950 hover:bg-amber-300 border border-amber-500 shadow-sm cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Propose Convoy Dispatch</span>
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {LIVE_CONVOYS.map((convoy) => {
+          {allConvoys.map((convoy) => {
             const isCheckedIn = !!checkedInConvoys[convoy.id];
+            
+            // Check if activeVehicle is already in the roster
+            const isCarInRoster = convoy.roster.some(r => r.vehicleName.toLowerCase() === activeVehicle.name.toLowerCase());
+
             return (
               <div 
                 key={convoy.id}
-                className={`posh-card rounded-2xl border p-6 flex flex-col justify-between space-y-5 transition-all shadow-xs ${
+                className={`posh-card rounded-3xl border p-6 flex flex-col justify-between space-y-5 transition-all shadow-xs ${
                   isWhiteYellow
                     ? 'bg-white border-zinc-200/90 text-zinc-900 hover:border-yellow-400/80 hover:shadow-md'
                     : 'bg-[#0F1014] border-zinc-800 text-white hover:border-amber-500/30 shadow-xl'
@@ -325,9 +434,28 @@ export const CommunitiesPage: FC = () => {
                   {/* Confirmed Drivers Roster */}
                   <div className="space-y-2">
                     <span className={`text-[10px] uppercase font-mono-numbers tracking-wider block ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                      Confirmed Driver Roster ({convoy.carsCount} Cars Staged)
+                      Confirmed Driver Roster ({convoy.carsCount + (isCheckedIn && !isCarInRoster ? 1 : 0)} Cars Staged)
                     </span>
                     <div className="space-y-2">
+                      {/* Dynamically insert active vehicle if checked in and not already listed */}
+                      {isCheckedIn && !isCarInRoster && (
+                        <div className="p-2.5 rounded-xl border border-amber-400/40 bg-amber-400/10 flex items-center justify-between gap-3 text-xs font-mono-numbers animate-in fade-in duration-200">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <img src={activeVehicle.heroImage || '/real_uk_m3_cottage.jpg'} alt={activeVehicle.name} className="w-8 h-8 rounded-lg object-cover border border-amber-400/30 shrink-0" />
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-bold text-amber-300 block truncate">{activeVehicle.name}</span>
+                                <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-400 text-black font-extrabold uppercase">My Active Car</span>
+                              </div>
+                              <span className="text-[10px] text-zinc-300 truncate">{activeVehicle.fullName}</span>
+                            </div>
+                          </div>
+                          <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px]">
+                            CONFIRMED
+                          </span>
+                        </div>
+                      )}
+
                       {convoy.roster.map((car, idx) => (
                         <div 
                           key={idx}
@@ -369,7 +497,7 @@ export const CommunitiesPage: FC = () => {
 
                   <button
                     onClick={() => handleToggleConvoyCheckIn(convoy.id, convoy.convoyTitle)}
-                    className={`px-4 py-2 rounded-xl text-xs font-mono-numbers font-bold transition flex items-center gap-1.5 shadow-xs ${
+                    className={`px-4 py-2 rounded-xl text-xs font-mono-numbers font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer ${
                       isCheckedIn
                         ? isWhiteYellow
                           ? 'bg-zinc-100 text-yellow-950 border border-yellow-400/60 hover:bg-zinc-200'
@@ -378,7 +506,7 @@ export const CommunitiesPage: FC = () => {
                     }`}
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{isCheckedIn ? 'MAYA Checked In • Ready' : 'Check In Vehicle'}</span>
+                    <span>{isCheckedIn ? `${activeVehicle.name} Checked In • Ready` : `Check In ${activeVehicle.name}`}</span>
                   </button>
                 </div>
               </div>
@@ -461,18 +589,18 @@ export const CommunitiesPage: FC = () => {
                   <button
                     onClick={() => showToast({
                       title: `Telemetry Stamped: ${ch.title}`,
-                      message: `MAYA telemetry submitted to ${ch.guildName}. Recorded on season leaderboard.`,
+                      message: `${activeVehicle.name} telemetry submitted to ${ch.guildName}. Recorded on season leaderboard.`,
                       type: 'success',
                       badge: 'ENTERED'
                     })}
-                    className={`px-3 py-1 rounded-lg border text-[10px] font-mono-numbers font-bold transition flex items-center gap-1.5 ${
+                    className={`px-3 py-1 rounded-lg border text-[10px] font-mono-numbers font-bold transition flex items-center gap-1.5 cursor-pointer ${
                       isWhiteYellow
                         ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-950 border-yellow-300'
                         : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border-amber-500/30'
                     }`}
                   >
                     <Award className="w-3 h-3 text-yellow-600" />
-                    <span>Submit MAYA Telemetry</span>
+                    <span>Submit {activeVehicle.name} Telemetry</span>
                   </button>
                 </div>
               </div>
@@ -492,7 +620,7 @@ export const CommunitiesPage: FC = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-2xl transition-all whitespace-nowrap flex items-center gap-2 font-mono-numbers text-xs font-semibold ${
+              className={`px-4 py-2 rounded-2xl transition-all whitespace-nowrap flex items-center gap-2 font-mono-numbers text-xs font-semibold cursor-pointer ${
                 isSelected
                   ? 'bg-yellow-400 text-zinc-950 shadow-sm font-bold border border-yellow-500'
                   : isWhiteYellow
@@ -548,55 +676,37 @@ export const CommunitiesPage: FC = () => {
                 {isEnrolled && (
                   <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 text-[10px] font-mono-numbers font-bold border border-emerald-500/40 backdrop-blur-md flex items-center gap-1">
                     <Check className="w-3 h-3 stroke-[3]" />
-                    <span>MAYA INDUCTED</span>
+                    <span>{activeVehicle.name} Inducted</span>
                   </span>
                 )}
               </div>
 
-              {/* Club Content Card */}
-              <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
-                <div className="space-y-3">
-                  <div>
-                    <h3 className={`text-base font-bold font-luxury-display transition-colors leading-snug ${isWhiteYellow ? 'text-zinc-950 group-hover:text-yellow-600' : 'text-white group-hover:text-amber-300'}`}>
-                      {comm.name}
-                    </h3>
-                    <p className={`text-xs leading-relaxed font-sans mt-1 ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
-                      {comm.description}
-                    </p>
-                  </div>
-
-                  {/* Benchmark spec badge */}
-                  {comm.featuredSpec && (
-                    <div className={`p-2.5 rounded-xl border flex items-center justify-between text-xs font-mono-numbers ${isWhiteYellow ? 'bg-zinc-50 border-zinc-200 text-zinc-900' : 'bg-zinc-950/80 border-zinc-850 text-white'}`}>
-                      <span className="text-[10px] text-zinc-500 uppercase">Benchmark Spec:</span>
-                      <span className={`font-bold text-[11px] truncate max-w-[200px] ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>{comm.featuredSpec}</span>
-                    </div>
-                  )}
-
-                  {/* Top Vehicles Avatar Strip */}
-                  <div className="flex items-center gap-2 pt-1">
-                    <div className="flex -space-x-2">
-                      {comm.topVehicles.map((car, i) => (
-                        <img
-                          key={i}
-                          src={car.imageUrl}
-                          alt={car.name}
-                          className={`w-7 h-7 rounded-full object-cover border-2 ${isWhiteYellow ? 'border-white' : 'border-[#0F1116]'}`}
-                          title={`${car.name} (${car.model})`}
-                        />
-                      ))}
-                    </div>
-                    <span className={`text-[11px] font-mono-numbers ${isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                      {comm.activeCarsCount.toLocaleString()} sovereign cars
-                    </span>
-                  </div>
+              {/* Content Card */}
+              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <h3 className={`text-lg font-bold font-luxury-display ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>
+                    {comm.name}
+                  </h3>
+                  <p className={`text-xs font-sans leading-relaxed line-clamp-2 ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
+                    {comm.description}
+                  </p>
                 </div>
 
-                {/* Footer Buttons */}
-                <div className={`pt-3 border-t flex items-center justify-between gap-2 ${isWhiteYellow ? 'border-zinc-200' : 'border-zinc-850'}`}>
+                {/* Subculture Metric Tag */}
+                <div className={`p-3 rounded-2xl border text-xs font-mono-numbers flex items-center justify-between ${
+                  isWhiteYellow ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-950 border-zinc-850'
+                }`}>
+                  <span className={isWhiteYellow ? 'text-zinc-500' : 'text-zinc-400'}>Benchmark:</span>
+                  <span className={`font-bold ${isWhiteYellow ? 'text-zinc-950' : 'text-white'}`}>
+                    {comm.featuredSpec || 'Verifiable Hardware'}
+                  </span>
+                </div>
+
+                {/* Footer Strip */}
+                <div className={`pt-3 border-t flex items-center justify-between text-xs ${isWhiteYellow ? 'border-zinc-200' : 'border-zinc-850'}`}>
                   <button
                     onClick={() => setActiveClub(comm)}
-                    className={`text-xs font-mono-numbers transition flex items-center gap-1 ${
+                    className={`font-mono-numbers flex items-center gap-1.5 transition cursor-pointer ${
                       isWhiteYellow ? 'text-zinc-600 hover:text-zinc-950 font-medium' : 'text-zinc-400 hover:text-white'
                     }`}
                   >
@@ -606,7 +716,7 @@ export const CommunitiesPage: FC = () => {
 
                   <button
                     onClick={() => handleToggleEnroll(comm.id, comm.name)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono-numbers font-bold transition border ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono-numbers font-bold transition border cursor-pointer ${
                       isEnrolled
                         ? isWhiteYellow
                           ? 'bg-zinc-100 text-rose-700 border-zinc-200 hover:bg-zinc-200'
@@ -614,7 +724,7 @@ export const CommunitiesPage: FC = () => {
                         : 'bg-yellow-400 text-zinc-950 border-yellow-500 hover:bg-yellow-300 shadow-xs'
                     }`}
                   >
-                    {isEnrolled ? 'Enrolled' : 'Induct Car'}
+                    {isEnrolled ? 'Enrolled' : `Induct ${activeVehicle.name}`}
                   </button>
                 </div>
               </div>
@@ -658,7 +768,7 @@ export const CommunitiesPage: FC = () => {
 
               <button
                 onClick={() => setActiveClub(null)}
-                className={`p-1.5 rounded-xl transition ${
+                className={`p-1.5 rounded-xl transition cursor-pointer ${
                   isWhiteYellow ? 'text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                 }`}
               >
@@ -684,7 +794,7 @@ export const CommunitiesPage: FC = () => {
               </div>
 
               <div className={`p-3.5 rounded-2xl border space-y-1 ${
-                isWhiteYellow ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-950 border-zinc-800'
+                isWhiteYellow ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-950 border-zinc-850'
               }`}>
                 <span className={`text-[10px] font-mono-numbers uppercase font-bold block ${isWhiteYellow ? 'text-yellow-700' : 'text-amber-400'}`}>
                   Upcoming Convoy / Trackday
@@ -699,13 +809,13 @@ export const CommunitiesPage: FC = () => {
             <div className={`flex items-center justify-between pt-3 border-t ${isWhiteYellow ? 'border-zinc-200' : 'border-zinc-800'}`}>
               <div className={`text-xs font-mono-numbers flex items-center gap-2 ${isWhiteYellow ? 'text-zinc-600' : 'text-zinc-400'}`}>
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Induct as MAYA (BMW M3)</span>
+                <span>Induct as {activeVehicle.name} ({activeVehicle.fullName})</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setActiveClub(null)}
-                  className={`px-4 py-2 rounded-xl border text-xs font-mono-numbers transition ${
+                  className={`px-4 py-2 rounded-xl border text-xs font-mono-numbers transition cursor-pointer ${
                     isWhiteYellow ? 'border-zinc-200 text-zinc-600 hover:text-zinc-950 hover:bg-zinc-50' : 'border-zinc-800 text-zinc-400 hover:text-white'
                   }`}
                 >
@@ -716,7 +826,7 @@ export const CommunitiesPage: FC = () => {
                     handleToggleEnroll(activeClub.id, activeClub.name);
                     setActiveClub(null);
                   }}
-                  className={`px-5 py-2 rounded-xl font-bold text-xs uppercase font-mono-numbers transition shadow-sm ${
+                  className={`px-5 py-2 rounded-xl font-bold text-xs uppercase font-mono-numbers transition shadow-sm cursor-pointer ${
                     enrolledClubs[activeClub.id]
                       ? isWhiteYellow
                         ? 'bg-zinc-100 text-rose-700 border border-zinc-300'
@@ -724,11 +834,122 @@ export const CommunitiesPage: FC = () => {
                       : 'bg-yellow-400 text-zinc-950 hover:bg-yellow-300 border border-yellow-500'
                   }`}
                 >
-                  {enrolledClubs[activeClub.id] ? 'Withdraw Vehicle' : 'Induct Maya Into Guild'}
+                  {enrolledClubs[activeClub.id] ? 'Withdraw Vehicle' : `Induct ${activeVehicle.name} Into Guild`}
                 </button>
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* 7. PROPOSE CONVOY DISPATCH MODAL                          */}
+      {/* ========================================================= */}
+      {isProposeConvoyOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className={`border rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative my-auto animate-in fade-in duration-200 ${
+            isWhiteYellow ? 'bg-white border-zinc-200 text-zinc-900' : 'bg-[#0B0C0E] border-amber-500/30 text-white'
+          }`}>
+            <div className="flex items-center justify-between border-b pb-3 border-zinc-800">
+              <div className="flex items-center gap-2">
+                <Compass className="w-5 h-5 text-amber-400" />
+                <h3 className="font-luxury-display text-base font-bold uppercase tracking-wide">
+                  Propose Guild Convoy Dispatch
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsProposeConvoyOpen(false)}
+                className="p-1.5 rounded-xl text-zinc-400 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateConvoy} className="space-y-4 text-xs font-mono-numbers">
+              <div className="space-y-1">
+                <label className="text-[11px] text-zinc-400 uppercase font-semibold">Convoy Title / Run Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Snake Pass Sunset Shakedown"
+                  value={convoyTitleInput}
+                  onChange={(e) => setConvoyTitleInput(e.target.value)}
+                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs ${
+                    isWhiteYellow ? 'bg-zinc-50 border-zinc-300 text-zinc-900' : 'bg-zinc-900 border-zinc-800 text-white'
+                  }`}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[11px] text-zinc-400 uppercase font-semibold">Scheduled Departure</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Saturday 06:00 AM"
+                    value={convoyDepartureInput}
+                    onChange={(e) => setConvoyDepartureInput(e.target.value)}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs ${
+                      isWhiteYellow ? 'bg-zinc-50 border-zinc-300 text-zinc-900' : 'bg-zinc-900 border-zinc-800 text-white'
+                    }`}
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] text-zinc-400 uppercase font-semibold">Radio Channel / CTCSS</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. PMR446 Ch 7 • CTCSS 12"
+                    value={convoyRadioInput}
+                    onChange={(e) => setConvoyRadioInput(e.target.value)}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs ${
+                      isWhiteYellow ? 'bg-zinc-50 border-zinc-300 text-zinc-900' : 'bg-zinc-900 border-zinc-800 text-white'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] text-zinc-400 uppercase font-semibold">Route Sector & Rendezvous</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Ladybower Viaduct to Glossop Summit"
+                  value={convoySectorInput}
+                  onChange={(e) => setConvoySectorInput(e.target.value)}
+                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs ${
+                    isWhiteYellow ? 'bg-zinc-50 border-zinc-300 text-zinc-900' : 'bg-zinc-900 border-zinc-800 text-white'
+                  }`}
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-300 text-[11px] space-y-1">
+                <p className="font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Lead Vehicle: {activeVehicle.name} ({activeVehicle.fullName})</span>
+                </p>
+                <p className="text-zinc-400 font-sans">
+                  Residential start points are automatically cloaked by an 800m privacy sanctuary. Telemetry will sync live to the paddock roster.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => setIsProposeConvoyOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-zinc-700 text-zinc-400 hover:text-white transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-amber-400 text-zinc-950 font-bold hover:bg-amber-300 transition cursor-pointer shadow-sm"
+                >
+                  Stage Convoy
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

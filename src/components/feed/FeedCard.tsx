@@ -153,10 +153,24 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const [isBomOpen, setIsBomOpen] = useState(false);
   const [selectedBomComponent, setSelectedBomComponent] = useState<CommunityPost['taggedBomComponent'] | null>(null);
 
-  const [respected, setRespected] = useState(false);
+  const [respected, setRespected] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(`datum_respect_${post.id}`) === 'true';
+    } catch { return false; }
+  });
   const [showRespectMenu, setShowRespectMenu] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.likesCount);
+  const [saved, setSaved] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(`datum_saved_${post.id}`) === 'true';
+    } catch { return false; }
+  });
+  const [likesCount, setLikesCount] = useState<number>(() => {
+    try {
+      const storedDelta = localStorage.getItem(`datum_likes_delta_${post.id}`);
+      if (storedDelta) return post.likesCount + Number(storedDelta);
+    } catch { /* ignore */ }
+    return post.likesCount;
+  });
   const [likeCountBumped, setLikeCountBumped] = useState(false);
   const [showRespectBurst, setShowRespectBurst] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
@@ -168,8 +182,26 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
   const [commentInput, setCommentInput] = useState('');
   const [drawerInput, setDrawerInput] = useState('');
-  const [comments, setComments] = useState<CommentEntry[]>(SEED_COMMENTS);
-  const [repliesCount, setRepliesCount] = useState(post.repliesCount || SEED_COMMENTS.length);
+  const [comments, setComments] = useState<CommentEntry[]>(() => {
+    try {
+      const savedCmts = localStorage.getItem(`datum_comments_${post.id}`);
+      if (savedCmts) {
+        const parsed = JSON.parse(savedCmts);
+        if (Array.isArray(parsed)) return [...parsed, ...SEED_COMMENTS];
+      }
+    } catch { /* ignore */ }
+    return SEED_COMMENTS;
+  });
+  const [repliesCount, setRepliesCount] = useState<number>(() => {
+    try {
+      const savedCmts = localStorage.getItem(`datum_comments_${post.id}`);
+      if (savedCmts) {
+        const parsed = JSON.parse(savedCmts);
+        if (Array.isArray(parsed)) return (post.repliesCount || SEED_COMMENTS.length) + parsed.length;
+      }
+    } catch { /* ignore */ }
+    return post.repliesCount || SEED_COMMENTS.length;
+  });
 
   // Carousel
   const mediaUrls = post.mediaUrls.length > 1
@@ -236,6 +268,10 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
       setRespected(true);
       setLikeCountBumped(true);
       setTimeout(() => setLikeCountBumped(false), 600);
+      try {
+        localStorage.setItem(`datum_respect_${post.id}`, 'true');
+        localStorage.setItem(`datum_likes_delta_${post.id}`, '25');
+      } catch { /* ignore */ }
       showToast({
         title: `Respect Ratified for ${post.authorVehicleName || 'Chassis'}`,
         message: 'Driver telemetry respect recorded',
@@ -251,11 +287,19 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
     if (respected) {
       setLikesCount(c => Math.max(0, c - 25));
       setRespected(false);
+      try {
+        localStorage.removeItem(`datum_respect_${post.id}`);
+        localStorage.removeItem(`datum_likes_delta_${post.id}`);
+      } catch { /* ignore */ }
     } else {
       setLikesCount(c => c + 25);
       setRespected(true);
       setLikeCountBumped(true);
       setTimeout(() => setLikeCountBumped(false), 600);
+      try {
+        localStorage.setItem(`datum_respect_${post.id}`, 'true');
+        localStorage.setItem(`datum_likes_delta_${post.id}`, '25');
+      } catch { /* ignore */ }
       showToast({
         title: `Respect Ratified for ${post.authorVehicleName || 'Chassis'}`,
         message: 'Driver telemetry respect recorded',
@@ -271,6 +315,10 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
     }
     setLikesCount(c => c + criterion.points);
     setShowRespectMenu(false);
+    try {
+      localStorage.setItem(`datum_respect_${post.id}`, 'true');
+      localStorage.setItem(`datum_likes_delta_${post.id}`, String(criterion.points));
+    } catch { /* ignore */ }
     showToast({
       title: `${criterion.label}`,
       message: `+${criterion.points} Certified Respects awarded to ${post.authorVehicleName}`,
@@ -282,6 +330,13 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
   const handleToggleSave = () => {
     const nextSaved = !saved;
     setSaved(nextSaved);
+    try {
+      if (nextSaved) {
+        localStorage.setItem(`datum_saved_${post.id}`, 'true');
+      } else {
+        localStorage.removeItem(`datum_saved_${post.id}`);
+      }
+    } catch { /* ignore */ }
     showToast({
       title: nextSaved ? 'Saved to Offline Pocket' : 'Removed from Saved',
       message: nextSaved ? 'Route GPX & telemetry cached for offline driving' : undefined,
@@ -304,7 +359,14 @@ export const FeedCard: FC<FeedCardProps> = ({ post }) => {
       likes: 1,
       liked: true
     };
-    setComments(prev => [newEntry, ...prev]);
+    setComments(prev => {
+      const updated = [newEntry, ...prev];
+      try {
+        const userCommentsOnly = updated.filter(c => c.id.startsWith('c-'));
+        localStorage.setItem(`datum_comments_${post.id}`, JSON.stringify(userCommentsOnly));
+      } catch { /* ignore */ }
+      return updated;
+    });
     setRepliesCount(c => c + 1);
     showToast({
       title: 'Comment Published',

@@ -103,10 +103,11 @@ function AppContent() {
       content: newPostData.content || 'Tested tire pressures and damping rebound over damp tarmac. Zero drop in pace.',
       mediaUrls: newPostData.mediaUrls && newPostData.mediaUrls.length > 0 
         ? newPostData.mediaUrls 
-        : ['https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=90'],
+        : [activeVehicle.heroImage || '/real_uk_m3_cottage.jpg'],
       provenanceTag: newPostData.provenanceTag || 'owner_experience',
       createdAt: 'Just now',
       likesCount: 1,
+      respectsCount: newPostData.respectsCount || 1,
       repliesCount: 0,
       cadenceRank: newPostData.cadenceRank,
       cadenceScore: newPostData.cadenceScore,
@@ -114,6 +115,7 @@ function AppContent() {
       routePassName: newPostData.routePassName,
       linkedDriveId: newPostData.postType === 'DRIVE' ? 'drive-184' : undefined,
       linkedBuildVersion: newPostData.postType === 'BUILD_UPDATE' ? 'BUILD 04' : undefined,
+      taggedBomComponent: newPostData.taggedBomComponent
     };
 
     setPosts((prev) => {
